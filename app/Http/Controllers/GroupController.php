@@ -7,6 +7,6 @@ use Illuminate\Http\Request;
 class GroupController extends Controller
 {
     public function index() {
-
+        return view('modules.settings.accounts.group.index');
     }
 }

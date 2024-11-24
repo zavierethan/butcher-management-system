@@ -15,7 +15,7 @@ License: For each use you must have a valid license purchased only from above li
 <!--begin::Head-->
 
 <head>
-    <title>Metronic - The World's #1 Selling Bootstrap Admin Template by KeenThemes</title>
+    <title>Priyadis Buthers</title>
     <meta charset="utf-8" />
     <meta name="description"
         content="The most advanced Bootstrap 5 Admin Theme with 40 unique prebuilt layouts on Themeforest trusted by 100,000 beginners and professionals. Multi-demo, Dark Mode, RTL support and complete React, Angular, Vue, Asp.Net Core, Rails, Spring, Blazor, Django, Express.js, Node.js, Flask, Symfony & Laravel versions. Grab your copy now and get life-time updates for free." />
@@ -98,7 +98,7 @@ License: For each use you must have a valid license purchased only from above li
                     <!--begin::Mobile logo-->
                     <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
                         <a href="index.html" class="d-lg-none">
-                            <img alt="Logo" src="assets/media/logos/default-small.svg" class="h-30px" />
+                            <img alt="Logo" src="{{asset('assets/media/logos/default-small.svg')}}" class="h-30px" />
                         </a>
                     </div>
                     <!--end::Mobile logo-->
@@ -726,8 +726,7 @@ License: For each use you must have a valid license purchased only from above li
                                                     <!--end::Option-->
                                                     <!--begin::Option-->
                                                     <label>
-                                                        <input type="radio" class="btn-check" name="type"
-                                                            value="users" />
+                                                        <input type="radio" class="btn-check" name="type" value="users" />
                                                         <span
                                                             class="btn btn-sm btn-color-muted btn-active btn-active-primary px-4">Users</span>
                                                     </label>
@@ -891,10 +890,8 @@ License: For each use you must have a valid license purchased only from above li
                                             <!--end::Input group-->
                                             <!--begin::Input group-->
                                             <div class="py-4 border-bottom">
-                                                <label
-                                                    class="form-check form-switch form-switch-sm form-check-custom form-check-solid flex-stack">
-                                                    <span
-                                                        class="form-check-label text-gray-700 fs-6 fw-semibold ms-0 me-2">Users</span>
+                                                <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid flex-stack">
+                                                    <span class="form-check-label text-gray-700 fs-6 fw-semibold ms-0 me-2">Users</span>
                                                     <input class="form-check-input" type="checkbox" value="1" />
                                                 </label>
                                             </div>
@@ -1027,7 +1024,7 @@ License: For each use you must have a valid license purchased only from above li
                                         <div class="menu-content d-flex align-items-center px-3">
                                             <!--begin::Avatar-->
                                             <div class="symbol symbol-50px me-5">
-                                                <img alt="Logo" src="assets/media/avatars/300-3.jpg" />
+                                                <img alt="Logo" src="{{asset('assets/media/avatars/300-3.jpg')}}" />
                                             </div>
                                             <!--end::Avatar-->
                                             <!--begin::Username-->
@@ -1044,19 +1041,10 @@ License: For each use you must have a valid license purchased only from above li
                                     <!--begin::Menu separator-->
                                     <div class="separator my-2"></div>
                                     <!--end::Menu separator-->
-                                    <!--begin::Menu item-->
-                                    <div class="menu-item px-5">
-                                        <a href="account/overview.html" class="menu-link px-5">My Profile</a>
-                                    </div>
-                                    <!--end::Menu item-->
-
-                                    <!--begin::Menu separator-->
-                                    <div class="separator my-2"></div>
-                                    <!--end::Menu separator-->
 
                                     <!--begin::Menu item-->
                                     <div class="menu-item px-5 my-1">
-                                        <a href="account/settings.html" class="menu-link px-5">Account Settings</a>
+                                        <a href="account/settings.html" class="menu-link px-5">Change Password</a>
                                     </div>
                                     <!--end::Menu item-->
                                     <!--begin::Menu item-->
@@ -1402,7 +1390,7 @@ License: For each use you must have a valid license purchased only from above li
                                                     <span class="path5"></span>
                                                 </i>
                                             </span>
-                                            <span class="menu-title">System Accounts</span>
+                                            <span class="menu-title">Accounts</span>
                                             <span class="menu-arrow"></span>
                                         </span>
                                         <!--end:Menu link-->
@@ -1411,7 +1399,7 @@ License: For each use you must have a valid license purchased only from above li
                                             <!--begin:Menu item-->
                                             <div class="menu-item">
                                                 <!--begin:Menu link-->
-                                                <a class="menu-link" href="pages/user-profile/overview.html">
+                                                <a class="menu-link" href="{{route('users.index')}}">
                                                     <span class="menu-bullet">
                                                         <span class="bullet bullet-dot"></span>
                                                     </span>
@@ -1423,7 +1411,7 @@ License: For each use you must have a valid license purchased only from above li
                                             <!--begin:Menu item-->
                                             <div class="menu-item">
                                                 <!--begin:Menu link-->
-                                                <a class="menu-link" href="pages/user-profile/projects.html">
+                                                <a class="menu-link" href="{{route('groups.index')}}">
                                                     <span class="menu-bullet">
                                                         <span class="bullet bullet-dot"></span>
                                                     </span>
@@ -6468,7 +6456,7 @@ License: For each use you must have a valid license purchased only from above li
     <script src="https://cdn.amcharts.com/lib/5/geodata/usaLow.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/geodata/worldTimeZonesLow.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/geodata/worldTimeZoneAreasLow.js"></script>
-    <script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="{{asset('assets/plugins/custom/datatables/datatables.bundle.js')}}"></script>
     <!--end::Vendors Javascript-->
     <!--begin::Custom Javascript(used for this page only)-->
     <script src="{{asset('assets/js/widgets.bundle.js')}}"></script>
@@ -6481,8 +6469,6 @@ License: For each use you must have a valid license purchased only from above li
     <!--end::Custom Javascript-->
     <!--end::Javascript-->
     @yield('script')
-
 </body>
 <!--end::Body-->
-
 </html>

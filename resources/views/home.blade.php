@@ -600,7 +600,7 @@
                                                 <td>
                                                     <div class="d-flex align-items-center">
                                                         <div class="symbol symbol-50px me-3">
-                                                            <img src="assets/media/stock/600x600/img-49.jpg" class=""
+                                                            <img src="{{asset('assets/media/stock/600x600/img-49.jpg')}}" class=""
                                                                 alt="" />
                                                         </div>
                                                         <div class="d-flex justify-content-start flex-column">
