@@ -30,6 +30,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::prefix('users')->group(function () {
         Route::name('users.')->group(function () {
             Route::get('/', [App\Http\Controllers\UserController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\UserController::class, 'getLists'])->name('get-lists');
             Route::post('/create', [App\Http\Controllers\UserController::class, 'create'])->name('create');
         });
     });
@@ -37,6 +38,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::prefix('groups')->group(function () {
         Route::name('groups.')->group(function () {
             Route::get('/', [App\Http\Controllers\GroupController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\GroupController::class, 'getLists'])->name('get-lists');
             Route::post('/create', [App\Http\Controllers\GroupController::class, 'create'])->name('create');
         });
     });
