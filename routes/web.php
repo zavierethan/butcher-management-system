@@ -27,11 +27,18 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+    //Account
     Route::prefix('users')->group(function () {
         Route::name('users.')->group(function () {
             Route::get('/', [App\Http\Controllers\UserController::class, 'index'])->name('index');
             Route::get('/lists', [App\Http\Controllers\UserController::class, 'getLists'])->name('get-lists');
-            Route::post('/create', [App\Http\Controllers\UserController::class, 'create'])->name('create');
+            Route::get('/create', [App\Http\Controllers\UserController::class, 'create'])->name('create');
+            Route::post('/save', [App\Http\Controllers\UserController::class, 'save'])->name('save');
+            Route::get('/edit/{userId}', [App\Http\Controllers\UserController::class, 'edit'])->name('edit');
+            Route::post('/update', [App\Http\Controllers\UserController::class, 'update'])->name('update');
+
+            Route::get('/change-password/{userId}', [App\Http\Controllers\UserController::class, 'changePassword'])->name('change-password');
+            Route::post('/update-password', [App\Http\Controllers\UserController::class, 'updatePassword'])->name('update-password');
         });
     });
 
@@ -39,7 +46,44 @@ Route::group(['middleware' => ['auth']], function() {
         Route::name('groups.')->group(function () {
             Route::get('/', [App\Http\Controllers\GroupController::class, 'index'])->name('index');
             Route::get('/lists', [App\Http\Controllers\GroupController::class, 'getLists'])->name('get-lists');
-            Route::post('/create', [App\Http\Controllers\GroupController::class, 'create'])->name('create');
+            Route::get('/create', [App\Http\Controllers\GroupController::class, 'create'])->name('create');
+            Route::post('/save', [App\Http\Controllers\GroupController::class, 'save'])->name('save');
+            Route::get('/edit/{groupId}', [App\Http\Controllers\GroupController::class, 'edit'])->name('edit');
+            Route::get('/menu-access/{groupId}', [App\Http\Controllers\GroupController::class, 'menuAccess'])->name('menu-access');
+            Route::post('/update', [App\Http\Controllers\GroupController::class, 'update'])->name('update');
+        });
+    });
+
+    //Master Data
+    Route::prefix('products')->group(function () {
+        Route::name('products.')->group(function () {
+            Route::get('/', [App\Http\Controllers\ProductController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\ProductController::class, 'getLists'])->name('get-lists');
+            Route::get('/create', [App\Http\Controllers\ProductController::class, 'create'])->name('create');
+        });
+    });
+
+    Route::prefix('product-categories')->group(function () {
+        Route::name('product-categories.')->group(function () {
+            Route::get('/', [App\Http\Controllers\ProductCategoryController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\ProductCategoryController::class, 'getLists'])->name('get-lists');
+            Route::get('/create', [App\Http\Controllers\ProductCategoryController::class, 'create'])->name('create');
+        });
+    });
+
+    Route::prefix('customers')->group(function () {
+        Route::name('customers.')->group(function () {
+            Route::get('/', [App\Http\Controllers\CustomerController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\CustomerController::class, 'getLists'])->name('get-lists');
+            Route::get('/create', [App\Http\Controllers\CustomerController::class, 'create'])->name('create');
+        });
+    });
+
+    Route::prefix('suppliers')->group(function () {
+        Route::name('suppliers.')->group(function () {
+            Route::get('/', [App\Http\Controllers\SupplierController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\SupplierController::class, 'getLists'])->name('get-lists');
+            Route::get('/create', [App\Http\Controllers\SupplierController::class, 'create'])->name('create');
         });
     });
 });
