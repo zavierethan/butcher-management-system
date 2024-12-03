@@ -138,6 +138,7 @@
                                 <div class="separator my-5"></div>
                                 <div class="flex justify-end">
                                     <button type="submit" class="btn btn-primary">Submit</button>
+                                    <a href="{{ route('home') }}" class="btn btn-danger">Cancel</a>
                                 </div>
                             </form>
                         </div>

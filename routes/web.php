@@ -54,6 +54,17 @@ Route::group(['middleware' => ['auth']], function() {
         });
     });
 
+    Route::prefix('menus')->group(function () {
+        Route::name('menus.')->group(function () {
+            Route::get('/', [App\Http\Controllers\MenuController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\MenuController::class, 'getLists'])->name('get-lists');
+            Route::get('/create', [App\Http\Controllers\MenuController::class, 'create'])->name('create');
+            Route::post('/save', [App\Http\Controllers\MenuController::class, 'save'])->name('save');
+            Route::get('/edit/{menuId}', [App\Http\Controllers\MenuController::class, 'edit'])->name('edit');
+            Route::post('/update', [App\Http\Controllers\MenuController::class, 'update'])->name('update');
+        });
+    });
+
     //Master Data
     Route::prefix('products')->group(function () {
         Route::name('products.')->group(function () {
