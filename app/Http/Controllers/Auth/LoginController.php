@@ -37,4 +37,14 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
     }
+
+    /**
+     * Override the username method to use 'name' instead of 'email'.
+     *
+     * @return string
+     */
+    public function username()
+    {
+        return 'name';
+    }
 }

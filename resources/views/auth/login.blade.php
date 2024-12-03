@@ -90,9 +90,9 @@ License: For each use you must have a valid license purchased only from above li
                             <!--begin::Input group=-->
                             <div class="fv-row mb-8">
                                 <!--begin::Email-->
-                                <input type="text" placeholder="Email" name="email" autocomplete="off" class="form-control bg-transparent @error('email') is-invalid @enderror"
-                                    value="{{ old('email') }}" />
-                                @error('email')
+                                <input type="text" placeholder="Username" name="name" autocomplete="off" class="form-control bg-transparent @error('name') is-invalid @enderror"
+                                    value="{{ old('name') }}" />
+                                @error('name')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
