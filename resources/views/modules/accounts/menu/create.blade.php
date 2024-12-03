@@ -58,7 +58,7 @@
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Name</label>
                                         <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="code" id="code" />
+                                            <input class="form-control form-control-md form-control-solid" type="text" name="name" id="name" />
                                         </div>
                                     </div>
                                 </div>
@@ -67,8 +67,11 @@
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Parent ID</label>
                                         <div class="position-relative mb-3">
-                                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="is_active">
-                                                <option value=""></option>
+                                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="parent_id">
+                                                <option value="">-</option>
+                                                @foreach($parentIds as $parent)
+                                                <option value="{{ $parent->id }}">{{ $parent->id }} - {{ $parent->name }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -78,7 +81,12 @@
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">URL</label>
                                         <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="name" id="name" />
+                                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="url">
+                                                <option value="">-</option>
+                                                @foreach($urls as $url)
+                                                <option value="{{ $url['url'] }}">{{ $url['uri'] }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -87,7 +95,7 @@
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Icon</label>
                                         <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="name" id="name" />
+                                            <input class="form-control form-control-md form-control-solid" type="text" name="icon" id="icon" />
                                         </div>
                                     </div>
                                 </div>
@@ -96,7 +104,7 @@
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Order Sequence</label>
                                         <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="name" id="name" />
+                                            <input class="form-control form-control-md form-control-solid" type="text" name="order" id="order" />
                                         </div>
                                     </div>
                                 </div>

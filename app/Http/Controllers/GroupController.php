@@ -47,13 +47,17 @@ class GroupController extends Controller
 
     public function edit($id) {
         $group = DB::table('groups')->where('id', $id)->first();
-
-        return view('modules.accounts.group.edit', compact('group'));
+        return view('modules.accounts.group.edit', compact('group', 'menuHierarchy'));
     }
 
     public function menuAccess($id) {
         $group = DB::table('groups')->where('id', $id)->first();
-        return view('modules.accounts.group.menu-access', compact('group'));
+
+        $parent = DB::table('menus')->whereNull('parent_id')->orderBy('order', 'asc')->get();
+
+        $child = DB::table('menus')->whereNotNull('parent_id')->orderBy('order', 'asc')->get();
+
+        return view('modules.accounts.group.menu-access', compact('group', 'parent', 'child'));
     }
 
     public function update(Request $request) {

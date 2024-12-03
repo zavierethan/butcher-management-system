@@ -212,8 +212,8 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">Parent</th>
                                         <th class="min-w-125px">Name</th>
+                                        <th class="min-w-125px">Parent</th>
                                         <th class="min-w-125px">URL</th>
                                         <th class="min-w-125px">Order</th>
                                         <th class="min-w-125px">Active</th>
@@ -258,8 +258,8 @@
             }
         },
         columns: [
-            { data: 'parent_id', name: 'parent_id' },
             { data: 'name', name: 'name' },
+            { data: 'parent_id', name: 'parent_id' },
             { data: 'url', name: 'url' },
             { data: 'order', name: 'order' },
             { data: 'is_active', name: 'is_active' },

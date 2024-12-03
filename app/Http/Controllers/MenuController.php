@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use DB;
 
 class MenuController extends Controller
@@ -21,7 +22,7 @@ class MenuController extends Controller
 
         $totalRecords = $query->count();
         $filteredRecords = $query->count();
-        $data = $query->skip($start)->take($length)->get();
+        $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get();
 
         return response()->json([
             'draw' => $request->input('draw'),
@@ -32,13 +33,34 @@ class MenuController extends Controller
     }
 
     public function create() {
-        return view('modules.accounts.menu.create');
+
+        $routes = Route::getRoutes();
+
+        // Filter routes to only include GET routes (optional)
+        $urls = [];
+        foreach ($routes as $route) {
+            // You can customize the filtering as needed
+            if ($route->methods()[0] == 'GET') {
+                $urls[] = [
+                    'uri' => $route->uri(), // Use URI instead of name
+                    'url' => url($route->uri()) // Generate URL using URI
+                ];
+            }
+        }
+
+        $parentIds = DB::table('menus')->get();
+
+        return view('modules.accounts.menu.create', compact('urls', 'parentIds'));
     }
 
     public function save(Request $request) {
         DB::table('menus')->insert([
-            "code" => $request->code,
-            "name" => $request->name
+            "name" => $request->name,
+            "parent_id" => $request->parent_id,
+            "url" => $request->url,
+            "icon" => $request->icon,
+            "order" => $request->order,
+            "is_active" => $request->is_active,
         ]);
 
         return redirect()->route('menus.index');
@@ -47,13 +69,33 @@ class MenuController extends Controller
     public function edit($id) {
         $menu = DB::table('menus')->where('id', $id)->first();
 
-        return view('modules.accounts.menu.edit', compact('menu'));
+        $routes = Route::getRoutes();
+
+        // Filter routes to only include GET routes (optional)
+        $urls = [];
+        foreach ($routes as $route) {
+            // You can customize the filtering as needed
+            if ($route->methods()[0] == 'GET') {
+                $urls[] = [
+                    'uri' => $route->uri(), // Use URI instead of name
+                    'url' => url($route->uri()) // Generate URL using URI
+                ];
+            }
+        }
+
+        $parentIds = DB::table('menus')->get();
+
+        return view('modules.accounts.menu.edit', compact('menu', 'urls', 'parentIds'));
     }
 
     public function update(Request $request) {
         DB::table('menus')->where('id', $request->id)->update([
-            "code" => $request->code,
-            "name" => $request->name
+            "name" => $request->name,
+            "parent_id" => $request->parent_id,
+            "url" => $request->url,
+            "icon" => $request->icon,
+            "order" => $request->order,
+            "is_active" => $request->is_active,
         ]);
 
         return redirect()->route('menus.index');

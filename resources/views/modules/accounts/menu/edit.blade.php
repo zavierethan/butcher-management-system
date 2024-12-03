@@ -52,13 +52,14 @@
                 <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
                     <div class="card">
                         <div class="card-body pt-10">
-                            <form class="w-[60%]" method="POST" action="{{route('menus.save')}}">
+                            <form class="w-[60%]" method="POST" action="{{route('menus.update')}}">
                                 @csrf
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Name</label>
                                         <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="code" id="code" />
+                                            <input class="form-control form-control-md form-control-solid" type="text" name="name" id="name" value="{{$menu->name}}" />
+                                            <input class="form-control form-control-md form-control-solid" type="hidden" name="id" id="id" value="{{$menu->id}}" />
                                         </div>
                                     </div>
                                 </div>
@@ -67,8 +68,11 @@
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Parent ID</label>
                                         <div class="position-relative mb-3">
-                                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="is_active">
-                                                <option value=""></option>
+                                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="parent_id">
+                                                <option value="">-</option>
+                                                @foreach($parentIds as $parent)
+                                                <option value="{{ $parent->id }}" <?php echo ($parent->id == $menu->parent_id) ? "selected" : ""; ?>>{{ $parent->id }} - {{ $parent->name }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -78,7 +82,12 @@
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">URL</label>
                                         <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="name" id="name" />
+                                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="url">
+                                                <option value="">-</option>
+                                                @foreach($urls as $url)
+                                                <option value="{{ $url['url'] }}">{{ $url['uri'] }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -87,7 +96,7 @@
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Icon</label>
                                         <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="name" id="name" />
+                                            <input class="form-control form-control-md form-control-solid" type="text" name="icon" id="icon" value="{{$menu->icon}}"/>
                                         </div>
                                     </div>
                                 </div>
@@ -96,7 +105,7 @@
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Order Sequence</label>
                                         <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="name" id="name" />
+                                            <input class="form-control form-control-md form-control-solid" type="text" name="order" id="order" value="{{$menu->order}}"/>
                                         </div>
                                     </div>
                                 </div>
@@ -107,16 +116,16 @@
                                         <div class="position-relative mb-3">
                                             <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="is_active">
                                                 <option value=""></option>
-                                                <option value="1" selected>Yes</option>
-                                                <option value="0">No</option>
+                                                <option value="1" <?php echo ($menu->is_active == 1) ? "selected" : ""; ?>>Yes</option>
+                                                <option value="0" <?php echo ($menu->is_active == 0) ? "selected" : ""; ?>>No</option>
                                             </select>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="separator my-5"></div>
                                 <div class="flex justify-end">
-                                    <button type="submit" class="btn btn-primary">Update</button>
-                                    <a href="{{route('groups.index')}}" class="btn btn-danger">Cancel</a>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    <a href="{{route('menus.index')}}" class="btn btn-danger">Cancel</a>
                                 </div>
                             </form>
                         </div>

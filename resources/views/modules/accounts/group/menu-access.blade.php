@@ -87,53 +87,23 @@
                                                 <!--end::Card header-->
                                                 <!--begin::Card body-->
                                                 <div class="card-body pt-2">
-                                                    <!--begin::Notice-->
-                                                    <div class="notice d-flex bg-light-primary rounded border-primary border border-dashed mb-9 p-6">
-                                                        <!--begin::Icon-->
-                                                        <!--begin::Svg Icon | path: icons/duotune/art/art006.svg-->
-                                                        <span class="svg-icon svg-icon-2tx svg-icon-primary me-4">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                                height="24" viewBox="0 0 24 24" fill="none">
-                                                                <path opacity="0.3"
-                                                                    d="M22 19V17C22 16.4 21.6 16 21 16H8V3C8 2.4 7.6 2 7 2H5C4.4 2 4 2.4 4 3V19C4 19.6 4.4 20 5 20H21C21.6 20 22 19.6 22 19Z"
-                                                                    fill="black"></path>
-                                                                <path
-                                                                    d="M20 5V21C20 21.6 19.6 22 19 22H17C16.4 22 16 21.6 16 21V8H8V4H19C19.6 4 20 4.4 20 5ZM3 8H4V4H3C2.4 4 2 4.4 2 5V7C2 7.6 2.4 8 3 8Z"
-                                                                    fill="black"></path>
-                                                            </svg>
-                                                        </span>
-                                                        <!--end::Svg Icon-->
-                                                        <!--end::Icon-->
-                                                        <!--begin::Wrapper-->
-                                                        <div class="d-flex flex-stack flex-grow-1">
-                                                            <!--begin::Content-->
-                                                            <div class="fw-bold">
-                                                                <div class="fs-6 text-gray-700">By connecting an
-                                                                    account, you hereby agree to our
-                                                                    <a href="#" class="me-1">privacy policy</a>and
-                                                                    <a href="#">terms of use</a>.
-                                                                </div>
-                                                            </div>
-                                                            <!--end::Content-->
-                                                        </div>
-                                                        <!--end::Wrapper-->
-                                                    </div>
-                                                    <!--end::Notice-->
+
                                                     <!--begin::Items-->
                                                     <div class="py-2">
+                                                        @foreach($parent as $p)
                                                         <!--begin::Item-->
                                                         <div class="d-flex flex-stack">
                                                             <div class="d-flex">
                                                                 <div class="d-flex flex-column">
-                                                                    <a href="#" class="fs-5 text-dark text-hover-primary fw-bolder">Dashboard</a>
-                                                                    <div class="fs-6 fw-bold text-muted">Plan properly your workflow</div>
+                                                                    <a href="#" class="fs-5 text-dark text-hover-primary fw-bolder">{{$p->name}}</a>
+                                                                    <div class="fs-6 fw-bold text-muted">{{$p->url}}</div>
                                                                 </div>
                                                             </div>
                                                             <div class="d-flex justify-content-end">
                                                                 <!--begin::Switch-->
                                                                 <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
                                                                     <!--begin::Input-->
-                                                                    <input class="form-check-input" name="google" type="checkbox" value="1" id="kt_modal_connected_accounts_google">
+                                                                    <!-- <input class="form-check-input" name="google" type="checkbox" value="1" id="kt_modal_connected_accounts_google"> -->
                                                                     <!--end::Input-->
                                                                     <!--begin::Label-->
                                                                     <span class="form-check-label fw-bold text-muted" for="kt_modal_connected_accounts_google"></span>
@@ -144,143 +114,34 @@
                                                         </div>
                                                         <!--end::Item-->
                                                         <div class="separator separator-dashed my-5"></div>
-                                                        <!--begin::Item-->
-                                                        <div class="d-flex flex-stack">
-                                                            <div class="d-flex">
-                                                                <div class="d-flex flex-column">
-                                                                    <a href="#" class="fs-5 text-dark text-hover-primary fw-bolder">Point of Sales</a>
-                                                                    <div class="fs-6 fw-bold text-muted">Keep eye on on your Repositories</div>
+                                                            @foreach($child as $c)
+                                                                @if($c->parent_id == $p->id)
+                                                                <!--begin::Item-->
+                                                                <div class="d-flex flex-stack" style="margin-left: 20px;">
+                                                                    <div class="d-flex">
+                                                                        <div class="d-flex flex-column">
+                                                                            <a href="#" class="fs-5 text-dark text-hover-primary fw-bolder">{{$c->name}}</a>
+                                                                            <div class="fs-6 fw-bold text-muted">{{$c->url}}</div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="d-flex justify-content-end">
+                                                                        <!--begin::Switch-->
+                                                                        <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
+                                                                            <!--begin::Input-->
+                                                                            <input class="form-check-input" name="google" type="checkbox" value="1" id="kt_modal_connected_accounts_google">
+                                                                            <!--end::Input-->
+                                                                            <!--begin::Label-->
+                                                                            <span class="form-check-label fw-bold text-muted" for="kt_modal_connected_accounts_google"></span>
+                                                                            <!--end::Label-->
+                                                                        </label>
+                                                                        <!--end::Switch-->
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            <div class="d-flex justify-content-end">
-                                                                <!--begin::Switch-->
-                                                                <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                                                    <!--begin::Input-->
-                                                                    <input class="form-check-input" name="github" type="checkbox" value="1" id="kt_modal_connected_accounts_github">
-                                                                    <!--end::Input-->
-                                                                    <!--begin::Label-->
-                                                                    <span class="form-check-label fw-bold text-muted" for="kt_modal_connected_accounts_github"></span>
-                                                                    <!--end::Label-->
-                                                                </label>
-                                                                <!--end::Switch-->
-                                                            </div>
-                                                        </div>
-                                                        <!--end::Item-->
-                                                        <div class="separator separator-dashed my-5"></div>
-                                                        <!--begin::Item-->
-                                                        <div class="d-flex flex-stack">
-                                                            <div class="d-flex">
-                                                                <div class="d-flex flex-column">
-                                                                    <a href="#" class="fs-5 text-dark text-hover-primary fw-bolder">Productions</a>
-                                                                    <div class="fs-6 fw-bold text-muted">Keep eye on on your Repositories</div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="d-flex justify-content-end">
-                                                                <!--begin::Switch-->
-                                                                <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                                                    <!--begin::Input-->
-                                                                    <input class="form-check-input" name="github" type="checkbox" value="1" id="kt_modal_connected_accounts_github">
-                                                                    <!--end::Input-->
-                                                                    <!--begin::Label-->
-                                                                    <span class="form-check-label fw-bold text-muted" for="kt_modal_connected_accounts_github"></span>
-                                                                    <!--end::Label-->
-                                                                </label>
-                                                                <!--end::Switch-->
-                                                            </div>
-                                                        </div>
-                                                        <!--end::Item-->
-                                                        <div class="separator separator-dashed my-5"></div>
-                                                        <!--begin::Item-->
-                                                        <div class="d-flex flex-stack">
-                                                            <div class="d-flex">
-                                                                <div class="d-flex flex-column">
-                                                                    <a href="#" class="fs-5 text-dark text-hover-primary fw-bolder">Inventory</a>
-                                                                    <div class="fs-6 fw-bold text-muted">Keep eye on on your Repositories</div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="d-flex justify-content-end">
-                                                                <!--begin::Switch-->
-                                                                <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                                                    <!--begin::Input-->
-                                                                    <input class="form-check-input" name="github" type="checkbox" value="1" id="kt_modal_connected_accounts_github">
-                                                                    <!--end::Input-->
-                                                                    <!--begin::Label-->
-                                                                    <span class="form-check-label fw-bold text-muted" for="kt_modal_connected_accounts_github"></span>
-                                                                    <!--end::Label-->
-                                                                </label>
-                                                                <!--end::Switch-->
-                                                            </div>
-                                                        </div>
-                                                        <!--end::Item-->
-                                                        <div class="separator separator-dashed my-5"></div>
-                                                        <!--begin::Item-->
-                                                        <div class="d-flex flex-stack">
-                                                            <div class="d-flex">
-                                                                <div class="d-flex flex-column">
-                                                                    <a href="#" class="fs-5 text-dark text-hover-primary fw-bolder">Finances</a>
-                                                                    <div class="fs-6 fw-bold text-muted">Keep eye on on your Repositories</div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="d-flex justify-content-end">
-                                                                <!--begin::Switch-->
-                                                                <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                                                    <!--begin::Input-->
-                                                                    <input class="form-check-input" name="github" type="checkbox" value="1" id="kt_modal_connected_accounts_github">
-                                                                    <!--end::Input-->
-                                                                    <!--begin::Label-->
-                                                                    <span class="form-check-label fw-bold text-muted" for="kt_modal_connected_accounts_github"></span>
-                                                                    <!--end::Label-->
-                                                                </label>
-                                                                <!--end::Switch-->
-                                                            </div>
-                                                        </div>
-                                                        <!--end::Item-->
-                                                        <div class="separator separator-dashed my-5"></div>
-                                                        <!--begin::Item-->
-                                                        <div class="d-flex flex-stack">
-                                                            <div class="d-flex">
-                                                                <div class="d-flex flex-column">
-                                                                    <a href="#" class="fs-5 text-dark text-hover-primary fw-bolder">Accounts</a>
-                                                                    <div class="fs-6 fw-bold text-muted">Keep eye on on your Repositories</div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="d-flex justify-content-end">
-                                                                <!--begin::Switch-->
-                                                                <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                                                    <!--begin::Input-->
-                                                                    <input class="form-check-input" name="github" type="checkbox" value="1" id="kt_modal_connected_accounts_github">
-                                                                    <!--end::Input-->
-                                                                    <!--begin::Label-->
-                                                                    <span class="form-check-label fw-bold text-muted" for="kt_modal_connected_accounts_github"></span>
-                                                                    <!--end::Label-->
-                                                                </label>
-                                                                <!--end::Switch-->
-                                                            </div>
-                                                        </div>
-                                                        <!--end::Item-->
-                                                        <div class="separator separator-dashed my-5"></div>
-                                                        <!--begin::Item-->
-                                                        <div class="d-flex flex-stack">
-                                                            <div class="d-flex">
-                                                                <div class="d-flex flex-column">
-                                                                    <a href="#" class="fs-5 text-dark text-hover-primary fw-bolder">Master Data</a>
-                                                                    <div class="fs-6 fw-bold text-muted">Keep eye on on your Repositories</div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="d-flex justify-content-end">
-                                                                <!--begin::Switch-->
-                                                                <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                                                    <!--begin::Input-->
-                                                                    <input class="form-check-input" name="github" type="checkbox" value="1" id="kt_modal_connected_accounts_github">
-                                                                    <!--end::Input-->
-                                                                    <!--begin::Label-->
-                                                                    <span class="form-check-label fw-bold text-muted" for="kt_modal_connected_accounts_github"></span>
-                                                                    <!--end::Label-->
-                                                                </label>
-                                                                <!--end::Switch-->
-                                                            </div>
-                                                        </div>
-                                                        <!--end::Item-->
+                                                                <!--end::Item-->
+                                                                <div class="separator separator-dashed my-5"></div>
+                                                                @endif
+                                                            @endforeach
+                                                        @endforeach
                                                     </div>
                                                     <!--end::Items-->
                                                 </div>
