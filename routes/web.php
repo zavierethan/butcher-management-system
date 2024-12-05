@@ -97,4 +97,13 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/create', [App\Http\Controllers\SupplierController::class, 'create'])->name('create');
         });
     });
+
+    //Transaction
+
+    // Point of Sales
+    Route::prefix('point-of-sales')->group(function () {
+        Route::name('point-of-sales.')->group(function () {
+
+        });
+    });
 });
