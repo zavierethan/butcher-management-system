@@ -61,8 +61,7 @@
                                         <div class="fv-row mb-5">
                                             <label class="form-label fw-bold fs-6 mb-2 fw-bolder">Group Code</label>
                                             <div class="position-relative mb-3">
-                                                <input class="form-control form-control-md form-control-solid"
-                                                    type="text" name="code" id="code" value="{{$group->code}}" />
+                                                <input class="form-control form-control-md form-control-solid" type="text" name="code" id="code" value="{{$group->code}}" />
                                             </div>
                                         </div>
                                         <div class="separator my-5"></div>

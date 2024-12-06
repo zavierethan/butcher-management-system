@@ -36,6 +36,15 @@ class AppServiceProvider extends ServiceProvider
 
         //     $view->with('menuTree', $menuTree);
         // });
+
+        $parent = DB::table('menus')->whereNull('parent_id')->orderBy('order', 'asc')->get();
+
+        $child = DB::table('menus')->whereNotNull('parent_id')->orderBy('order', 'asc')->get();
+
+        View::share([
+            'parent_menus' => $parent,
+            'child_menus' => $child,
+        ]);
     }
 
     /**

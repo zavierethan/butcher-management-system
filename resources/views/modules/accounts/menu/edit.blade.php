@@ -85,7 +85,7 @@
                                             <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="url">
                                                 <option value="">-</option>
                                                 @foreach($urls as $url)
-                                                <option value="{{ $url['url'] }}">{{ $url['uri'] }}</option>
+                                                <option value="{{ $url['url'] }}" <?php echo ($menu->url == $url['url']) ? "selected" : ""; ?>>{{ $url['uri'] }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
