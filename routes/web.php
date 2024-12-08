@@ -78,6 +78,18 @@ Route::group(['middleware' => ['auth']], function() {
         });
     });
 
+    Route::prefix('branches')->group(function () {
+        Route::name('branches.')->group(function () {
+            Route::get('/', [App\Http\Controllers\BranchController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\BranchController::class, 'getLists'])->name('get-lists');
+            Route::get('/create', [App\Http\Controllers\BranchController::class, 'create'])->name('create');
+            Route::post('/store', [App\Http\Controllers\BranchController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [App\Http\Controllers\BranchController::class, 'edit'])->name('edit');
+            Route::put('/update/{id}', [App\Http\Controllers\BranchController::class, 'update'])->name('update');
+            Route::delete('/delete/{id}', [App\Http\Controllers\BranchController::class, 'destroy'])->name('destroy');
+        });
+    });
+
     Route::prefix('product-categories')->group(function () {
         Route::name('product-categories.')->group(function () {
             Route::get('/', [App\Http\Controllers\ProductCategoryController::class, 'index'])->name('index');
