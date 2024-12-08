@@ -71,6 +71,10 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/', [App\Http\Controllers\ProductController::class, 'index'])->name('index');
             Route::get('/lists', [App\Http\Controllers\ProductController::class, 'getLists'])->name('get-lists');
             Route::get('/create', [App\Http\Controllers\ProductController::class, 'create'])->name('create');
+            Route::post('/store', [App\Http\Controllers\ProductController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [App\Http\Controllers\ProductController::class, 'edit'])->name('edit');
+            Route::put('/update/{id}', [App\Http\Controllers\ProductController::class, 'update'])->name('update');
+            Route::delete('/delete/{id}', [App\Http\Controllers\ProductController::class, 'destroy'])->name('destroy');
         });
     });
 
