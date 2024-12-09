@@ -72,6 +72,22 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/', [App\Http\Controllers\ProductController::class, 'index'])->name('index');
             Route::get('/lists', [App\Http\Controllers\ProductController::class, 'getLists'])->name('get-lists');
             Route::get('/create', [App\Http\Controllers\ProductController::class, 'create'])->name('create');
+            Route::post('/store', [App\Http\Controllers\ProductController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [App\Http\Controllers\ProductController::class, 'edit'])->name('edit');
+            Route::put('/update/{id}', [App\Http\Controllers\ProductController::class, 'update'])->name('update');
+            Route::delete('/delete/{id}', [App\Http\Controllers\ProductController::class, 'destroy'])->name('destroy');
+        });
+    });
+
+    Route::prefix('branches')->group(function () {
+        Route::name('branches.')->group(function () {
+            Route::get('/', [App\Http\Controllers\BranchController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\BranchController::class, 'getLists'])->name('get-lists');
+            Route::get('/create', [App\Http\Controllers\BranchController::class, 'create'])->name('create');
+            Route::post('/store', [App\Http\Controllers\BranchController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [App\Http\Controllers\BranchController::class, 'edit'])->name('edit');
+            Route::put('/update/{id}', [App\Http\Controllers\BranchController::class, 'update'])->name('update');
+            Route::delete('/delete/{id}', [App\Http\Controllers\BranchController::class, 'destroy'])->name('destroy');
         });
     });
 
