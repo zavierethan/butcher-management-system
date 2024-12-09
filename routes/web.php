@@ -51,6 +51,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/edit/{groupId}', [App\Http\Controllers\GroupController::class, 'edit'])->name('edit');
             Route::get('/menu-access/{groupId}', [App\Http\Controllers\GroupController::class, 'menuAccess'])->name('menu-access');
             Route::post('/update', [App\Http\Controllers\GroupController::class, 'update'])->name('update');
+            Route::post('/update-menu-access', [App\Http\Controllers\GroupController::class, 'updateMenuAccess'])->name('update-menu-access');
         });
     });
 

@@ -124,7 +124,7 @@
                                 <div class="separator my-5"></div>
                                 <div class="flex justify-end">
                                     <button type="submit" class="btn btn-primary">Submit</button>
-                                    <a href="{{route('groups.index')}}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{route('menus.index')}}" class="btn btn-danger">Cancel</a>
                                 </div>
                             </form>
                         </div>

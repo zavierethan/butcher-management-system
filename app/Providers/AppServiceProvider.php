@@ -39,7 +39,7 @@ class AppServiceProvider extends ServiceProvider
 
         $parent = DB::table('menus')->whereNull('parent_id')->orderBy('order', 'asc')->get();
 
-        $child = DB::table('menus')->whereNotNull('parent_id')->orderBy('order', 'asc')->get();
+        $child = DB::table('menus')->where('is_active', 1)->whereNotNull('parent_id')->orderBy('order', 'asc')->get();
 
         View::share([
             'parent_menus' => $parent,

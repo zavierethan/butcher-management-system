@@ -57,7 +57,9 @@ class GroupController extends Controller
 
         $child = DB::table('menus')->whereNotNull('parent_id')->orderBy('order', 'asc')->get();
 
-        return view('modules.accounts.group.menu-access', compact('group', 'parent', 'child'));
+        $menuAssigned = DB::table('group_menu_access')->where('group_id', $id)->get();
+
+        return view('modules.accounts.group.menu-access', compact('group', 'parent', 'child', 'menuAssigned'));
     }
 
     public function update(Request $request) {
@@ -67,5 +69,34 @@ class GroupController extends Controller
         ]);
 
         return redirect()->route('groups.index');
+    }
+
+    public function updateMenuAccess(Request $request) {
+        $query = DB::table('group_menu_access');
+
+        try {
+            if($request['is_checked'] == 1) {
+                $query->insert([
+                    "group_id" => $request['group_id'],
+                    "menu_id" => $request['menu_id']
+                ]);
+
+                return response()->json([
+                    "message" => "Data Berhasil di Simpan"
+                ], 201); // 201 Created
+            } else {
+                $query->where('group_id', $request['group_id'])->where('menu_id', $request['menu_id'])->delete();
+
+                return response()->json([
+                    "message" => "Data Berhasil di Hapus"
+                ], 200);
+            }
+
+        }catch (\Exception $e) {
+            return response()->json([
+                "error" => "An error occurred",
+                "details" => $e->getMessage()
+            ], 500); // 500 Internal Server Error for unexpected errors
+        }
     }
 }

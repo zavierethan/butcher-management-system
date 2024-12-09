@@ -25,11 +25,15 @@ License: For each use you must have a valid license purchased only from above li
     <meta property="og:title" content="Priyadis Butchers" />
     <meta property="og:url" content="https://keenthemes.com/metronic" />
     <meta property="og:site_name" content="Priyadis Butchers" />
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <link rel="canonical" href="https://preview.keenthemes.com/metronic8" />
     <link rel="shortcut icon" href="assets/media/logos/favicon.ico" />
     <!--begin::Fonts(mandatory for all pages)-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
     <!--end::Fonts-->
+    <link rel="stylesheet" href="{{ asset('assets/plugins/global/fontawesome/css/all.min.css') }}">
     <!--begin::Vendor Stylesheets(used for this page only)-->
     <link href="{{asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.css')}}" rel="stylesheet"
         type="text/css" />
@@ -279,7 +283,7 @@ License: For each use you must have a valid license purchased only from above li
                     <!--begin::Logo-->
                     <div class="app-sidebar-logo px-6" id="kt_app_sidebar_logo">
                         <!--begin::Logo image-->
-                        <a href="index.html">
+                        <a href="{{route('home')}}">
                             <img alt="Logo" src="{{asset('assets/media/logos/default-dark.svg')}}"
                                 class="h-25px app-sidebar-logo-default" />
                             <img alt="Logo" src="{{asset('assets/media/logos/default-small.svg')}}"
@@ -315,13 +319,7 @@ License: For each use you must have a valid license purchased only from above li
                                         <!--begin:Menu link-->
                                         <span class="menu-link">
                                             <span class="menu-icon">
-                                                <i class="ki-duotone ki-element-plus fs-2">
-                                                    <span class="path1"></span>
-                                                    <span class="path2"></span>
-                                                    <span class="path3"></span>
-                                                    <span class="path4"></span>
-                                                    <span class="path5"></span>
-                                                </i>
+                                            {!! $parent->icon !!}
                                             </span>
                                             <span class="menu-title">{{$parent->name}}</span>
                                             <span class="menu-arrow"></span>
@@ -391,11 +389,6 @@ License: For each use you must have a valid license purchased only from above li
     <!--begin::Custom Javascript(used for this page only)-->
     <script src="{{asset('assets/js/widgets.bundle.js')}}"></script>
     <script src="{{asset('assets/js/custom/widgets.js')}}"></script>
-    <script src="{{asset('assets/js/custom/apps/chat/chat.js')}}"></script>
-    <script src="{{asset('assets/js/custom/utilities/modals/upgrade-plan.js')}}"></script>
-    <script src="{{asset('assets/js/custom/utilities/modals/create-app.js')}}"></script>
-    <script src="{{asset('assets/js/custom/utilities/modals/new-target.js')}}"></script>
-    <script src="{{asset('assets/js/custom/utilities/modals/users-search.js')}}"></script>
     <!--end::Custom Javascript-->
     <!--end::Javascript-->
     @yield('script')
