@@ -57,7 +57,10 @@ class GroupController extends Controller
 
         $child = DB::table('menus')->whereNotNull('parent_id')->orderBy('order', 'asc')->get();
 
-        $menuAssigned = DB::table('group_menu_access')->where('group_id', $id)->get();
+        $menuAssigned = DB::table('group_menu_access')
+                    ->where('group_id', $id)
+                    ->pluck('menu_id') // Plucks the 'menu_id' column
+                    ->toArray();
 
         return view('modules.accounts.group.menu-access', compact('group', 'parent', 'child', 'menuAssigned'));
     }

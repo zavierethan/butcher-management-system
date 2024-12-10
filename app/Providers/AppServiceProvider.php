@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Cache;
 
 use DB;
+use Auth;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,28 +24,43 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // View::composer('*', function ($view) {
-        //     $menuTree = Cache::rememberForever('menu_tree', function () {
-        //         $menus = DB::table('menus')
-        //             ->select('id', 'name', 'url', 'icon', 'parent_id', 'order')
-        //             ->orderBy('parent_id')
-        //             ->orderBy('order')
-        //             ->get();
+        // Defer the menu population logic until views are being rendered
+        View::composer('*', function ($view) {
+            if (Auth::check()) {
+                $userId = Auth::id(); // Get logged-in user's ID
+                $groupId = Auth::user()->group_id; // Get the group ID of the user
 
-        //         return $this->buildMenuTree($menus);
-        //     });
+                // Fetch parent menus
+                $parentMenus = DB::table('menus as m')
+                    ->join('group_menu_access as gma', 'm.id', '=', 'gma.menu_id')
+                    ->where('gma.group_id', $groupId)
+                    ->whereNull('m.parent_id')
+                    ->select('m.*')
+                    ->orderBy('m.order')
+                    ->get();
 
-        //     $view->with('menuTree', $menuTree);
-        // });
-
-        $parent = DB::table('menus')->whereNull('parent_id')->orderBy('order', 'asc')->get();
-
-        $child = DB::table('menus')->where('is_active', 1)->whereNotNull('parent_id')->orderBy('order', 'asc')->get();
-
-        View::share([
-            'parent_menus' => $parent,
-            'child_menus' => $child,
-        ]);
+                // Fetch child menus
+                $childMenus = DB::table('menus as m')
+                    ->join('group_menu_access as gma', 'm.id', '=', 'gma.menu_id')
+                    ->where('gma.group_id', $groupId)
+                    ->whereNotNull('m.parent_id')
+                    ->select('m.*')
+                    ->orderBy('m.order')
+                    ->get();
+                // dd($childMenus);
+                // Share with all views
+                $view->with([
+                    'parent_menus' => $parentMenus,
+                    'child_menus' => $childMenus,
+                ]);
+            } else {
+                // No user is logged in, share empty menus
+                $view->with([
+                    'parent_menus' => [],
+                    'child_menus' => [],
+                ]);
+            }
+        });
     }
 
     /**

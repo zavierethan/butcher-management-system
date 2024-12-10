@@ -7,7 +7,7 @@ use DB;
 
 class BranchController extends Controller
 {
-        public function index() {
+    public function index() {
         $branches = $this->getList();
 
         return view('modules.master.branch.index', compact('branches'));

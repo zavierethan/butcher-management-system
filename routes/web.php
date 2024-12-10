@@ -118,8 +118,8 @@ Route::group(['middleware' => ['auth']], function() {
     //Transaction
 
     // Point of Sales
-    Route::prefix('point-of-sales')->group(function () {
-        Route::name('point-of-sales.')->group(function () {
+    Route::prefix('transactions')->group(function () {
+        Route::name('transactions.')->group(function () {
 
         });
     });

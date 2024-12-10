@@ -61,8 +61,11 @@
                                         <div class="fv-row mb-5">
                                             <label class="form-label fw-bold fs-6 mb-2 fw-bolder">Group Code</label>
                                             <div class="position-relative mb-3">
-                                                <input class="form-control form-control-md form-control-solid" type="text" name="code" id="code" value="{{$group->code}}" />
-                                                <input class="form-control form-control-md form-control-solid" type="hidden" name="group_id" id="group_id" value="{{$group->id}}" />
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    type="text" name="code" id="code" value="{{$group->code}}" />
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    type="hidden" name="group_id" id="group_id"
+                                                    value="{{$group->id}}" />
                                             </div>
                                         </div>
                                         <div class="separator my-5"></div>
@@ -95,62 +98,78 @@
                                                     <!--begin::Items-->
                                                     <div class="py-2">
                                                         @foreach($parent as $p)
-                                                        <!--begin::Item-->
+                                                        <!-- Begin::Item -->
                                                         <div class="d-flex flex-stack">
                                                             <div class="d-flex">
                                                                 <div class="d-flex flex-column">
                                                                     <a href="#"
-                                                                        class="fs-5 text-dark text-hover-primary fw-bolder">{{$p->name}}</a>
-                                                                    <div class="fs-6 fw-bold text-muted">{{$p->url}}
+                                                                        class="fs-5 text-dark text-hover-primary fw-bolder">{{ $p->name }}</a>
+                                                                    <div class="fs-6 fw-bold text-muted">{{ $p->url }}
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                             <div class="d-flex justify-content-end">
-                                                                <!--begin::Switch-->
+                                                                <!-- Begin::Switch -->
                                                                 <label
                                                                     class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                                                    <!--begin::Input-->
-                                                                    <!-- <input class="form-check-input" name="google" type="checkbox" value="1" id="kt_modal_connected_accounts_google"> -->
-                                                                    <!--end::Input-->
-                                                                    <!--begin::Label-->
-                                                                    <span class="form-check-label fw-bold text-muted"
-                                                                        for="kt_modal_connected_accounts_google"></span>
-                                                                    <!--end::Label-->
+                                                                    <!-- Begin::Input -->
+                                                                    <input class="form-check-input"
+                                                                        name="menu_access_id" type="checkbox"
+                                                                        value="{{ $p->id }}"
+                                                                        id="menu_access_{{ $p->id }}"
+                                                                        onChange="addMenuAccess(this)"
+                                                                        {{ in_array($p->id, $menuAssigned) ? 'checked' : '' }}>
+                                                                    <!-- End::Input -->
+                                                                    <!-- Begin::Label -->
+                                                                    <span
+                                                                        class="form-check-label fw-bold text-muted"></span>
+                                                                    <!-- End::Label -->
                                                                 </label>
-                                                                <!--end::Switch-->
+                                                                <!-- End::Switch -->
                                                             </div>
                                                         </div>
-                                                        <!--end::Item-->
+                                                        <!-- End::Item -->
                                                         <div class="separator separator-dashed my-5"></div>
+
                                                         @foreach($child as $c)
-                                                            @if($c->parent_id == $p->id)
-                                                            <!--begin::Item-->
-                                                            <div class="d-flex flex-stack" style="margin-left: 20px;">
-                                                                <div class="d-flex">
-                                                                    <div class="d-flex flex-column">
-                                                                        <a href="#" class="fs-5 text-dark text-hover-primary fw-bolder">{{$c->name}}</a>
-                                                                        <div class="fs-6 fw-bold text-muted">{{$c->url}}</div>
+                                                        @if($c->parent_id == $p->id)
+                                                        <!-- Begin::Item -->
+                                                        <div class="d-flex flex-stack" style="margin-left: 20px;">
+                                                            <div class="d-flex">
+                                                                <div class="d-flex flex-column">
+                                                                    <a href="#"
+                                                                        class="fs-5 text-dark text-hover-primary fw-bolder">{{ $c->name }}</a>
+                                                                    <div class="fs-6 fw-bold text-muted">{{ $c->url }}
                                                                     </div>
                                                                 </div>
-                                                                <div class="d-flex justify-content-end">
-                                                                    <!--begin::Switch-->
-                                                                    <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                                                        <!--begin::Input-->
-                                                                        <input class="form-check-input" name="menu_access_id" type="checkbox" value="{{$c->id}}" id="menu_access_{{$c->id}}" onChange="addMenuAccess(this)">
-                                                                        <!--end::Input-->
-                                                                        <!--begin::Label-->
-                                                                        <span class="form-check-label fw-bold text-muted" for="kt_modal_connected_accounts_google"></span>
-                                                                        <!--end::Label-->
-                                                                    </label>
-                                                                    <!--end::Switch-->
-                                                                </div>
                                                             </div>
-                                                            <!--end::Item-->
-                                                            <div class="separator separator-dashed my-5"></div>
-                                                            @endif
+                                                            <div class="d-flex justify-content-end">
+                                                                <!-- Begin::Switch -->
+                                                                <label
+                                                                    class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
+                                                                    <!-- Begin::Input -->
+                                                                    <input class="form-check-input"
+                                                                        name="menu_access_id" type="checkbox"
+                                                                        value="{{ $c->id }}"
+                                                                        id="menu_access_{{ $c->id }}"
+                                                                        onChange="addMenuAccess(this)"
+                                                                        {{ in_array($c->id, $menuAssigned) ? 'checked' : '' }}>
+                                                                    <!-- End::Input -->
+                                                                    <!-- Begin::Label -->
+                                                                    <span
+                                                                        class="form-check-label fw-bold text-muted"></span>
+                                                                    <!-- End::Label -->
+                                                                </label>
+                                                                <!-- End::Switch -->
+                                                            </div>
+                                                        </div>
+                                                        <!-- End::Item -->
+                                                        <div class="separator separator-dashed my-5"></div>
+                                                        @endif
                                                         @endforeach
                                                         @endforeach
                                                     </div>
+
                                                     <!--end::Items-->
                                                 </div>
                                                 <!--end::Card body-->
@@ -187,7 +206,7 @@ function addMenuAccess(checkbox) {
     let menuId = checkbox.value;
     let isChecked = 0;
 
-    if(checkbox.checked == true) {
+    if (checkbox.checked == true) {
         isChecked = 1;
     }
 

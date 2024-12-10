@@ -326,7 +326,7 @@ License: For each use you must have a valid license purchased only from above li
                                         </span>
                                         <!--end:Menu link-->
                                         @foreach($child_menus as $child)
-                                        @if($child->parent_id == $parent->id)
+                                        @if($parent->id == $child->parent_id)
                                         <!--begin:Menu sub-->
                                         <div class="menu-sub menu-sub-accordion">
                                             <!--begin:Menu item-->
