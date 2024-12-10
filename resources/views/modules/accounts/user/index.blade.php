@@ -55,7 +55,6 @@
                             <!--end::Card toolbar-->
                         </div>
                         <!--end::Card header-->
-                        <!--end::Card header-->
                         <!--begin::Card body-->
                         <div class="card-body pt-0 overflow-x-auto">
                             <!--begin::Table-->
@@ -98,7 +97,9 @@
 
 @section('script')
 <script>
-    $("#kt_users_table").DataTable({
+$(document).ready(function () {
+
+    const table = $("#kt_users_table").DataTable({
         processing: true,
         serverSide: true,
         paging: true, // Enable pagination
@@ -131,5 +132,11 @@
             }
         ]
     });
+
+    $('[data-kt-customer-table-filter="search"]').on('keyup', function () {
+        const searchTerm = $(this).val(); // Get the value from the search input
+        table.search(searchTerm).draw(); // Trigger the search and refresh the DataTable
+    });
+});
 </script>
 @endsection

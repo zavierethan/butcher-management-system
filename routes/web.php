@@ -120,7 +120,7 @@ Route::group(['middleware' => ['auth']], function() {
     // Point of Sales
     Route::prefix('transactions')->group(function () {
         Route::name('transactions.')->group(function () {
-
+            Route::get('/', [App\Http\Controllers\TransactionController::class, 'index'])->name('index');
         });
     });
 });
