@@ -54,10 +54,12 @@ class MenuController extends Controller
     }
 
     public function save(Request $request) {
+        $baseUrl = config('app.url');
+
         DB::table('menus')->insert([
             "name" => $request->name,
             "parent_id" => $request->parent_id,
-            "url" => $request->url,
+            "url" => $baseUrl.'/'.$request->url,
             "icon" => $request->icon,
             "order" => $request->order,
             "is_active" => $request->is_active,

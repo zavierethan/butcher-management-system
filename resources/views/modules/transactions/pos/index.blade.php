@@ -53,12 +53,7 @@
                                                     <div class="mb-2">
                                                         <!--begin::Title-->
                                                         <div class="text-center">
-                                                            <span
-                                                                class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">T-Bone
-                                                                Stake</span>
-                                                            <span
-                                                                class="text-gray-500 fw-semibold d-block fs-6 mt-n1">16
-                                                                mins to cook</span>
+                                                            <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">T-Bone Stake</span>
                                                         </div>
                                                         <!--end::Title-->
                                                     </div>
@@ -83,12 +78,7 @@
                                                     <div class="mb-2">
                                                         <!--begin::Title-->
                                                         <div class="text-center">
-                                                            <span
-                                                                class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Chef’s
-                                                                Salmon</span>
-                                                            <span
-                                                                class="text-gray-500 fw-semibold d-block fs-6 mt-n1">16
-                                                                mins to cook</span>
+                                                            <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Chef’s Salmon</span>
                                                         </div>
                                                         <!--end::Title-->
                                                     </div>
@@ -113,11 +103,7 @@
                                                     <div class="mb-2">
                                                         <!--begin::Title-->
                                                         <div class="text-center">
-                                                            <span
-                                                                class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Ramen</span>
-                                                            <span
-                                                                class="text-gray-500 fw-semibold d-block fs-6 mt-n1">16
-                                                                mins to cook</span>
+                                                            <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Ramen</span>
                                                         </div>
                                                         <!--end::Title-->
                                                     </div>
@@ -142,12 +128,7 @@
                                                     <div class="mb-2">
                                                         <!--begin::Title-->
                                                         <div class="text-center">
-                                                            <span
-                                                                class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Chicken
-                                                                Breast</span>
-                                                            <span
-                                                                class="text-gray-500 fw-semibold d-block fs-6 mt-n1">16
-                                                                mins to cook</span>
+                                                            <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Chicken Breast</span>
                                                         </div>
                                                         <!--end::Title-->
                                                     </div>
@@ -172,12 +153,7 @@
                                                     <div class="mb-2">
                                                         <!--begin::Title-->
                                                         <div class="text-center">
-                                                            <span
-                                                                class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Tenderlion
-                                                                Steak</span>
-                                                            <span
-                                                                class="text-gray-500 fw-semibold d-block fs-6 mt-n1">16
-                                                                mins to cook</span>
+                                                            <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Tenderlion Steak</span>
                                                         </div>
                                                         <!--end::Title-->
                                                     </div>
@@ -202,12 +178,7 @@
                                                     <div class="mb-2">
                                                         <!--begin::Title-->
                                                         <div class="text-center">
-                                                            <span
-                                                                class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Soup
-                                                                of the Day</span>
-                                                            <span
-                                                                class="text-gray-500 fw-semibold d-block fs-6 mt-n1">16
-                                                                mins to cook</span>
+                                                            <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Soup of the Day</span>
                                                         </div>
                                                         <!--end::Title-->
                                                     </div>
@@ -232,11 +203,7 @@
                                                     <div class="mb-2">
                                                         <!--begin::Title-->
                                                         <div class="text-center">
-                                                            <span
-                                                                class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Pancakes</span>
-                                                            <span
-                                                                class="text-gray-500 fw-semibold d-block fs-6 mt-n1">16
-                                                                mins to cook</span>
+                                                            <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Pancakes</span>
                                                         </div>
                                                         <!--end::Title-->
                                                     </div>
@@ -261,11 +228,7 @@
                                                     <div class="mb-2">
                                                         <!--begin::Title-->
                                                         <div class="text-center">
-                                                            <span
-                                                                class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Breakfast</span>
-                                                            <span
-                                                                class="text-gray-500 fw-semibold d-block fs-6 mt-n1">16
-                                                                mins to cook</span>
+                                                            <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Breakfast</span>
                                                         </div>
                                                         <!--end::Title-->
                                                     </div>
@@ -469,11 +432,10 @@
                                     <!--end::Content-->
                                     <!--begin::Content-->
                                     <div class="fs-6 fw-bold text-white text-end">
-                                        <span class="d-block lh-1 mb-2" data-kt-pos-element="total">$100.50</span>
-                                        <span class="d-block mb-2" data-kt-pos-element="discount">-$8.00</span>
-                                        <span class="d-block mb-9" data-kt-pos-element="tax">$11.20</span>
-                                        <span class="d-block fs-2qx lh-1"
-                                            data-kt-pos-element="grant-total">$93.46</span>
+                                        <span class="d-block lh-1 mb-2" data-kt-pos-element="total">Rp. 100.50</span>
+                                        <span class="d-block mb-2" data-kt-pos-element="discount">Rp. 8.00</span>
+                                        <span class="d-block mb-9" data-kt-pos-element="tax">Rp. 11.20</span>
+                                        <span class="d-block fs-2qx lh-1" data-kt-pos-element="grant-total">Rp. 93.46</span>
                                     </div>
                                     <!--end::Content-->
                                 </div>
