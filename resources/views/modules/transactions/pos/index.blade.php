@@ -28,218 +28,16 @@
                     <!--begin::Content-->
                     <div class="d-flex flex-row-fluid me-xl-9 mb-10 mb-xl-0">
                         <!--begin::Pos food-->
-                        <div class="card card-p-0 bg-transparent border-0">
+                        <div class="card card-p-0 border-0">
                             <!--begin::Body-->
-                            <div class="card-body">
-                                <!--begin::Nav-->
-
-                                <!--end::Nav-->
+                            <div class="card-body p-5">
                                 <!--begin::Tab Content-->
-                                <div class="tab-content">
+                                <div class="tab-content overflow-y-auto" style="height: 760px;">
                                     <!--begin::Tap pane-->
                                     <div class="tab-pane fade show active" id="kt_pos_food_content_1">
                                         <!--begin::Wrapper-->
-                                        <div class="d-flex flex-wrap d-grid gap-5 gap-xxl-9">
-                                            <!--begin::Card-->
-                                            <div class="card card-flush flex-row-fluid p-6 pb-5 mw-100">
-                                                <!--begin::Body-->
-                                                <div class="card-body text-center">
-                                                    <!--begin::Food img-->
-                                                    <img src="assets/media/stock/food/ayam.jpeg"
-                                                        class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px"
-                                                        alt="" />
-                                                    <!--end::Food img-->
-                                                    <!--begin::Info-->
-                                                    <div class="mb-2">
-                                                        <!--begin::Title-->
-                                                        <div class="text-center">
-                                                            <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">T-Bone Stake</span>
-                                                        </div>
-                                                        <!--end::Title-->
-                                                    </div>
-                                                    <!--end::Info-->
-                                                    <!--begin::Total-->
-                                                    <span class="text-success text-end fw-bold fs-1">$16.50$</span>
-                                                    <!--end::Total-->
-                                                </div>
-                                                <!--end::Body-->
-                                            </div>
-                                            <!--end::Card-->
-                                            <!--begin::Card-->
-                                            <div class="card card-flush flex-row-fluid p-6 pb-5 mw-100">
-                                                <!--begin::Body-->
-                                                <div class="card-body text-center">
-                                                    <!--begin::Food img-->
-                                                    <img src="assets/media/stock/food/ayam.jpeg"
-                                                        class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px"
-                                                        alt="" />
-                                                    <!--end::Food img-->
-                                                    <!--begin::Info-->
-                                                    <div class="mb-2">
-                                                        <!--begin::Title-->
-                                                        <div class="text-center">
-                                                            <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Chef’s Salmon</span>
-                                                        </div>
-                                                        <!--end::Title-->
-                                                    </div>
-                                                    <!--end::Info-->
-                                                    <!--begin::Total-->
-                                                    <span class="text-success text-end fw-bold fs-1">$12.40$</span>
-                                                    <!--end::Total-->
-                                                </div>
-                                                <!--end::Body-->
-                                            </div>
-                                            <!--end::Card-->
-                                            <!--begin::Card-->
-                                            <div class="card card-flush flex-row-fluid p-6 pb-5 mw-100">
-                                                <!--begin::Body-->
-                                                <div class="card-body text-center">
-                                                    <!--begin::Food img-->
-                                                    <img src="assets/media/stock/food/ayam.jpeg"
-                                                        class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px"
-                                                        alt="" />
-                                                    <!--end::Food img-->
-                                                    <!--begin::Info-->
-                                                    <div class="mb-2">
-                                                        <!--begin::Title-->
-                                                        <div class="text-center">
-                                                            <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Ramen</span>
-                                                        </div>
-                                                        <!--end::Title-->
-                                                    </div>
-                                                    <!--end::Info-->
-                                                    <!--begin::Total-->
-                                                    <span class="text-success text-end fw-bold fs-1">$14.90$</span>
-                                                    <!--end::Total-->
-                                                </div>
-                                                <!--end::Body-->
-                                            </div>
-                                            <!--end::Card-->
-                                            <!--begin::Card-->
-                                            <div class="card card-flush flex-row-fluid p-6 pb-5 mw-100">
-                                                <!--begin::Body-->
-                                                <div class="card-body text-center">
-                                                    <!--begin::Food img-->
-                                                    <img src="assets/media/stock/food/ayam.jpeg"
-                                                        class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px"
-                                                        alt="" />
-                                                    <!--end::Food img-->
-                                                    <!--begin::Info-->
-                                                    <div class="mb-2">
-                                                        <!--begin::Title-->
-                                                        <div class="text-center">
-                                                            <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Chicken Breast</span>
-                                                        </div>
-                                                        <!--end::Title-->
-                                                    </div>
-                                                    <!--end::Info-->
-                                                    <!--begin::Total-->
-                                                    <span class="text-success text-end fw-bold fs-1">$9.00$</span>
-                                                    <!--end::Total-->
-                                                </div>
-                                                <!--end::Body-->
-                                            </div>
-                                            <!--end::Card-->
-                                            <!--begin::Card-->
-                                            <div class="card card-flush flex-row-fluid p-6 pb-5 mw-100">
-                                                <!--begin::Body-->
-                                                <div class="card-body text-center">
-                                                    <!--begin::Food img-->
-                                                    <img src="assets/media/stock/food/ayam.jpeg"
-                                                        class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px"
-                                                        alt="" />
-                                                    <!--end::Food img-->
-                                                    <!--begin::Info-->
-                                                    <div class="mb-2">
-                                                        <!--begin::Title-->
-                                                        <div class="text-center">
-                                                            <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Tenderlion Steak</span>
-                                                        </div>
-                                                        <!--end::Title-->
-                                                    </div>
-                                                    <!--end::Info-->
-                                                    <!--begin::Total-->
-                                                    <span class="text-success text-end fw-bold fs-1">$19.00$</span>
-                                                    <!--end::Total-->
-                                                </div>
-                                                <!--end::Body-->
-                                            </div>
-                                            <!--end::Card-->
-                                            <!--begin::Card-->
-                                            <div class="card card-flush flex-row-fluid p-6 pb-5 mw-100">
-                                                <!--begin::Body-->
-                                                <div class="card-body text-center">
-                                                    <!--begin::Food img-->
-                                                    <img src="assets/media/stock/food/ayam.jpeg"
-                                                        class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px"
-                                                        alt="" />
-                                                    <!--end::Food img-->
-                                                    <!--begin::Info-->
-                                                    <div class="mb-2">
-                                                        <!--begin::Title-->
-                                                        <div class="text-center">
-                                                            <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Soup of the Day</span>
-                                                        </div>
-                                                        <!--end::Title-->
-                                                    </div>
-                                                    <!--end::Info-->
-                                                    <!--begin::Total-->
-                                                    <span class="text-success text-end fw-bold fs-1">$7.50$</span>
-                                                    <!--end::Total-->
-                                                </div>
-                                                <!--end::Body-->
-                                            </div>
-                                            <!--end::Card-->
-                                            <!--begin::Card-->
-                                            <div class="card card-flush flex-row-fluid p-6 pb-5 mw-100">
-                                                <!--begin::Body-->
-                                                <div class="card-body text-center">
-                                                    <!--begin::Food img-->
-                                                    <img src="assets/media/stock/food/ayam.jpeg"
-                                                        class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px"
-                                                        alt="" />
-                                                    <!--end::Food img-->
-                                                    <!--begin::Info-->
-                                                    <div class="mb-2">
-                                                        <!--begin::Title-->
-                                                        <div class="text-center">
-                                                            <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Pancakes</span>
-                                                        </div>
-                                                        <!--end::Title-->
-                                                    </div>
-                                                    <!--end::Info-->
-                                                    <!--begin::Total-->
-                                                    <span class="text-success text-end fw-bold fs-1">$6.50$</span>
-                                                    <!--end::Total-->
-                                                </div>
-                                                <!--end::Body-->
-                                            </div>
-                                            <!--end::Card-->
-                                            <!--begin::Card-->
-                                            <div class="card card-flush flex-row-fluid p-6 pb-5 mw-100">
-                                                <!--begin::Body-->
-                                                <div class="card-body text-center">
-                                                    <!--begin::Food img-->
-                                                    <img src="assets/media/stock/food/ayam.jpeg"
-                                                        class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px"
-                                                        alt="" />
-                                                    <!--end::Food img-->
-                                                    <!--begin::Info-->
-                                                    <div class="mb-2">
-                                                        <!--begin::Title-->
-                                                        <div class="text-center">
-                                                            <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">Breakfast</span>
-                                                        </div>
-                                                        <!--end::Title-->
-                                                    </div>
-                                                    <!--end::Info-->
-                                                    <!--begin::Total-->
-                                                    <span class="text-success text-end fw-bold fs-1">$8.20$</span>
-                                                    <!--end::Total-->
-                                                </div>
-                                                <!--end::Body-->
-                                            </div>
-                                            <!--end::Card-->
+                                        <div class="d-flex flex-wrap d-grid gap-5 gap-xxl-9" id="product-list">
+
                                         </div>
                                         <!--end::Wrapper-->
                                     </div>
@@ -253,15 +51,13 @@
                     </div>
                     <!--end::Content-->
                     <!--begin::Sidebar-->
-                    <div class="flex-row-auto w-xl-450px">
+                    <div class="flex-row-auto w-xl-500px">
                         <!--begin::Pos order-->
                         <div class="card card-flush bg-body" id="kt_pos_form">
                             <!--begin::Header-->
                             <div class="card-header pt-5">
-                                <h3 class="card-title fw-bold text-gray-800 fs-2qx">Current Order</h3>
-                                <!--begin::Toolbar-->
-                                <div class="card-toolbar">
-                                    <a href="#" class="btn btn-light-primary fs-4 fw-bold py-4">Clear All</a>
+                                <div class="d-flex mb-3">
+                                    <button class="btn btn-link text-danger text-decoration-none" id="btn-clear-all"><i class="fas fa-trash text-red"></i> Bersihkan Semua</button>
                                 </div>
                                 <!--end::Toolbar-->
                             </div>
@@ -269,155 +65,8 @@
                             <!--begin::Body-->
                             <div class="card-body pt-0">
                                 <!--begin::Table container-->
-                                <div class="table-responsive mb-8">
-                                    <!--begin::Table-->
-                                    <table class="table align-middle gs-0 gy-4 my-0">
-                                        <!--begin::Table head-->
-                                        <thead>
-                                            <tr>
-                                                <th class="min-w-175px"></th>
-                                                <th class="w-125px"></th>
-                                                <th class="w-60px"></th>
-                                            </tr>
-                                        </thead>
-                                        <!--end::Table head-->
-                                        <!--begin::Table body-->
-                                        <tbody>
-                                            <tr data-kt-pos-element="item" data-kt-pos-item-price="33">
-                                                <td class="pe-0">
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="assets/media/stock/food/ayam.jpeg"
-                                                            class="w-50px h-50px rounded-3 me-3" alt="" />
-                                                        <span
-                                                            class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-6 me-1">T-Bone
-                                                            Stake</span>
-                                                    </div>
-                                                </td>
-                                                <td class="pe-0">
-                                                    <!--begin::Dialer-->
-                                                    <div class="position-relative d-flex align-items-center"
-                                                        data-kt-dialer="true" data-kt-dialer-min="1"
-                                                        data-kt-dialer-max="10" data-kt-dialer-step="1"
-                                                        data-kt-dialer-decimals="0">
-                                                        <!--begin::Decrease control-->
-                                                        <button type="button"
-                                                            class="btn btn-icon btn-sm btn-light btn-icon-gray-500"
-                                                            data-kt-dialer-control="decrease">
-                                                            <i class="ki-duotone ki-minus fs-3x"></i>
-                                                        </button>
-                                                        <!--end::Decrease control-->
-                                                        <!--begin::Input control-->
-                                                        <input type="text"
-                                                            class="form-control border-0 text-center px-0 fs-3 fw-bold text-gray-800 w-30px"
-                                                            data-kt-dialer-control="input" placeholder="Amount"
-                                                            name="manageBudget" readonly="readonly" value="2" />
-                                                        <!--end::Input control-->
-                                                        <!--begin::Increase control-->
-                                                        <button type="button"
-                                                            class="btn btn-icon btn-sm btn-light btn-icon-gray-500"
-                                                            data-kt-dialer-control="increase">
-                                                            <i class="ki-duotone ki-plus fs-3x"></i>
-                                                        </button>
-                                                        <!--end::Increase control-->
-                                                    </div>
-                                                    <!--end::Dialer-->
-                                                </td>
-                                                <td class="text-end">
-                                                    <span class="fw-bold text-primary fs-2"
-                                                        data-kt-pos-element="item-total">$66.00</span>
-                                                </td>
-                                            </tr>
-                                            <tr data-kt-pos-element="item" data-kt-pos-item-price="7.5">
-                                                <td class="pe-0">
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="assets/media/stock/food/ayam.jpeg"
-                                                            class="w-50px h-50px rounded-3 me-3" alt="" />
-                                                        <span
-                                                            class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-6 me-1">Soup
-                                                            of the Day</span>
-                                                    </div>
-                                                </td>
-                                                <td class="pe-0">
-                                                    <!--begin::Dialer-->
-                                                    <div class="position-relative d-flex align-items-center"
-                                                        data-kt-dialer="true" data-kt-dialer-min="1"
-                                                        data-kt-dialer-max="10" data-kt-dialer-step="1"
-                                                        data-kt-dialer-decimals="0">
-                                                        <!--begin::Decrease control-->
-                                                        <button type="button"
-                                                            class="btn btn-icon btn-sm btn-light btn-icon-gray-500"
-                                                            data-kt-dialer-control="decrease">
-                                                            <i class="ki-duotone ki-minus fs-3x"></i>
-                                                        </button>
-                                                        <!--end::Decrease control-->
-                                                        <!--begin::Input control-->
-                                                        <input type="text"
-                                                            class="form-control border-0 text-center px-0 fs-3 fw-bold text-gray-800 w-30px"
-                                                            data-kt-dialer-control="input" placeholder="Amount"
-                                                            name="manageBudget" readonly="readonly" value="1" />
-                                                        <!--end::Input control-->
-                                                        <!--begin::Increase control-->
-                                                        <button type="button"
-                                                            class="btn btn-icon btn-sm btn-light btn-icon-gray-500"
-                                                            data-kt-dialer-control="increase">
-                                                            <i class="ki-duotone ki-plus fs-3x"></i>
-                                                        </button>
-                                                        <!--end::Increase control-->
-                                                    </div>
-                                                    <!--end::Dialer-->
-                                                </td>
-                                                <td class="text-end">
-                                                    <span class="fw-bold text-primary fs-2"
-                                                        data-kt-pos-element="item-total">$7.50</span>
-                                                </td>
-                                            </tr>
-                                            <tr data-kt-pos-element="item" data-kt-pos-item-price="13.5">
-                                                <td class="pe-0">
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="assets/media/stock/food/ayam.jpeg"
-                                                            class="w-50px h-50px rounded-3 me-3" alt="" />
-                                                        <span
-                                                            class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-6 me-1">Pancakes</span>
-                                                    </div>
-                                                </td>
-                                                <td class="pe-0">
-                                                    <!--begin::Dialer-->
-                                                    <div class="position-relative d-flex align-items-center"
-                                                        data-kt-dialer="true" data-kt-dialer-min="1"
-                                                        data-kt-dialer-max="10" data-kt-dialer-step="1"
-                                                        data-kt-dialer-decimals="0">
-                                                        <!--begin::Decrease control-->
-                                                        <button type="button"
-                                                            class="btn btn-icon btn-sm btn-light btn-icon-gray-500"
-                                                            data-kt-dialer-control="decrease">
-                                                            <i class="ki-duotone ki-minus fs-3x"></i>
-                                                        </button>
-                                                        <!--end::Decrease control-->
-                                                        <!--begin::Input control-->
-                                                        <input type="text"
-                                                            class="form-control border-0 text-center px-0 fs-3 fw-bold text-gray-800 w-30px"
-                                                            data-kt-dialer-control="input" placeholder="Amount"
-                                                            name="manageBudget" readonly="readonly" value="2" />
-                                                        <!--end::Input control-->
-                                                        <!--begin::Increase control-->
-                                                        <button type="button"
-                                                            class="btn btn-icon btn-sm btn-light btn-icon-gray-500"
-                                                            data-kt-dialer-control="increase">
-                                                            <i class="ki-duotone ki-plus fs-3x"></i>
-                                                        </button>
-                                                        <!--end::Increase control-->
-                                                    </div>
-                                                    <!--end::Dialer-->
-                                                </td>
-                                                <td class="text-end">
-                                                    <span class="fw-bold text-primary fs-2"
-                                                        data-kt-pos-element="item-total">$27.00</span>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                        <!--end::Table body-->
-                                    </table>
-                                    <!--end::Table-->
+                                <div class="overflow-y-auto" style="height: 300px;" id="cart-item">
+
                                 </div>
                                 <!--end::Table container-->
                                 <!--begin::Summary-->
@@ -435,7 +84,8 @@
                                         <span class="d-block lh-1 mb-2" data-kt-pos-element="total">Rp. 100.50</span>
                                         <span class="d-block mb-2" data-kt-pos-element="discount">Rp. 8.00</span>
                                         <span class="d-block mb-9" data-kt-pos-element="tax">Rp. 11.20</span>
-                                        <span class="d-block fs-2qx lh-1" data-kt-pos-element="grant-total">Rp. 93.46</span>
+                                        <span class="d-block fs-2qx lh-1" data-kt-pos-element="grant-total">Rp.
+                                            93.46</span>
                                     </div>
                                     <!--end::Content-->
                                 </div>
@@ -481,7 +131,7 @@
                                             </i>
                                             <!--end::Icon-->
                                             <!--begin::Title-->
-                                            <span class="fs-7 fw-bold d-block">Card</span>
+                                            <span class="fs-7 fw-bold d-block">Piutang</span>
                                             <!--end::Title-->
                                         </label>
                                         <!--end::Radio-->
@@ -499,7 +149,7 @@
                                             </i>
                                             <!--end::Icon-->
                                             <!--begin::Title-->
-                                            <span class="fs-7 fw-bold d-block">E-Wallet</span>
+                                            <span class="fs-7 fw-bold d-block">COD</span>
                                             <!--end::Title-->
                                         </label>
                                         <!--end::Radio-->
@@ -528,5 +178,142 @@
 @endsection
 
 @section('script')
+<script>
+$(document).ready(function() {
+    getProductList();
+
+    $('#prompt').click(function() {
+        const elem = document.documentElement;
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        }
+    });
+
+    $(document).on('click', '.product', function() {
+        var productId = $(this).data('product-id');
+        var productName = $(this).data('product-name');
+        var productPrice = $(this).data('product-price');
+        var productImgUrl = $(this).find('img').attr('src');
+
+        console.log($(this).data('product-id'));
+
+        // Check if the product already exists in the cart
+        var existingProduct = $(`#product-id-${productId}`);
+
+        if (existingProduct.length > 0) {
+            // Update the quantity if the product exists
+            const quantityBadge = existingProduct.find('.badge');
+            const currentQuantity = parseInt(quantityBadge.text()) || 1;
+            quantityBadge.text(`${currentQuantity + 1} Gram`);
+        } else {
+            var productItem = `<div class="container py-1 cart-item-lists" id="product-id-${productId}">
+                            <div class="pb-3 mb-3">
+                                <div class="d-flex">
+                                    <img src="${productImgUrl}" alt="Item" class="rounded me-3" style="width: 60px; height: 60px;">
+                                    <div class="flex-grow-1 mt-3">
+                                        <h5 class="mb-1">${productName}</h5>
+                                        <span class="badge bg-warning text-dark">1,98 Gram</span>
+                                    </div>
+                                    <div class="text-end me-3 mt-3">
+                                        <h6 class="mb-0">Rp ${productPrice}</h6>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-row-reverse">
+                                    <div class="text-end">
+                                        <button class="btn btn-outline-primary btn-sm me-2">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-sm remove-item" data-product-id="${productId}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="separator separator-dashed my-5"></div>
+                    </div>`;
+
+            $('#cart-item').append(productItem);
+        }
+
+        console.log(`Processed Product - ID: ${productId}, Name: ${productName}`);
+    });
+
+
+    $(document).on('click', '.remove-item', function(e) {
+
+        e.preventDefault();
+        // Get the product ID from the button's data attribute
+        const productId = $(this).data('product-id');
+
+        Swal.fire({
+            title: 'Are you sure?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Remove the product item from the cart
+                $(`#product-id-${productId}`).remove();
+
+                // Show success notification
+                // Swal.fire(
+                //     'Deleted!',
+                //     'Your item has been removed.',
+                //     'success'
+                // );
+            }
+        });
+        console.log(`Removed Product ID: ${productId}`);
+    });
+
+    $("#btn-clear-all").on('click', function() {
+        Swal.fire({
+            title: 'Are you sure?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Remove the product item from the cart
+                $(".cart-item-lists").remove();
+            }
+        });
+    });
+
+    function getProductList(params = '') {
+        $.ajax({
+            url: '/api/products', // Laravel route to fetch products
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                // Loop through each product in the JSON response
+                data.forEach(function(product) {
+                    // Construct HTML for each product
+                    const productItem = `<div class="card card-flush flex-row-fluid p-6 pb-5 mw-100 product" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}">
+                                            <div class="card-body text-center">
+                                                <img src="${product.imgUrl}" class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px" alt="" />
+                                                <div class="mb-2">
+                                                    <div class="text-center">
+                                                        <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">${product.name}</span>
+                                                    </div>
+                                                </div>
+                                                <span class="text-success text-end fw-bold fs-1">Rp. ${product.price}</span>
+                                            </div>
+                                        </div>`;
+                    // Append the product to the product list container
+                    $('#product-list').append(productItem);
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching products:', error);
+            }
+        });
+    }
+});
+</script>
 
 @endsection

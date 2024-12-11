@@ -59,7 +59,7 @@ class MenuController extends Controller
         DB::table('menus')->insert([
             "name" => $request->name,
             "parent_id" => $request->parent_id,
-            "url" => $baseUrl.'/'.$request->url,
+            "url" => $request->url,
             "icon" => $request->icon,
             "order" => $request->order,
             "is_active" => $request->is_active,
