@@ -18,6 +18,10 @@
                         <li class="breadcrumb-item text-muted">Point of Sales</li>
                     </ul>
                 </div>
+                <div class="d-flex align-items-center gap-2 gap-lg-3">
+                    <a href="#" class="btn btn-sm fw-bold btn-primary" id="fullscreen-control"
+                        title="Click untuk mode fullscreen"><i class="fa-solid fa-desktop"></i></a>
+                </div>
             </div>
         </div>
         <div id="kt_app_content" class="app-content flex-column-fluid">
@@ -31,19 +35,9 @@
                         <div class="card card-p-0 border-0">
                             <!--begin::Body-->
                             <div class="card-body p-5">
-                                <!--begin::Tab Content-->
-                                <div class="tab-content overflow-y-auto" style="height: 760px;">
-                                    <!--begin::Tap pane-->
-                                    <div class="tab-pane fade show active" id="kt_pos_food_content_1">
-                                        <!--begin::Wrapper-->
-                                        <div class="d-flex flex-wrap d-grid gap-5 gap-xxl-9" id="product-list">
+                                <div class="d-flex flex-wrap d-grid gap-5 gap-xxl-9 overflow-y-auto" style="height: 760px;" id="product-list">
 
-                                        </div>
-                                        <!--end::Wrapper-->
-                                    </div>
-                                    <!--end::Tap pane-->
                                 </div>
-                                <!--end::Tab Content-->
                             </div>
                             <!--end: Card Body-->
                         </div>
@@ -57,7 +51,8 @@
                             <!--begin::Header-->
                             <div class="card-header pt-5">
                                 <div class="d-flex mb-3">
-                                    <button class="btn btn-link text-danger text-decoration-none" id="btn-clear-all"><i class="fas fa-trash text-red"></i> Bersihkan Semua</button>
+                                    <button class="btn btn-link text-danger text-decoration-none" id="btn-clear-all"><i
+                                            class="fas fa-trash text-red"></i> Bersihkan Semua</button>
                                 </div>
                                 <!--end::Toolbar-->
                             </div>
@@ -82,10 +77,9 @@
                                     <!--begin::Content-->
                                     <div class="fs-6 fw-bold text-white text-end">
                                         <span class="d-block lh-1 mb-2" data-kt-pos-element="total">Rp. 100.50</span>
-                                        <span class="d-block mb-2" data-kt-pos-element="discount">Rp. 8.00</span>
-                                        <span class="d-block mb-9" data-kt-pos-element="tax">Rp. 11.20</span>
-                                        <span class="d-block fs-2qx lh-1" data-kt-pos-element="grant-total">Rp.
-                                            93.46</span>
+                                        <span class="d-block mb-2" data-kt-pos-element="discount">Rp. 0,00</span>
+                                        <span class="d-block mb-9" data-kt-pos-element="tax">Rp. 0,00</span>
+                                        <span class="d-block fs-2qx lh-1" data-kt-pos-element="grant-total">Rp. 93.46</span>
                                     </div>
                                     <!--end::Content-->
                                 </div>
@@ -182,7 +176,7 @@
 $(document).ready(function() {
     getProductList();
 
-    $('#prompt').click(function() {
+    $('#fullscreen-control').click(function() {
         const elem = document.documentElement;
         if (elem.requestFullscreen) {
             elem.requestFullscreen();
@@ -301,7 +295,7 @@ $(document).ready(function() {
                                                         <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">${product.name}</span>
                                                     </div>
                                                 </div>
-                                                <span class="text-success text-end fw-bold fs-1">Rp. ${product.price}</span>
+                                                <span class="text-success text-end fw-bold fs-1">${formatCurrency(parseFloat(product.price))}</span>
                                             </div>
                                         </div>`;
                     // Append the product to the product list container
@@ -312,6 +306,15 @@ $(document).ready(function() {
                 console.error('Error fetching products:', error);
             }
         });
+    }
+
+    function formatCurrency(amount) {
+        const formatter = new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR', // IDR is the currency code for Indonesian Rupiah
+            minimumFractionDigits: 0, // Optional, remove decimals if not needed
+        });
+        return formatter.format(amount);
     }
 });
 </script>
