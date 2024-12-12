@@ -35,7 +35,8 @@
                         <div class="card card-p-0 border-0">
                             <!--begin::Body-->
                             <div class="card-body p-5">
-                                <div class="d-flex flex-wrap d-grid gap-5 gap-xxl-9 overflow-y-auto" style="height: 760px;" id="product-list">
+                                <div class="d-flex flex-wrap d-grid gap-5 gap-xxl-9 overflow-y-auto"
+                                    style="height: 760px;" id="product-list">
 
                                 </div>
                             </div>
@@ -76,10 +77,12 @@
                                     <!--end::Content-->
                                     <!--begin::Content-->
                                     <div class="fs-6 fw-bold text-white text-end">
-                                        <span class="d-block lh-1 mb-2" data-kt-pos-element="total">Rp. 100.50</span>
+                                        <span class="d-block lh-1 mb-2" data-kt-pos-element="total"
+                                            id="subtotal-amount">Rp. 0,00</span>
                                         <span class="d-block mb-2" data-kt-pos-element="discount">Rp. 0,00</span>
                                         <span class="d-block mb-9" data-kt-pos-element="tax">Rp. 0,00</span>
-                                        <span class="d-block fs-2qx lh-1" data-kt-pos-element="grant-total">Rp. 93.46</span>
+                                        <span class="d-block fs-2qx lh-1" data-kt-pos-element="grand-total"
+                                            id="total-amount">Rp. 0,00</span>
                                     </div>
                                     <!--end::Content-->
                                 </div>
@@ -186,30 +189,34 @@ $(document).ready(function() {
     $(document).on('click', '.product', function() {
         var productId = $(this).data('product-id');
         var productName = $(this).data('product-name');
-        var productPrice = $(this).data('product-price');
+        var productPrice = parseFloat($(this).data('product-price')); // Ensure price is a number
         var productImgUrl = $(this).find('img').attr('src');
-
-        console.log($(this).data('product-id'));
 
         // Check if the product already exists in the cart
         var existingProduct = $(`#product-id-${productId}`);
 
         if (existingProduct.length > 0) {
-            // Update the quantity if the product exists
-            const quantityBadge = existingProduct.find('.badge');
-            const currentQuantity = parseInt(quantityBadge.text()) || 1;
-            quantityBadge.text(`${currentQuantity + 1} Gram`);
+            // Update quantity and subtotal for existing product
+            const quantityElement = existingProduct.find('.qty');
+            const currentQuantity = parseInt(quantityElement.text()) || 1;
+            const newQuantity = currentQuantity + 1;
+            quantityElement.text(`${newQuantity} Kg`);
+
+            const priceElement = existingProduct.find('.price');
+            const newSubtotal = productPrice * newQuantity;
+            priceElement.text(formatCurrency(newSubtotal));
         } else {
+            // Add new product to the cart
             var productItem = `<div class="container py-1 cart-item-lists" id="product-id-${productId}">
                             <div class="pb-3 mb-3">
                                 <div class="d-flex">
                                     <img src="${productImgUrl}" alt="Item" class="rounded me-3" style="width: 60px; height: 60px;">
                                     <div class="flex-grow-1 mt-3">
                                         <h5 class="mb-1">${productName}</h5>
-                                        <span class="badge bg-warning text-dark">1,98 Gram</span>
+                                        <span class="badge bg-warning text-dark qty">1 Kg</span>
                                     </div>
                                     <div class="text-end me-3 mt-3">
-                                        <h6 class="mb-0">Rp ${productPrice}</h6>
+                                        <h6 class="mb-0 price">${formatCurrency(productPrice)}</h6>
                                     </div>
                                 </div>
                                 <div class="d-flex flex-row-reverse">
@@ -229,8 +236,10 @@ $(document).ready(function() {
             $('#cart-item').append(productItem);
         }
 
-        console.log(`Processed Product - ID: ${productId}, Name: ${productName}`);
+        // Recalculate totals
+        calculateTotals();
     });
+
 
 
     $(document).on('click', '.remove-item', function(e) {
@@ -250,13 +259,7 @@ $(document).ready(function() {
             if (result.isConfirmed) {
                 // Remove the product item from the cart
                 $(`#product-id-${productId}`).remove();
-
-                // Show success notification
-                // Swal.fire(
-                //     'Deleted!',
-                //     'Your item has been removed.',
-                //     'success'
-                // );
+                calculateTotals();
             }
         });
         console.log(`Removed Product ID: ${productId}`);
@@ -306,6 +309,22 @@ $(document).ready(function() {
                 console.error('Error fetching products:', error);
             }
         });
+    }
+
+    function calculateTotals() {
+        let subtotal = 0;
+
+        // Iterate through each product in the cart and sum up their subtotals
+        $('.cart-item-lists').each(function() {
+            const priceText = $(this).find('.price').text().replace(/[^\d]/g,
+            ''); // Remove currency symbols
+            const price = parseFloat(priceText) || 0; // Ensure numeric value
+            subtotal += price; // Add to the subtotal
+        });
+
+        // Update subtotal and total amount in the UI
+        $('#subtotal-amount').text(formatCurrency(subtotal));
+        $('#total-amount').text(formatCurrency(subtotal)); // Add additional charges if needed
     }
 
     function formatCurrency(amount) {

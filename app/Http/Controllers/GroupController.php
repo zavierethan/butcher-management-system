@@ -66,7 +66,7 @@ class GroupController extends Controller
     }
 
     public function update(Request $request) {
-        DB::table('groups')->where('id', $request->id)->update([
+        DB::table('groups')->where('id', $request->group_id)->update([
             "code" => $request->code,
             "name" => $request->name
         ]);
