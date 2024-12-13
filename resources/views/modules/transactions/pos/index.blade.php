@@ -506,6 +506,68 @@
             <!--begin::Content container-->
             <div id="kt_app_content_container" class="app-container">
                 <!--begin::Layout-->
+                <div class="row mb-3">
+                    <!--begin::Content-->
+                    <div class="col-md-8">
+                        <!--begin::Pos food-->
+                        <div class="card card-p-0 border-0">
+                            <!--begin::Body-->
+                            <div class="card-body p-3">
+                                <div class="d-flex">
+                                    <div class="d-flex align-items-center position-relative">
+                                        <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
+                                        <span class="svg-icon svg-icon-1 position-absolute ms-6">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none">
+                                                <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2"
+                                                    rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
+                                                <path
+                                                    d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z"
+                                                    fill="black" />
+                                            </svg>
+                                        </span>
+                                        <!--end::Svg Icon-->
+                                        <input type="text" data-product-filter="search"
+                                            class="form-control form-control-solid w-400px ps-15"
+                                            placeholder="Cari Product" />
+                                    </div>
+                                    <div class="ms-auto">
+                                        <select class="form-select form-select-solid w-400px" data-control="select2"
+                                            data-placeholder="Pilih Kategori Product" name="product_category">
+                                            <option value="">-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end: Card Body-->
+                        </div>
+                        <!--end::Pos food-->
+                    </div>
+                    <!--end::Content-->
+                    <!--begin::Sidebar-->
+                    <div class="col-md-4">
+                        <!--begin::Pos order-->
+                        <div class="card card-p-0 border-0" id="kt_pos_form">
+                            <!--begin::Body-->
+                            <div class="card-body p-3">
+                                <div class="d-flex">
+                                    <div class="d-flex align-items-center position-relative">
+                                        <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
+                                        <select class="form-select form-select-solid w-350px" data-control="select2" data-placeholder="Pilih Customer" name="customer">
+                                            <option value="">-</option>
+                                        </select>
+                                    </div>
+                                    <div class="ms-auto">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end: Card Body-->
+                        </div>
+                        <!--end::Pos order-->
+                    </div>
+                    <!--end::Sidebar-->
+                </div>
                 <div class="row">
                     <!--begin::Content-->
                     <div class="col-md-8">
