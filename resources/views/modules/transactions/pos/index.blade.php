@@ -172,6 +172,75 @@
     </div>
     <!--end::Content wrapper-->
 </div>
+
+<!--begin::Modal - View Users-->
+<div class="modal fade" id="kt_modal_edit_product_item" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog mw-650px">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div class="modal-header pb-0 border-0 justify-content-end">
+                <!--begin::Close-->
+                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                    <i class="ki-duotone ki-cross fs-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </div>
+                <!--end::Close-->
+            </div>
+            <!--begin::Modal header-->
+            <!--begin::Modal body-->
+            <div class="modal-body scroll-y mx-5 mx-xl-18 pt-0 pb-15">
+                <!--begin::Heading-->
+                <div class="text-center mb-13">
+                    <!--begin::Title-->
+                    <h1 class="mb-3">Edit Product</h1>
+                    <!--end::Title-->
+                </div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Nama Product</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid" type="text" id="product_name"
+                                readonly />
+                            <input class="form-control form-control-md form-control-solid" type="hidden"
+                                id="product_id" />
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Harga Product</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid" type="text" id="product_price"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Quantity (kg)</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid" type="number"
+                                id="quantity" />
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="flex justify-content-center">
+                    <button type="button" class="btn btn-primary" id="update-item">Update</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="btn-close">Cancel</button>
+                </div>
+            </div>
+            <!--end::Modal body-->
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div>
 @endsection
 
 @section('script')
@@ -198,7 +267,7 @@ $(document).ready(function() {
         if (existingProduct.length > 0) {
             // Update quantity and subtotal for existing product
             const quantityElement = existingProduct.find('.qty');
-            const currentQuantity = parseInt(quantityElement.text()) || 1;
+            const currentQuantity = parseFloat(quantityElement.text()) || 1;
             const newQuantity = currentQuantity + 1;
             quantityElement.text(`${newQuantity} Kg`);
 
@@ -221,9 +290,9 @@ $(document).ready(function() {
                                 </div>
                                 <div class="d-flex flex-row-reverse">
                                     <div class="text-end">
-                                        <button class="btn btn-outline-primary btn-sm me-2">
+                                        <a href="#" class="btn btn-outline-primary btn-sm me-2 edit-item" data-bs-toggle="modal" data-bs-target="#kt_modal_edit_product_item" data-product-id="${productId}" data-product-name="${productName}" data-product-price="${productPrice}">
                                             <i class="fas fa-edit"></i>
-                                        </button>
+                                        </a>
                                         <button class="btn btn-outline-danger btn-sm remove-item" data-product-id="${productId}">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -265,6 +334,47 @@ $(document).ready(function() {
         console.log(`Removed Product ID: ${productId}`);
     });
 
+    $(document).on('click', '.edit-item', function(e) {
+
+        e.preventDefault();
+
+        const productId = $(this).data('product-id');
+        const productName = $(this).data('product-name');
+        const productPrice = $(this).data('product-price');
+
+        $("#kt_modal_edit_product_item #product_id").val(productId);
+        $("#kt_modal_edit_product_item #product_name").val(productName);
+        $("#kt_modal_edit_product_item #product_price").val(productPrice);
+    });
+
+    $(document).on('click', '#update-item', function(e) {
+
+        e.preventDefault();
+
+        const productId = $("#kt_modal_edit_product_item #product_id").val();
+        const quantity = $("#kt_modal_edit_product_item #quantity").val();
+        const productPrice = $("#kt_modal_edit_product_item #product_price").val();
+
+        // Check if the product already exists in the cart
+        var existingProduct = $(`#product-id-${productId}`);
+
+        if (existingProduct.length > 0) {
+            // Update quantity and subtotal for existing product
+            const quantityElement = existingProduct.find('.qty');
+            // const currentQuantity = parseFloat(quantityElement.text()) || 1;
+            const newQuantity = parseFloat(quantity);
+            quantityElement.text(`${newQuantity} Kg`);
+
+            const priceElement = existingProduct.find('.price');
+            const newSubtotal = productPrice * newQuantity;
+            priceElement.text(formatCurrency(newSubtotal));
+        }
+
+        calculateTotals();
+        $('#kt_modal_edit_product_item').modal('hide');
+
+    });
+
     $("#btn-clear-all").on('click', function() {
         Swal.fire({
             title: 'Are you sure?',
@@ -279,6 +389,13 @@ $(document).ready(function() {
                 $(".cart-item-lists").remove();
             }
         });
+    });
+
+    $('#btn-close').on('click', function() {
+        $("#kt_modal_edit_product_item #product_id").val("");
+        $("#kt_modal_edit_product_item #product_name").val("");
+        $("#kt_modal_edit_product_item #product_price").val("");
+        $('#kt_modal_edit_product_item').modal('hide');
     });
 
     function getProductList(params = '') {
@@ -317,7 +434,7 @@ $(document).ready(function() {
         // Iterate through each product in the cart and sum up their subtotals
         $('.cart-item-lists').each(function() {
             const priceText = $(this).find('.price').text().replace(/[^\d]/g,
-            ''); // Remove currency symbols
+                ''); // Remove currency symbols
             const price = parseFloat(priceText) || 0; // Ensure numeric value
             subtotal += price; // Add to the subtotal
         });
