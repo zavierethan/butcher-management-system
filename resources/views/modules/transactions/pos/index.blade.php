@@ -528,11 +528,11 @@
                                         </span>
                                         <!--end::Svg Icon-->
                                         <input type="text" data-product-filter="search"
-                                            class="form-control form-control-solid w-400px ps-15"
+                                            class="form-control form-control-solid ps-15"
                                             placeholder="Cari Product" />
                                     </div>
                                     <div class="ms-auto">
-                                        <select class="form-select form-select-solid w-400px" data-control="select2"
+                                        <select class="form-select form-select-solid" data-control="select2"
                                             data-placeholder="Pilih Kategori Product" name="product_category">
                                             <option value="">-</option>
                                         </select>
@@ -553,7 +553,7 @@
                                 <div class="d-flex">
                                     <div class="d-flex align-items-center position-relative">
                                         <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
-                                        <select class="form-select form-select-solid w-350px" data-control="select2" data-placeholder="Pilih Customer" name="customer">
+                                        <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Customer" name="customer">
                                             <option value="">-</option>
                                         </select>
                                     </div>
