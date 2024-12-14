@@ -136,7 +136,7 @@
         columns: [
             { data: 'code', name: 'code' },
             { data: 'name', name: 'name' },
-            { data: 'price', price: 'price' },
+            { data: 'price', name: 'price' },
             { data: 'is_active', name: 'is_active' },
             {
                 data: null, // No direct field from the server
