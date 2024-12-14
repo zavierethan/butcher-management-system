@@ -8,25 +8,48 @@ use DB;
 class ProductController extends Controller
 {
     public function index() {
-        $products = $this->getList();
-
-        return view('modules.master.product.index', compact('products'));
+        return view('modules.master.product.index');
     }
 
-    public function getList() {
-        // $products = DB::table('products')
-        //     ->leftjoin('stocks', 'products.id', '=', 'stocks.product_id')
-        //     ->leftJoin('branches', 'branches.id', '=', 'stocks.branch_id')
-        //     ->select('products.id', 'products.code', 'products.name', 'products.price', 'stocks.quantity', 'branches.name as branch_name')
-        //     ->where('products.is_active', 1)
-        //     ->paginate(10);
+    public function getLists(Request $request) {
 
-        $products = DB::table('products')
-            ->select('products.id', 'products.code', 'products.name', 'products.price')
-            ->where('products.is_active', 1)
-            ->paginate(10);
+        $params = $request->all();
 
-        return $products;
+        $query = DB::table('products');
+
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 10);
+
+        $totalRecords = $query->count();
+        $filteredRecords = $query->count();
+        $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get();
+        
+        $response = [
+            'draw' => $request->input('draw'),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $data
+        ];
+
+        return response()->json($response);
+    }
+
+    public function create() {
+        return view('modules.master.product.create');
+    }
+
+    public function save(Request $request) {
+        $baseUrl = config('app.url');
+
+        //TODO set created_by and updated)_by
+        DB::table('products')->insert([
+            "code" => $request->code,
+            "name" => $request->name,
+            "price" => $request->price,
+            "is_active" => $request->is_active,
+        ]);
+
+        return redirect()->route('products.index');
     }
 
     public function edit($id) {
@@ -39,56 +62,25 @@ class ProductController extends Controller
         return view('modules.master.product.edit', compact('product'));
     }
 
-    public function update(Request $request, $id) {
-        $request->validate([
-            'code' => 'required|string',
-            'name' => 'required|string',
-            'price' => 'required|numeric',
-        ]);
+    public function update(Request $request) {
+        // $request->validate([
+        //     'code' => 'required|string',
+        //     'name' => 'required|string',
+        //     'price' => 'required|numeric',
+        // ]);
+        
+        //TODO add validation and updated_by based on user
 
         DB::table('products')
-            ->where('id', $id)
+            ->where('id', $request->id)
             ->update([
                 'code' => $request->code,
                 'name' => $request->name,
                 'price' => $request->price,
+                "is_active" => $request->is_active,
             ]);
 
-        return redirect()->route('products.index')->with('success', 'Product updated successfully.');
-    }
-
-    public function destroy($id) {
-        DB::table('products')
-            ->where('id', $id)
-            ->update(['is_active' => 0]);
-
-        return redirect()->route('products.index')->with('success', 'Product soft deleted successfully!');
-    }
-
-    public function create() {
-        return view('modules.master.product.create');
-    }
-
-    //TODO: CREATE AN ALERT FOR INVALID DATA INPUT
-    public function store(Request $request) {
-        // Validate the data
-        $validatedData = $request->validate([
-            'code' => 'required|unique:products,code',
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-        ]);
-
-        // Insert the new product
-        DB::table('products')->insert([
-            'code' => $validatedData['code'],
-            'name' => $validatedData['name'],
-            'price' => $validatedData['price'],
-            'is_active' => 1,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        return redirect()->route('products.index')->with('success', 'Product created successfully!');
+        return redirect()->route('products.index');
     }
 
 }
