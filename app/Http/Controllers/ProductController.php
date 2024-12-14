@@ -35,7 +35,9 @@ class ProductController extends Controller
     }
 
     public function create() {
-        return view('modules.master.product.create');
+        $categories = DB::table('product_categories')->orderBy('name', 'asc')->get();
+
+        return view('modules.master.product.create', compact('categories'));
     }
 
     public function save(Request $request) {
@@ -47,6 +49,7 @@ class ProductController extends Controller
             "name" => $request->name,
             "price" => $request->price,
             "is_active" => $request->is_active,
+            "category_id" => $request->category_id
         ]);
 
         return redirect()->route('products.index');
@@ -54,12 +57,14 @@ class ProductController extends Controller
 
     public function edit($id) {
         $product = DB::table('products')->where('id', $id)->first();
+        $selectedCategoryId = $product->category_id;
+        $categories = DB::table('product_categories')->orderBy('name', 'asc')->get();
 
         if (!$product) {
             return redirect()->route('products.index')->with('error', 'Product not found.');
         }
 
-        return view('modules.master.product.edit', compact('product'));
+        return view('modules.master.product.edit', compact('product', 'selectedCategoryId', 'categories'));
     }
 
     public function update(Request $request) {
@@ -78,6 +83,7 @@ class ProductController extends Controller
                 'name' => $request->name,
                 'price' => $request->price,
                 "is_active" => $request->is_active,
+                "category_id" => $request->category_id
             ]);
 
         return redirect()->route('products.index');
