@@ -23,7 +23,7 @@ class ProductController extends Controller
         $totalRecords = $query->count();
         $filteredRecords = $query->count();
         $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get();
-        
+
         $response = [
             'draw' => $request->input('draw'),
             'recordsTotal' => $totalRecords,
@@ -73,7 +73,7 @@ class ProductController extends Controller
         //     'name' => 'required|string',
         //     'price' => 'required|numeric',
         // ]);
-        
+
         //TODO add validation and updated_by based on user
 
         DB::table('products')
@@ -87,6 +87,32 @@ class ProductController extends Controller
             ]);
 
         return redirect()->route('products.index');
+    }
+
+    public function getListProducts(Request $request) {
+        $params = $request->q;
+
+        $query = DB::table('products');
+
+        if($params != null) {
+            $query->where('name', 'like', $params.'%');
+        }
+
+        $data = $query->orderBy('id', 'desc')->get();
+
+        $totalRecords = $query->count();
+        $filteredRecords = $query->count();
+
+        $data = $query->orderBy('id', 'desc')->get();
+
+        $response = [
+            'draw' => $request->input('draw'),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $data
+        ];
+
+        return response()->json($response);
     }
 
 }

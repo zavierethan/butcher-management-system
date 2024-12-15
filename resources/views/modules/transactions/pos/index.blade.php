@@ -527,8 +527,7 @@
                                             </svg>
                                         </span>
                                         <!--end::Svg Icon-->
-                                        <input type="text" data-product-filter="search"
-                                            class="form-control form-control-solid ps-15" placeholder="Cari Product" />
+                                        <input type="text" data-product-filter="search" class="form-control form-control-solid ps-15" placeholder="Cari Product" id="product-search" />
                                     </div>
                                     <div class="ms-auto">
                                         <select class="form-select form-select-solid" data-control="select2"
@@ -574,9 +573,8 @@
                         <div class="card card-p-0 border-0">
                             <!--begin::Body-->
                             <div class="card-body p-5">
-                                <div class="d-flex flex-wrap d-grid gap-5 gap-xxl-9 overflow-y-auto"
-                                    style="height: 800px;" id="product-list">
-                                    <div class="hourglassBackground" id="product-loader">
+                                <div class="row overflow-y-auto" style="height: 750px;" id="product-list">
+                                    <div class="col-md-12 hourglassBackground" id="product-loader">
                                         <div class="hourglassContainer">
                                             <div class="hourglassCurves"></div>
                                             <div class="hourglassCapTop"></div>
@@ -880,7 +878,14 @@ $(document).ready(function() {
         calculateTotals();
     });
 
+    $(document).on('keydown', '#product-search', function(e) {
+        if (e.keyCode === 13) {
+            var searchQuery = $(this).val();
 
+            getProductList(searchQuery);
+        }
+
+    });
 
     $(document).on('click', '.remove-item', function(e) {
 
@@ -902,7 +907,6 @@ $(document).ready(function() {
                 calculateTotals();
             }
         });
-        console.log(`Removed Product ID: ${productId}`);
     });
 
     $(document).on('click', '.edit-item', function(e) {
@@ -1049,18 +1053,25 @@ $(document).ready(function() {
         $('#kt_modal_edit_product_item').modal('hide');
     });
 
-    function getProductList(params = '') {
+    function getProductList(param) {
+        $('.product').remove();
+        $("#product-loader").show();
         $.ajax({
-            url: '/api/products', // Laravel route to fetch products
+            url: `/api/products`, // Laravel route to fetch products
             type: 'GET',
+            data: {
+                q: param,
+            },
             dataType: 'json',
-            success: function(data) {
+            success: function(response) {
                 // Loop through each product in the JSON response
+
+                var data = response.data;
                 data.forEach(function(product) {
                     // Construct HTML for each product
-                    const productItem = `<div class="card card-flush flex-row-fluid p-6 pb-5 mw-100 product" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}">
+                    const productItem = `<div class="col-md-4 mb-3"><div class="card p-6 pb-5 mw-100 product" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}">
                                             <div class="card-body text-center">
-                                                <img src="${product.imgUrl}" class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px" alt="" />
+                                                <img src="${product.url_path}" class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px" alt="" />
                                                 <div class="mb-2">
                                                     <div class="text-center">
                                                         <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">${product.name}</span>
@@ -1068,7 +1079,7 @@ $(document).ready(function() {
                                                 </div>
                                                 <span class="text-success text-end fw-bold fs-1">${formatCurrency(parseFloat(product.price))}</span>
                                             </div>
-                                        </div>`;
+                                        </div></div>`;
                     // Append the product to the product list container
                     $('#product-list').append(productItem);
                 });
