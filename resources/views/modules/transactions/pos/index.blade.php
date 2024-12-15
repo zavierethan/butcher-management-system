@@ -528,8 +528,7 @@
                                         </span>
                                         <!--end::Svg Icon-->
                                         <input type="text" data-product-filter="search"
-                                            class="form-control form-control-solid ps-15"
-                                            placeholder="Cari Product" />
+                                            class="form-control form-control-solid ps-15" placeholder="Cari Product" />
                                     </div>
                                     <div class="ms-auto">
                                         <select class="form-select form-select-solid" data-control="select2"
@@ -553,9 +552,9 @@
                                 <div class="d-flex">
                                     <div class="d-flex align-items-center position-relative">
                                         <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
-                                        <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Customer" name="customer">
-                                            <option value="">-</option>
-                                        </select>
+                                        <input class="form-control form-control-md form-control-solid" type="text"
+                                            placeholder="Nama Customer" name="customer" id="customer"
+                                            autocomplete="off" />
                                     </div>
                                     <div class="ms-auto">
 
@@ -621,7 +620,6 @@
                                     <div class="fs-6 fw-bold text-white">
                                         <span class="d-block lh-1 mb-2">Subtotal</span>
                                         <span class="d-block mb-2">Discounts</span>
-                                        <span class="d-block mb-9">Tax(12%)</span>
                                         <span class="d-block fs-2qx lh-1">Total</span>
                                     </div>
                                     <!--end::Content-->
@@ -630,7 +628,6 @@
                                         <span class="d-block lh-1 mb-2" data-kt-pos-element="total"
                                             id="subtotal-amount">Rp. 0,00</span>
                                         <span class="d-block mb-2" data-kt-pos-element="discount">Rp. 0,00</span>
-                                        <span class="d-block mb-9" data-kt-pos-element="tax">Rp. 0,00</span>
                                         <span class="d-block fs-2qx lh-1" data-kt-pos-element="grand-total"
                                             id="total-amount">Rp. 0,00</span>
                                     </div>
@@ -660,7 +657,7 @@
                                             </i>
                                             <!--end::Icon-->
                                             <!--begin::Title-->
-                                            <span class="fs-7 fw-bold d-block">Cash</span>
+                                            <span class="fs-7 fw-bold d-block">Tunai</span>
                                             <!--end::Title-->
                                         </label>
                                         <!--end::Radio-->
@@ -703,7 +700,8 @@
                                     </div>
                                     <!--end::Radio group-->
                                     <!--begin::Actions-->
-                                    <button class="btn btn-primary fs-1 w-100 py-4">Bayar</button>
+                                    <button class="btn btn-primary fs-1 w-100 py-4" id="process-transaction">Proses
+                                        Transaksi</button>
                                     <!--end::Actions-->
                                 </div>
                                 <!--end::Payment Method-->
@@ -834,10 +832,12 @@ $(document).ready(function() {
                                     <img src="${productImgUrl}" alt="Item" class="rounded me-3" style="width: 60px; height: 60px;">
                                     <div class="flex-grow-1 mt-3">
                                         <h5 class="mb-1">${productName}</h5>
+                                        <div class="d-none product-id">${productId}</div>
                                         <span class="badge bg-warning text-dark qty">1 Kg</span>
                                     </div>
                                     <div class="text-end me-3 mt-3">
-                                        <h6 class="mb-0 price">${formatCurrency(productPrice)}</h6>
+                                        <h6 class="mb-1 price">${formatCurrency(productPrice)}</h6>
+                                        <span class="badge bg-warning text-dark"></span>
                                     </div>
                                 </div>
                                 <div class="d-flex flex-row-reverse">
@@ -870,7 +870,7 @@ $(document).ready(function() {
         const productId = $(this).data('product-id');
 
         Swal.fire({
-            title: 'Are you sure?',
+            title: 'Apakah anda yakin ?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -929,9 +929,81 @@ $(document).ready(function() {
 
     });
 
+    $(document).on('click', '#process-transaction', function(e) {
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Apakah anda yakin untuk memproses transaksi ?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Proses Transaksi'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const products = [];
+
+                $('.cart-item-lists').each(function() {
+
+                    const productId = $(this).find('.product-id').text();
+                    const price = $(this).find('.price').text().replace(/[^\d]/g, '');
+                    const quantity = $(this).find('.qty').text().replace(/ Kg$/, "");
+
+                    products.push({
+                        product_id: productId,
+                        price: price,
+                        quantity: quantity,
+                    });
+                });
+
+                const totalAmount = $('#total-amount').text().replace(/[^\d]/g, '');
+
+                // Build the JSON payload
+                const payload = {
+                    header: {
+                        transaction_date: new Date().toISOString(),
+                        customer_name: 1,
+                        total_amount: totalAmount,
+                        payment_method: 1 // Example, adjust as needed
+                    },
+                    details: products
+                };
+
+                console.log(payload)
+
+                $.ajax({
+                    url: `{{route('transactions.store')}}`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: JSON.stringify(payload),
+                    success: function (response) {
+                        Swal.fire({
+                            title: 'Suceess !',
+                            text: 'Transaksi berhasil di simpan',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            location.href = `{{route('transactions.index')}}`;
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire(
+                            'Error!',
+                            error,
+                            'error'
+                        )
+                    }
+                });
+            }
+        });
+    });
+
     $("#btn-clear-all").on('click', function() {
         Swal.fire({
-            title: 'Are you sure?',
+            title: 'Apakah anda yakin ?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -991,7 +1063,7 @@ $(document).ready(function() {
         // Iterate through each product in the cart and sum up their subtotals
         $('.cart-item-lists').each(function() {
             const priceText = $(this).find('.price').text().replace(/[^\d]/g,
-                ''); // Remove currency symbols
+            ''); // Remove currency symbols
             const price = parseFloat(priceText) || 0; // Ensure numeric value
             subtotal += price; // Add to the subtotal
         });

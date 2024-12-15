@@ -119,6 +119,15 @@ Route::group(['middleware' => ['auth']], function() {
     Route::prefix('transactions')->group(function () {
         Route::name('transactions.')->group(function () {
             Route::get('/', [App\Http\Controllers\TransactionController::class, 'index'])->name('index');
+            Route::post('/store', [App\Http\Controllers\TransactionController::class, 'store'])->name('store');
+        });
+    });
+
+    // Point of Sales
+    Route::prefix('orders')->group(function () {
+        Route::name('orders.')->group(function () {
+            Route::get('/', [App\Http\Controllers\OrderController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\OrderController::class, 'getLists'])->name('get-lists');
         });
     });
 });
