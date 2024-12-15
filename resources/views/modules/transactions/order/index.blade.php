@@ -131,7 +131,7 @@
                         </div>
                         <!--end::Menu 1-->
                     </div>
-                    <a href="#" class="btn btn-sm fw-bold btn-secondary">Export ke Excel</a>
+                    <a href="{{route('orders.export')}}" class="btn btn-sm fw-bold btn-secondary">Export ke Excel</a>
                     <!--end::Secondary button-->
                 </div>
                 <!--end::Actions-->
@@ -264,6 +264,10 @@ $("#kt_transactions_table").DataTable({
                     paymentMethod = "COD"
                 }
 
+                if (row.payment_method == 4) {
+                    paymentMethod = "Transfer"
+                }
+
                 return paymentMethod;
             }
         },
@@ -278,18 +282,14 @@ $("#kt_transactions_table").DataTable({
                 var status = "";
 
                 if (row.status == 1) {
-                    status = `<span class="badge bg-warning text-dark">Pending</span>`
-                }
-
-                if (row.status == 2) {
-                    status = "Menunggu Transfer"
-                }
-
-                if (row.status == 3) {
                     status = `<span class="badge bg-success text-dark">Lunas</span>`
                 }
 
-                if (row.status == 4) {
+                if (row.status == 2) {
+                    status = `<span class="badge bg-warning text-dark">Pending</span>`
+                }
+
+                if (row.status == 3) {
                     status = `<span class="badge bg-danger text-dark">Batal</span>`
                 }
 

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Exports\TransactionExport;
+use Maatwebsite\Excel\Facades\Excel;
 use DB;
 
 class OrderController extends Controller
@@ -46,12 +48,25 @@ class OrderController extends Controller
                     ->select(
                         'transactions.id',
                         'transactions.code',
-                        'transactions.transaction_date',
                         DB::raw("TO_CHAR(transactions.transaction_date, 'DD/MM/YYYY') as transaction_date"),
-                        'transactions.payment_method',
+                        DB::raw("
+                            CASE
+                                WHEN transactions.payment_method = '1' THEN 'TUNAI'
+                                WHEN transactions.payment_method = '2' THEN 'PIUTANG'
+                                WHEN transactions.payment_method = '3' THEN 'COD'
+                                ELSE 'TRANSFER'
+                            END AS payment_method
+                        "),
                         'transactions.total_amount',
-                        'transactions.status',
-                        'customers.name as customer_name')
+                        DB::raw("
+                            CASE
+                                WHEN transactions.status = 1 THEN 'LUNAS'
+                                WHEN transactions.status = 2 THEN 'PENDING'
+                                ELSE 'BATAL'
+                            END AS status
+                        "),
+                        'customers.name as customer_name',
+                    )
                     ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
                     ->where('transactions.id', $id)->first();
 
@@ -68,5 +83,9 @@ class OrderController extends Controller
                     ->where('transaction_id', $detailTransaction->id)->get();
 
         return view('modules.transactions.order.edit', compact('detailTransaction', 'detailItems'));
+    }
+
+    public function export() {
+        return Excel::download(new TransactionExport, 'siswa.xlsx');
     }
 }

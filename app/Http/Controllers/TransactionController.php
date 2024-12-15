@@ -15,10 +15,27 @@ class TransactionController extends Controller
     public function store(Request $request) {
 
         $payloads = $request->all();
+        $status = 0;
 
         try {
             // Start a database transaction
             DB::beginTransaction();
+
+            if($payloads["header"]["payment_method"] == '1') {
+                $status = 1;
+            }
+
+            if($payloads["header"]["payment_method"] == '2') {
+                $status = 2;
+            }
+
+            if($payloads["header"]["payment_method"] == '3') {
+                $status = 2;
+            }
+
+            if($payloads["header"]["payment_method"] == '4') {
+                $status = 1;
+            }
 
             $transactionId = DB::table('transactions')->insertGetId([
                 "code" => DB::select('SELECT generate_transaction_code() AS transaction_code')[0]->transaction_code,
@@ -26,7 +43,7 @@ class TransactionController extends Controller
                 "customer_id" => $payloads["header"]["customer_name"],
                 "total_amount" => $payloads["header"]["total_amount"],
                 "payment_method" => $payloads["header"]["payment_method"],
-                "status" => 3, // 1 = Pending, 2 = Menunggu Transfer, 3 = Lunas , 4  = Batal
+                "status" => $status, // 1 = Lunas, 2 = Pending, 3 = Batal
                 "created_by" => Auth::user()->id,
             ]);
 

@@ -663,7 +663,7 @@
                                         <!--end::Radio-->
                                         <!--begin::Radio-->
                                         <label
-                                            class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4 active"
+                                            class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4"
                                             data-kt-button="true">
                                             <!--begin::Input-->
                                             <input class="btn-check" type="radio" name="payment_method" value="2" />
@@ -694,6 +694,24 @@
                                             <!--end::Icon-->
                                             <!--begin::Title-->
                                             <span class="fs-7 fw-bold d-block">COD</span>
+                                            <!--end::Title-->
+                                        </label>
+                                        <!--end::Radio-->
+                                        <!--begin::Radio-->
+                                        <label
+                                            class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4"
+                                            data-kt-button="true">
+                                            <!--begin::Input-->
+                                            <input class="btn-check" type="radio" name="payment_method" value="4" />
+                                            <!--end::Input-->
+                                            <!--begin::Icon-->
+                                            <i class="ki-duotone ki-delivery fs-2hx mb-2 pe-0">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                            </i>
+                                            <!--end::Icon-->
+                                            <!--begin::Title-->
+                                            <span class="fs-7 fw-bold d-block">Transfer</span>
                                             <!--end::Title-->
                                         </label>
                                         <!--end::Radio-->
