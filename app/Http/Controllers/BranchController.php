@@ -8,79 +8,85 @@ use DB;
 class BranchController extends Controller
 {
     public function index() {
-        $branches = $this->getList();
-
-        return view('modules.master.branch.index', compact('branches'));
+        return view('modules.master.branch.index');
     }
 
-    public function getList() {
-        $branches = DB::table('branches')
-            ->select('branches.id', 'branches.code', 'branches.name', 'branches.address')
-            ->where('branches.is_active', 1)
-            ->paginate(10);
+    public function getLists(Request $request) {
+        // $branches = DB::table('branches')
+        //     ->select('branches.id', 'branches.code', 'branches.name', 'branches.address')
+        //     ->where('branches.is_active', 1)
+        //     ->paginate(10);
 
-        return $branches;
-    }
+        // return $branches;
 
-    public function edit($id) {
-        $product = DB::table('branches')->where('id', $id)->first();
+        $params = $request->all();
 
-        if (!$product) {
-            return redirect()->route('branches.index')->with('error', 'Branch not found.');
-        }
+        $query = DB::table('branches');
 
-        return view('modules.master.branch.edit', compact('branch'));
-    }
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 10);
 
-    public function update(Request $request, $id) {
-        $request->validate([
-            'code' => 'required|string',
-            'name' => 'required|string',
-            'address' => 'required|string',
-        ]);
+        $totalRecords = $query->count();
+        $filteredRecords = $query->count();
+        $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get();
+        
+        $response = [
+            'draw' => $request->input('draw'),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $data
+        ];
 
-        DB::table('branches')
-            ->where('id', $id)
-            ->update([
-                'code' => $request->code,
-                'name' => $request->name,
-                'address' => $request->address,
-            ]);
-
-        return redirect()->route('branches.index')->with('success', 'Branch updated successfully.');
-    }
-
-    public function destroy($id) {
-        DB::table('branches')
-            ->where('id', $id)
-            ->update(['is_active' => 0]);
-
-        return redirect()->route('branches.index')->with('success', 'Branch soft deleted successfully!');
+        return response()->json($response);
     }
 
     public function create() {
         return view('modules.master.branch.create');
     }
 
-    //TODO: CREATE AN ALERT FOR INVALID DATA INPUT
-    public function store(Request $request) {
-        // Validate the data
-        $validatedData = $request->validate([
-            'code' => 'required|unique:branches,code',
-            'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
+    public function save(Request $request) {
+        $baseUrl = config('app.url');
+
+        //TODO set created_by and updated)_by
+        DB::table('branches')->insert([
+            "code" => $request->code,
+            "name" => $request->name,
+            "address" => $request->address,
+            "is_active" => $request->is_active,
         ]);
 
-        // Insert the new product
-        DB::table('products')->insert([
-            'code' => $validatedData['code'],
-            'name' => $validatedData['name'],
-            'address' => $validatedData['address'],
-            'is_active' => 1,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        return redirect()->route('branches.index')->with('success', 'Branch created successfully!');
+        return redirect()->route('branches.index');
     }
+
+    public function edit($id) {
+        $branch = DB::table('branches')->where('id', $id)->first();
+
+        if (!$branch) {
+            return redirect()->route('branches.index')->with('error', 'Branch not found.');
+        }
+
+        return view('modules.master.branch.edit', compact('branch'));
+    }
+
+    public function update(Request $request) {
+        // $request->validate([
+        //     'code' => 'required|string',
+        //     'name' => 'required|string',
+        //     'price' => 'required|numeric',
+        // ]);
+        
+        //TODO add validation and updated_by based on user
+
+        DB::table('branches')
+            ->where('id', $request->id)
+            ->update([
+                'code' => $request->code,
+                'name' => $request->name,
+                'address' => $request->address,
+                "is_active" => $request->is_active,
+            ]);
+
+        return redirect()->route('branches.index');
+    }
+
 }

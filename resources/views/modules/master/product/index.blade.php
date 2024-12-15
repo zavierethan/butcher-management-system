@@ -92,6 +92,7 @@
                                         <th class="min-w-125px">Kode</th>
                                         <th class="min-w-125px">Nama</th>
                                         <th class="min-w-125px">Harga</th>
+                                        <th class="min-w-125px">Kategori</th>
                                         <th class="min-w-125px">Active</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
@@ -136,7 +137,8 @@
         columns: [
             { data: 'code', name: 'code' },
             { data: 'name', name: 'name' },
-            { data: 'price', price: 'price' },
+            { data: 'price', name: 'price' },
+            { data: 'category_id', name: 'category_id' },
             { data: 'is_active', name: 'is_active' },
             {
                 data: null, // No direct field from the server

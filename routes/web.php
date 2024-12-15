@@ -83,9 +83,9 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/', [App\Http\Controllers\BranchController::class, 'index'])->name('index');
             Route::get('/lists', [App\Http\Controllers\BranchController::class, 'getLists'])->name('get-lists');
             Route::get('/create', [App\Http\Controllers\BranchController::class, 'create'])->name('create');
-            Route::post('/store', [App\Http\Controllers\BranchController::class, 'store'])->name('store');
+            Route::post('/save', [App\Http\Controllers\BranchController::class, 'save'])->name('save');
             Route::get('/edit/{id}', [App\Http\Controllers\BranchController::class, 'edit'])->name('edit');
-            Route::put('/update/{id}', [App\Http\Controllers\BranchController::class, 'update'])->name('update');
+            Route::post('/update', [App\Http\Controllers\BranchController::class, 'update'])->name('update');
         });
     });
 
@@ -94,6 +94,9 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/', [App\Http\Controllers\ProductCategoryController::class, 'index'])->name('index');
             Route::get('/lists', [App\Http\Controllers\ProductCategoryController::class, 'getLists'])->name('get-lists');
             Route::get('/create', [App\Http\Controllers\ProductCategoryController::class, 'create'])->name('create');
+            Route::post('/save', [App\Http\Controllers\ProductCategoryController::class, 'save'])->name('save');
+            Route::get('/edit/{id}', [App\Http\Controllers\ProductCategoryController::class, 'edit'])->name('edit');
+            Route::post('/update', [App\Http\Controllers\ProductCategoryController::class, 'update'])->name('update');
         });
     });
 
@@ -102,6 +105,9 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/', [App\Http\Controllers\CustomerController::class, 'index'])->name('index');
             Route::get('/lists', [App\Http\Controllers\CustomerController::class, 'getLists'])->name('get-lists');
             Route::get('/create', [App\Http\Controllers\CustomerController::class, 'create'])->name('create');
+            Route::post('/save', [App\Http\Controllers\CustomerController::class, 'save'])->name('save');
+            Route::get('/edit/{id}', [App\Http\Controllers\CustomerController::class, 'edit'])->name('edit');
+            Route::post('/update', [App\Http\Controllers\CustomerController::class, 'update'])->name('update');
         });
     });
 
