@@ -641,13 +641,13 @@
                                     <!--end::Title-->
                                     <!--begin::Radio group-->
                                     <div class="d-flex flex-equal gap-5 gap-xxl-9 px-0 mb-12" data-kt-buttons="true"
-                                        data-kt-buttons-target="[data-kt-button]">
+                                        data-kt-buttons-target="[data-kt-button]" id="payment-method">
                                         <!--begin::Radio-->
                                         <label
                                             class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4"
                                             data-kt-button="true">
                                             <!--begin::Input-->
-                                            <input class="btn-check" type="radio" name="method" value="0" />
+                                            <input class="btn-check" type="radio" name="payment_method" value="1" />
                                             <!--end::Input-->
                                             <!--begin::Icon-->
                                             <i class="ki-duotone ki-dollar fs-2hx mb-2 pe-0">
@@ -666,7 +666,7 @@
                                             class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4 active"
                                             data-kt-button="true">
                                             <!--begin::Input-->
-                                            <input class="btn-check" type="radio" name="method" value="1" />
+                                            <input class="btn-check" type="radio" name="payment_method" value="2" />
                                             <!--end::Input-->
                                             <!--begin::Icon-->
                                             <i class="ki-duotone ki-credit-cart fs-2hx mb-2 pe-0">
@@ -684,10 +684,10 @@
                                             class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4"
                                             data-kt-button="true">
                                             <!--begin::Input-->
-                                            <input class="btn-check" type="radio" name="method" value="2" />
+                                            <input class="btn-check" type="radio" name="payment_method" value="3" />
                                             <!--end::Input-->
                                             <!--begin::Icon-->
-                                            <i class="ki-duotone ki-paypal fs-2hx mb-2 pe-0">
+                                            <i class="ki-duotone ki-delivery fs-2hx mb-2 pe-0">
                                                 <span class="path1"></span>
                                                 <span class="path2"></span>
                                             </i>
@@ -833,6 +833,7 @@ $(document).ready(function() {
                                     <div class="flex-grow-1 mt-3">
                                         <h5 class="mb-1">${productName}</h5>
                                         <div class="d-none product-id">${productId}</div>
+                                        <div class="d-none base-price">${productPrice}</div>
                                         <span class="badge bg-warning text-dark qty">1 Kg</span>
                                     </div>
                                     <div class="text-end me-3 mt-3">
@@ -947,16 +948,21 @@ $(document).ready(function() {
 
                     const productId = $(this).find('.product-id').text();
                     const price = $(this).find('.price').text().replace(/[^\d]/g, '');
+                    const basePrice = $(this).find('.base-price').text().replace(/[^\d]/g, '');
                     const quantity = $(this).find('.qty').text().replace(/ Kg$/, "");
 
                     products.push({
                         product_id: productId,
+                        base_price: basePrice,
                         price: price,
                         quantity: quantity,
                     });
                 });
 
                 const totalAmount = $('#total-amount').text().replace(/[^\d]/g, '');
+                const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
+
+                console.log(paymentMethod);
 
                 // Build the JSON payload
                 const payload = {
@@ -964,7 +970,7 @@ $(document).ready(function() {
                         transaction_date: new Date().toISOString(),
                         customer_name: 1,
                         total_amount: totalAmount,
-                        payment_method: 1 // Example, adjust as needed
+                        payment_method: paymentMethod // Example, adjust as needed
                     },
                     details: products
                 };

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use Auth;
 
 class TransactionController extends Controller
 {
@@ -26,6 +27,7 @@ class TransactionController extends Controller
                 "total_amount" => $payloads["header"]["total_amount"],
                 "payment_method" => $payloads["header"]["payment_method"],
                 "status" => 3, // 1 = Pending, 2 = Menunggu Transfer, 3 = Lunas , 4  = Batal
+                "created_by" => Auth::user()->id,
             ]);
 
             // Save the transaction details
@@ -34,6 +36,7 @@ class TransactionController extends Controller
                     "transaction_id" => $transactionId,
                     "product_id" =>  $detail["product_id"],
                     "quantity" => $detail["quantity"],
+                    "base_price" => $detail["base_price"],
                     "unit_price" => $detail["price"],
                 ]);
             }
