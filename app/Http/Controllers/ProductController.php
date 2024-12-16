@@ -15,7 +15,9 @@ class ProductController extends Controller
 
         $params = $request->all();
 
-        $query = DB::table('products');
+        $query = DB::table('products')
+            ->leftJoin('product_categories', 'products.category_id', '=', 'product_categories.id')
+            ->select('products.*', 'product_categories.name as category_name');
 
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);

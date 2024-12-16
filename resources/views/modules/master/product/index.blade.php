@@ -138,7 +138,7 @@
             { data: 'code', name: 'code' },
             { data: 'name', name: 'name' },
             { data: 'price', name: 'price' },
-            { data: 'category_id', name: 'category_id' },
+            { data: 'category_name', name: 'category_name' },
             { data: 'is_active', name: 'is_active' },
             {
                 data: null, // No direct field from the server

@@ -85,4 +85,30 @@ class CustomerController extends Controller
         return redirect()->route('customers.index');
     }
 
+    public function getListFiltered(Request $request) {
+        $params = $request->q;
+
+        $query = DB::table('consumers');
+
+        if($params != null) {
+            $query->where('name', 'like', $params.'%');
+        }
+
+        $data = $query->orderBy('id', 'desc')->get();
+
+        $totalRecords = $query->count();
+        $filteredRecords = $query->count();
+
+        $data = $query->orderBy('id', 'desc')->get();
+
+        $response = [
+            'draw' => $request->input('draw'),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $data
+        ];
+
+        return response()->json($response);
+    }
+
 }

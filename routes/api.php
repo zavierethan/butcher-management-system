@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CustomerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,15 +22,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('products/', [App\Http\Controllers\ProductController::class, 'getListProducts']);
 
-Route::get('/customers', function () {
-    $path = storage_path('app/customers.json');
-
-    $customers = DB::table('customers')->get();
-    file_put_contents($path, $customers->toJson());
-
-    if (file_exists($path)) {
-        return response()->json(json_decode(file_get_contents($path)));
-    } else {
-        return response()->json(['error' => 'Customers not found'], 404);
-    }
-});
+Route::get('customers/', [App\Http\Controllers\CustomerController::class, 'getListFiltered']);
