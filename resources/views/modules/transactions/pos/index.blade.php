@@ -1057,7 +1057,7 @@ $(document).ready(function() {
     });
 
     function getProductList(param) {
-        $('.product').remove();
+        $('.product-l').remove();
         $("#product-loader").show();
         $.ajax({
             url: `/api/products`, // Laravel route to fetch products
@@ -1072,7 +1072,7 @@ $(document).ready(function() {
                 var data = response.data;
                 data.forEach(function(product) {
                     // Construct HTML for each product
-                    const productItem = `<div class="col-md-4 mb-3 product"><div class="card p-6 pb-5 mw-100" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}">
+                    const productItem = `<div class="col-md-4 mb-3 product-l"><div class="card p-6 pb-5 mw-100 product" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}">
                                             <div class="card-body text-center">
                                                 <img src="${product.url_path}" class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px" alt="" />
                                                 <div class="mb-2">
