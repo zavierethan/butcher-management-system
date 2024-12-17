@@ -52,7 +52,7 @@
                 <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
                     <div class="card">
                         <div class="card-body pt-10">
-                            <form class="w-[60%]" method="POST" action="{{route('products.update')}}">
+                            <form class="w-[60%]" method="POST" action="{{route('products.update')}}" enctype="multipart/form-data">
                                 @csrf
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
@@ -95,6 +95,37 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="separator my-5"></div>
+                                <!--begin::Media-->
+                                <div class="card card-flush py-4">
+                                    <!--begin::Card header-->
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>Media</h2>
+                                        </div>
+                                    </div>
+                                    <!--end::Card header-->
+                                    <!--begin::Card body-->
+                                    <div class="card-body pt-0">
+                                        <!--begin::Input group-->
+                                        <div class="fv-row mb-2">
+                                            <div class="card-body pt-0">
+                                                <!-- File input for image upload -->
+                                                <div class="fv-row mb-2">
+                                                    <label for="media" class="form-label fw-bold fs-6 mb-2">Upload Image</label>
+                                                    <input type="file" name="media" id="media" class="form-control" accept="image/*" />
+                                                </div>
+                                                <div class="text-muted fs-7">Upload an image for the product.</div>
+                                            </div>
+                                        </div>
+                                        <!--end::Input group-->
+                                        <!--begin::Description-->
+                                        <div class="text-muted fs-7">Set the product media gallery.</div>
+                                        <!--end::Description-->
+                                    </div>
+                                    <!--end::Card header-->
+                                </div>
+                                <!--end::Media-->
                                 <div class="separator my-5"></div>
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">

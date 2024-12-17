@@ -45,13 +45,27 @@ class ProductController extends Controller
     public function save(Request $request) {
         $baseUrl = config('app.url');
 
+        // Validate input fields, including image upload
+        // $request->validate([
+        //     'name' => 'required|string|max:255',
+        //     'media' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        // ]);
+
+        // Handle the image upload
+        $imagePath = null;
+        if ($request->hasFile('media')) {
+            // Store image in 'public/products' directory
+            $imagePath = $request->file('media')->store('products', 'public');
+        }
+
         //TODO set created_by and updated)_by
         DB::table('products')->insert([
             "code" => $request->code,
             "name" => $request->name,
             "price" => $request->price,
             "is_active" => $request->is_active,
-            "category_id" => $request->category_id
+            "category_id" => $request->category_id,
+            "url_path" => $imagePath
         ]);
 
         return redirect()->route('products.index');
@@ -78,15 +92,25 @@ class ProductController extends Controller
 
         //TODO add validation and updated_by based on user
 
+        // Initialize update data
+        $updateData = [
+            'code' => $request->code,
+            'name' => $request->name,
+            'price' => $request->price,
+            'is_active' => $request->is_active,
+            'category_id' => $request->category_id,
+        ];
+
+        $imagePath = null;
+        if ($request->hasFile('media')) {
+            // Store image in 'public/products' directory
+            $imagePath = $request->file('media')->store('products', 'public');
+            $updateData['url_path'] = $imagePath;
+        }
+
         DB::table('products')
             ->where('id', $request->id)
-            ->update([
-                'code' => $request->code,
-                'name' => $request->name,
-                'price' => $request->price,
-                "is_active" => $request->is_active,
-                "category_id" => $request->category_id
-            ]);
+            ->update($updateData);
 
         return redirect()->route('products.index');
     }
@@ -100,12 +124,20 @@ class ProductController extends Controller
             $query->where('name', 'like', $params.'%');
         }
 
-        $data = $query->orderBy('id', 'desc')->get();
-
         $totalRecords = $query->count();
         $filteredRecords = $query->count();
 
         $data = $query->orderBy('id', 'desc')->get();
+
+        // Map url_path
+        $data = $data->map(function ($product) {
+            if ($product->url_path) {
+                $product->url_path = asset('storage/' . $product->url_path);
+            } else {
+                $product->url_path = asset('storage/default.png'); // Optional default image
+            }
+            return $product;
+        });
 
         $response = [
             'draw' => $request->input('draw'),
