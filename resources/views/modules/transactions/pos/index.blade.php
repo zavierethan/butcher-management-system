@@ -530,9 +530,11 @@
                                         <input type="text" data-product-filter="search" class="form-control form-control-solid ps-15" placeholder="Cari Product" id="product-search" />
                                     </div>
                                     <div class="ms-auto">
-                                        <select class="form-select form-select-solid" data-control="select2"
-                                            data-placeholder="Pilih Kategori Product" name="product_category">
-                                            <option value="">-</option>
+                                        <select class="form-select form-select-solid" data-placeholder="Pilih Kategori Product" name="product_category">
+                                            <option value="0">Pilih Kategori Product</option>
+                                            @foreach($productCategories as $category)
+                                            <option value="{{$category->id}}">{{$category->name}}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -573,18 +575,19 @@
                         <div class="card card-p-0 border-0">
                             <!--begin::Body-->
                             <div class="card-body p-5">
-                                <div class="row overflow-y-auto" style="height: 750px;" id="product-list">
-                                    <div class="col-md-12 hourglassBackground" id="product-loader">
-                                        <div class="hourglassContainer">
-                                            <div class="hourglassCurves"></div>
-                                            <div class="hourglassCapTop"></div>
-                                            <div class="hourglassGlassTop"></div>
-                                            <div class="hourglassSand"></div>
-                                            <div class="hourglassSandStream"></div>
-                                            <div class="hourglassCapBottom"></div>
-                                            <div class="hourglassGlass"></div>
-                                        </div>
+                                <div class="hourglassBackground" id="product-loader">
+                                    <div class="hourglassContainer">
+                                        <div class="hourglassCurves"></div>
+                                        <div class="hourglassCapTop"></div>
+                                        <div class="hourglassGlassTop"></div>
+                                        <div class="hourglassSand"></div>
+                                        <div class="hourglassSandStream"></div>
+                                        <div class="hourglassCapBottom"></div>
+                                        <div class="hourglassGlass"></div>
                                     </div>
+                                </div>
+                                <div class="row overflow-y-auto" style="height: 750px;" id="product-list">
+
                                 </div>
                             </div>
                             <!--end: Card Body-->
@@ -1069,7 +1072,7 @@ $(document).ready(function() {
                 var data = response.data;
                 data.forEach(function(product) {
                     // Construct HTML for each product
-                    const productItem = `<div class="col-md-4 mb-3"><div class="card p-6 pb-5 mw-100 product" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}">
+                    const productItem = `<div class="col-md-4 mb-3 product"><div class="card p-6 pb-5 mw-100" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}">
                                             <div class="card-body text-center">
                                                 <img src="${product.url_path}" class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px" alt="" />
                                                 <div class="mb-2">

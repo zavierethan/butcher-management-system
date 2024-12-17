@@ -9,7 +9,8 @@ use Auth;
 class TransactionController extends Controller
 {
     public function index() {
-        return view('modules.transactions.pos.index');
+        $productCategories = DB::table('product_categories')->where('is_active', 1)->get();
+        return view('modules.transactions.pos.index', compact('productCategories'));
     }
 
     public function store(Request $request) {

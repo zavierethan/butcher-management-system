@@ -121,7 +121,7 @@ class ProductController extends Controller
         $query = DB::table('products');
 
         if($params != null) {
-            $query->where('name', 'like', $params.'%');
+            $query->where('name', 'like', strtoupper($params).'%');
         }
 
         $totalRecords = $query->count();
