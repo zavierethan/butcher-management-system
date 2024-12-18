@@ -19,8 +19,9 @@ class UserController extends Controller
 
         // Base query
         $query = DB::table('users')
-            ->select('users.id', 'users.name as username', 'users.email', 'groups.name as group_name', 'users.is_active', 'users.created_at')
-            ->leftJoin('groups', 'groups.id', '=', 'users.group_id');
+            ->select('users.id', 'users.name as username', 'users.email', 'groups.name as group_name','branches.name as branch_name', 'users.is_active', 'users.created_at')
+            ->leftJoin('groups', 'groups.id', '=', 'users.group_id')
+            ->leftJoin('branches', 'branches.id', '=', 'users.branch_id');
 
         // Apply global search if provided
         $searchValue = $request->input('search.value'); // This is where DataTables sends the search input
@@ -60,7 +61,8 @@ class UserController extends Controller
 
     public function create() {
         $groups = DB::table('groups')->get();
-        return view('modules.accounts.user.create', compact('groups'));
+        $branches = DB::table('branches')->get();
+        return view('modules.accounts.user.create', compact('groups', 'branches'));
     }
 
     public function save(Request $request) {
@@ -68,8 +70,9 @@ class UserController extends Controller
         DB::table('users')->insert([
             "name" => $request->username,
             "email" => $request->email,
-            "password" => Hash::make("123456"),
+            "password" => Hash::make("Abcd12345"),
             "group_id" => $request->group_id,
+            "branch_id" => $request->branch_id,
             "is_active" => $request->is_active,
             "created_at" => date('Y-m-d h:i:s'),
         ]);
@@ -80,7 +83,8 @@ class UserController extends Controller
     public function edit($id) {
         $user = DB::table('users')->where('id', $id)->first();
         $groups = DB::table('groups')->get();
-        return view('modules.accounts.user.edit', compact('user', 'groups'));
+        $branches = DB::table('branches')->get();
+        return view('modules.accounts.user.edit', compact('user', 'groups', 'branches'));
     }
 
     public function update(Request $request) {
@@ -89,6 +93,7 @@ class UserController extends Controller
             "name" => $request->username,
             "email" => $request->email,
             "group_id" => $request->group_id,
+            "branch_id" => $request->branch_id,
             "is_active" => $request->is_active,
         ]);
 

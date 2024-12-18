@@ -621,16 +621,14 @@
                                     <div class="fs-6 fw-bold text-white">
                                         <span class="d-block lh-1 mb-2">Subtotal</span>
                                         <span class="d-block mb-2">Discounts</span>
-                                        <span class="d-block fs-2qx lh-1">Total</span>
+                                        <span class="d-block mb-2">Total</span>
                                     </div>
                                     <!--end::Content-->
                                     <!--begin::Content-->
                                     <div class="fs-6 fw-bold text-white text-end">
-                                        <span class="d-block lh-1 mb-2" data-kt-pos-element="total"
-                                            id="subtotal-amount">Rp. 0,00</span>
-                                        <span class="d-block mb-2" data-kt-pos-element="discount">Rp. 0,00</span>
-                                        <span class="d-block fs-2qx lh-1" data-kt-pos-element="grand-total"
-                                            id="total-amount">Rp. 0,00</span>
+                                        <span class="d-block lh-1 mb-2" data-kt-pos-element="total" id="subtotal-amount">Rp. 0,00</span>
+                                        <span class="d-block mb-2" data-kt-pos-element="discount">Rp. 0</span>
+                                        <span class="d-block mb-2" data-kt-pos-element="grand-total" id="total-amount">Rp. 0,00</span>
                                     </div>
                                     <!--end::Content-->
                                 </div>
@@ -881,12 +879,11 @@ $(document).ready(function() {
         calculateTotals();
     });
 
-    $(document).on('keydown', '#product-search', function(e) {
-        if (e.keyCode === 13) {
+    $(document).on('keyup', '#product-search', function(e) {
+        // if (e.keyCode === 13) {
             var searchQuery = $(this).val();
-
             getProductList(searchQuery);
-        }
+        // }
 
     });
 
@@ -1057,7 +1054,6 @@ $(document).ready(function() {
     });
 
     function getProductList(param) {
-        $('.product-l').remove();
         $("#product-loader").show();
         $.ajax({
             url: `/api/products`, // Laravel route to fetch products
@@ -1070,6 +1066,7 @@ $(document).ready(function() {
                 // Loop through each product in the JSON response
 
                 var data = response.data;
+                $('.product-l').remove();
                 data.forEach(function(product) {
                     // Construct HTML for each product
                     const productItem = `<div class="col-md-4 mb-3 product-l"><div class="card p-6 pb-5 mw-100 product" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}">

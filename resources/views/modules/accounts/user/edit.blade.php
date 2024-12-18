@@ -65,6 +65,20 @@
                                 </div>
                                 <div class="separator my-5"></div>
                                 <div class="fv-row mb-5">
+                                <div class="mb-1">
+                                        <label class="form-label fw-bold fs-6 mb-2">Branch</label>
+                                        <div class="position-relative mb-3">
+                                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="branch_id">
+                                                <option value=""></option>
+                                                @foreach($branches as $branch)
+                                                <option value="{{$branch->id}}" <?php echo ($user->branch_id == $branch->id) ? "selected" : ""; ?>>{{$branch->code}} - {{$branch->name}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="separator my-5"></div>
+                                <div class="fv-row mb-5">
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Is Active</label>
                                         <div class="position-relative mb-3">

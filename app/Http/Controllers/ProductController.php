@@ -121,13 +121,13 @@ class ProductController extends Controller
         $query = DB::table('products');
 
         if($params != null) {
-            $query->where('name', 'like', strtoupper($params).'%');
+            $query->where('name', 'like', '%'.strtoupper($params).'%');
         }
 
         $totalRecords = $query->count();
         $filteredRecords = $query->count();
 
-        $data = $query->orderBy('id', 'desc')->get();
+        $data = $query->orderBy('name', 'asc')->get();
 
         // Map url_path
         $data = $data->map(function ($product) {

@@ -66,6 +66,7 @@
                                         <th class="min-w-125px">Username</th>
                                         <th class="min-w-125px">Email</th>
                                         <th class="min-w-125px">Group</th>
+                                        <th class="min-w-125px">Cabang</th>
                                         <th class="min-w-125px">Is Active</th>
                                         <th class="min-w-125px">Created Date</th>
                                         <th class="text-center min-w-70px">Actions</th>
@@ -115,7 +116,19 @@ $(document).ready(function () {
             { data: 'username', name: 'username' },
             { data: 'email', name: 'email' },
             { data: 'group_name', name: 'group_name' },
-            { data: 'is_active', name: 'is_active' },
+            { data: 'branch_name', name: 'branch_name' },
+            {
+                data: 'is_active',
+                name: 'is_active',
+                render: function (data, type, row) {
+                    let status = "Aktif"
+
+                    if(row.is_active != 1)
+                        status = "Non Aktif"
+
+                    return status;
+                }
+            },
             { data: 'created_at', name: 'created_at' },
             {
                 data: null, // No direct field from the server
