@@ -194,6 +194,7 @@
                                         <th class="min-w-125px">METODE PEMBAYARAN</th>
                                         <th class="min-w-125px">TOTAL</th>
                                         <th class="min-w-125px">STATUS</th>
+                                        <th class="min-w-125px">DIBUAT OLEH</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -297,6 +298,10 @@ $("#kt_transactions_table").DataTable({
             }
         },
         {
+            data: 'created_by',
+            name: 'created_by'
+        },
+        {
             data: null, // No direct field from the server
             name: 'action',
             orderable: false, // Disable ordering for this column
@@ -304,6 +309,7 @@ $("#kt_transactions_table").DataTable({
             render: function(data, type, row) {
                 return `
                         <div class="text-center">
+                            <a href="/orders/receipt/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Cetak Faktur"><i class="fa-solid fa-print"></i></a>
                             <a href="/orders/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail Transaksi"><i class="fa-solid fa-magnifying-glass"></i></a>
                             <a href="#" class="btn btn-sm btn-light btn-active-light-primary" title="Sync Jurnal"><i class="fa-solid fa-arrow-right-arrow-left"></i></a>
                         <div>

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Exports\TransactionExport;
 use Maatwebsite\Excel\Facades\Excel;
 use DB;
+use PDF;
 
 class OrderController extends Controller
 {
@@ -25,8 +26,11 @@ class OrderController extends Controller
                     'transactions.payment_method',
                     'transactions.total_amount',
                     'transactions.status',
-                    'customers.name as customer_name')
-                ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id');
+                    'customers.name as customer_name',
+                    'users.name as created_by'
+                )
+                ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
+                ->leftJoin('users', 'users.id', '=', 'transactions.created_by');
 
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
@@ -49,22 +53,9 @@ class OrderController extends Controller
                         'transactions.id',
                         'transactions.code',
                         DB::raw("TO_CHAR(transactions.transaction_date, 'DD/MM/YYYY') as transaction_date"),
-                        DB::raw("
-                            CASE
-                                WHEN transactions.payment_method = '1' THEN 'TUNAI'
-                                WHEN transactions.payment_method = '2' THEN 'PIUTANG'
-                                WHEN transactions.payment_method = '3' THEN 'COD'
-                                ELSE 'TRANSFER'
-                            END AS payment_method
-                        "),
+                        'transactions.payment_method',
                         'transactions.total_amount',
-                        DB::raw("
-                            CASE
-                                WHEN transactions.status = 1 THEN 'LUNAS'
-                                WHEN transactions.status = 2 THEN 'PENDING'
-                                ELSE 'BATAL'
-                            END AS status
-                        "),
+                        'transactions.status',
                         'customers.name as customer_name',
                     )
                     ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
@@ -87,5 +78,56 @@ class OrderController extends Controller
 
     public function export() {
         return Excel::download(new TransactionExport, 'siswa.xlsx');
+    }
+
+    public function printReceipt($id) {
+        $detailTransaction = DB::table('transactions')
+                    ->select(
+                        'transactions.id',
+                        'transactions.code',
+                        DB::raw("TO_CHAR(transactions.transaction_date, 'DD FMMonth YYYY, HH24:MI:SS') as transaction_date"),
+                        DB::raw("
+                            CASE
+                                WHEN transactions.payment_method = '1' THEN 'TUNAI'
+                                WHEN transactions.payment_method = '2' THEN 'PIUTANG'
+                                WHEN transactions.payment_method = '3' THEN 'COD'
+                                WHEN transactions.payment_method = '4' THEN 'TRANSFER'
+                            ELSE
+                                '-'
+                            END AS payment_method
+                        "),
+                        'transactions.total_amount',
+                        'transactions.status',
+                        'customers.name as customer_name',
+                        'users.name as created_by',
+                        'branches.name as branhces'
+                    )
+                    ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
+                    ->leftJoin('users', 'users.id', '=', 'transactions.created_by')
+                    ->leftJoin('branches', 'branches.id', '=', 'users.branch_id')
+                    ->where('transactions.id', $id)->first();
+
+        $detailItems = DB::table('transaction_items')
+                    ->select(
+                        'products.id',
+                        'products.code',
+                        'products.name',
+                        'transaction_items.quantity',
+                        'transaction_items.base_price',
+                        'transaction_items.unit_price as sell_price')
+                    ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')
+                    ->where('transaction_id', $detailTransaction->id)->get()->map(function ($item) {
+                        // Format the prices using number_format
+                        $item->base_price = number_format($item->base_price, 0, '.', ','); // Format for money
+                        $item->sell_price = number_format($item->sell_price, 0, '.', ','); // Format for money
+                        return $item;
+                    });
+
+        $pdf = PDF::loadView('modules.transactions.order.receipt', [
+            "info" => $detailTransaction,
+            "items" => $detailItems
+        ])->setPaper([0, 0, 330, 700]);
+
+        return $pdf->stream('receipt.pdf'); // To display
     }
 }

@@ -60,7 +60,12 @@
                                         <div class="mb-1">
                                             <label class="form-label fw-bold fs-6 mb-2">Metode Pembayaran</label>
                                             <div class="position-relative mb-3">
-                                                <input class="form-control form-control-md form-control-solid" type="text" name="email" id="email" value="{{$detailTransaction->payment_method}}"/>
+                                                <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="status">
+                                                    <option value="1" <?php echo ($detailTransaction->customer_name == 1) ? "selected" : ""; ?>>Tunai</option>
+                                                    <option value="2" <?php echo ($detailTransaction->customer_name == 2) ? "selected" : ""; ?>>Piutang</option>
+                                                    <option value="3" <?php echo ($detailTransaction->customer_name == 3) ? "selected" : ""; ?>>COD</option>
+                                                    <option value="4" <?php echo ($detailTransaction->customer_name == 4) ? "selected" : ""; ?>>Transfer</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -78,7 +83,11 @@
                                         <div class="mb-1">
                                             <label class="form-label fw-bold fs-6 mb-2">Status</label>
                                             <div class="position-relative mb-3">
-                                                <input class="form-control form-control-md form-control-solid" type="text" name="email" id="email" value="{{$detailTransaction->status}}"/>
+                                                <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="status">
+                                                    <option value="1" <?php echo ($detailTransaction->status == 1) ? "selected" : ""; ?>>Lunas</option>
+                                                    <option value="2" <?php echo ($detailTransaction->status == 2) ? "selected" : ""; ?>>Pending</option>
+                                                    <option value="3" <?php echo ($detailTransaction->status == 3) ? "selected" : ""; ?>>Batal</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>

@@ -23,7 +23,7 @@ class CustomerController extends Controller
         $totalRecords = $query->count();
         $filteredRecords = $query->count();
         $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get();
-        
+
         $response = [
             'draw' => $request->input('draw'),
             'recordsTotal' => $totalRecords,
@@ -69,7 +69,7 @@ class CustomerController extends Controller
         //     'name' => 'required|string',
         //     'price' => 'required|numeric',
         // ]);
-        
+
         //TODO add validation and updated_by based on user
 
         DB::table('customers')
@@ -88,7 +88,7 @@ class CustomerController extends Controller
     public function getListFiltered(Request $request) {
         $params = $request->q;
 
-        $query = DB::table('consumers');
+        $query = DB::table('customers');
 
         if($params != null) {
             $query->where('name', 'like', $params.'%');
