@@ -111,4 +111,16 @@ class CustomerController extends Controller
         return response()->json($response);
     }
 
+    public function saveNewCustomerFromPOS(Request $request) {
+
+        DB::table('customers')->insert([
+            "name" => $request->name,
+            "phone_number" => $request->phone_number,
+        ]);
+
+        return response()->json([
+            'message' => 'customer successfully created'
+        ], 201);
+    }
+
 }

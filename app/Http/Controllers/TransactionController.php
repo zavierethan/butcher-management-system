@@ -44,6 +44,7 @@ class TransactionController extends Controller
                 "customer_id" => $payloads["header"]["customer_name"],
                 "total_amount" => $payloads["header"]["total_amount"],
                 "payment_method" => $payloads["header"]["payment_method"],
+                "customer_id" => $payloads["header"]["customer_id"],
                 "status" => $status, // 1 = Lunas, 2 = Pending, 3 = Batal
                 "created_by" => Auth::user()->id,
             ]);

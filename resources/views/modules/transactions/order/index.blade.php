@@ -172,8 +172,7 @@
                                         </svg>
                                     </span>
                                     <!--end::Svg Icon-->
-                                    <input type="text" data-kt-customer-table-filter="search"
-                                        class="form-control form-control-solid w-250px ps-15" placeholder="Search" />
+                                    <input type="text" data-kt-customer-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Search" />
                                 </div>
                                 <!--end::Toolbar-->
                             </div>
@@ -309,7 +308,7 @@ $("#kt_transactions_table").DataTable({
             render: function(data, type, row) {
                 return `
                         <div class="text-center">
-                            <a href="/orders/receipt/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Cetak Faktur"><i class="fa-solid fa-print"></i></a>
+                            <a href="/orders/receipt/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" target="_blank" title="Cetak Faktur"><i class="fa-solid fa-print"></i></a>
                             <a href="/orders/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail Transaksi"><i class="fa-solid fa-magnifying-glass"></i></a>
                             <a href="#" class="btn btn-sm btn-light btn-active-light-primary" title="Sync Jurnal"><i class="fa-solid fa-arrow-right-arrow-left"></i></a>
                         <div>

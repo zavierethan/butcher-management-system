@@ -6,8 +6,7 @@
         <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
             <div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-                        Order Details</h1>
+                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Order Details</h1>
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
                         <li class="breadcrumb-item text-muted">
                             <a href="index.html" class="text-muted text-hover-primary">Order Lists</a>
@@ -31,7 +30,10 @@
                                         <div class="mb-1">
                                             <label class="form-label fw-bold fs-6 mb-2">Kode Transaksi</label>
                                             <div class="position-relative mb-3">
-                                                <input class="form-control form-control-md form-control-solid" type="text" name="email" id="email" value="{{$detailTransaction->code}}"/>
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    type="text" value="{{$detailTransaction->code}}" readonly />
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    type="hidden" value="{{$detailTransaction->id}}" id="transaction-id"/>
                                             </div>
                                         </div>
                                     </div>
@@ -40,7 +42,8 @@
                                         <div class="mb-1">
                                             <label class="form-label fw-bold fs-6 mb-2">Tanggal</label>
                                             <div class="position-relative mb-3">
-                                                <input class="form-control form-control-md form-control-solid" type="text" name="email" id="email" value="{{$detailTransaction->transaction_date}}"/>
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    value="{{$detailTransaction->transaction_date}}" readonly />
                                             </div>
                                         </div>
                                     </div>
@@ -49,7 +52,8 @@
                                         <div class="mb-1">
                                             <label class="form-label fw-bold fs-6 mb-2">Customer</label>
                                             <div class="position-relative mb-3">
-                                                <input class="form-control form-control-md form-control-solid" type="text" name="email" id="email" value="{{$detailTransaction->customer_name}}"/>
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    value="{{$detailTransaction->customer_name}}" readonly />
                                             </div>
                                         </div>
                                     </div>
@@ -60,11 +64,20 @@
                                         <div class="mb-1">
                                             <label class="form-label fw-bold fs-6 mb-2">Metode Pembayaran</label>
                                             <div class="position-relative mb-3">
-                                                <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="status">
-                                                    <option value="1" <?php echo ($detailTransaction->customer_name == 1) ? "selected" : ""; ?>>Tunai</option>
-                                                    <option value="2" <?php echo ($detailTransaction->customer_name == 2) ? "selected" : ""; ?>>Piutang</option>
-                                                    <option value="3" <?php echo ($detailTransaction->customer_name == 3) ? "selected" : ""; ?>>COD</option>
-                                                    <option value="4" <?php echo ($detailTransaction->customer_name == 4) ? "selected" : ""; ?>>Transfer</option>
+                                                <select class="form-select form-select-solid" data-control="select2"
+                                                    data-placeholder="-" name="payment-method" disabled>
+                                                    <option value="1"
+                                                        <?php echo ($detailTransaction->customer_name == 1) ? "selected" : ""; ?>>
+                                                        Tunai</option>
+                                                    <option value="2"
+                                                        <?php echo ($detailTransaction->customer_name == 2) ? "selected" : ""; ?>>
+                                                        Piutang</option>
+                                                    <option value="3"
+                                                        <?php echo ($detailTransaction->customer_name == 3) ? "selected" : ""; ?>>
+                                                        COD</option>
+                                                    <option value="4"
+                                                        <?php echo ($detailTransaction->customer_name == 4) ? "selected" : ""; ?>>
+                                                        Transfer</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -74,7 +87,8 @@
                                         <div class="mb-1">
                                             <label class="form-label fw-bold fs-6 mb-2">Total Transaksi (Rp)</label>
                                             <div class="position-relative mb-3">
-                                                <input class="form-control form-control-md form-control-solid" type="text" name="email" id="email" value="{{$detailTransaction->total_amount}}"/>
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    type="text" value="{{$detailTransaction->total_amount}}" readonly />
                                             </div>
                                         </div>
                                     </div>
@@ -83,15 +97,26 @@
                                         <div class="mb-1">
                                             <label class="form-label fw-bold fs-6 mb-2">Status</label>
                                             <div class="position-relative mb-3">
-                                                <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="status">
-                                                    <option value="1" <?php echo ($detailTransaction->status == 1) ? "selected" : ""; ?>>Lunas</option>
-                                                    <option value="2" <?php echo ($detailTransaction->status == 2) ? "selected" : ""; ?>>Pending</option>
-                                                    <option value="3" <?php echo ($detailTransaction->status == 3) ? "selected" : ""; ?>>Batal</option>
+                                                <select class="form-select form-select-solid" data-control="select2"
+                                                    data-placeholder="-" name="status" id="status">
+                                                    <option value="1"
+                                                        <?php echo ($detailTransaction->status == 1) ? "selected" : ""; ?>>
+                                                        Lunas</option>
+                                                    <option value="2"
+                                                        <?php echo ($detailTransaction->status == 2) ? "selected" : ""; ?>>
+                                                        Pending</option>
+                                                    <option value="3"
+                                                        <?php echo ($detailTransaction->status == 3) ? "selected" : ""; ?>>
+                                                        Batal</option>
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="separator my-5"></div>
+                                    <div class="text-end">
+                                        <a href="{{route('orders.index')}}" class="btn btn-danger">Cancel</a>
+                                        <a href="#" class="btn btn-primary" id="btn-update">Update</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -125,7 +150,8 @@
                                                     <!--end::Thumbnail-->
                                                     <!--begin::Title-->
                                                     <div class="ms-5">
-                                                        <a href="#" class="fw-bold text-gray-600 text-hover-primary">{{$detail->code}}</a>
+                                                        <a href="#"
+                                                            class="fw-bold text-gray-600 text-hover-primary">{{$detail->code}}</a>
                                                         <div class="fs-7 text-muted">{{$detail->name}}</div>
                                                     </div>
                                                     <!--end::Title-->
@@ -146,7 +172,8 @@
                                         </tr>
                                         <tr>
                                             <td colspan="3" class="fs-3 text-gray-900 text-end">Grand Total</td>
-                                            <td class="text-gray-900 fs-3 fw-bolder text-end">{{$detailTransaction->total_amount}}</td>
+                                            <td class="text-gray-900 fs-3 fw-bolder text-end">
+                                                {{$detailTransaction->total_amount}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -164,5 +191,62 @@
 @endsection
 
 @section('script')
+<script>
+$(document).ready(function() {
+
+    $('#btn-update').on('click', function(e) {
+        e.preventDefault();
+
+        let transaction_id = $("#transaction-id").val();
+        let status = $("#status").val();
+
+        Swal.fire({
+            title: 'Apakah anda yakin untuk memperbaharui status transaksi ?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Update Transaksi'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                const payload = {
+                    transaction_id: transaction_id,
+                    status: status
+                };
+
+                console.log(payload)
+
+                $.ajax({
+                    url: `{{route('orders.update')}}`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: JSON.stringify(payload),
+                    success: function(response) {
+                        Swal.fire({
+                            title: 'Suceess !',
+                            text: 'Transaksi berhasil di perbaharui',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            location.href = `{{route('orders.index')}}`;
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire(
+                            'Error!',
+                            error,
+                            'error'
+                        )
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
 
 @endsection

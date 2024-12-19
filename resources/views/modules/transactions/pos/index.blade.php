@@ -527,15 +527,12 @@
                                             </svg>
                                         </span>
                                         <!--end::Svg Icon-->
-                                        <input type="text" data-product-filter="search" class="form-control form-control-solid ps-15" placeholder="Cari Product" id="product-search" />
+                                        <input type="text" data-product-filter="search"
+                                            class="form-control form-control-solid ps-15" placeholder="Cari Product"
+                                            id="product-search" />
                                     </div>
                                     <div class="ms-auto">
-                                        <select class="form-select form-select-solid" data-placeholder="Pilih Kategori Product" name="product_category">
-                                            <option value="0">Pilih Kategori Product</option>
-                                            @foreach($productCategories as $category)
-                                            <option value="{{$category->id}}">{{$category->name}}</option>
-                                            @endforeach
-                                        </select>
+                                        <input type="date" class="form-control form-control-solid" />
                                     </div>
                                 </div>
                             </div>
@@ -550,15 +547,16 @@
                         <div class="card card-p-0 border-0" id="kt_pos_form">
                             <!--begin::Body-->
                             <div class="card-body p-3">
-                                <div class="d-flex">
-                                    <div class="d-flex align-items-center position-relative">
-                                        <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
-                                        <input class="form-control form-control-md form-control-solid" type="text"
-                                            placeholder="Nama Customer" name="customer" id="customer"
-                                            autocomplete="off" />
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Customer" name="customer" id="customer">
+                                            <option value=""></option>
+                                        </select>
                                     </div>
-                                    <div class="ms-auto">
-
+                                    <div class="col-md-4">
+                                        <button class="btn btn-md" data-bs-toggle="modal"
+                                            data-bs-target="#kt_modal_add_customer"><i
+                                                class="fa-solid fa-user-plus"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -626,9 +624,11 @@
                                     <!--end::Content-->
                                     <!--begin::Content-->
                                     <div class="fs-6 fw-bold text-white text-end">
-                                        <span class="d-block lh-1 mb-2" data-kt-pos-element="total" id="subtotal-amount">Rp. 0,00</span>
+                                        <span class="d-block lh-1 mb-2" data-kt-pos-element="total"
+                                            id="subtotal-amount">Rp. 0,00</span>
                                         <span class="d-block mb-2" data-kt-pos-element="discount">Rp. 0</span>
-                                        <span class="d-block mb-2" data-kt-pos-element="grand-total" id="total-amount">Rp. 0,00</span>
+                                        <span class="d-block mb-2" data-kt-pos-element="grand-total"
+                                            id="total-amount">Rp. 0,00</span>
                                     </div>
                                     <!--end::Content-->
                                 </div>
@@ -738,7 +738,7 @@
     <!--end::Content wrapper-->
 </div>
 
-<!--begin::Modal - View Users-->
+<!--begin::Modal - Edit Product-->
 <div class="modal fade" id="kt_modal_edit_product_item" tabindex="-1" aria-hidden="true">
     <!--begin::Modal dialog-->
     <div class="modal-dialog mw-650px">
@@ -807,6 +807,62 @@
     </div>
     <!--end::Modal dialog-->
 </div>
+
+<!--begin::Modal - Add Customer-->
+<div class="modal fade" id="kt_modal_add_customer" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog mw-650px">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div class="modal-header pb-0 border-0 justify-content-end">
+                <!--begin::Close-->
+                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                    <i class="ki-duotone ki-cross fs-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </div>
+                <!--end::Close-->
+            </div>
+            <!--begin::Modal header-->
+            <!--begin::Modal body-->
+            <div class="modal-body scroll-y mx-5 mx-xl-18 pt-0 pb-15">
+                <!--begin::Heading-->
+                <div class="text-center mb-13">
+                    <!--begin::Title-->
+                    <h1 class="mb-3">Tambah Customer</h1>
+                    <!--end::Title-->
+                </div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Nama Customer</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid" type="text" id="customer-name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">No. Hp</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid" type="text" id="customer-phone-number" />
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="flex justify-content-center">
+                    <button type="button" class="btn btn-primary" id="btn-form-customer">Simpan</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="btn-form-close">Batal</button>
+                </div>
+            </div>
+            <!--end::Modal body-->
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div>
 @endsection
 
 @section('script')
@@ -814,6 +870,7 @@
 $(document).ready(function() {
     $("#product-loader").show();
     getProductList();
+    getCustomers();
 
     $('#fullscreen-control').click(function() {
         const elem = document.documentElement;
@@ -881,8 +938,8 @@ $(document).ready(function() {
 
     $(document).on('keyup', '#product-search', function(e) {
         // if (e.keyCode === 13) {
-            var searchQuery = $(this).val();
-            getProductList(searchQuery);
+        var searchQuery = $(this).val();
+        getProductList(searchQuery);
         // }
 
     });
@@ -970,7 +1027,8 @@ $(document).ready(function() {
 
                     const productId = $(this).find('.product-id').text();
                     const price = $(this).find('.price').text().replace(/[^\d]/g, '');
-                    const basePrice = $(this).find('.base-price').text().replace(/[^\d]/g, '');
+                    const basePrice = $(this).find('.base-price').text().replace(
+                        /[^\d]/g, '');
                     const quantity = $(this).find('.qty').text().replace(/ Kg$/, "");
 
                     products.push({
@@ -983,6 +1041,7 @@ $(document).ready(function() {
 
                 const totalAmount = $('#total-amount').text().replace(/[^\d]/g, '');
                 const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
+                const customerId = $('#customer').val();
 
                 console.log(paymentMethod);
 
@@ -992,7 +1051,8 @@ $(document).ready(function() {
                         transaction_date: new Date().toISOString(),
                         customer_name: 1,
                         total_amount: totalAmount,
-                        payment_method: paymentMethod // Example, adjust as needed
+                        payment_method: paymentMethod, // Example, adjust as needed
+                        customer_id : customerId
                     },
                     details: products
                 };
@@ -1007,17 +1067,18 @@ $(document).ready(function() {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     data: JSON.stringify(payload),
-                    success: function (response) {
+                    success: function(response) {
                         Swal.fire({
                             title: 'Suceess !',
                             text: 'Transaksi berhasil di simpan',
                             icon: 'success',
                             confirmButtonText: 'OK'
                         }).then((result) => {
-                            location.href = `{{route('transactions.index')}}`;
+                            location.href =
+                                `{{route('transactions.index')}}`;
                         });
                     },
-                    error: function (xhr, status, error) {
+                    error: function(xhr, status, error) {
                         Swal.fire(
                             'Error!',
                             error,
@@ -1025,6 +1086,51 @@ $(document).ready(function() {
                         )
                     }
                 });
+            }
+        });
+    });
+
+    $(document).on('click', '#btn-form-customer', function(e) {
+        e.preventDefault();
+
+        let customer_name = $("#customer-name").val();
+        let customer_phone_number = $("#customer-phone-number").val();
+
+        const payload = {
+            name : customer_name,
+            phone_number : customer_phone_number
+        };
+
+        console.log(payload)
+
+        $.ajax({
+            url: `{{url('/api/customers/save')}}`,
+            type: 'POST',
+            contentType: 'application/json',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: JSON.stringify(payload),
+            success: function(response) {
+                Swal.fire({
+                    title: 'Suceess !',
+                    text: 'Customer berhasil di tambahkan',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    $('#kt_modal_add_customer').modal('hide');
+                    $("#customer-name").val("");
+                    $("#customer-phone-number").val("");
+
+                    getCustomers();
+                });
+            },
+            error: function(xhr, status, error) {
+                Swal.fire(
+                    'Error!',
+                    error,
+                    'error'
+                )
             }
         });
     });
@@ -1092,13 +1198,38 @@ $(document).ready(function() {
         });
     }
 
+    function getCustomers() {
+
+        $.ajax({
+            url: `/api/customers`, // Laravel route to fetch products
+            type: 'GET',
+            dataType: 'json',
+            beforeSend: function() {
+                // Clear existing options before the request
+                $('#customer').html('<option value="">Pilih Customer</option>');
+            },
+            success: function(response) {
+                // Loop through each product in the JSON response
+                var data = response.data;
+                const selectBox = $('#customer');
+
+                data.forEach(item => {
+                    selectBox.append(new Option(item.name, item.id));
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching products:', error);
+            }
+        });
+    }
+
     function calculateTotals() {
         let subtotal = 0;
 
         // Iterate through each product in the cart and sum up their subtotals
         $('.cart-item-lists').each(function() {
             const priceText = $(this).find('.price').text().replace(/[^\d]/g,
-            ''); // Remove currency symbols
+                ''); // Remove currency symbols
             const price = parseFloat(priceText) || 0; // Ensure numeric value
             subtotal += price; // Add to the subtotal
         });

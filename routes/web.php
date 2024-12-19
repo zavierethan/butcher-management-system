@@ -135,6 +135,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/', [App\Http\Controllers\OrderController::class, 'index'])->name('index');
             Route::get('/lists', [App\Http\Controllers\OrderController::class, 'getLists'])->name('get-lists');
             Route::get('/edit/{id}', [App\Http\Controllers\OrderController::class, 'edit'])->name('edit');
+            Route::post('/update', [App\Http\Controllers\OrderController::class, 'update'])->name('update');
             Route::get('/export', [App\Http\Controllers\OrderController::class, 'export'])->name('export');
             Route::get('/receipt/{id}', [App\Http\Controllers\OrderController::class, 'printReceipt'])->name('print-receipt');
         });

@@ -69,11 +69,23 @@ class OrderController extends Controller
                         'products.url_path',
                         'transaction_items.quantity',
                         'transaction_items.base_price',
-                        'transaction_items.unit_price as sell_price')
+                        'transaction_items.unit_price as sell_price'
+                    )
                     ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')
                     ->where('transaction_id', $detailTransaction->id)->get();
 
         return view('modules.transactions.order.edit', compact('detailTransaction', 'detailItems'));
+    }
+
+    public function update(Request $request) {
+
+        DB::table('transactions')->where('id', $request->transaction_id)->update([
+            "status" => $request->status
+        ]);
+
+        return response()->json([
+            'message' => 'Transaction successfully updated',
+        ], 200);
     }
 
     public function export() {
@@ -114,7 +126,8 @@ class OrderController extends Controller
                         'products.name',
                         'transaction_items.quantity',
                         'transaction_items.base_price',
-                        'transaction_items.unit_price as sell_price')
+                        'transaction_items.unit_price as sell_price'
+                    )
                     ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')
                     ->where('transaction_id', $detailTransaction->id)->get()->map(function ($item) {
                         // Format the prices using number_format
