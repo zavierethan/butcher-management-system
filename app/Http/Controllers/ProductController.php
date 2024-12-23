@@ -62,7 +62,6 @@ class ProductController extends Controller
         DB::table('products')->insert([
             "code" => $request->code,
             "name" => $request->name,
-            "price" => $request->price,
             "is_active" => $request->is_active,
             "category_id" => $request->category_id,
             "url_path" => $imagePath
@@ -96,7 +95,6 @@ class ProductController extends Controller
         $updateData = [
             'code' => $request->code,
             'name' => $request->name,
-            'price' => $request->price,
             'is_active' => $request->is_active,
             'category_id' => $request->category_id,
         ];

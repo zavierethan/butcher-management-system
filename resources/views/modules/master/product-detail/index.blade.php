@@ -11,7 +11,7 @@
                 <!--begin::Page title-->
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
-                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Products</h1>
+                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Product Details</h1>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
@@ -26,7 +26,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Products</li>
+                        <li class="breadcrumb-item text-muted">Product Details</li>
                         <!--end::Item-->
                     </ul>
                     <!--end::Breadcrumb-->
@@ -39,7 +39,7 @@
                         data-bs-target="#kt_modal_create_app">Export</a>
                     <!--end::Secondary button-->
                     <!--begin::Primary button-->
-                    <a href="{{route('products.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
+                    <a href="{{route('product-details.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
                     <!--end::Primary button-->
                 </div>
                 <!--end::Actions-->
@@ -84,15 +84,17 @@
                         <!--begin::Card body-->
                         <div class="card-body pt-0 overflow-x-auto">
                             <!--begin::Table-->
-                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_products_table">
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_product_details_table">
                                 <!--begin::Table head-->
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">Kode</th>
-                                        <th class="min-w-125px">Nama</th>
-                                        <th class="min-w-125px">Kategori</th>
-                                        <th class="min-w-125px">Active</th>
+                                        <th class="min-w-125px">Cabang</th>
+                                        <th class="min-w-125px">Nama Produk</th>
+                                        <th class="min-w-125px">Harga</th>
+                                        <th class="min-w-125px">Diskon</th>
+                                        <th class="min-w-125px">Diskon Start</th>
+                                        <th class="min-w-125px">Diskon End</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -121,23 +123,25 @@
 
 @section('script')
 <script>
-    $("#kt_products_table").DataTable({
+    $("#kt_product_details_table").DataTable({
         processing: true,
         serverSide: true,
         paging: true, // Enable pagination
         pageLength: 10, // Number of rows per page
         ajax: {
-            url: `{{route('products.get-lists')}}`, // Replace with your route
+            url: `{{route('product-details.get-lists')}}`, // Replace with your route
             type: 'GET',
             dataSrc: function (json) {
                 return json.data; // Map the 'data' field
             }
         },
         columns: [
-            { data: 'code', name: 'code' },
-            { data: 'name', name: 'name' },
-            { data: 'category_name', name: 'category_name' },
-            { data: 'is_active', name: 'is_active' },
+            { data: 'branch_name', name: 'branch_name' },
+            { data: 'product_name', name: 'product_name' },
+            { data: 'price', name: 'price' },
+            { data: 'discount', name: 'discount' },
+            { data: 'start_period', name: 'start_period' },
+            { data: 'end_period', name: 'end_period' },
             {
                 data: null, // No direct field from the server
                 name: 'action',
@@ -146,7 +150,7 @@
                 render: function (data, type, row) {
                     return `
                         <div class="text-center">
-                            <a href="/products/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Edit</a>
+                            <a href="/product-details/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Edit</a>
                         <div>
                     `;
                 }

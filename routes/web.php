@@ -100,6 +100,17 @@ Route::group(['middleware' => ['auth']], function() {
         });
     });
 
+    Route::prefix('product-details')->group(function () {
+        Route::name('product-details.')->group(function () {
+            Route::get('/', [App\Http\Controllers\ProductDetailController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\ProductDetailController::class, 'getLists'])->name('get-lists');
+            Route::get('/create', [App\Http\Controllers\ProductDetailController::class, 'create'])->name('create');
+            Route::post('/save', [App\Http\Controllers\ProductDetailController::class, 'save'])->name('save');
+            Route::get('/edit/{id}', [App\Http\Controllers\ProductDetailController::class, 'edit'])->name('edit');
+            Route::post('/update', [App\Http\Controllers\ProductDetailController::class, 'update'])->name('update');
+        });
+    });
+
     Route::prefix('customers')->group(function () {
         Route::name('customers.')->group(function () {
             Route::get('/', [App\Http\Controllers\CustomerController::class, 'index'])->name('index');

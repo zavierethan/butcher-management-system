@@ -11,7 +11,7 @@
                 <!--begin::Page title-->
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
-                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Products</h1>
+                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Product Details</h1>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
@@ -26,7 +26,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Products</li>
+                        <li class="breadcrumb-item text-muted">Product Details</li>
                         <!--end::Item-->
                         <!--begin::Item-->
                         <li class="breadcrumb-item">
@@ -52,87 +52,76 @@
                 <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
                     <div class="card">
                         <div class="card-body pt-10">
-                            <form class="w-[60%]" method="POST" action="{{route('products.save')}}" enctype="multipart/form-data">
+                            <form class="w-[60%]" method="POST" action="{{route('product-details.save')}}" enctype="multipart/form-data">
                                 @csrf
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Kode</label>
+                                        <label class="form-label fw-bold fs-6 mb-2">Produk</label>
                                         <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="code" id="code" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="separator my-5"></div>
-                                <div class="fv-row mb-5">
-                                    <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Nama</label>
-                                        <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="name" id="name" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="separator my-5"></div>
-                                <div class="fv-row mb-5">
-                                    <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Kategori</label>
-                                        <div class="position-relative mb-3">
-                                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="category_id">
+                                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="product_id">
                                                 <option value="">-</option>
-                                                @foreach($categories as $category)
-                                                <option value="{{ $category->id }}">{{ $category->id }} - {{ $category->name }}</option>
+                                                @foreach($products as $product)
+                                                <option value="{{ $product->id }}">{{ $product->code }} - {{ $product->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="separator my-5"></div>
-                                <!--begin::Media-->
-                                <div class="card card-flush py-4">
-                                    <!--begin::Card header-->
-                                    <div class="card-header">
-                                        <div class="card-title">
-                                            <h2>Media</h2>
-                                        </div>
-                                    </div>
-                                    <!--end::Card header-->
-                                    <!--begin::Card body-->
-                                    <div class="card-body pt-0">
-                                        <!--begin::Input group-->
-                                        <div class="fv-row mb-2">
-                                            <div class="card-body pt-0">
-                                                <!-- File input for image upload -->
-                                                <div class="fv-row mb-2">
-                                                    <label for="media" class="form-label fw-bold fs-6 mb-2">Upload Image</label>
-                                                    <input type="file" name="media" id="media" class="form-control" accept="image/*" />
-                                                </div>
-                                                <div class="text-muted fs-7">Upload an image for the product.</div>
-                                            </div>
-                                        </div>
-                                        <!--end::Input group-->
-                                        <!--begin::Description-->
-                                        <div class="text-muted fs-7">Set the product media gallery.</div>
-                                        <!--end::Description-->
-                                    </div>
-                                    <!--end::Card header-->
-                                </div>
-                                <!--end::Media-->
-                                <div class="separator my-5"></div>
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Is Active</label>
+                                        <label class="form-label fw-bold fs-6 mb-2">Cabang</label>
                                         <div class="position-relative mb-3">
-                                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="is_active">
-                                                <option value=""></option>
-                                                <option value="1" selected>Yes</option>
-                                                <option value="0">No</option>
+                                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="branch_id">
+                                                <option value="">-</option>
+                                                @foreach($branches as $branch)
+                                                <option value="{{ $branch->id }}">{{ $branch->code }} - {{ $branch->name }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="separator my-5"></div>
+                                <div class="fv-row mb-5">
+                                    <div class="mb-1">
+                                        <label class="form-label fw-bold fs-6 mb-2">Harga</label>
+                                        <div class="position-relative mb-3">
+                                            <input class="form-control form-control-md form-control-solid" type="text" name="price" id="price" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="separator my-5"></div>
+                                <!--begin::Input group-->
+                                <div class="row row-cols-lg-2 g-10">
+                                    <div class="col">
+                                        <div class="fv-row mb-9">
+                                            <!--begin::Label-->
+                                            <label class="fs-6 fw-semibold mb-2 required">Start Diskon</label>
+                                            <!--end::Label-->
+                                            <!--begin::Input-->
+                                            <input class="form-control form-control-solid" name="calendar_event_start_date" placeholder="Pick a start date" id="kt_calendar_datepicker_start_date" />
+                                            <!--end::Input-->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="separator my-5"></div>
+                                <div class="row row-cols-lg-2 g-10">
+                                    <div class="col">
+                                        <div class="fv-row mb-9">
+                                            <!--begin::Label-->
+                                            <label class="fs-6 fw-semibold mb-2 required">End Diskon</label>
+                                            <!--end::Label-->
+                                            <!--begin::Input-->
+                                            <input class="form-control form-control-solid" name="calendar_event_end_date" placeholder="Pick an end date" id="kt_calendar_datepicker_end_date" />
+                                            <!--end::Input-->
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--end::Input group-->
+                                <div class="separator my-5"></div>
                                 <div class="flex justify-end">
                                     <button type="submit" class="btn btn-primary">Submit</button>
-                                    <a href="{{route('products.index')}}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{route('product-details.index')}}" class="btn btn-danger">Cancel</a>
                                 </div>
                             </form>
                         </div>
@@ -149,5 +138,28 @@
 @endsection
 
 @section('script')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Select the start date and end date inputs
+        const startDateInput = document.getElementById('kt_calendar_datepicker_start_date');
+        const endDateInput = document.getElementById('kt_calendar_datepicker_end_date');
+
+        // Log the values when the form is submitted
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function (event) {
+            console.log('Start Date:', startDateInput.value);
+            console.log('End Date:', endDateInput.value);
+        });
+
+        // Optional: Log the values on input change
+        startDateInput.addEventListener('input', function () {
+            console.log('Start Date Changed:', startDateInput.value);
+        });
+
+        endDateInput.addEventListener('input', function () {
+            console.log('End Date Changed:', endDateInput.value);
+        });
+    });
+</script>
 
 @endsection
