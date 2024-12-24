@@ -164,13 +164,24 @@
                         <td style="font-weight: bold;">Discount</td>
                         <td></td>
                         <td></td>
-                        <td style="text-align: right;">0.00</td>
+                        <td style="text-align: right;">@php echo number_format($info->discount, 0, '.', ',') @endphp</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Ongkos Kirim</td>
+                        <td></td>
+                        <td></td>
+                        <td style="text-align: right;">@php echo number_format($info->shipping_cost, 0, '.', ',') @endphp</td>
                     </tr>
                     <tr>
                         <td style="font-weight: bold;">Total</td>
                         <td></td>
                         <td></td>
-                        <td style="text-align: right;">@php echo number_format($info->total_amount, 0, '.', ',') @endphp</td>
+                        <td style="text-align: right;">
+                            @php
+                                $grand_total = ($info->total_amount - $info->discount) + $info->shipping_cost;
+                                echo number_format($grand_total, 0, '.', ',');
+                            @endphp
+                        </td>
                     </tr>
                 </tfoot>
             </table>
@@ -179,8 +190,6 @@
         <div class="line"></div>
 
         <div class="footer">
-            <p>Thank you for shopping!</p>
-            <p>Visit Again!</p>
         </div>
     </div>
 </body>

@@ -7,6 +7,7 @@ use App\Exports\TransactionExport;
 use Maatwebsite\Excel\Facades\Excel;
 use DB;
 use PDF;
+use Auth;
 
 class OrderController extends Controller
 {
@@ -30,7 +31,12 @@ class OrderController extends Controller
                     'users.name as created_by'
                 )
                 ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
-                ->leftJoin('users', 'users.id', '=', 'transactions.created_by');
+                ->leftJoin('users', 'users.id', '=', 'transactions.created_by')
+                ->leftJoin('branches', 'branches.id', '=', 'users.branch_id');
+
+        if(Auth::user()->group_id != 1 || Auth::user()->branch_id != 1) {
+            $query->where('transactions.branch_id', Auth::user()->branch_id);
+        }
 
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
@@ -54,6 +60,8 @@ class OrderController extends Controller
                         'transactions.code',
                         DB::raw("TO_CHAR(transactions.transaction_date, 'DD/MM/YYYY') as transaction_date"),
                         'transactions.payment_method',
+                        'transactions.discount',
+                        'transactions.shipping_cost',
                         'transactions.total_amount',
                         'transactions.status',
                         'customers.name as customer_name',
@@ -108,6 +116,8 @@ class OrderController extends Controller
                                 '-'
                             END AS payment_method
                         "),
+                        'transactions.discount',
+                        'transactions.shipping_cost',
                         'transactions.total_amount',
                         'transactions.status',
                         'customers.name as customer_name',

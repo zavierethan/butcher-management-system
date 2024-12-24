@@ -88,7 +88,7 @@
                                             <label class="form-label fw-bold fs-6 mb-2">Total Transaksi (Rp)</label>
                                             <div class="position-relative mb-3">
                                                 <input class="form-control form-control-md form-control-solid"
-                                                    type="text" value="{{$detailTransaction->total_amount}}" readonly />
+                                                    type="text" value="@php echo number_format($detailTransaction->total_amount, 0, '.', ',') @endphp" readonly />
                                             </div>
                                         </div>
                                     </div>
@@ -157,23 +157,31 @@
                                                     <!--end::Title-->
                                                 </div>
                                             </td>
-                                            <td class="text-end">{{$detail->base_price}}</td>
+                                            <td class="text-end">@php echo number_format($detail->base_price, 0, '.', ',') @endphp</td>
                                             <td class="text-end">{{$detail->quantity}}</td>
-                                            <td class="text-end">{{$detail->sell_price}}</td>
+                                            <td class="text-end">@php echo number_format($detail->sell_price, 0, '.', ',') @endphp</td>
                                         </tr>
                                         @endforeach
                                         <tr>
                                             <td colspan="3" class="text-end">Subtotal</td>
-                                            <td class="text-end">{{$detailTransaction->total_amount}}</td>
+                                            <td class="text-end">@php echo number_format($detailTransaction->total_amount, 0, '.', ',') @endphp</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" class="text-end">Discount</td>
+                                            <td class="text-end">@php echo number_format($detailTransaction->discount, 0, '.', ',') @endphp</td>
                                         </tr>
                                         <tr>
                                             <td colspan="3" class="text-end">Biaya Pengiriman</td>
-                                            <td class="text-end">0.00</td>
+                                            <td class="text-end">@php echo number_format($detailTransaction->shipping_cost, 0, '.', ',') @endphp</td>
                                         </tr>
                                         <tr>
                                             <td colspan="3" class="fs-3 text-gray-900 text-end">Grand Total</td>
                                             <td class="text-gray-900 fs-3 fw-bolder text-end">
-                                                {{$detailTransaction->total_amount}}</td>
+                                                @php
+                                                    $grand_total = ($detailTransaction->total_amount - $detailTransaction->discount) + $detailTransaction->shipping_cost;
+                                                    echo number_format($grand_total, 0, '.', ',');
+                                                @endphp
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>

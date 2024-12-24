@@ -5,6 +5,7 @@ namespace App\Exports;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use DB;
+use Auth;
 
 class TransactionExport implements FromCollection, WithHeadings
 {
@@ -14,7 +15,7 @@ class TransactionExport implements FromCollection, WithHeadings
     public function collection()
     {
         // Fetching data from the database
-        return DB::table('transactions')
+        $query = DB::table('transactions')
             ->select(
                 'transactions.code as transaction_code',
                 DB::raw("TO_CHAR(transactions.transaction_date, 'DD/MM/YYYY') as transaction_date"),
@@ -43,8 +44,16 @@ class TransactionExport implements FromCollection, WithHeadings
             )
             ->leftJoin('transaction_items', 'transaction_items.transaction_id', '=', 'transactions.id')
             ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')
-            ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
-            ->get();
+            ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id');
+
+
+        if(Auth::user()->group_id != 1 || Auth::user()->branch_id != 1) {
+            $query->where('transactions.branch_id', Auth::user()->branch_id);
+        }
+
+        $data = $query->get();
+
+        return $data;
     }
 
     /**

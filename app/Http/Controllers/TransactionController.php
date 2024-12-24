@@ -22,6 +22,8 @@ class TransactionController extends Controller
             // Start a database transaction
             DB::beginTransaction();
 
+            $branchCode = DB::table('branches')->where('id', Auth::user()->branch_id)->value('code');
+
             if($payloads["header"]["payment_method"] == '1') {
                 $status = 1;
             }
@@ -39,14 +41,17 @@ class TransactionController extends Controller
             }
 
             $transactionId = DB::table('transactions')->insertGetId([
-                "code" => DB::select('SELECT generate_transaction_code() AS transaction_code')[0]->transaction_code,
+                "code" => DB::select('SELECT generate_transaction_code(?) AS transaction_code', [$branchCode])[0]->transaction_code,
                 "transaction_date" => date("Y-m-d"),
                 "customer_id" => $payloads["header"]["customer_name"],
                 "total_amount" => $payloads["header"]["total_amount"],
                 "payment_method" => $payloads["header"]["payment_method"],
                 "customer_id" => $payloads["header"]["customer_id"],
+                "discount" => $payloads["header"]["discount"],
+                "shipping_cost" => $payloads["header"]["shipping_cost"],
                 "status" => $status, // 1 = Lunas, 2 = Pending, 3 = Batal
                 "created_by" => Auth::user()->id,
+                "branch_id" => Auth::user()->branch_id,
             ]);
 
             // Save the transaction details

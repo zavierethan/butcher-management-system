@@ -549,7 +549,8 @@
                             <div class="card-body p-3">
                                 <div class="row">
                                     <div class="col-md-8">
-                                        <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Customer" name="customer" id="customer">
+                                        <select class="form-select form-select-solid" data-control="select2"
+                                            data-placeholder="Pilih Customer" name="customer" id="customer">
                                             <option value=""></option>
                                         </select>
                                     </div>
@@ -584,7 +585,7 @@
                                         <div class="hourglassGlass"></div>
                                     </div>
                                 </div>
-                                <div class="row overflow-y-auto" style="height: 750px;" id="product-list">
+                                <div class="row overflow-y-auto" style="height: 800px;" id="product-list">
 
                                 </div>
                             </div>
@@ -618,7 +619,12 @@
                                     <!--begin::Content-->
                                     <div class="fs-6 fw-bold text-white">
                                         <span class="d-block lh-1 mb-2">Subtotal</span>
-                                        <span class="d-block mb-2">Discounts</span>
+                                        <span class="d-block mb-2">Discounts <a href="javascript(0);"
+                                                data-bs-toggle="modal" data-bs-target="#kt_modal_add_discount"><i
+                                                    class="fas fa-edit text-white"></i></a></span>
+                                        <span class="d-block mb-2">Ongkos Kirim <a href="javascript(0);"
+                                                data-bs-toggle="modal" data-bs-target="#kt_modal_add_shipping_cost"><i
+                                                    class="fas fa-edit text-white"></i></a></span>
                                         <span class="d-block mb-2">Total</span>
                                     </div>
                                     <!--end::Content-->
@@ -626,7 +632,8 @@
                                     <div class="fs-6 fw-bold text-white text-end">
                                         <span class="d-block lh-1 mb-2" data-kt-pos-element="total"
                                             id="subtotal-amount">Rp. 0,00</span>
-                                        <span class="d-block mb-2" data-kt-pos-element="discount">Rp. 0</span>
+                                        <span class="d-block mb-2" id="discount">Rp. 0</span>
+                                        <span class="d-block mb-2" id="shipping-cost">Rp. 0</span>
                                         <span class="d-block mb-2" data-kt-pos-element="grand-total"
                                             id="total-amount">Rp. 0,00</span>
                                     </div>
@@ -716,6 +723,22 @@
                                         <!--end::Radio-->
                                     </div>
                                     <!--end::Radio group-->
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Masukan Nominal Bayar</label>
+                                            <div class="position-relative mb-3">
+                                                <input class="form-control form-control-md form-control-solid" type="number" id="nominal-payment"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Nominal Kembali</label>
+                                            <div class="position-relative mb-3">
+                                                <input class="form-control form-control-md form-control-solid" type="text" id="nominal-return" readonly/>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <!--begin::Actions-->
                                     <button class="btn btn-primary fs-1 w-100 py-4" id="process-transaction">Proses
                                         Transaksi</button>
@@ -838,7 +861,8 @@
                     <div class="mb-1">
                         <label class="form-label fw-bold fs-6 mb-2">Nama Customer</label>
                         <div class="position-relative mb-3">
-                            <input class="form-control form-control-md form-control-solid" type="text" id="customer-name" />
+                            <input class="form-control form-control-md form-control-solid" type="text"
+                                id="customer-name" />
                         </div>
                     </div>
                 </div>
@@ -847,14 +871,114 @@
                     <div class="mb-1">
                         <label class="form-label fw-bold fs-6 mb-2">No. Hp</label>
                         <div class="position-relative mb-3">
-                            <input class="form-control form-control-md form-control-solid" type="text" id="customer-phone-number" />
+                            <input class="form-control form-control-md form-control-solid" type="text"
+                                id="customer-phone-number" />
                         </div>
                     </div>
                 </div>
                 <div class="separator my-5"></div>
                 <div class="flex justify-content-center">
                     <button type="button" class="btn btn-primary" id="btn-form-customer">Simpan</button>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="btn-form-close">Batal</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
+                        id="btn-form-close">Batal</button>
+                </div>
+            </div>
+            <!--end::Modal body-->
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div>
+
+<!--begin::Modal - Add Customer-->
+<div class="modal fade" id="kt_modal_add_discount" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog mw-650px">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div class="modal-header pb-0 border-0 justify-content-end">
+                <!--begin::Close-->
+                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                    <i class="ki-duotone ki-cross fs-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </div>
+                <!--end::Close-->
+            </div>
+            <!--begin::Modal header-->
+            <!--begin::Modal body-->
+            <div class="modal-body scroll-y mx-5 mx-xl-18 pt-0 pb-15">
+                <!--begin::Heading-->
+                <div class="text-center mb-13">
+                    <!--begin::Title-->
+                    <h1 class="mb-3">Discount</h1>
+                    <!--end::Title-->
+                </div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Masukan Nominal Discount</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid" type="number"
+                                id="discount-value" />
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="flex justify-content-center">
+                    <button type="button" class="btn btn-primary" id="btn-form-discount">Simpan</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
+                        id="btn-form-close">Batal</button>
+                </div>
+            </div>
+            <!--end::Modal body-->
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div>
+
+<!--begin::Modal - Add Customer-->
+<div class="modal fade" id="kt_modal_add_shipping_cost" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog mw-650px">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div class="modal-header pb-0 border-0 justify-content-end">
+                <!--begin::Close-->
+                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                    <i class="ki-duotone ki-cross fs-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </div>
+                <!--end::Close-->
+            </div>
+            <!--begin::Modal header-->
+            <!--begin::Modal body-->
+            <div class="modal-body scroll-y mx-5 mx-xl-18 pt-0 pb-15">
+                <!--begin::Heading-->
+                <div class="text-center mb-13">
+                    <!--begin::Title-->
+                    <h1 class="mb-3">Ongkos Kirim</h1>
+                    <!--end::Title-->
+                </div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Masukan Nominal Ongkos Kirim</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid" type="number"
+                                id="shipment-cost-value" />
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="flex justify-content-center">
+                    <button type="button" class="btn btn-primary" id="btn-form-shipping-cost">Simpan</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
+                        id="btn-form-close">Batal</button>
                 </div>
             </div>
             <!--end::Modal body-->
@@ -937,11 +1061,8 @@ $(document).ready(function() {
     });
 
     $(document).on('keyup', '#product-search', function(e) {
-        // if (e.keyCode === 13) {
         var searchQuery = $(this).val();
         getProductList(searchQuery);
-        // }
-
     });
 
     $(document).on('click', '.remove-item', function(e) {
@@ -1009,6 +1130,28 @@ $(document).ready(function() {
 
     });
 
+    $(document).on('click', '#btn-form-discount', function(e) {
+        let value = $("#discount-value").val();
+        $('#discount').text(formatCurrency(value));
+        calculateTotals();
+        $('#kt_modal_add_discount').modal('hide');
+        $("#discount-value").val(0);
+    });
+
+    $(document).on('click', '#btn-form-shipping-cost', function(e) {
+        let value = $("#shipment-cost-value").val();
+        $('#shipping-cost').text(formatCurrency(value));
+        calculateTotals();
+        $('#kt_modal_add_shipping_cost').modal('hide');
+        $("#shipment-cost-value").val(0);
+    });
+
+    $(document).on('keyup', '#nominal-payment', function(e) {
+        const totalAmount = $('#total-amount').text().replace(/[^\d]/g, '');
+        let nominalreturn = $(this).val() - totalAmount;
+        $("#nominal-return").val(formatCurrency(nominalreturn));
+    });
+
     $(document).on('click', '#process-transaction', function(e) {
         e.preventDefault();
 
@@ -1039,8 +1182,11 @@ $(document).ready(function() {
                     });
                 });
 
+                const discount = $('#discount').text().replace(/[^\d]/g, '') | 0;
+                const shippingCost = $('#shipping-cost').text().replace(/[^\d]/g, '') | 0;
                 const totalAmount = $('#total-amount').text().replace(/[^\d]/g, '');
-                const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
+                const paymentMethod = $('#payment-method').find('input[type="radio"]:checked')
+                    .val();
                 const customerId = $('#customer').val();
 
                 console.log(paymentMethod);
@@ -1049,10 +1195,12 @@ $(document).ready(function() {
                 const payload = {
                     header: {
                         transaction_date: new Date().toISOString(),
-                        customer_name: 1,
+                        customer_name: customerId,
                         total_amount: totalAmount,
                         payment_method: paymentMethod, // Example, adjust as needed
-                        customer_id : customerId
+                        customer_id: customerId,
+                        discount: discount,
+                        shipping_cost: shippingCost
                     },
                     details: products
                 };
@@ -1097,8 +1245,8 @@ $(document).ready(function() {
         let customer_phone_number = $("#customer-phone-number").val();
 
         const payload = {
-            name : customer_name,
-            phone_number : customer_phone_number
+            name: customer_name,
+            phone_number: customer_phone_number
         };
 
         console.log(payload)
@@ -1229,14 +1377,24 @@ $(document).ready(function() {
         // Iterate through each product in the cart and sum up their subtotals
         $('.cart-item-lists').each(function() {
             const priceText = $(this).find('.price').text().replace(/[^\d]/g,
-                ''); // Remove currency symbols
+            ''); // Remove currency symbols
             const price = parseFloat(priceText) || 0; // Ensure numeric value
             subtotal += price; // Add to the subtotal
         });
 
         // Update subtotal and total amount in the UI
         $('#subtotal-amount').text(formatCurrency(subtotal));
-        $('#total-amount').text(formatCurrency(subtotal)); // Add additional charges if needed
+
+        const discount = $('#discount').text().replace(/[^\d]/g, '') | 0;
+        const shippingCost = $('#shipping-cost').text().replace(/[^\d]/g, '') | 0;
+        console.log("Discount : " + discount);
+
+        const totalAmount = (subtotal - parseFloat(discount)) + parseFloat(shippingCost);
+        $('#total-amount').text(formatCurrency(totalAmount)); // Add additional charges if needed
+
+        $("#nominal-payment").val("");
+        $("#nominal-return").val("");
+
     }
 
     function formatCurrency(amount) {
