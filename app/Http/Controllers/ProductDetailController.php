@@ -90,7 +90,8 @@ class ProductDetailController extends Controller
         //TODO add validation and updated_by based on user
 
         // Log request data for debugging
-        Log::info('Updating product details', $request->all());
+        // Log::info('Updating product details', $request->all());
+        // var_dump($request->all());
 
         DB::table('product_details')
             ->where('id', $request->id)

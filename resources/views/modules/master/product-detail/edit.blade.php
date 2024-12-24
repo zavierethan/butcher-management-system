@@ -54,6 +54,7 @@
                         <div class="card-body pt-10">
                             <form class="w-[60%]" method="POST" action="{{route('product-details.update')}}" >
                                 @csrf
+                                <input class="form-control form-control-md form-control-solid" type="hidden" name="id" id="id" value="{{$productDetails->id}}" />
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Produk</label>
