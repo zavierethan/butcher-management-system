@@ -56,19 +56,6 @@
                                 @csrf
                                 <input class="form-control form-control-md form-control-solid" type="hidden" name="id" id="id" value="{{$productDetails->id}}" />
                                 <input class="form-control form-control-md form-control-solid" type="hidden" name="product_id" id="product_id" value="{{$productDetails->product_id}}" />
-                                {{-- <div class="fv-row mb-5">
-                                    <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Cabang</label>
-                                        <div class="position-relative mb-3">
-                                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="branch_id">
-                                                <option value="">-</option>
-                                                @foreach($branches as $branch)
-                                                <option value="{{ $branch->id }}" <?php echo ($branch->id == $selectedBranchId) ? "selected" : ""; ?>>{{ $branch->code }} - {{ $branch->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div> --}}
 
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">

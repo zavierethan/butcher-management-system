@@ -84,7 +84,6 @@ class ProductDetailController extends Controller
             "end_period" => $request->calendar_event_end_date,
         ]);
 
-        // return redirect()->route('product-details.index');
         return redirect()->route('products.edit', ['id' => $request->product_id]);
     }
 
