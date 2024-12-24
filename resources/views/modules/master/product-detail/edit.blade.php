@@ -55,21 +55,8 @@
                             <form class="w-[60%]" method="POST" action="{{route('product-details.update')}}" >
                                 @csrf
                                 <input class="form-control form-control-md form-control-solid" type="hidden" name="id" id="id" value="{{$productDetails->id}}" />
-                                <div class="fv-row mb-5">
-                                    <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Produk</label>
-                                        <div class="position-relative mb-3">
-                                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="product_id">
-                                                <option value="">-</option>
-                                                @foreach($products as $product)
-                                                <option value="{{ $product->id }}" <?php echo ($product->id == $selectedProductId) ? "selected" : ""; ?>>{{ $product->code }} - {{ $product->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="separator my-5"></div>
-                                <div class="fv-row mb-5">
+                                <input class="form-control form-control-md form-control-solid" type="hidden" name="product_id" id="product_id" value="{{$productDetails->product_id}}" />
+                                {{-- <div class="fv-row mb-5">
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Cabang</label>
                                         <div class="position-relative mb-3">
@@ -81,7 +68,34 @@
                                             </select>
                                         </div>
                                     </div>
+                                </div> --}}
+
+                                <div class="fv-row mb-5">
+                                    <div class="mb-1">
+                                        <label class="form-label fw-bold fs-6 mb-2">Cabang</label>
+                                        <div class="position-relative mb-3">
+                                            @if(count($branches) === 0)
+                                                <!-- Hidden input to ensure branch_id is submitted -->
+                                                <input type="hidden" name="branch_id" value="{{ $productDetails->branch_id }}">
+                                            @endif
+                                            <select 
+                                                class="form-select form-select-solid" 
+                                                data-control="select2" 
+                                                data-placeholder="-" 
+                                                name="branch_id"
+                                                {{ count($branches) === 0 ? 'disabled' : '' }}>
+                                                <option value="">-</option>
+                                                @foreach($branches as $branch)
+                                                <option value="{{ $branch->id }}" {{ $branch->id == $selectedBranchId ? 'selected' : '' }}>
+                                                    {{ $branch->code }} - {{ $branch->name }}
+                                                </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
+
+
                                 <div class="separator my-5"></div>
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
@@ -120,7 +134,7 @@
                                 <div class="separator my-5"></div>
                                 <div class="flex justify-end">
                                     <button type="submit" class="btn btn-primary">Submit</button>
-                                    <a href="{{route('product-details.index')}}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{route('products.edit', ['id' => $productDetails->product_id])}}" class="btn btn-danger">Cancel</a>
                                 </div>
                             </form>
                         </div>
