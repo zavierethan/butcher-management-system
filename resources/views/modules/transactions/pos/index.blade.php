@@ -1175,6 +1175,10 @@ $(document).ready(function() {
                 $('.product-l').remove();
                 data.forEach(function(product) {
                     // Construct HTML for each product
+                    const discountHTML = product.discount !== null && !isNaN(parseFloat(product.discount))
+                        ? `<span class="fs-6 text-muted">${formatCurrency(parseFloat(product.discount))}</span>`
+                        : '';
+
                     const productItem = `<div class="col-md-4 mb-3 product-l"><div class="card p-6 pb-5 mw-100 product" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}">
                                             <div class="card-body text-center">
                                                 <img src="${product.url_path}" class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px" alt="" />
@@ -1183,7 +1187,10 @@ $(document).ready(function() {
                                                         <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">${product.name}</span>
                                                     </div>
                                                 </div>
-                                                <span class="text-success text-end fw-bold fs-1">${formatCurrency(parseFloat(product.price))}</span>
+                                                <div>
+                                                    <span class="text-success text-end fw-bold fs-1">${formatCurrency(parseFloat(product.price))}</span>
+                                                </div>
+                                                ${discountHTML}
                                             </div>
                                         </div></div>`;
                     // Append the product to the product list container

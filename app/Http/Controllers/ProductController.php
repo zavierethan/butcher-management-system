@@ -116,7 +116,19 @@ class ProductController extends Controller
     public function getListProducts(Request $request) {
         $params = $request->q;
 
-        $query = DB::table('products');
+        $query = DB::table('products')
+            ->leftJoin('product_details', 'products.id', '=', 'product_details.product_id')
+            ->leftJoin('product_categories', 'products.category_id', '=', 'product_categories.id')
+            ->select(
+                'products.*',
+                'product_categories.name as category_name',
+                'product_details.price',
+                'product_details.branch_id',
+                'product_details.discount',
+                'product_details.start_period',
+                'product_details.end_period'
+                )
+            ->where('products.is_active', '=', 1);
 
         if($params != null) {
             $query->where('name', 'like', '%'.strtoupper($params).'%');

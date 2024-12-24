@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use Log;
 
 class ProductDetailController extends Controller
 {
@@ -49,7 +50,10 @@ class ProductDetailController extends Controller
     }
 
     public function create() {
-        return view('modules.master.product-category.create');
+        $products = DB::table('products')->orderBy('name', 'asc')->get();
+        $branches = DB::table('branches')->orderBy('name', 'asc')->get();
+
+        return view('modules.master.product-detail.create', compact('products', 'branches'));
     }
 
     public function save(Request $request) {
@@ -61,39 +65,42 @@ class ProductDetailController extends Controller
             "branch_id" => $request->branch_id,
             "price" => $request->price,
             "discount" => $request->discount,
-            "start_period" => $request->start_period,
-            "end_period" => $request->end_period,
+            "start_period" => $request->calendar_event_start_date,
+            "end_period" => $request->calendar_event_end_date,
         ]);
 
         return redirect()->route('product-details.index');
     }
 
     public function edit($id) {
-        $productDetail = DB::table('product_details')->where('id', $id)->first();
+        $productDetails = DB::table('product_details')->where('id', $id)->first();
+        $products = DB::table('products')->orderBy('name', 'asc')->get();
+        $branches = DB::table('branches')->orderBy('name', 'asc')->get();
+        $selectedProductId = $productDetails->product_id;
+        $selectedBranchId = $productDetails->branch_id;
 
-        if (!$productDetail) {
+        if (!$productDetails) {
             return redirect()->route('product-details.index')->with('error', 'Product detail not found.');
         }
 
-        return view('modules.master.product-detail.edit', compact('productDetail'));
+        return view('modules.master.product-detail.edit', compact('productDetails', 'products', 'branches', 'selectedProductId', 'selectedBranchId'));
     }
 
     public function update(Request $request) {
-        // $request->validate([
-        //     'code' => 'required|string',
-        //     'name' => 'required|string',
-        //     'price' => 'required|numeric',
-        // ]);
-        
         //TODO add validation and updated_by based on user
+
+        // Log request data for debugging
+        Log::info('Updating product details', $request->all());
 
         DB::table('product_details')
             ->where('id', $request->id)
             ->update([
+                "product_id" => $request->product_id,
+                "branch_id" => $request->branch_id,
                 "price" => $request->price,
                 "discount" => $request->discount,
-                "start_period" => $request->start_period,
-                "end_period" => $request->end_period,
+                "start_period" => $request->calendar_event_start_date,
+                "end_period" => $request->calendar_event_end_date,
             ]);
 
         return redirect()->route('product-details.index');

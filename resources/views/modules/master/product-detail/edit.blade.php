@@ -52,7 +52,7 @@
                 <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
                     <div class="card">
                         <div class="card-body pt-10">
-                            <form class="w-[60%]" method="POST" action="{{route('product-details.update')}}">
+                            <form class="w-[60%]" method="POST" action="{{route('product-details.update')}}" >
                                 @csrf
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
@@ -61,7 +61,7 @@
                                             <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="product_id">
                                                 <option value="">-</option>
                                                 @foreach($products as $product)
-                                                <option value="{{ $product->id }}">{{ $product->code }} - {{ $product->name }}</option>
+                                                <option value="{{ $product->id }}" <?php echo ($product->id == $selectedProductId) ? "selected" : ""; ?>>{{ $product->code }} - {{ $product->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -75,7 +75,7 @@
                                             <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="branch_id">
                                                 <option value="">-</option>
                                                 @foreach($branches as $branch)
-                                                <option value="{{ $branch->id }}">{{ $branch->code }} - {{ $branch->name }}</option>
+                                                <option value="{{ $branch->id }}" <?php echo ($branch->id == $selectedBranchId) ? "selected" : ""; ?>>{{ $branch->code }} - {{ $branch->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -86,7 +86,16 @@
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Harga</label>
                                         <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="price" id="price" />
+                                            <input class="form-control form-control-md form-control-solid" type="text" name="price" id="price" value="{{ $productDetails->price }}" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="separator my-5"></div>
+                                <div class="fv-row mb-5">
+                                    <div class="mb-1">
+                                        <label class="form-label fw-bold fs-6 mb-2">Diskon</label>
+                                        <div class="position-relative mb-3">
+                                            <input class="form-control form-control-md form-control-solid" type="text" name="discount" id="discount" value="{{ $productDetails->discount }}" />
                                         </div>
                                     </div>
                                 </div>
@@ -95,25 +104,14 @@
                                 <div class="row row-cols-lg-2 g-10">
                                     <div class="col">
                                         <div class="fv-row mb-9">
-                                            <!--begin::Label-->
                                             <label class="fs-6 fw-semibold mb-2 required">Start Diskon</label>
-                                            <!--end::Label-->
-                                            <!--begin::Input-->
-                                            <input class="form-control form-control-solid" name="calendar_event_start_date" placeholder="Pick a start date" id="kt_calendar_datepicker_start_date" />
-                                            <!--end::Input-->
+                                            <input class="form-control form-control-solid" name="calendar_event_start_date" placeholder="Pick a start date" id="kt_calendar_datepicker_start_date" value="{{ $productDetails->start_period }}" />
                                         </div>
                                     </div>
-                                </div>
-                                <div class="separator my-5"></div>
-                                <div class="row row-cols-lg-2 g-10">
                                     <div class="col">
                                         <div class="fv-row mb-9">
-                                            <!--begin::Label-->
                                             <label class="fs-6 fw-semibold mb-2 required">End Diskon</label>
-                                            <!--end::Label-->
-                                            <!--begin::Input-->
-                                            <input class="form-control form-control-solid" name="calendar_event_end_date" placeholder="Pick an end date" id="kt_calendar_datepicker_end_date" />
-                                            <!--end::Input-->
+                                            <input class="form-control form-control-solid" name="calendar_event_end_date" placeholder="Pick an end date" id="kt_calendar_datepicker_end_date" value="{{ $productDetails->end_period }}"/>
                                         </div>
                                     </div>
                                 </div>
@@ -121,7 +119,7 @@
                                 <div class="separator my-5"></div>
                                 <div class="flex justify-end">
                                     <button type="submit" class="btn btn-primary">Submit</button>
-                                    <a href="{{route('product-categories.index')}}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{route('product-details.index')}}" class="btn btn-danger">Cancel</a>
                                 </div>
                             </form>
                         </div>
@@ -138,5 +136,21 @@
 @endsection
 
 @section('script')
+<!-- Include Flatpickr -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        flatpickr('#kt_calendar_datepicker_start_date', {
+            dateFormat: "Y-m-d",
+            enableTime: false
+        });
+        flatpickr('#kt_calendar_datepicker_end_date', {
+            dateFormat: "Y-m-d",
+            enableTime: false
+        });
+    });
+</script>
 
 @endsection
