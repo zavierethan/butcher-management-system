@@ -57,38 +57,13 @@
                                 <input class="form-control form-control-md form-control-solid" type="hidden" name="id" id="id" value="{{$productDetails->id}}" />
                                 <input class="form-control form-control-md form-control-solid" type="hidden" name="product_id" id="product_id" value="{{$productDetails->product_id}}" />
 
-                                <div class="fv-row mb-5">
-                                    <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Cabang</label>
-                                        <div class="position-relative mb-3">
-                                            @if(count($branches) === 0)
-                                                <!-- Hidden input to ensure branch_id is submitted -->
-                                                <input type="hidden" name="branch_id" value="{{ $productDetails->branch_id }}">
-                                            @endif
-                                            <select 
-                                                class="form-select form-select-solid" 
-                                                data-control="select2" 
-                                                data-placeholder="-" 
-                                                name="branch_id"
-                                                {{ count($branches) === 0 ? 'disabled' : '' }}>
-                                                <option value="">-</option>
-                                                @foreach($branches as $branch)
-                                                <option value="{{ $branch->id }}" {{ $branch->id == $selectedBranchId ? 'selected' : '' }}>
-                                                    {{ $branch->code }} - {{ $branch->name }}
-                                                </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                <div class="separator my-5"></div>
+                                <!--  -->
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Harga</label>
                                         <div class="position-relative mb-3">
                                             <input class="form-control form-control-md form-control-solid" type="text" name="price" id="price" value="{{ $productDetails->price }}" />
+                                            <input type="hidden" name="branch_id" value="{{ $productDetails->branch_id }}">
                                         </div>
                                     </div>
                                 </div>

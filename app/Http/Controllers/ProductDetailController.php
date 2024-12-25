@@ -33,7 +33,7 @@ class ProductDetailController extends Controller
             )
             ->where('products.is_active', '=', 1)
             ->where('branches.is_active', '=', 1)
-            ->where('product_details.branch_id', '=', $currentUserBranchId)
+            // ->where('product_details.branch_id', '=', $currentUserBranchId)
             ->where('product_details.product_id', '=', $id);
 
 
@@ -43,7 +43,7 @@ class ProductDetailController extends Controller
         $totalRecords = $query->count();
         $filteredRecords = $query->count();
         $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get();
-        
+
         $response = [
             'draw' => $request->input('draw'),
             'recordsTotal' => $totalRecords,
