@@ -54,12 +54,22 @@
                         <div class="card-body pt-10">
                             <form class="w-[60%]" method="POST" action="{{route('branches.update')}}">
                                 @csrf
+                                <input class="form-control form-control-md form-control-solid" type="hidden" name="id" id="id" value="{{$branch->id}}" />
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Kode</label>
                                         <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="code" id="code" value="{{$branch->code}}" />
-                                            <input class="form-control form-control-md form-control-solid" type="hidden" name="id" id="id" value="{{$branch->id}}" />
+                                            <input 
+                                                class="form-control form-control-md form-control-solid" 
+                                                type="text" 
+                                                name="code" 
+                                                id="code" 
+                                                value="{{$branch->code}}" 
+                                                maxlength="8" 
+                                                pattern="^[^\s]*$" 
+                                                title="Kode cannot contain spaces and must be at most 8 characters long" 
+                                                required
+                                            />
                                         </div>
                                     </div>
                                 </div>
