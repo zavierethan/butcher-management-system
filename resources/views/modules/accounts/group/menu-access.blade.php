@@ -136,7 +136,7 @@
                                                                 <div class="d-flex flex-column">
                                                                     <a href="#"
                                                                         class="fs-5 text-dark text-hover-primary fw-bolder">{{ $c->name }}</a>
-                                                                    <div class="fs-6 fw-bold text-muted">{{ $c->url }}
+                                                                    <div class="fs-6 fw-bold text-muted">{{ url($c->url) }}
                                                                     </div>
                                                                 </div>
                                                             </div>

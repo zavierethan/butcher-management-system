@@ -549,8 +549,7 @@
                             <div class="card-body p-3">
                                 <div class="row">
                                     <div class="col-md-8">
-                                        <select class="form-select form-select-solid" data-control="select2"
-                                            data-placeholder="Pilih Customer" name="customer" id="customer">
+                                        <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Customer" name="customer" id="customer">
                                             <option value=""></option>
                                         </select>
                                     </div>
@@ -1028,7 +1027,7 @@ $(document).ready(function() {
 
             const priceElement = existingProduct.find('.price');
             const newSubtotal = productPrice * newQuantity;
-            priceElement.text(formatCurrency(newSubtotal));
+            priceElement.text(formatCurrency(mround(newSubtotal, 500)));
         } else {
             // Add new product to the cart
             var productItem = `<div class="container py-1 cart-item-lists" id="product-id-${productId}">
@@ -1129,7 +1128,7 @@ $(document).ready(function() {
 
             const priceElement = existingProduct.find('.price');
             const newSubtotal = productPrice * newQuantity;
-            priceElement.text(formatCurrency(newSubtotal));
+            priceElement.text(formatCurrency(mround(newSubtotal, 500)));
         }
 
         calculateTotals();
@@ -1428,6 +1427,10 @@ $(document).ready(function() {
             minimumFractionDigits: 0, // Optional, remove decimals if not needed
         });
         return formatter.format(amount);
+    }
+
+    function mround(number, multiple) {
+        return Math.round(number / multiple) * multiple;
     }
 });
 </script>

@@ -65,15 +65,9 @@
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <div>
-                                        <select class="form-select form-select-solid" multiple="multiple"
-                                            data-kt-select2="true" data-close-on-select="false"
-                                            data-placeholder="Select option"
-                                            data-dropdown-parent="#kt_menu_65a12143712c8" data-allow-clear="true">
-                                            <option></option>
-                                            <option value="1">Approved</option>
-                                            <option value="2">Pending</option>
-                                            <option value="2">In Process</option>
-                                            <option value="2">Rejected</option>
+                                        <select class="form-select form-select-solid" data-control="select2"
+                                            data-placeholder="Pilih Customer" name="customer" id="customer">
+                                            <option value=""></option>
                                         </select>
                                     </div>
                                     <!--end::Input-->
@@ -82,22 +76,12 @@
                                 <!--begin::Input group-->
                                 <div class="mb-10">
                                     <!--begin::Label-->
-                                    <label class="form-label fw-semibold">Member Type:</label>
+                                    <label class="form-label fw-semibold">Tanggal Mulai</label>
                                     <!--end::Label-->
                                     <!--begin::Options-->
                                     <div class="d-flex">
                                         <!--begin::Options-->
-                                        <label class="form-check form-check-sm form-check-custom form-check-solid me-5">
-                                            <input class="form-check-input" type="checkbox" value="1" />
-                                            <span class="form-check-label">Author</span>
-                                        </label>
-                                        <!--end::Options-->
-                                        <!--begin::Options-->
-                                        <label class="form-check form-check-sm form-check-custom form-check-solid">
-                                            <input class="form-check-input" type="checkbox" value="2"
-                                                checked="checked" />
-                                            <span class="form-check-label">Customer</span>
-                                        </label>
+                                        <input type="date" class="form-control form-control-solid" />
                                         <!--end::Options-->
                                     </div>
                                     <!--end::Options-->
@@ -106,16 +90,15 @@
                                 <!--begin::Input group-->
                                 <div class="mb-10">
                                     <!--begin::Label-->
-                                    <label class="form-label fw-semibold">Notifications:</label>
+                                    <label class="form-label fw-semibold">Tanggal Mulai</label>
                                     <!--end::Label-->
-                                    <!--begin::Switch-->
-                                    <div
-                                        class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                        <input class="form-check-input" type="checkbox" value="" name="notifications"
-                                            checked="checked" />
-                                        <label class="form-check-label">Enabled</label>
+                                    <!--begin::Options-->
+                                    <div class="d-flex">
+                                        <!--begin::Options-->
+                                        <input type="date" class="form-control form-control-solid" />
+                                        <!--end::Options-->
                                     </div>
-                                    <!--end::Switch-->
+                                    <!--end::Options-->
                                 </div>
                                 <!--end::Input group-->
                                 <!--begin::Actions-->
@@ -174,7 +157,7 @@
                                     </span>
                                     <!--end::Svg Icon-->
                                     <input type="text" data-kt-customer-table-filter="search"
-                                        class="form-control form-control-solid w-250px ps-15" placeholder="Search" />
+                                        class="form-control form-control-solid w-250px ps-15" placeholder="kode Transaksi" />
                                 </div>
                                 <!--end::Toolbar-->
                             </div>
@@ -281,144 +264,151 @@
 
 @section('script')
 <script>
-$("#kt_transactions_table").DataTable({
-    processing: true,
-    serverSide: true,
-    paging: true, // Enable pagination
-    pageLength: 10, // Number of rows per page
-    ajax: {
-        url: `{{route('orders.get-lists')}}`, // Replace with your route
-        type: 'GET',
-        dataSrc: function(json) {
-            return json.data; // Map the 'data' field
-        }
-    },
-    columns: [{
-            data: 'code',
-            name: 'code'
-        },
-        {
-            data: 'transaction_date',
-            name: 'transaction_date',
-        },
-        {
-            data: 'customer_name',
-            name: 'customer_name'
-        },
-        {
-            data: 'payment_method',
-            name: 'payment_method',
-            render: function(data, type, row) {
-                var paymentMethod = "";
-
-                if (row.payment_method == 1) {
-                    paymentMethod = "Tunai"
-                }
-
-                if (row.payment_method == 2) {
-                    paymentMethod = "Piutang"
-                }
-
-                if (row.payment_method == 3) {
-                    paymentMethod = "COD"
-                }
-
-                if (row.payment_method == 4) {
-                    paymentMethod = "Transfer"
-                }
-
-                return paymentMethod;
+$(document).ready(function() {
+    const table = $("#kt_transactions_table").DataTable({
+        processing: true,
+        serverSide: true,
+        paging: true, // Enable pagination
+        pageLength: 10, // Number of rows per page
+        ajax: {
+            url: `{{route('orders.get-lists')}}`, // Replace with your route
+            type: 'GET',
+            dataSrc: function(json) {
+                return json.data; // Map the 'data' field
             }
         },
-        {
-            data: 'total_amount',
-            name: 'total_amount'
-        },
-        {
-            data: 'status',
-            name: 'status',
-            render: function(data, type, row) {
-                var status = "";
+        columns: [{
+                data: 'code',
+                name: 'code'
+            },
+            {
+                data: 'transaction_date',
+                name: 'transaction_date',
+            },
+            {
+                data: 'customer_name',
+                name: 'customer_name'
+            },
+            {
+                data: 'payment_method',
+                name: 'payment_method',
+                render: function(data, type, row) {
+                    var paymentMethod = "";
 
-                if (row.status == 1) {
-                    status = `<span class="badge bg-success text-dark">Lunas</span>`
+                    if (row.payment_method == 1) {
+                        paymentMethod = "Tunai"
+                    }
+
+                    if (row.payment_method == 2) {
+                        paymentMethod = "Piutang"
+                    }
+
+                    if (row.payment_method == 3) {
+                        paymentMethod = "COD"
+                    }
+
+                    if (row.payment_method == 4) {
+                        paymentMethod = "Transfer"
+                    }
+
+                    return paymentMethod;
                 }
+            },
+            {
+                data: 'total_amount',
+                name: 'total_amount'
+            },
+            {
+                data: 'status',
+                name: 'status',
+                render: function(data, type, row) {
+                    var status = "";
 
-                if (row.status == 2) {
-                    status = `<span class="badge bg-warning text-dark">Pending</span>`
+                    if (row.status == 1) {
+                        status = `<span class="badge bg-success text-dark">Lunas</span>`
+                    }
+
+                    if (row.status == 2) {
+                        status = `<span class="badge bg-warning text-dark">Pending</span>`
+                    }
+
+                    if (row.status == 3) {
+                        status = `<span class="badge bg-danger text-dark">Batal</span>`
+                    }
+
+                    return status;
                 }
-
-                if (row.status == 3) {
-                    status = `<span class="badge bg-danger text-dark">Batal</span>`
-                }
-
-                return status;
-            }
-        },
-        {
-            data: 'created_by',
-            name: 'created_by'
-        },
-        {
-            data: null, // No direct field from the server
-            name: 'action',
-            orderable: false, // Disable ordering for this column
-            searchable: false, // Disable searching for this column
-            render: function(data, type, row) {
-                return `
+            },
+            {
+                data: 'created_by',
+                name: 'created_by'
+            },
+            {
+                data: null, // No direct field from the server
+                name: 'action',
+                orderable: false, // Disable ordering for this column
+                searchable: false, // Disable searching for this column
+                render: function(data, type, row) {
+                    return `
                         <div class="text-center">
                             <a href="/orders/receipt/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" target="_blank" title="Cetak Faktur"><i class="fa-solid fa-print"></i></a>
                             <a href="/orders/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail Transaksi"><i class="fa-solid fa-magnifying-glass"></i></a>
                             <a href="#" class="btn btn-sm btn-light btn-active-light-primary" title="Sync Jurnal"><i class="fa-solid fa-arrow-right-arrow-left"></i></a>
                         <div>
                     `;
+                }
             }
-        }
-    ]
-});
-
-$("#btn-form-export").on("click", function() {
-
-    const start_date = $("#start-date").val();
-    const end_date = $("#end-date").val();
-
-    $.ajax({
-        url: `{{url('/orders/export')}}`,
-        type: 'GET',
-        data: {
-            start_date: start_date,
-            end_date: end_date
-        },
-        xhrFields: {
-            responseType: 'blob', // Treat response as binary
-        },
-        success: function(data, status, xhr) {
-            $("#kt_modal_export_filter").modal('hide');
-            // Create a Blob object from the response
-            const blob = new Blob([data], {
-                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            });
-
-            // Create a link element for downloading
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = 'transaction-reports.xlsx'; // Set the filename
-            document.body.appendChild(link); // Append link to the body
-            link.click(); // Trigger the download
-            document.body.removeChild(link); // Clean up the DOM
-
-            Swal.fire({
-                title: 'Success!',
-                text: 'Transaction report exported successfully.',
-                icon: 'success',
-                confirmButtonText: 'OK',
-            });
-        },
-        error: function(xhr, status, error) {
-            Swal.fire('Error!', 'Failed to export the transaction report.', 'error');
-        },
+        ]
     });
 
+    $('[data-kt-customer-table-filter="search"]').on('keyup', function() {
+        const searchTerm = $(this).val(); // Get the value from the search input
+        table.search(searchTerm).draw(); // Trigger the search and refresh the DataTable
+    });
+
+    $("#btn-form-export").on("click", function() {
+
+        const start_date = $("#start-date").val();
+        const end_date = $("#end-date").val();
+
+        $.ajax({
+            url: `{{url('/orders/export')}}`,
+            type: 'GET',
+            data: {
+                start_date: start_date,
+                end_date: end_date
+            },
+            xhrFields: {
+                responseType: 'blob', // Treat response as binary
+            },
+            success: function(data, status, xhr) {
+                $("#kt_modal_export_filter").modal('hide');
+                // Create a Blob object from the response
+                const blob = new Blob([data], {
+                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                });
+
+                // Create a link element for downloading
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = 'transaction-reports.xlsx'; // Set the filename
+                document.body.appendChild(link); // Append link to the body
+                link.click(); // Trigger the download
+                document.body.removeChild(link); // Clean up the DOM
+
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Transaction report exported successfully.',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                });
+            },
+            error: function(xhr, status, error) {
+                Swal.fire('Error!', 'Failed to export the transaction report.', 'error');
+            },
+        });
+
+    });
 });
 </script>
 @endsection

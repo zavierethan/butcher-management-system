@@ -38,6 +38,14 @@ class OrderController extends Controller
             $query->where('transactions.branch_id', Auth::user()->branch_id);
         }
 
+        // Apply global search if provided
+        $searchValue = $request->input('search.value'); // This is where DataTables sends the search input
+        if (!empty($searchValue)) {
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('transactions.code', 'like', '%' . strtoupper($searchValue) . '%');
+            });
+        }
+
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
 

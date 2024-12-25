@@ -151,4 +151,11 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/receipt/{id}', [App\Http\Controllers\OrderController::class, 'printReceipt'])->name('print-receipt');
         });
     });
+
+    // Productions
+    Route::prefix('productions')->group(function () {
+        Route::name('productions.')->group(function () {
+            Route::get('/', [App\Http\Controllers\ProductionController::class, 'index'])->name('index');
+        });
+    });
 });
