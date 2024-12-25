@@ -108,7 +108,7 @@
                         <td>: {{$info->code}}</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: bold;">Waktu Pesanan</td>
+                        <td style="font-weight: bold;">Tanggal</td>
                         <td>: {{$info->transaction_date}}</td>
                     </tr>
                     <tr>

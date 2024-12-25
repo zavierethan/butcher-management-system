@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use Auth;
 
 class ProductController extends Controller
 {
@@ -115,6 +116,7 @@ class ProductController extends Controller
 
     public function getListProducts(Request $request) {
         $params = $request->q;
+        $branchId = $request->branch_id;
 
         $query = DB::table('products')
             ->leftJoin('product_details', 'products.id', '=', 'product_details.product_id')
@@ -128,16 +130,17 @@ class ProductController extends Controller
                 'product_details.start_period',
                 'product_details.end_period'
                 )
+            ->where('product_details.branch_id', $branchId)
             ->where('products.is_active', '=', 1);
 
         if($params != null) {
-            $query->where('name', 'like', '%'.strtoupper($params).'%');
+            $query->where('products.name', 'like', '%'.strtoupper($params).'%');
         }
 
         $totalRecords = $query->count();
         $filteredRecords = $query->count();
 
-        $data = $query->orderBy('name', 'asc')->get();
+        $data = $query->orderBy('products.name', 'asc')->get();
 
         // Map url_path
         $data = $data->map(function ($product) {

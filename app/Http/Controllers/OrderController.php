@@ -34,7 +34,7 @@ class OrderController extends Controller
                 ->leftJoin('users', 'users.id', '=', 'transactions.created_by')
                 ->leftJoin('branches', 'branches.id', '=', 'users.branch_id');
 
-        if(Auth::user()->group_id != 1 || Auth::user()->branch_id != 1) {
+        if(Auth::user()->group_id != 1) {
             $query->where('transactions.branch_id', Auth::user()->branch_id);
         }
 
@@ -96,8 +96,19 @@ class OrderController extends Controller
         ], 200);
     }
 
-    public function export() {
-        return Excel::download(new TransactionExport, 'siswa.xlsx');
+    public function export(Request $request) {
+        // Generate raw Excel data
+        $export = new TransactionExport($request->start_date, $request->end_date);
+        $excelData = Excel::raw($export, \Maatwebsite\Excel\Excel::XLSX);
+
+        // Return the data as a proper response
+        return response($excelData, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="transaction-reports.xlsx"',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+        ]);
     }
 
     public function printReceipt($id) {

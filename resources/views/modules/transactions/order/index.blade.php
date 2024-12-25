@@ -131,7 +131,8 @@
                         </div>
                         <!--end::Menu 1-->
                     </div>
-                    <a href="{{route('orders.export')}}" class="btn btn-sm fw-bold btn-secondary">Export ke Excel</a>
+                    <a href="javascript(0);" class="btn btn-sm fw-bold btn-secondary" data-bs-toggle="modal"
+                        data-bs-target="#kt_modal_export_filter">Export ke Excel</a>
                     <!--end::Secondary button-->
                 </div>
                 <!--end::Actions-->
@@ -172,7 +173,8 @@
                                         </svg>
                                     </span>
                                     <!--end::Svg Icon-->
-                                    <input type="text" data-kt-customer-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Search" />
+                                    <input type="text" data-kt-customer-table-filter="search"
+                                        class="form-control form-control-solid w-250px ps-15" placeholder="Search" />
                                 </div>
                                 <!--end::Toolbar-->
                             </div>
@@ -217,6 +219,63 @@
         <!--end::Content-->
     </div>
     <!--end::Content wrapper-->
+</div>
+
+<div class="modal fade" id="kt_modal_export_filter" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog mw-650px">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div class="modal-header pb-0 border-0 justify-content-end">
+                <!--begin::Close-->
+                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                    <i class="ki-duotone ki-cross fs-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </div>
+                <!--end::Close-->
+            </div>
+            <!--begin::Modal header-->
+            <!--begin::Modal body-->
+            <div class="modal-body scroll-y mx-5 mx-xl-18 pt-0 pb-15">
+                <!--begin::Heading-->
+                <div class="text-center mb-13">
+                    <!--begin::Title-->
+                    <h1 class="mb-3">Export Filters</h1>
+                    <!--end::Title-->
+                </div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Tanggal Mulai</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid" type="date"
+                                id="start-date" />
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Tanggal Akhir</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid" type="date" id="end-date" />
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="flex justify-content-center">
+                    <button type="button" class="btn btn-primary" id="btn-form-export">Submit</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
+                        id="btn-form-close">Batal</button>
+                </div>
+            </div>
+            <!--end::Modal body-->
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
 </div>
 @endsection
 
@@ -316,6 +375,50 @@ $("#kt_transactions_table").DataTable({
             }
         }
     ]
+});
+
+$("#btn-form-export").on("click", function() {
+
+    const start_date = $("#start-date").val();
+    const end_date = $("#end-date").val();
+
+    $.ajax({
+        url: `{{url('/orders/export')}}`,
+        type: 'GET',
+        data: {
+            start_date: start_date,
+            end_date: end_date
+        },
+        xhrFields: {
+            responseType: 'blob', // Treat response as binary
+        },
+        success: function(data, status, xhr) {
+            $("#kt_modal_export_filter").modal('hide');
+            // Create a Blob object from the response
+            const blob = new Blob([data], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            });
+
+            // Create a link element for downloading
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = 'transaction-reports.xlsx'; // Set the filename
+            document.body.appendChild(link); // Append link to the body
+            link.click(); // Trigger the download
+            document.body.removeChild(link); // Clean up the DOM
+
+            Swal.fire({
+                title: 'Success!',
+                text: 'Transaction report exported successfully.',
+                icon: 'success',
+                confirmButtonText: 'OK',
+            });
+        },
+        error: function(xhr, status, error) {
+            Swal.fire('Error!', 'Failed to export the transaction report.', 'error');
+        },
+    });
+
 });
 </script>
 @endsection

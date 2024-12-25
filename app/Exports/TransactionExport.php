@@ -9,9 +9,15 @@ use Auth;
 
 class TransactionExport implements FromCollection, WithHeadings
 {
-    /**
-    * @return \Illuminate\Support\Collection
-    */
+    protected $startDate;
+    protected $endDate;
+
+    public function __construct($startDate, $endDate)
+    {
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
+    }
+
     public function collection()
     {
         // Fetching data from the database
@@ -44,8 +50,8 @@ class TransactionExport implements FromCollection, WithHeadings
             )
             ->leftJoin('transaction_items', 'transaction_items.transaction_id', '=', 'transactions.id')
             ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')
-            ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id');
-
+            ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
+            ->whereBetween('transactions.transaction_date', [$this->startDate, $this->endDate]);
 
         if(Auth::user()->group_id != 1 || Auth::user()->branch_id != 1) {
             $query->where('transactions.branch_id', Auth::user()->branch_id);

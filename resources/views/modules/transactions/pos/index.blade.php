@@ -532,7 +532,7 @@
                                             id="product-search" />
                                     </div>
                                     <div class="ms-auto">
-                                        <input type="date" class="form-control form-control-solid" />
+                                        <input type="date" class="form-control form-control-solid"/>
                                     </div>
                                 </div>
                             </div>
@@ -653,7 +653,8 @@
                                             class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4"
                                             data-kt-button="true">
                                             <!--begin::Input-->
-                                            <input class="btn-check" type="radio" name="payment_method" value="1" />
+                                            <input class="btn-check" type="radio" name="payment_method" value="1"
+                                                id="payment-method-cash" />
                                             <!--end::Input-->
                                             <!--begin::Icon-->
                                             <i class="ki-duotone ki-dollar fs-2hx mb-2 pe-0">
@@ -723,19 +724,24 @@
                                         <!--end::Radio-->
                                     </div>
                                     <!--end::Radio group-->
-                                    <div class="fv-row mb-5">
-                                        <div class="mb-1">
-                                            <label class="form-label fw-bold fs-6 mb-2">Masukan Nominal Bayar</label>
-                                            <div class="position-relative mb-3">
-                                                <input class="form-control form-control-md form-control-solid" type="number" id="nominal-payment"/>
+                                    <div id="form-nominal">
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Masukan Nominal
+                                                    Bayar</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid"
+                                                        type="number" id="nominal-payment" />
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="fv-row mb-5">
-                                        <div class="mb-1">
-                                            <label class="form-label fw-bold fs-6 mb-2">Nominal Kembali</label>
-                                            <div class="position-relative mb-3">
-                                                <input class="form-control form-control-md form-control-solid" type="text" id="nominal-return" readonly/>
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Nominal Kembali</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid"
+                                                        type="text" id="nominal-return" readonly />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -993,6 +999,7 @@
 <script>
 $(document).ready(function() {
     $("#product-loader").show();
+    $("#form-nominal").hide();
     getProductList();
     getCustomers();
 
@@ -1307,6 +1314,15 @@ $(document).ready(function() {
         $('#kt_modal_edit_product_item').modal('hide');
     });
 
+    $('#payment-method .btn-check').on('change', function() {
+
+        if ($(this).val() === '1' && $(this).is(':checked')) {
+            $("#form-nominal").show();
+        } else {
+            $("#form-nominal").hide();
+        }
+    });
+
     function getProductList(param) {
         $("#product-loader").show();
         $.ajax({
@@ -1314,6 +1330,7 @@ $(document).ready(function() {
             type: 'GET',
             data: {
                 q: param,
+                branch_id: `{{Auth::user()->branch_id}}`
             },
             dataType: 'json',
             success: function(response) {
@@ -1323,9 +1340,9 @@ $(document).ready(function() {
                 $('.product-l').remove();
                 data.forEach(function(product) {
                     // Construct HTML for each product
-                    const discountHTML = product.discount !== null && !isNaN(parseFloat(product.discount))
-                        ? `<span class="fs-6 text-muted">${formatCurrency(parseFloat(product.discount))}</span>`
-                        : '';
+                    const discountHTML = product.discount !== 0 && !isNaN(parseFloat(product.discount)) ?
+                        `<span class="fs-6 text-muted">${formatCurrency(parseFloat(product.discount))}</span>` :
+                        '';
 
                     const productItem = `<div class="col-md-4 mb-3 product-l"><div class="card p-6 pb-5 mw-100 product" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}">
                                             <div class="card-body text-center">
@@ -1384,7 +1401,7 @@ $(document).ready(function() {
         // Iterate through each product in the cart and sum up their subtotals
         $('.cart-item-lists').each(function() {
             const priceText = $(this).find('.price').text().replace(/[^\d]/g,
-            ''); // Remove currency symbols
+                ''); // Remove currency symbols
             const price = parseFloat(priceText) || 0; // Ensure numeric value
             subtotal += price; // Add to the subtotal
         });
