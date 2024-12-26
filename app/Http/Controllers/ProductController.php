@@ -59,17 +59,34 @@ class ProductController extends Controller
             $imagePath = $request->file('media')->store('products', 'public');
         }
 
-        //TODO set created_by and updated)_by
-        DB::table('products')->insert([
-            "code" => $request->code,
-            "name" => $request->name,
-            "is_active" => $request->is_active,
-            "category_id" => $request->category_id,
-            "url_path" => $imagePath
-        ]);
+        DB::transaction(function () use ($request, $imagePath) {
+            // Insert new product and retrieve its ID
+            $productId = DB::table('products')->insertGetId([
+                "code" => $request->code,
+                "name" => $request->name,
+                "is_active" => $request->is_active,
+                "category_id" => $request->category_id,
+                "url_path" => $imagePath
+            ]);
+
+            // Retrieve all branches
+            $branches = DB::table('branches')->get();
+
+            // Prepare product_details entries
+            $productDetails = $branches->map(function ($branch) use ($productId) {
+                return [
+                    'product_id' => $productId,
+                    'branch_id' => $branch->id,
+                ];
+            })->toArray();
+
+            // Insert into product_details
+            DB::table('product_details')->insert($productDetails);
+        });
 
         return redirect()->route('products.index');
     }
+
 
     public function edit($id) {
         $product = DB::table('products')->where('id', $id)->first();

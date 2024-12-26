@@ -44,19 +44,46 @@ class BranchController extends Controller
         return view('modules.master.branch.create');
     }
 
+    // public function save(Request $request) {
+    //     $baseUrl = config('app.url');
+
+    //     //TODO set created_by and updated)_by
+    //     DB::table('branches')->insert([
+    //         "code" => $request->code,
+    //         "name" => $request->name,
+    //         "address" => $request->address,
+    //         "is_active" => $request->is_active,
+    //     ]);
+
+    //     return redirect()->route('branches.index');
+    // }
+
     public function save(Request $request) {
         $baseUrl = config('app.url');
 
-        //TODO set created_by and updated)_by
-        DB::table('branches')->insert([
+        // Insert branch baru ke branches table dan get ID nya
+        $branchId = DB::table('branches')->insertGetId([
             "code" => $request->code,
             "name" => $request->name,
             "address" => $request->address,
             "is_active" => $request->is_active,
         ]);
 
+        $products = DB::table('products')->get();
+        // buat entry product details untuk di insert
+        $productDetails = $products->map(function ($product) use ($branchId) {
+            return [
+                'product_id' => $product->id,
+                'branch_id' => $branchId,
+            ];
+        })->toArray();
+
+        // Insert product details untuk branch baru tersebut
+        DB::table('product_details')->insert($productDetails);
+
         return redirect()->route('branches.index');
     }
+
 
     public function edit($id) {
         $branch = DB::table('branches')->where('id', $id)->first();

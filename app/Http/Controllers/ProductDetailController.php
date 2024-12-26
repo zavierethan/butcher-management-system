@@ -31,11 +31,7 @@ class ProductDetailController extends Controller
                 'branches.code as branch_code',
                 'branches.name as branch_name'
             )
-            ->where('products.is_active', '=', 1)
-            ->where('branches.is_active', '=', 1)
-            // ->where('product_details.branch_id', '=', $currentUserBranchId)
             ->where('product_details.product_id', '=', $id);
-
 
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
@@ -125,4 +121,25 @@ class ProductDetailController extends Controller
 
         return redirect()->route('products.edit', ['id' => $request->product_id]);
     }
+
+    public function updateStatus(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:product_details,id',
+            'is_active' => 'required|boolean',
+        ]);
+
+        // Update the 'is_active' column for the specific product
+        $product = DB::table('product_details')
+                    ->where('id', $validated['id'])
+                    ->update(['is_active' => $validated['is_active']]);
+
+        if ($product) {
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false], 500);
+        }
+    }
+
+
 }

@@ -108,6 +108,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::post('/save', [App\Http\Controllers\ProductDetailController::class, 'save'])->name('save');
             Route::get('/edit/{id}', [App\Http\Controllers\ProductDetailController::class, 'edit'])->name('edit');
             Route::post('/update', [App\Http\Controllers\ProductDetailController::class, 'update'])->name('update');
+            Route::post('/update-status', [App\Http\Controllers\ProductDetailController::class, 'updateStatus'])->name('update-status');
         });
     });
 
