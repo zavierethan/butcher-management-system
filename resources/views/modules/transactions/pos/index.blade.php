@@ -497,7 +497,7 @@
                     </ul>
                 </div>
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
-                    <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Store" id="branch-id" disabled>
+                    <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Store" id="branch-id">
                         @foreach($branches as $branch)
                         <option value="{{$branch->id}}" <?php echo ($branch->id == Auth::user()->branch_id) ? "selected" : ""; ?>>{{$branch->code}}</option>
                         @endforeach
@@ -1195,6 +1195,7 @@ $(document).ready(function() {
                 const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
                 const customerId = $('#customer').val();
                 const butcherName = $('#butcher-name').val();
+                const branchId = $('#branch-id').val();
 
                 console.log(paymentMethod);
 
@@ -1208,7 +1209,8 @@ $(document).ready(function() {
                         customer_id: customerId,
                         butcher_name: butcherName,
                         discount: discount,
-                        shipping_cost: shippingCost
+                        shipping_cost: shippingCost,
+                        branch_id : branchId
                     },
                     details: products
                 };
@@ -1226,12 +1228,19 @@ $(document).ready(function() {
                     success: function(response) {
                         Swal.fire({
                             title: 'Suceess !',
-                            text: 'Transaksi berhasil di simpan',
+                            text: `Transaksi berhasil di simpan dengan Nomor Transaksi ${response.transaction_code}`,
                             icon: 'success',
-                            confirmButtonText: 'OK'
+                            confirmButtonText: 'Cetak Faktur',
+                            allowOutsideClick: false
                         }).then((result) => {
-                            location.href =
-                                `{{route('transactions.index')}}`;
+                            let receiptUrl = `{{ route('orders.print-receipt', ['id' => '__transaction_id__']) }}`;
+                            receiptUrl = receiptUrl.replace('__transaction_id__', response.transaction_id);
+
+                            // Open the receipt in a new tab
+                            window.open(receiptUrl, '_blank');
+
+                            // Redirect the current page to the transaction index
+                            location.href = `{{ route('transactions.index') }}`;
                         });
                     },
                     error: function(xhr, status, error) {

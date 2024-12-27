@@ -41,8 +41,10 @@ class TransactionController extends Controller
                 $status = 1;
             }
 
+            $transactionCode = DB::select('SELECT generate_transaction_code(?) AS transaction_code', [$branchCode])[0]->transaction_code;
+
             $transactionId = DB::table('transactions')->insertGetId([
-                "code" => DB::select('SELECT generate_transaction_code(?) AS transaction_code', [$branchCode])[0]->transaction_code,
+                "code" => $transactionCode,
                 "transaction_date" => date("Y-m-d"),
                 "customer_id" => $payloads["header"]["customer_name"],
                 "total_amount" => $payloads["header"]["total_amount"],
@@ -53,7 +55,7 @@ class TransactionController extends Controller
                 "shipping_cost" => $payloads["header"]["shipping_cost"],
                 "status" => $status, // 1 = Lunas, 2 = Pending, 3 = Batal
                 "created_by" => Auth::user()->id,
-                "branch_id" => Auth::user()->branch_id,
+                "branch_id" => $payloads["header"]["branch_id"],
             ]);
 
             // Save the transaction details
@@ -74,6 +76,7 @@ class TransactionController extends Controller
             // Return success response
             return response()->json([
                 'message' => 'Transaction successfully created',
+                'transaction_code' => $transactionCode,
                 'transaction_id' => $transactionId,
             ], 201);
 
