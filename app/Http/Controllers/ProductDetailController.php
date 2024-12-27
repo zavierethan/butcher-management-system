@@ -106,20 +106,29 @@ class ProductDetailController extends Controller
     }
 
     public function update(Request $request) {
-        //TODO add validation and updated_by based on user
+        $rules = [
+            'id' => 'required|integer|exists:product_details,id',
+            'price' => 'nullable|numeric',
+            'discount' => 'nullable|numeric',
+            'start_period' => 'nullable|date',
+            'end_period' => 'nullable|date',
+        ];
 
-        DB::table('product_details')
-            ->where('id', $request->id)
-            ->update([
-                "product_id" => $request->product_id,
-                "branch_id" => $request->branch_id,
-                "price" => $request->price,
-                "discount" => $request->discount,
-                "start_period" => $request->calendar_event_start_date,
-                "end_period" => $request->calendar_event_end_date,
-            ]);
+        // Validate the request
+        $validatedData = $request->validate($rules);
 
-        return redirect()->route('products.edit', ['id' => $request->product_id]);
+        // Prepare data for update
+        $updateData = array_filter($validatedData, function ($key) {
+            return in_array($key, ['price', 'discount', 'start_period', 'end_period']);
+        }, ARRAY_FILTER_USE_KEY);
+
+        // Perform the update
+        $updated = DB::table('product_details')
+            ->where('id', $validatedData['id'])
+            ->update($updateData);
+
+        // Return JSON response
+        return response()->json(['success' => (bool) $updated]);
     }
 
     public function updateStatus(Request $request)
@@ -141,37 +150,33 @@ class ProductDetailController extends Controller
         }
     }
 
-    public function updateRow(Request $request)
-    {
-        // Base validation rules
-        $rules = [
-            'id' => 'required|integer|exists:product_details,id',
-            'field' => 'required|string|in:price,discount,start_period,end_period',
-        ];
+    // public function updateRow(Request $request)
+    // {
+    //     $rules = [
+    //         'id' => 'required|integer|exists:product_details,id',
+    //         'price' => 'nullable|numeric',
+    //         'discount' => 'nullable|numeric',
+    //         'start_period' => 'nullable|date',
+    //         'end_period' => 'nullable|date',
+    //     ];
 
-        // Add conditional validation for `value`
-        $field = $request->get('field');
-        if (in_array($field, ['price', 'discount'])) {
-            $rules['value'] = 'nullable|numeric';
-        } elseif (in_array($field, ['start_period', 'end_period'])) {
-            $rules['value'] = 'nullable|date';
-        }
+    //     // Validate the request
+    //     $validatedData = $request->validate($rules);
 
-        // Validate the request
-        $validatedData = $request->validate($rules);
+    //     // Prepare data for update
+    //     $updateData = array_filter($validatedData, function ($key) {
+    //         return in_array($key, ['price', 'discount', 'start_period', 'end_period']);
+    //     }, ARRAY_FILTER_USE_KEY);
 
-        // Perform the update
-        $updated = DB::table('product_details')
-            ->where('id', $validatedData['id'])
-            ->update([$validatedData['field'] => $validatedData['value']]);
+    //     // Perform the update
+    //     $updated = DB::table('product_details')
+    //         ->where('id', $validatedData['id'])
+    //         ->update($updateData);
 
-        // Return a response
-        if ($updated) {
-            return response()->json(['success' => true]);
-        }
+    //     // Return JSON response
+    //     return response()->json(['success' => (bool) $updated]);
+    // }
 
-        return response()->json(['success' => false]);
-    }
 
     public function updateAllPrice(Request $request)
     {
