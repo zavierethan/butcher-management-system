@@ -155,10 +155,6 @@
                     <!--end::Page title-->
                     <!--begin::Actions-->
                     <div class="d-flex align-items-center gap-2 gap-lg-3">
-                        <!--begin::Secondary button-->
-                        <a href="#" class="btn btn-sm fw-bold btn-secondary" data-bs-toggle="modal"
-                            data-bs-target="#kt_modal_create_app">Export</a>
-                        <!--end::Secondary button-->
                         <!--begin::Primary button-->
                         <a href="{{route('product-details.create', ['product_id' => $product->id])}}" class="btn btn-sm fw-bold btn-primary">New</a>
                         <!--end::Primary button-->
@@ -210,11 +206,11 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">Cabang</th>
-                                        <th class="min-w-125px">Nama Produk</th>
                                         <th class="min-w-125px">Harga</th>
                                         <th class="min-w-125px">Diskon</th>
                                         <th class="min-w-125px">Diskon Start</th>
                                         <th class="min-w-125px">Diskon End</th>
+                                        <th class="text-center min-w-70px">Status</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -258,11 +254,29 @@
         },
         columns: [
             { data: 'branch_name', name: 'branch_name' },
-            { data: 'product_name', name: 'product_name' },
             { data: 'price', name: 'price' },
             { data: 'discount', name: 'discount' },
             { data: 'start_period', name: 'start_period' },
             { data: 'end_period', name: 'end_period' },
+            {
+                data: 'is_active', // Assuming you have this field in your data
+                name: 'is_active',
+                orderable: false, // Disable ordering for this column
+                searchable: false, // Disable searching for this column
+                render: function (data, type, row) {
+                    return `
+                        <div class="d-flex justify-content-center">
+                            <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
+                                <input class="form-check-input toggle-status" 
+                                    type="checkbox" 
+                                    data-id="${row.id}"
+                                    ${data ? 'checked' : ''}>
+                                <span class="form-check-label fw-bold text-muted"></span>
+                            </label>
+                        </div>
+                    `;
+                }
+            },
             {
                 data: null, // No direct field from the server
                 name: 'action',
@@ -275,9 +289,59 @@
                         <div>
                     `;
                 }
-            }
+            },
         ]
     });
+
+    $(document).on('change', '.toggle-status', function() {
+        var productId = $(this).data('id');
+        var isActive = $(this).prop('checked') ? 1 : 0;
+
+        $.ajax({
+            url: '{{ route('product-details.update-status') }}',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                id: productId,
+                is_active: isActive
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Show success SweetAlert
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Status updated successfully!',
+                        text: 'The product status has been updated.',
+                        showConfirmButton: true
+                    });
+                } else {
+                    // Show error SweetAlert
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error updating status',
+                        text: 'There was an issue updating the status. Please try again.',
+                        showConfirmButton: true
+                    });
+
+                    // Optionally revert the toggle switch if there's an error
+                    $(this).prop('checked', !isActive);
+                }
+            },
+            error: function() {
+                // Show error SweetAlert on AJAX failure
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error processing the request',
+                    text: 'Unable to process the request. Please try again later.',
+                    showConfirmButton: true
+                });
+
+                // Optionally revert the toggle switch if there's an error
+                $(this).prop('checked', !isActive);
+            }
+        });
+    });
+
 </script>
 
 <script>
