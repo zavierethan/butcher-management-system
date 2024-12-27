@@ -92,6 +92,7 @@
                                         <th class="min-w-125px">Kode</th>
                                         <th class="min-w-125px">Nama</th>
                                         <th class="min-w-125px">Alamat</th>
+                                        <th class="min-w-125px">No. Telephone</th>
                                         <th class="min-w-125px">Active</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
@@ -137,6 +138,7 @@
             { data: 'code', name: 'code' },
             { data: 'name', name: 'name' },
             { data: 'address', name: 'address' },
+            { data: 'phone_number', name: 'phone_number' },
             { data: 'is_active', name: 'is_active' },
             {
                 data: null, // No direct field from the server

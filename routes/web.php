@@ -109,6 +109,10 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/edit/{id}', [App\Http\Controllers\ProductDetailController::class, 'edit'])->name('edit');
             Route::post('/update', [App\Http\Controllers\ProductDetailController::class, 'update'])->name('update');
             Route::post('/update-status', [App\Http\Controllers\ProductDetailController::class, 'updateStatus'])->name('update-status');
+            Route::post('/update-row', [App\Http\Controllers\ProductDetailController::class, 'updateRow'])->name('update-row');
+            Route::post('/update-all-price', [App\Http\Controllers\ProductDetailController::class, 'updateAllPrice'])->name('update-all-price');
+            Route::post('/update-all-discount', [App\Http\Controllers\ProductDetailController::class, 'updateAllDiscount'])->name('update-all-discount');
+            Route::post('/update-all-discount-date', [App\Http\Controllers\ProductDetailController::class, 'updateAllDiscountDate'])->name('update-all-discount-date');
         });
     });
 

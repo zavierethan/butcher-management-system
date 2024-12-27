@@ -141,5 +141,109 @@ class ProductDetailController extends Controller
         }
     }
 
+    public function updateRow(Request $request)
+    {
+        // Base validation rules
+        $rules = [
+            'id' => 'required|integer|exists:product_details,id',
+            'field' => 'required|string|in:price,discount,start_period,end_period',
+        ];
+
+        // Add conditional validation for `value`
+        $field = $request->get('field');
+        if (in_array($field, ['price', 'discount'])) {
+            $rules['value'] = 'nullable|numeric';
+        } elseif (in_array($field, ['start_period', 'end_period'])) {
+            $rules['value'] = 'nullable|date';
+        }
+
+        // Validate the request
+        $validatedData = $request->validate($rules);
+
+        // Perform the update
+        $updated = DB::table('product_details')
+            ->where('id', $validatedData['id'])
+            ->update([$validatedData['field'] => $validatedData['value']]);
+
+        // Return a response
+        if ($updated) {
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
+
+    public function updateAllPrice(Request $request)
+    {
+        $price = $request->input('price');
+
+        // Check if the price is empty and set it to null if true
+        if (empty($price)) {
+            $price = null;
+        }
+
+        try {
+            // Update all rows
+            DB::table('product_details')->update(['price' => $price]);
+
+            return response()->json(['success' => true, 'message' => 'All rows updated successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error updating rows', 'error' => $e->getMessage()]);
+        }
+    }
+
+    public function updateAllDiscount(Request $request)
+    {
+        $discount = $request->input('discount');
+
+        // Check if the discount is empty and set it to null if true
+        if (empty($discount)) {
+            $discount = null;
+        }
+
+        try {
+            // Update all rows
+            DB::table('product_details')->update(['discount' => $discount]);
+
+            return response()->json(['success' => true, 'message' => 'All rows updated successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error updating rows', 'error' => $e->getMessage()]);
+        }
+    }
+
+    public function updateAllDiscountDate(Request $request)
+    {
+        
+        if ($request->has('discountStartDate')) {
+            $discountStartDate = $request->input('discountStartDate');
+            if (empty($discountStartDate)) {
+                $discountStartDate = null;
+            }
+
+            try {
+                // Update all rows
+                DB::table('product_details')->update(['start_period' => $discountStartDate]);
+
+                return response()->json(['success' => true, 'message' => 'All rows updated successfully']);
+            } catch (\Exception $e) {
+                return response()->json(['success' => false, 'message' => 'Error updating rows', 'error' => $e->getMessage()]);
+            }
+
+        } else if ($request->has('discountEndDate')) {
+            $discountEndDate = $request->input('discountEndDate');
+            if (empty($discountEndDate)) {
+                $discountEndDate = null;
+            }
+
+            try {
+                // Update all rows
+                DB::table('product_details')->update(['end_period' => $discountEndDate]);
+
+                return response()->json(['success' => true, 'message' => 'All rows updated successfully']);
+            } catch (\Exception $e) {
+                return response()->json(['success' => false, 'message' => 'Error updating rows', 'error' => $e->getMessage()]);
+            }
+        }
+    }
 
 }

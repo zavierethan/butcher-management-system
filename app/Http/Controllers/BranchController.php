@@ -66,6 +66,7 @@ class BranchController extends Controller
             "code" => $request->code,
             "name" => $request->name,
             "address" => $request->address,
+            "phone_number" => $request->phone_number,
             "is_active" => $request->is_active,
         ]);
 
@@ -110,6 +111,7 @@ class BranchController extends Controller
                 'code' => $request->code,
                 'name' => $request->name,
                 'address' => $request->address,
+                'phone_number' => $request->phone_number,
                 "is_active" => $request->is_active,
             ]);
 
