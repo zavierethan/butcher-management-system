@@ -532,7 +532,7 @@
                                             id="product-search" />
                                     </div>
                                     <div class="ms-auto">
-                                        <input type="date" class="form-control form-control-solid"/>
+                                        <input type="text" class="form-control form-control-solid" placeholder="Nama Butcher" id="butcher-name"/>
                                     </div>
                                 </div>
                             </div>
@@ -1013,6 +1013,7 @@ $(document).ready(function() {
         var productId = $(this).data('product-id');
         var productName = $(this).data('product-name');
         var productPrice = parseFloat($(this).data('product-price')); // Ensure price is a number
+        var productDiscount = parseFloat($(this).data('product-discount'));
         var productImgUrl = $(this).find('img').attr('src');
 
         // Check if the product already exists in the cart
@@ -1026,7 +1027,7 @@ $(document).ready(function() {
             quantityElement.text(`${newQuantity} Kg`);
 
             const priceElement = existingProduct.find('.price');
-            const newSubtotal = productPrice * newQuantity;
+            const newSubtotal = (productPrice * newQuantity);
             priceElement.text(formatCurrency(mround(newSubtotal, 500)));
         } else {
             // Add new product to the cart
@@ -1041,8 +1042,8 @@ $(document).ready(function() {
                                         <span class="badge bg-warning text-dark qty">1 Kg</span>
                                     </div>
                                     <div class="text-end me-3 mt-3">
-                                        <h6 class="mb-1 price">${formatCurrency(productPrice)}</h6>
-                                        <span class="badge bg-warning text-dark"></span>
+                                        <h6 class="mb-1 price">${formatCurrency(productPrice - productDiscount)}</h6>
+                                        <span class="badge bg-warning text-dark discount">- ${productDiscount}</span>
                                     </div>
                                 </div>
                                 <div class="d-flex flex-row-reverse">
@@ -1127,8 +1128,9 @@ $(document).ready(function() {
             quantityElement.text(`${newQuantity} Kg`);
 
             const priceElement = existingProduct.find('.price');
+            const discountElement = existingProduct.find('.discount').text().replace(/[^\d]/g, '');
             const newSubtotal = productPrice * newQuantity;
-            priceElement.text(formatCurrency(mround(newSubtotal, 500)));
+            priceElement.text(formatCurrency(mround(newSubtotal, 500) - parseFloat(discountElement)));
         }
 
         calculateTotals();
@@ -1178,12 +1180,15 @@ $(document).ready(function() {
                     const price = $(this).find('.price').text().replace(/[^\d]/g, '');
                     const basePrice = $(this).find('.base-price').text().replace(
                         /[^\d]/g, '');
+                    const productDiscount = $(this).find('.discount').text().replace(
+                            /[^\d]/g, '');
                     const quantity = $(this).find('.qty').text().replace(/ Kg$/, "");
 
                     products.push({
                         product_id: productId,
                         base_price: basePrice,
                         price: price,
+                        discount: productDiscount,
                         quantity: quantity,
                     });
                 });
@@ -1191,9 +1196,9 @@ $(document).ready(function() {
                 const discount = $('#discount').text().replace(/[^\d]/g, '') | 0;
                 const shippingCost = $('#shipping-cost').text().replace(/[^\d]/g, '') | 0;
                 const totalAmount = $('#total-amount').text().replace(/[^\d]/g, '');
-                const paymentMethod = $('#payment-method').find('input[type="radio"]:checked')
-                    .val();
+                const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
                 const customerId = $('#customer').val();
+                const butcherName = $('#butcher-name').val();
 
                 console.log(paymentMethod);
 
@@ -1203,8 +1208,9 @@ $(document).ready(function() {
                         transaction_date: new Date().toISOString(),
                         customer_name: customerId,
                         total_amount: totalAmount,
-                        payment_method: paymentMethod, // Example, adjust as needed
+                        payment_method: paymentMethod,
                         customer_id: customerId,
+                        butcher_name: butcherName,
                         discount: discount,
                         shipping_cost: shippingCost
                     },
@@ -1340,10 +1346,10 @@ $(document).ready(function() {
                 data.forEach(function(product) {
                     // Construct HTML for each product
                     const discountHTML = product.discount !== 0 && !isNaN(parseFloat(product.discount)) ?
-                        `<span class="fs-6 text-muted">${formatCurrency(parseFloat(product.discount))}</span>` :
+                        `<span>Diskon</span> <span class="fs-6 text-muted">${formatCurrency(parseFloat(product.discount))}</span>` :
                         '';
 
-                    const productItem = `<div class="col-md-4 mb-3 product-l"><div class="card p-6 pb-5 mw-100 product" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}">
+                    const productItem = `<div class="col-md-4 mb-3 product-l"><div class="card p-6 pb-5 mw-100 product" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}" data-product-discount="${product.discount}">
                                             <div class="card-body text-center">
                                                 <img src="${product.url_path}" class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px" alt="" />
                                                 <div class="mb-2">

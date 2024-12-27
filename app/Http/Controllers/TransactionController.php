@@ -47,6 +47,7 @@ class TransactionController extends Controller
                 "total_amount" => $payloads["header"]["total_amount"],
                 "payment_method" => $payloads["header"]["payment_method"],
                 "customer_id" => $payloads["header"]["customer_id"],
+                "butcher_name" => $payloads["header"]["butcher_name"],
                 "discount" => $payloads["header"]["discount"],
                 "shipping_cost" => $payloads["header"]["shipping_cost"],
                 "status" => $status, // 1 = Lunas, 2 = Pending, 3 = Batal
@@ -62,6 +63,7 @@ class TransactionController extends Controller
                     "quantity" => $detail["quantity"],
                     "base_price" => $detail["base_price"],
                     "unit_price" => $detail["price"],
+                    "discount" => $detail["discount"],
                 ]);
             }
 

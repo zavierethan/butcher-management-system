@@ -16,16 +16,17 @@
         }
 
         .receipt {
-            width: 80mm; /* Width for thermal printer */
-            padding: 25px;
+            /* Width for thermal printer */
+            /* padding: 10px; */
             background: #fff;
-            border: 2px solid #b4aeae;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            /* border: 2px solid #b4aeae; */
+            /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
         }
 
         .header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 20px;
+            margin-top: 20px;
         }
 
         .header h1 {
@@ -41,7 +42,7 @@
 
         .line {
             border-top: 1px dashed #000;
-            margin: 10px 0;
+            margin-bottom: 2px;
         }
 
         .info {
@@ -61,6 +62,7 @@
         .items {
             font-size: 12px;
             margin-top: 10px;
+            margin-bottom: 10px;
         }
 
         .items table {
@@ -94,10 +96,16 @@
 </head>
 <body>
     <div class="receipt">
+        <div class="line"></div>
+        <div class="line"></div>
+
         <div class="header">
             <h1>Priyadis Butchers</h1>
+            <p>{{$info->address}}</p>
+            <p>Telp: 08216272718</p>
         </div>
 
+        <div class="line"></div>
         <div class="line"></div>
 
         <div class="items">
@@ -112,31 +120,18 @@
                         <td>: {{$info->transaction_date}}</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: bold;">Cabang</td>
-                        <td>: {{$info->branhces}}</td>
-                    </tr>
-                    <tr>
                         <td style="font-weight: bold;">Kasir</td>
                         <td>: {{$info->created_by}}</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: bold;">Nama Konsumen</td>
-                        <td>: {{$info->customer_name}}</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: bold;">Pembayaran</td>
-                        <td>: {{$info->payment_method}}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <div class="line"></div>
-
         <div class="items">
             <table>
-                <thead>
+                <thead style="border-top: 1px dashed black; border-bottom: 1px dashed black;">
                     <tr>
+                        <th style="width:10%;">No.</th>
                         <th>Item</th>
                         <th>Qty (Kg)</th>
                         <th style="text-align: right;">Harga</th>
@@ -144,18 +139,29 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php $no = 1 @endphp
                     @foreach($items as $item)
                     <tr>
+                        <td>{{$no++}}.</td>
                         <td>{{$item->name}}</td>
                         <td>{{$item->quantity}}</td>
                         <td style="text-align: right;">{{$item->base_price}}</td>
                         <td style="text-align: right;">{{$item->sell_price}}</td>
                     </tr>
+                    @if($item->discount > 0)
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td style="text-align: right;">- {{$item->discount}}</td>
+                        <td style="text-align: right;"></td>
+                    </tr>
+                    @endif
                     @endforeach
                 </tbody>
                 <tfoot>
                     <tr style="border-top: 1px dotted #000;">
-                        <td style="font-weight: bold;">Subtotal</td>
+                        <td style="font-weight: bold;" colspan="2">Subtotal</td>
                         <td></td>
                         <td></td>
                         <td style="text-align: right;">@php echo number_format($info->total_amount, 0, '.', ',') @endphp</td>
@@ -164,16 +170,18 @@
                         <td style="font-weight: bold;">Discount</td>
                         <td></td>
                         <td></td>
+                        <td></td>
                         <td style="text-align: right;">@php echo number_format($info->discount, 0, '.', ',') @endphp</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: bold;">Ongkos Kirim</td>
+                        <td style="font-weight: bold;" colspan="2">Ongkos Kirim</td>
                         <td></td>
                         <td></td>
                         <td style="text-align: right;">@php echo number_format($info->shipping_cost, 0, '.', ',') @endphp</td>
                     </tr>
                     <tr>
                         <td style="font-weight: bold;">Total</td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td style="text-align: right;">
@@ -187,6 +195,7 @@
             </table>
         </div>
 
+        <div class="line"></div>
         <div class="line"></div>
 
         <div class="footer">

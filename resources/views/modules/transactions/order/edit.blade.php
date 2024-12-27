@@ -58,6 +58,16 @@
                                         </div>
                                     </div>
                                     <div class="separator my-5"></div>
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Nama Butcher</label>
+                                            <div class="position-relative mb-3">
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    value="{{$detailTransaction->butcher_name}}" readonly />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="fv-row mb-5">
@@ -131,8 +141,9 @@
                                     <thead>
                                         <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
                                             <th class="min-w-175px">Nama Product</th>
-                                            <th class="min-w-100px text-end">Harga (Per Kg)</th>
                                             <th class="min-w-70px text-end">Jumlah (Kg)</th>
+                                            <th class="min-w-100px text-end">Harga (Per Kg)</th>
+                                            <th class="min-w-100px text-end">Diskon</th>
                                             <th class="min-w-100px text-end">Total Harga</th>
                                         </tr>
                                     </thead>
@@ -157,25 +168,26 @@
                                                     <!--end::Title-->
                                                 </div>
                                             </td>
-                                            <td class="text-end">@php echo number_format($detail->base_price, 0, '.', ',') @endphp</td>
                                             <td class="text-end">{{$detail->quantity}}</td>
+                                            <td class="text-end">@php echo number_format($detail->base_price, 0, '.', ',') @endphp</td>
+                                            <td class="text-end">{{$detail->discount}}</td>
                                             <td class="text-end">@php echo number_format($detail->sell_price, 0, '.', ',') @endphp</td>
                                         </tr>
                                         @endforeach
                                         <tr>
-                                            <td colspan="3" class="text-end">Subtotal</td>
+                                            <td colspan="4" class="text-end">Subtotal</td>
                                             <td class="text-end">@php echo number_format($detailTransaction->total_amount, 0, '.', ',') @endphp</td>
                                         </tr>
                                         <tr>
-                                            <td colspan="3" class="text-end">Discount</td>
+                                            <td colspan="4" class="text-end">Discount</td>
                                             <td class="text-end">@php echo number_format($detailTransaction->discount, 0, '.', ',') @endphp</td>
                                         </tr>
                                         <tr>
-                                            <td colspan="3" class="text-end">Biaya Pengiriman</td>
+                                            <td colspan="4" class="text-end">Biaya Pengiriman</td>
                                             <td class="text-end">@php echo number_format($detailTransaction->shipping_cost, 0, '.', ',') @endphp</td>
                                         </tr>
                                         <tr>
-                                            <td colspan="3" class="fs-3 text-gray-900 text-end">Grand Total</td>
+                                            <td colspan="4" class="fs-3 text-gray-900 text-end">Grand Total</td>
                                             <td class="text-gray-900 fs-3 fw-bolder text-end">
                                                 @php
                                                     $grand_total = ($detailTransaction->total_amount - $detailTransaction->discount) + $detailTransaction->shipping_cost;

@@ -73,6 +73,7 @@ class OrderController extends Controller
                         'transactions.total_amount',
                         'transactions.status',
                         'customers.name as customer_name',
+                        'transactions.butcher_name',
                     )
                     ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
                     ->where('transactions.id', $id)->first();
@@ -85,7 +86,8 @@ class OrderController extends Controller
                         'products.url_path',
                         'transaction_items.quantity',
                         'transaction_items.base_price',
-                        'transaction_items.unit_price as sell_price'
+                        'transaction_items.unit_price as sell_price',
+                        'transaction_items.discount'
                     )
                     ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')
                     ->where('transaction_id', $detailTransaction->id)->get();
@@ -124,7 +126,7 @@ class OrderController extends Controller
                     ->select(
                         'transactions.id',
                         'transactions.code',
-                        DB::raw("TO_CHAR(transactions.transaction_date, 'DD FMMonth YYYY, HH24:MI:SS') as transaction_date"),
+                        DB::raw("TO_CHAR(transactions.transaction_date, 'dd/mm/YYYY') as transaction_date"),
                         DB::raw("
                             CASE
                                 WHEN transactions.payment_method = '1' THEN 'TUNAI'
@@ -141,7 +143,8 @@ class OrderController extends Controller
                         'transactions.status',
                         'customers.name as customer_name',
                         'users.name as created_by',
-                        'branches.name as branhces'
+                        'branches.name as branhces',
+                        'branches.address'
                     )
                     ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
                     ->leftJoin('users', 'users.id', '=', 'transactions.created_by')
@@ -155,6 +158,7 @@ class OrderController extends Controller
                         'products.name',
                         'transaction_items.quantity',
                         'transaction_items.base_price',
+                        'transaction_items.discount',
                         'transaction_items.unit_price as sell_price'
                     )
                     ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')
