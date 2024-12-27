@@ -228,16 +228,135 @@
 @section('script')
 
 <script>
+    // $("#kt_product_details_table").DataTable({
+    //     processing: true,
+    //     serverSide: true,
+    //     paging: true, // Enable pagination
+    //     pageLength: 10, // Number of rows per page
+    //     ajax: {
+    //         url: `{{ route('product-details.get-lists', ['id' => $product->id]) }}`,
+    //         type: 'GET',
+    //         dataSrc: function (json) {
+    //             return json.data; // Map the 'data' field
+    //         }
+    //     },
+    //     columns: [
+    //         { data: 'branch_name', name: 'branch_name' },
+    //         {
+    //             data: 'price',
+    //             name: 'price',
+    //             render: function (data, type, row) {
+    //                 const displayValue = data !== null ? data : '-';
+    //                 return `
+    //                     <div class="d-flex align-items-center">
+    //                         <input type="text" 
+    //                             class="form-control form-control-sm inline-edit-price me-2" 
+    //                             value="${displayValue}" 
+    //                             data-id="${row.id}" 
+    //                             data-field="price" />
+    //                     </div>
+    //                 `;
+    //             }
+    //         },
+    //         {
+    //             data: 'discount',
+    //             name: 'discount',
+    //             render: function (data, type, row) {
+    //                 const displayValue = data !== null ? data : '-';
+    //                 return `
+    //                     <div class="d-flex align-items-center">
+    //                         <input type="text" 
+    //                             class="form-control form-control-sm inline-edit-discount me-2" 
+    //                             value="${displayValue}" 
+    //                             data-id="${row.id}" 
+    //                             data-field="discount" />
+    //                     </div>
+    //                 `;
+    //             }
+    //         },
+    //         {
+    //             data: 'start_period',
+    //             name: 'start_period',
+    //             render: function (data, type, row) {
+    //                 const displayValue = data !== null ? data : '-';
+    //                 return `
+    //                     <div class="d-flex align-items-center">
+    //                         <input type="date" 
+    //                             class="form-control form-control-sm inline-edit-start-period me-2" 
+    //                             value="${displayValue}" 
+    //                             data-id="${row.id}" 
+    //                             data-field="start_period" />
+    //                     </div>
+    //                 `;
+    //             }
+    //         },
+    //         {
+    //             data: 'end_period',
+    //             name: 'end_period',
+    //             render: function (data, type, row) {
+    //                 const displayValue = data !== null ? data : '-';
+    //                 return `
+    //                     <div class="d-flex align-items-center">
+    //                         <input type="date" 
+    //                             class="form-control form-control-sm inline-edit-end-period me-2" 
+    //                             value="${displayValue}" 
+    //                             data-id="${row.id}" 
+    //                             data-field="end_period" />
+    //                     </div>
+    //                 `;
+    //             }
+    //         },
+    //         {
+    //             data: 'is_active', // Assuming you have this field in your data
+    //             name: 'is_active',
+    //             orderable: false, // Disable ordering for this column
+    //             searchable: false, // Disable searching for this column
+    //             render: function (data, type, row) {
+    //                 return `
+    //                     <div class="d-flex justify-content-center">
+    //                         <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
+    //                             <input class="form-check-input toggle-status" 
+    //                                 type="checkbox" 
+    //                                 data-id="${row.id}"
+    //                                 ${data ? 'checked' : ''}>
+    //                             <span class="form-check-label fw-bold text-muted"></span>
+    //                         </label>
+    //                     </div>
+    //                 `;
+    //             }
+    //         },
+    //         {
+    //             data: null, // No direct field from the server
+    //             name: 'action',
+    //             orderable: false, // Disable ordering for this column
+    //             searchable: false, // Disable searching for this column
+    //             render: function (data, type, row) {
+    //                 return `
+    //                     <div class="text-center">
+    //                         <a href="/product-details/update/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Update</a>
+    //                     <div>
+    //                 `;
+    //             }
+    //         },
+    //     ]
+    // });
+
+    // Utility function to sanitize input values
+    const sanitizeValue = (value) => {
+        return value === '-' || value === '' ? null : value;
+    };
+
+    // Initialize the DataTable
     $("#kt_product_details_table").DataTable({
         processing: true,
         serverSide: true,
-        paging: true, // Enable pagination
-        pageLength: 10, // Number of rows per page
+        paging: true,
+        pageLength: 10,
         ajax: {
             url: `{{ route('product-details.get-lists', ['id' => $product->id]) }}`,
             type: 'GET',
             dataSrc: function (json) {
-                return json.data; // Map the 'data' field
+                return json.data;
             }
         },
         columns: [
@@ -246,7 +365,7 @@
                 data: 'price',
                 name: 'price',
                 render: function (data, type, row) {
-                    const displayValue = data !== null ? data : '-';
+                    const displayValue = data !== null ? data : '';
                     return `
                         <div class="d-flex align-items-center">
                             <input type="text" 
@@ -262,7 +381,7 @@
                 data: 'discount',
                 name: 'discount',
                 render: function (data, type, row) {
-                    const displayValue = data !== null ? data : '-';
+                    const displayValue = data !== null ? data : '';
                     return `
                         <div class="d-flex align-items-center">
                             <input type="text" 
@@ -274,12 +393,11 @@
                     `;
                 }
             },
-            // { data: 'start_period', name: 'start_period' },
             {
                 data: 'start_period',
                 name: 'start_period',
                 render: function (data, type, row) {
-                    const displayValue = data !== null ? data : '-';
+                    const displayValue = data !== null ? data : '';
                     return `
                         <div class="d-flex align-items-center">
                             <input type="date" 
@@ -295,7 +413,7 @@
                 data: 'end_period',
                 name: 'end_period',
                 render: function (data, type, row) {
-                    const displayValue = data !== null ? data : '-';
+                    const displayValue = data !== null ? data : '';
                     return `
                         <div class="d-flex align-items-center">
                             <input type="date" 
@@ -308,10 +426,10 @@
                 }
             },
             {
-                data: 'is_active', // Assuming you have this field in your data
+                data: 'is_active',
                 name: 'is_active',
-                orderable: false, // Disable ordering for this column
-                searchable: false, // Disable searching for this column
+                orderable: false,
+                searchable: false,
                 render: function (data, type, row) {
                     return `
                         <div class="d-flex justify-content-center">
@@ -327,19 +445,74 @@
                 }
             },
             {
-                data: null, // No direct field from the server
+                data: null,
                 name: 'action',
-                orderable: false, // Disable ordering for this column
-                searchable: false, // Disable searching for this column
+                orderable: false,
+                searchable: false,
                 render: function (data, type, row) {
                     return `
                         <div class="text-center">
-                            <a href="/product-details/update/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Update</a>
+                            <button type="button" class="btn btn-sm btn-light btn-active-light-primary" data-id="${row.id}">Update</button>
                         <div>
                     `;
                 }
             },
         ]
+    });
+
+    // Handle the Update button click with SweetAlert
+    $(document).on('click', '.btn-active-light-primary', function (e) {
+        e.preventDefault();
+
+        const row = $(this).closest('tr');
+        const id = $(this).data('id');
+        const price = sanitizeValue(row.find('.inline-edit-price').val());
+        const discount = sanitizeValue(row.find('.inline-edit-discount').val());
+        const startPeriod = row.find('.inline-edit-start-period').val();
+        const endPeriod = row.find('.inline-edit-end-period').val();
+
+        const data = {
+            _token: '{{ csrf_token() }}',
+            id: id,
+            price: price,
+            discount: discount,
+            start_period: startPeriod,
+            end_period: endPeriod,
+        };
+
+        // Show SweetAlert confirmation dialog
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you want to update this row?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, update it!',
+            cancelButtonText: 'Cancel',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Send the AJAX request
+                $.ajax({
+                    url: '{{ route("product-details.update") }}',
+                    type: 'POST',
+                    data: data,
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('Updated!', 'The row has been updated successfully.', 'success');
+                        } else {
+                            Swal.fire('Error!', 'Failed to update the row.', 'error');
+                        }
+                    },
+                    error: function (xhr) {
+                        const errors = xhr.responseJSON.errors;
+                        let errorMsg = '';
+                        for (const key in errors) {
+                            errorMsg += `${errors[key]}<br>`;
+                        }
+                        Swal.fire('Error!', errorMsg, 'error');
+                    },
+                });
+            }
+        });
     });
 
     $(document).on('change', '.toggle-status', function() {
@@ -390,98 +563,6 @@
             }
         });
     });
-
-    // Inline edit logic
-    // $(document).on('change', '.inline-edit-price, .inline-edit-discount', function () {
-    //     var inputField = $(this);
-    //     var productId = inputField.data('id');
-    //     var field = inputField.data('field'); // 'price' or 'discount'
-    //     var newValue = inputField.val();
-
-    //     $.ajax({
-    //         url: '{{ route('product-details.update-row') }}', // Use a dedicated route to update specific fields
-    //         type: 'POST',
-    //         data: {
-    //             _token: '{{ csrf_token() }}',
-    //             id: productId,
-    //             field: field,
-    //             value: newValue
-    //         },
-    //         success: function (response) {
-    //             if (response.success) {
-    //                 Swal.fire({
-    //                     icon: 'success',
-    //                     title: 'Field updated successfully!',
-    //                     text: `${field} has been updated.`,
-    //                     showConfirmButton: true
-    //                 });
-    //             } else {
-    //                 Swal.fire({
-    //                     icon: 'error',
-    //                     title: 'Error updating field',
-    //                     text: `Failed to update ${field}. Please try again.`,
-    //                     showConfirmButton: true
-    //                 });
-    //                 inputField.val(response.oldValue); // Revert to the old value on error
-    //             }
-    //         },
-    //         error: function () {
-    //             Swal.fire({
-    //                 icon: 'error',
-    //                 title: 'Error processing the request',
-    //                 text: 'Unable to process the request. Please try again later.',
-    //                 showConfirmButton: true
-    //             });
-    //             inputField.val(inputField.data('old-value')); // Revert to the old value on error
-    //         }
-    //     });
-    // });
-
-    // // Inline edit logic for start_period and end_period
-    // $(document).on('change', '.inline-edit-start-period, .inline-edit-end-period', function () {
-    //     var inputField = $(this);
-    //     var productId = inputField.data('id');
-    //     var field = inputField.data('field'); // 'start_period' or 'end_period'
-    //     var newValue = inputField.val();
-
-    //     $.ajax({
-    //         url: '{{ route('product-details.update-row') }}',
-    //         type: 'POST',
-    //         data: {
-    //             _token: '{{ csrf_token() }}',
-    //             id: productId,
-    //             field: field,
-    //             value: newValue
-    //         },
-    //         success: function (response) {
-    //             if (response.success) {
-    //                 Swal.fire({
-    //                     icon: 'success',
-    //                     title: 'Field updated successfully!',
-    //                     text: `${field} has been updated.`,
-    //                     showConfirmButton: true
-    //                 });
-    //             } else {
-    //                 Swal.fire({
-    //                     icon: 'error',
-    //                     title: 'Error updating field',
-    //                     text: `Failed to update ${field}. Please try again.`,
-    //                     showConfirmButton: true
-    //                 });
-    //                 inputField.val(response.oldValue); // Revert to the old value on error
-    //             }
-    //         },
-    //         error: function () {
-    //             Swal.fire({
-    //                 icon: 'error',
-    //                 title: 'Error processing the request',
-    //                 text: 'Unable to process the request. Please try again later.',
-    //                 showConfirmButton: true
-    //             });
-    //             inputField.val(inputField.data('old-value')); // Revert to the old value on error
-    //         }
-    //     });
-    // });
 
     // apply price to all
     $(document).on('click', '#applyPriceToAll', function () {
