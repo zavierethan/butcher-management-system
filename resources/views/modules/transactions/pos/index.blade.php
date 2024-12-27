@@ -497,8 +497,11 @@
                     </ul>
                 </div>
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
-                    <a href="#" class="btn btn-sm fw-bold btn-primary" id="fullscreen-control"
-                        title="Click untuk mode fullscreen"><i class="fa-solid fa-desktop"></i></a>
+                    <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Store" id="branch-id" disabled>
+                        @foreach($branches as $branch)
+                        <option value="{{$branch->id}}" <?php echo ($branch->id == Auth::user()->branch_id) ? "selected" : ""; ?>>{{$branch->code}}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
         </div>
@@ -1001,13 +1004,6 @@ $(document).ready(function() {
     $("#form-nominal").hide();
     getProductList();
     getCustomers();
-
-    $('#fullscreen-control').click(function() {
-        const elem = document.documentElement;
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen();
-        }
-    });
 
     $(document).on('click', '.product', function() {
         var productId = $(this).data('product-id');

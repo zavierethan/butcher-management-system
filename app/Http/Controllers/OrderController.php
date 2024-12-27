@@ -12,7 +12,8 @@ use Auth;
 class OrderController extends Controller
 {
     public function index() {
-        return view('modules.transactions.order.index');
+        $branches =  DB::table('branches')->where('is_active', 1)->get();
+        return view('modules.transactions.order.index', compact('branches'));
     }
 
     public function getLists(Request $request){
@@ -22,7 +23,6 @@ class OrderController extends Controller
                 ->select(
                     'transactions.id',
                     'transactions.code',
-                    'transactions.transaction_date',
                     DB::raw("TO_CHAR(transactions.transaction_date, 'DD/MM/YYYY') as transaction_date"),
                     'transactions.payment_method',
                     'transactions.total_amount',
@@ -44,6 +44,15 @@ class OrderController extends Controller
             $query->where(function ($q) use ($searchValue) {
                 $q->where('transactions.code', 'like', '%' . strtoupper($searchValue) . '%');
             });
+        }
+
+        // Apply sorting
+        if ($request->has('order') && $request->order) {
+            $columnIndex = $request->order[0]['column']; // Column index from the DataTable
+            $sortDirection = $request->order[0]['dir']; // 'asc' or 'desc'
+            $columnName = $request->columns[$columnIndex]['data']; // Column name
+
+            $query->orderBy($columnName, $sortDirection);
         }
 
         $start = $request->input('start', 0);
@@ -74,8 +83,10 @@ class OrderController extends Controller
                         'transactions.status',
                         'customers.name as customer_name',
                         'transactions.butcher_name',
+                        'users.name as created_by'
                     )
                     ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
+                    ->leftJoin('users', 'users.id', '=', 'transactions.created_by')
                     ->where('transactions.id', $id)->first();
 
         $detailItems = DB::table('transaction_items')
@@ -144,7 +155,8 @@ class OrderController extends Controller
                         'customers.name as customer_name',
                         'users.name as created_by',
                         'branches.name as branhces',
-                        'branches.address'
+                        'branches.address',
+                        'branches.phone_number'
                     )
                     ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
                     ->leftJoin('users', 'users.id', '=', 'transactions.created_by')

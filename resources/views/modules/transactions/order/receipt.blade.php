@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POS Receipt</title>
+    <title>Priyadis Butchers</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,11 +16,7 @@
         }
 
         .receipt {
-            /* Width for thermal printer */
-            /* padding: 10px; */
             background: #fff;
-            /* border: 2px solid #b4aeae; */
-            /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
         }
 
         .header {
@@ -102,7 +98,7 @@
         <div class="header">
             <h1>Priyadis Butchers</h1>
             <p>{{$info->address}}</p>
-            <p>Telp: 08216272718</p>
+            <p>Telp: {{$info->phone_number}}</p>
         </div>
 
         <div class="line"></div>
@@ -133,7 +129,7 @@
                     <tr>
                         <th style="width:10%;">No.</th>
                         <th>Item</th>
-                        <th>Qty (Kg)</th>
+                        <th style="text-align: center;">Qty (Kg)</th>
                         <th style="text-align: right;">Harga</th>
                         <th style="text-align: right;">Subtotal</th>
                     </tr>
@@ -144,7 +140,7 @@
                     <tr>
                         <td>{{$no++}}.</td>
                         <td>{{$item->name}}</td>
-                        <td>{{$item->quantity}}</td>
+                        <td style="text-align: center;">{{$item->quantity}}</td>
                         <td style="text-align: right;">{{$item->base_price}}</td>
                         <td style="text-align: right;">{{$item->sell_price}}</td>
                     </tr>

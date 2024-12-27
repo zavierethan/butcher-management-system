@@ -113,8 +113,8 @@ License: For each use you must have a valid license purchased only from above li
                             <!--begin::Theme mode-->
                             <div class="app-navbar-item ms-1 ms-md-4">
                                 <!--begin::Menu toggle-->
-                                <a href="#"
-                                    class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-35px h-35px"
+                                <a href="#" class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-35px h-35px" id="fullscreen-control" title="Click untuk mode fullscreen"><i class="fa-solid fa-desktop"></i></a>
+                                <a href="#" class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-35px h-35px"
                                     data-kt-menu-trigger="{default:'click', lg: 'hover'}" data-kt-menu-attach="parent"
                                     data-kt-menu-placement="bottom-end">
                                     <i class="ki-duotone ki-night-day theme-light-show fs-1">
@@ -391,6 +391,14 @@ License: For each use you must have a valid license purchased only from above li
     <script src="{{asset('assets/js/custom/widgets.js')}}"></script>
     <!--end::Custom Javascript-->
     <!--end::Javascript-->
+    <script>
+        $('#fullscreen-control').click(function() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            }
+        });
+    </script>
     @yield('script')
 </body>
 <!--end::Body-->

@@ -248,6 +248,19 @@
                     </div>
                 </div>
                 <div class="separator my-5"></div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Store / Cabang</label>
+                        <div class="position-relative mb-3">
+                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Store" id="branch-id" disabled="<?php echo (Auth::user()->group_id != 1) ? "disabled" : ""; ?>">
+                                @foreach($branches as $branch)
+                                <option value="{{$branch->id}}" <?php echo ($branch->id == Auth::user()->branch_id) ? "selected" : ""; ?>>{{$branch->code}}</option>
+                                @endforeach
+                             </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
                 <div class="flex justify-content-center">
                     <button type="button" class="btn btn-primary" id="btn-form-export">Submit</button>
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
