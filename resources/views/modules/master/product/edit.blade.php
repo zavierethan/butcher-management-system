@@ -165,21 +165,44 @@
                     <!--begin::Table-->
                     <div class="card">
                         <div class="card-header border-0 pt-6">
-                            <!--begin::Card toolbar-->
+                            {{-- <!--begin::Card toolbar-->
                             <div class="card-toolbar">
                                 <!--begin::Toolbar-->
                                 <div class="d-flex align-items-center position-relative my-1">
-                                    {{-- edit for all here --}}
                                         <!-- Input fields for setting values for all rows -->
                                     <input type="text" id="setAllPrice" class="form-control form-control-sm me-2" placeholder="Set Price for All">
                                     <button id="applyPriceToAll" class="btn btn-primary btn-sm">Apply Price to All</button>
                                     <input type="text" id="setAllDiscount" class="form-control form-control-sm me-2" placeholder="Set Discount for All">
                                     <button id="applyDiscountToAll" class="btn btn-primary btn-sm">Apply Discount to All</button>
-                                    <label class="fs-6 fw-semibold mb-2 required">Start Diskon</label>
                                     <input class="form-control form-control-solid" name="calendar_event_start_date" placeholder="Pick a start date" id="kt_calendar_datepicker_start_date"/>
                                     <button id="applyDiscountStartDateToAll" class="btn btn-primary btn-sm">Apply Discount Start to All</button>
                                     <input class="form-control form-control-solid" name="calendar_event_end_date" placeholder="Pick an end date" id="kt_calendar_datepicker_end_date"/>
                                     <button id="applyDiscountEndDateToAll" class="btn btn-primary btn-sm">Apply Discount End to All</button>
+                                </div>
+                                <!--end::Toolbar-->
+                            </div>
+                            <!--end::Card toolbar--> --}}
+                            <!--begin::Card toolbar-->
+                            <div class="card-toolbar">
+                                <!--begin::Toolbar-->
+                                <div class="d-flex align-items-center gap-2 my-1">
+                                    <!-- Input fields for setting values for all rows -->
+                                    <div class="d-flex align-items-center">
+                                        <input type="text" id="setAllPrice" class="form-control form-control-sm me-2" placeholder="Set Price for All">
+                                        <button id="applyPriceToAll" class="btn btn-primary btn-sm">Apply</button>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <input type="text" id="setAllDiscount" class="form-control form-control-sm me-2" placeholder="Set Discount for All">
+                                        <button id="applyDiscountToAll" class="btn btn-primary btn-sm">Apply</button>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <input class="form-control form-control-solid me-2" name="calendar_event_start_date" placeholder="Pick discount start date for all" id="kt_calendar_datepicker_start_date"/>
+                                        <button id="applyDiscountStartDateToAll" class="btn btn-primary btn-sm">Apply</button>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <input class="form-control form-control-solid me-2" name="calendar_event_end_date" placeholder="Pick discount end date for all" id="kt_calendar_datepicker_end_date"/>
+                                        <button id="applyDiscountEndDateToAll" class="btn btn-primary btn-sm">Apply</button>
+                                    </div>
                                 </div>
                                 <!--end::Toolbar-->
                             </div>
@@ -198,7 +221,7 @@
                                         <th class="min-w-125px">Diskon</th>
                                         <th class="min-w-125px">Diskon Start</th>
                                         <th class="min-w-125px">Diskon End</th>
-                                        <th class="text-center min-w-70px">Status</th>
+                                        <th class="text-center min-w-70px">Active Status</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
