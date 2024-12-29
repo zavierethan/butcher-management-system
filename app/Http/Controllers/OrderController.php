@@ -119,7 +119,8 @@ class OrderController extends Controller
 
     public function export(Request $request) {
         // Generate raw Excel data
-        $export = new TransactionExport($request->start_date, $request->end_date);
+        $branch = DB::table('branches')->where('id', $request->branch_id)->first();
+        $export = new TransactionExport($request->start_date, $request->end_date, $request->branch_id, $branch->name, $branch->code);
         $excelData = Excel::raw($export, \Maatwebsite\Excel\Excel::XLSX);
 
         // Return the data as a proper response

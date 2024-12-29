@@ -497,9 +497,12 @@
                     </ul>
                 </div>
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
-                    <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Store" id="branch-id">
+                    <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Store"
+                        id="branch-id">
                         @foreach($branches as $branch)
-                        <option value="{{$branch->id}}" <?php echo ($branch->id == Auth::user()->branch_id) ? "selected" : ""; ?>>{{$branch->code}}</option>
+                        <option value="{{$branch->id}}"
+                            <?php echo ($branch->id == Auth::user()->branch_id) ? "selected" : ""; ?>>{{$branch->code}}
+                        </option>
                         @endforeach
                     </select>
                 </div>
@@ -535,7 +538,8 @@
                                             id="product-search" />
                                     </div>
                                     <div class="ms-auto">
-                                        <input type="text" class="form-control form-control-solid" placeholder="Nama Butcher" id="butcher-name"/>
+                                        <input type="text" class="form-control form-control-solid"
+                                            placeholder="Nama Butcherees" id="butcher-name" />
                                     </div>
                                 </div>
                             </div>
@@ -552,7 +556,8 @@
                             <div class="card-body p-3">
                                 <div class="row">
                                     <div class="col-md-8">
-                                        <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Customer" name="customer" id="customer">
+                                        <select class="form-select form-select-solid" data-control="select2"
+                                            data-placeholder="Pilih Customer" name="customer" id="customer">
                                             <option value=""></option>
                                         </select>
                                     </div>
@@ -1159,100 +1164,110 @@ $(document).ready(function() {
     $(document).on('click', '#process-transaction', function(e) {
         e.preventDefault();
 
-        Swal.fire({
-            title: 'Apakah anda yakin untuk memproses transaksi ?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, Proses Transaksi'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const products = [];
+        if (validate()) {
+            Swal.fire({
+                title: 'Apakah anda yakin untuk memproses transaksi ?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Proses Transaksi'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const products = [];
 
-                $('.cart-item-lists').each(function() {
+                    $('.cart-item-lists').each(function() {
 
-                    const productId = $(this).find('.product-id').text();
-                    const price = $(this).find('.price').text().replace(/[^\d]/g, '');
-                    const basePrice = $(this).find('.base-price').text().replace(
-                        /[^\d]/g, '');
-                    const productDiscount = $(this).find('.discount').text().replace(
+                        const productId = $(this).find('.product-id').text();
+                        const price = $(this).find('.price').text().replace(/[^\d]/g,
+                            '');
+                        const basePrice = $(this).find('.base-price').text().replace(
                             /[^\d]/g, '');
-                    const quantity = $(this).find('.qty').text().replace(/ Kg$/, "");
+                        const productDiscount = $(this).find('.discount').text()
+                            .replace(
+                                /[^\d]/g, '');
+                        const quantity = $(this).find('.qty').text().replace(/ Kg$/,
+                        "");
 
-                    products.push({
-                        product_id: productId,
-                        base_price: basePrice,
-                        price: price,
-                        discount: productDiscount,
-                        quantity: quantity,
-                    });
-                });
-
-                const discount = $('#discount').text().replace(/[^\d]/g, '') | 0;
-                const shippingCost = $('#shipping-cost').text().replace(/[^\d]/g, '') | 0;
-                const totalAmount = $('#total-amount').text().replace(/[^\d]/g, '');
-                const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
-                const customerId = $('#customer').val();
-                const butcherName = $('#butcher-name').val();
-                const branchId = $('#branch-id').val();
-
-                console.log(paymentMethod);
-
-                // Build the JSON payload
-                const payload = {
-                    header: {
-                        transaction_date: new Date().toISOString(),
-                        customer_name: customerId,
-                        total_amount: totalAmount,
-                        payment_method: paymentMethod,
-                        customer_id: customerId,
-                        butcher_name: butcherName,
-                        discount: discount,
-                        shipping_cost: shippingCost,
-                        branch_id : branchId
-                    },
-                    details: products
-                };
-
-                console.log(payload)
-
-                $.ajax({
-                    url: `{{route('transactions.store')}}`,
-                    type: 'POST',
-                    contentType: 'application/json',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: JSON.stringify(payload),
-                    success: function(response) {
-                        Swal.fire({
-                            title: 'Suceess !',
-                            text: `Transaksi berhasil di simpan dengan Nomor Transaksi ${response.transaction_code}`,
-                            icon: 'success',
-                            confirmButtonText: 'Cetak Faktur',
-                            allowOutsideClick: false
-                        }).then((result) => {
-                            let receiptUrl = `{{ route('orders.print-receipt', ['id' => '__transaction_id__']) }}`;
-                            receiptUrl = receiptUrl.replace('__transaction_id__', response.transaction_id);
-
-                            // Open the receipt in a new tab
-                            window.open(receiptUrl, '_blank');
-
-                            // Redirect the current page to the transaction index
-                            location.href = `{{ route('transactions.index') }}`;
+                        products.push({
+                            product_id: productId,
+                            base_price: basePrice,
+                            price: price,
+                            discount: productDiscount,
+                            quantity: quantity,
                         });
-                    },
-                    error: function(xhr, status, error) {
-                        Swal.fire(
-                            'Error!',
-                            error,
-                            'error'
-                        )
-                    }
-                });
-            }
-        });
+                    });
+
+                    const discount = $('#discount').text().replace(/[^\d]/g, '') | 0;
+                    const shippingCost = $('#shipping-cost').text().replace(/[^\d]/g, '') | 0;
+                    const totalAmount = $('#total-amount').text().replace(/[^\d]/g, '');
+                    const paymentMethod = $('#payment-method').find(
+                        'input[type="radio"]:checked').val();
+                    const customerId = $('#customer').val();
+                    const butcherName = $('#butcher-name').val();
+                    const branchId = $('#branch-id').val();
+
+                    console.log(paymentMethod);
+
+                    // Build the JSON payload
+                    const payload = {
+                        header: {
+                            transaction_date: new Date().toISOString(),
+                            customer_name: customerId,
+                            total_amount: totalAmount,
+                            payment_method: paymentMethod,
+                            customer_id: customerId,
+                            butcher_name: butcherName,
+                            discount: discount,
+                            shipping_cost: shippingCost,
+                            branch_id: branchId
+                        },
+                        details: products
+                    };
+
+                    console.log(payload)
+
+                    $.ajax({
+                        url: `{{route('transactions.store')}}`,
+                        type: 'POST',
+                        contentType: 'application/json',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: JSON.stringify(payload),
+                        success: function(response) {
+                            Swal.fire({
+                                title: 'Suceess !',
+                                text: `Transaksi berhasil di simpan dengan Nomor Transaksi ${response.transaction_code}`,
+                                icon: 'success',
+                                confirmButtonText: 'Cetak Faktur',
+                                allowOutsideClick: false
+                            }).then((result) => {
+                                let receiptUrl =
+                                    `{{ route('orders.print-receipt', ['id' => '__transaction_id__']) }}`;
+                                receiptUrl = receiptUrl.replace(
+                                    '__transaction_id__', response
+                                    .transaction_id);
+
+                                // Open the receipt in a new tab
+                                window.open(receiptUrl, '_blank');
+
+                                // Redirect the current page to the transaction index
+                                location.href =
+                                    `{{ route('transactions.index') }}`;
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire(
+                                'Error!',
+                                error,
+                                'error'
+                            )
+                        }
+                    });
+                }
+            });
+        }
     });
 
     $(document).on('click', '#btn-form-customer', function(e) {
@@ -1350,7 +1365,8 @@ $(document).ready(function() {
                 $('.product-l').remove();
                 data.forEach(function(product) {
                     // Construct HTML for each product
-                    const discountHTML = product.discount !== 0 && !isNaN(parseFloat(product.discount)) ?
+                    const discountHTML = product.discount !== 0 && !isNaN(parseFloat(product
+                            .discount)) ?
                         `<span>Diskon</span> <span class="fs-6 text-muted">${formatCurrency(parseFloat(product.discount))}</span>` :
                         '';
 
@@ -1442,6 +1458,64 @@ $(document).ready(function() {
 
     function mround(number, multiple) {
         return Math.round(number / multiple) * multiple;
+    }
+
+    function validate() {
+        var toReturn = true;
+        const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
+        const customerId = $('#customer').val();
+        const butcherName = $('#butcher-name').val();
+        const branchId = $('#branch-id').val();
+
+        if (!paymentMethod) {
+            Swal.fire({
+                title: 'Warning !',
+                text: 'Metode Pembayaran tidak boleh kosong',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            });
+
+            toReturn = false;
+        }
+
+        if (!customerId) {
+            Swal.fire({
+                title: 'Warning !',
+                text: 'Nama customer harus di pilih',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            });
+
+            toReturn = false;
+        }
+
+        if (!butcherName) {
+            Swal.fire({
+                title: 'Warning !',
+                text: 'Nama Butcherees tidak boleh kosong',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            });
+
+            toReturn = false;
+        }
+
+        if (!branchId) {
+            Swal.fire({
+                title: 'Warning !',
+                text: 'Branch / Store harus di pilih',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            });
+
+            toReturn = false;
+        }
+
+        return toReturn;
     }
 });
 </script>

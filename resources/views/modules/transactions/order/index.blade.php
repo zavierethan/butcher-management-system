@@ -252,7 +252,7 @@
                     <div class="mb-1">
                         <label class="form-label fw-bold fs-6 mb-2">Store / Cabang</label>
                         <div class="position-relative mb-3">
-                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Store" id="branch-id" disabled="<?php echo (Auth::user()->group_id != 1) ? "disabled" : ""; ?>">
+                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Store" id="branch-id">
                                 @foreach($branches as $branch)
                                 <option value="{{$branch->id}}" <?php echo ($branch->id == Auth::user()->branch_id) ? "selected" : ""; ?>>{{$branch->code}}</option>
                                 @endforeach
@@ -383,13 +383,15 @@ $(document).ready(function() {
 
         const start_date = $("#start-date").val();
         const end_date = $("#end-date").val();
+        const branch_id = $("#branch-id").val();
 
         $.ajax({
             url: `{{url('/orders/export')}}`,
             type: 'GET',
             data: {
                 start_date: start_date,
-                end_date: end_date
+                end_date: end_date,
+                branch_id: branch_id
             },
             xhrFields: {
                 responseType: 'blob', // Treat response as binary

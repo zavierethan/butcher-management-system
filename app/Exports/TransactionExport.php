@@ -15,11 +15,17 @@ class TransactionExport implements FromCollection, WithHeadings, WithCustomStart
 {
     protected $startDate;
     protected $endDate;
+    protected $branchId;
+    protected $branchName;
+    protected $branchCode;
 
-    public function __construct($startDate, $endDate)
+    public function __construct($startDate, $endDate, $branchId, $branchName, $branchCode)
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
+        $this->branchId = $branchId;
+        $this->branchName = $branchName;
+        $this->branchCode = $branchCode;
     }
 
     public function collection()
@@ -59,6 +65,7 @@ class TransactionExport implements FromCollection, WithHeadings, WithCustomStart
             ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')
             ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
             ->leftJoin('users', 'users.id', '=', 'transactions.created_by')
+            ->where('transactions.branch_id', $this->branchId)
             ->whereBetween('transactions.transaction_date', [$this->startDate, $this->endDate]);
 
         if(Auth::user()->group_id != 1 || Auth::user()->branch_id != 1) {
@@ -107,9 +114,9 @@ class TransactionExport implements FromCollection, WithHeadings, WithCustomStart
 
                 // Add additional information above the table
                 $sheet->setCellValue('A1', 'TANGGAL');
-                $sheet->setCellValue('B1', $this->startDate);
+                $sheet->setCellValue('B1', $this->startDate.' - '.$this->endDate);
                 $sheet->setCellValue('A2', 'CABANG');
-                $sheet->setCellValue('B2', $this->startDate);
+                $sheet->setCellValue('B2', $this->branchName.' ('.$this->branchCode.')');
 
                 // Apply bold styling to the labels
                 $sheet->getStyle('A1:A2')->applyFromArray([
