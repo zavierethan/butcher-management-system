@@ -1014,11 +1014,17 @@ $(document).ready(function() {
         var productId = $(this).data('product-id');
         var productName = $(this).data('product-name');
         var productPrice = parseFloat($(this).data('product-price')); // Ensure price is a number
-        var productDiscount = parseFloat($(this).data('product-discount'));
+        var productDiscount = parseFloat($(this).data('product-discount')) | 0;
         var productImgUrl = $(this).find('img').attr('src');
 
         // Check if the product already exists in the cart
         var existingProduct = $(`#product-id-${productId}`);
+
+        var dicountElem = `<span class="badge bg-warning text-dark discount"></span>`;
+
+        if(productDiscount > 0) {
+            dicountElem = `<span class="badge bg-warning text-dark discount">- ${productDiscount}</span>`
+        }
 
         if (existingProduct.length > 0) {
             // Update quantity and subtotal for existing product
@@ -1044,7 +1050,7 @@ $(document).ready(function() {
                                     </div>
                                     <div class="text-end me-3 mt-3">
                                         <h6 class="mb-1 price">${formatCurrency(productPrice - productDiscount)}</h6>
-                                        <span class="badge bg-warning text-dark discount">- ${productDiscount}</span>
+                                        ${dicountElem}
                                     </div>
                                 </div>
                                 <div class="d-flex flex-row-reverse">
@@ -1183,11 +1189,8 @@ $(document).ready(function() {
                             '');
                         const basePrice = $(this).find('.base-price').text().replace(
                             /[^\d]/g, '');
-                        const productDiscount = $(this).find('.discount').text()
-                            .replace(
-                                /[^\d]/g, '');
-                        const quantity = $(this).find('.qty').text().replace(/ Kg$/,
-                        "");
+                        const productDiscount = $(this).find('.discount').text().replace(/[^\d]/g, '') | 0;
+                        const quantity = $(this).find('.qty').text().replace(/ Kg$/, "");
 
                         products.push({
                             product_id: productId,
