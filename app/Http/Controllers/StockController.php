@@ -8,7 +8,7 @@ use DB;
 class StockController extends Controller
 {
     public function index() {
-        return view('modules.transactions.stock.index');
+        return view('modules.inventory.stock.index');
     }
 
     public function getLists(Request $request) {
@@ -47,7 +47,7 @@ class StockController extends Controller
         $branches = DB::table('branches')->orderBy('name', 'asc')->get();
         $products = DB::table('products')->orderBy('name', 'asc')->get();
 
-        return view('modules.transactions.stock.create', compact('branches', 'products'));
+        return view('modules.inventory.stock.create', compact('branches', 'products'));
     }
 
     public function save(Request $request) {

@@ -131,6 +131,9 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/', [App\Http\Controllers\SupplierController::class, 'index'])->name('index');
             Route::get('/lists', [App\Http\Controllers\SupplierController::class, 'getLists'])->name('get-lists');
             Route::get('/create', [App\Http\Controllers\SupplierController::class, 'create'])->name('create');
+            Route::post('/save', [App\Http\Controllers\SupplierController::class, 'save'])->name('save');
+            Route::get('/edit/{id}', [App\Http\Controllers\SupplierController::class, 'edit'])->name('edit');
+            Route::post('/update', [App\Http\Controllers\SupplierController::class, 'update'])->name('update');
         });
     });
 
@@ -162,6 +165,8 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/', [App\Http\Controllers\ProductionController::class, 'index'])->name('index');
         });
     });
+
+    // Inventory Management
 
     Route::prefix('stocks')->group(function () {
         Route::name('stocks.')->group(function () {

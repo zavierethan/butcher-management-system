@@ -8,7 +8,7 @@ use DB;
 class StockLogController extends Controller
 {
     public function index($id) {
-        return view('modules.transactions.stock.stock-log.index', ['stockId' => $id]);
+        return view('modules.inventory.stock.stock-log.index', ['stockId' => $id]);
     }
 
     public function getLists(Request $request, $stockId) {
