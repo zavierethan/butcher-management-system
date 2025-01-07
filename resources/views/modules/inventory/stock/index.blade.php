@@ -11,17 +11,13 @@
                 <!--begin::Page title-->
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
-<<<<<<< HEAD
-                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Supliers</h1>
-=======
-                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Suppliers</h1>
->>>>>>> 89c6eeb774ef1f785e616ad2d19571dc93b4b3d6
+                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Stocks</h1>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
                         <!--begin::Item-->
                         <li class="breadcrumb-item text-muted">
-                            <a href="index.html" class="text-muted text-hover-primary">Master Data</a>
+                            <a href="index.html" class="text-muted text-hover-primary">Inventory Management</a>
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
@@ -30,11 +26,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-<<<<<<< HEAD
-                        <li class="breadcrumb-item text-muted">Supliers</li>
-=======
-                        <li class="breadcrumb-item text-muted">Suppliers</li>
->>>>>>> 89c6eeb774ef1f785e616ad2d19571dc93b4b3d6
+                        <li class="breadcrumb-item text-muted">Stocks</li>
                         <!--end::Item-->
                     </ul>
                     <!--end::Breadcrumb-->
@@ -42,15 +34,12 @@
                 <!--end::Page title-->
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
-<<<<<<< HEAD
-=======
                     <!--begin::Secondary button-->
                     <a href="#" class="btn btn-sm fw-bold btn-secondary" data-bs-toggle="modal"
                         data-bs-target="#kt_modal_create_app">Export</a>
                     <!--end::Secondary button-->
->>>>>>> 89c6eeb774ef1f785e616ad2d19571dc93b4b3d6
                     <!--begin::Primary button-->
-                    <a href="{{route('suppliers.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
+                    <a href="{{route('stocks.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
                     <!--end::Primary button-->
                 </div>
                 <!--end::Actions-->
@@ -95,24 +84,15 @@
                         <!--begin::Card body-->
                         <div class="card-body pt-0 overflow-x-auto">
                             <!--begin::Table-->
-<<<<<<< HEAD
-                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_suppliers_table">
-=======
-                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_product_categories_table">
->>>>>>> 89c6eeb774ef1f785e616ad2d19571dc93b4b3d6
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_products_table">
                                 <!--begin::Table head-->
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-<<<<<<< HEAD
-                                        <th class="min-w-125px">Nama Supplier</th>
-                                        <th class="min-w-125px">Nama Peternak</th>
-=======
-                                        <th class="min-w-125px">Nama</th>
-                                        <th class="min-w-125px">No. Telephone</th>
->>>>>>> 89c6eeb774ef1f785e616ad2d19571dc93b4b3d6
-                                        <th class="min-w-125px">Alamat</th>
-                                        <th class="min-w-125px">Active</th>
+                                        <th class="min-w-125px">Produk</th>
+                                        <th class="min-w-125px">Kuantitas</th>
+                                        <th class="min-w-125px">Cabang</th>
+                                        <th class="min-w-125px">Tanggal</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -141,44 +121,35 @@
 
 @section('script')
 <script>
-<<<<<<< HEAD
-    $("#kt_suppliers_table").DataTable({
-=======
-    $("#kt_product_categories_table").DataTable({
->>>>>>> 89c6eeb774ef1f785e616ad2d19571dc93b4b3d6
+    $("#kt_products_table").DataTable({
         processing: true,
         serverSide: true,
         paging: true, // Enable pagination
         pageLength: 10, // Number of rows per page
         ajax: {
-            url: `{{route('suppliers.get-lists')}}`, // Replace with your route
+            url: `{{route('stocks.get-lists')}}`, // Replace with your route
             type: 'GET',
             dataSrc: function (json) {
                 return json.data; // Map the 'data' field
             }
         },
         columns: [
-            { data: 'name', name: 'name' },
-<<<<<<< HEAD
-            { data: 'farmer_name', name: 'ktp_number' },
-            { data: 'address', name: 'phone_number' },
             {
-                data: 'is_active',
-                name: 'is_active',
+                data: null,
+                name: 'product_code_name',
                 render: function (data, type, row) {
-                    let status = "Aktif"
-
-                    if(row.is_active != 1)
-                        status = "Non Aktif"
-
-                    return status;
+                    return `${row.product_code} - ${row.product_name}`;
                 }
             },
-=======
-            { data: 'phone_number', name: 'phone_number' },
-            { data: 'address', name: 'address' },
-            { data: 'is_active', name: 'is_active' },
->>>>>>> 89c6eeb774ef1f785e616ad2d19571dc93b4b3d6
+            { data: 'quantity', name: 'quantity' },
+            {
+                data: null,
+                name: 'branch_code_name',
+                render: function (data, type, row) {
+                    return `${row.branch_code} - ${row.branch_name}`;
+                }
+            },
+            { data: 'date', name: 'date' },
             {
                 data: null, // No direct field from the server
                 name: 'action',
@@ -187,7 +158,7 @@
                 render: function (data, type, row) {
                     return `
                         <div class="text-center">
-                            <a href="/suppliers/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Edit</a>
+                            <a href="/stock-logs/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Details</a>
                         <div>
                     `;
                 }

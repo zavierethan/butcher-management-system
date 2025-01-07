@@ -11,8 +11,12 @@
                 <!--begin::Page title-->
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
+<<<<<<< HEAD
                     <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
                         Suppliers</h1>
+=======
+                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Suppliers</h1>
+>>>>>>> 89c6eeb774ef1f785e616ad2d19571dc93b4b3d6
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
@@ -55,6 +59,7 @@
                         <div class="card-body pt-10">
                             <form class="w-[60%]" method="POST" action="{{route('suppliers.save')}}">
                                 @csrf
+<<<<<<< HEAD
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="fv-row mb-5">
@@ -110,6 +115,48 @@
                                         <div class="separator my-5"></div>
                                     </div>
                                 </div>
+=======
+                                <div class="fv-row mb-5">
+                                    <div class="mb-1">
+                                        <label class="form-label fw-bold fs-6 mb-2">Nama</label>
+                                        <div class="position-relative mb-3">
+                                            <input class="form-control form-control-md form-control-solid" type="text" name="name" id="name" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="separator my-5"></div>
+                                <div class="fv-row mb-5">
+                                    <div class="mb-1">
+                                        <label class="form-label fw-bold fs-6 mb-2">No. Telephone</label>
+                                        <div class="position-relative mb-3">
+                                            <input class="form-control form-control-md form-control-solid" type="text" name="phone_number" id="phone_number" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="separator my-5"></div>
+                                <div class="fv-row mb-5">
+                                    <div class="mb-1">
+                                        <label class="form-label fw-bold fs-6 mb-2">Alamat</label>
+                                        <div class="position-relative mb-3">
+                                            <input class="form-control form-control-md form-control-solid" type="text" name="address" id="address" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="separator my-5"></div>
+                                <div class="fv-row mb-5">
+                                    <div class="mb-1">
+                                        <label class="form-label fw-bold fs-6 mb-2">Is Active</label>
+                                        <div class="position-relative mb-3">
+                                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="is_active">
+                                                <option value=""></option>
+                                                <option value="1" selected>Yes</option>
+                                                <option value="0">No</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="separator my-5"></div>
+>>>>>>> 89c6eeb774ef1f785e616ad2d19571dc93b4b3d6
                                 <div class="flex justify-end">
                                     <button type="submit" class="btn btn-primary">Submit</button>
                                     <a href="{{route('suppliers.index')}}" class="btn btn-danger">Cancel</a>
