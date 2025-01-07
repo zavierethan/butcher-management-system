@@ -1035,6 +1035,7 @@ $(document).ready(function() {
 
             const priceElement = existingProduct.find('.price');
             const newSubtotal = (productPrice * newQuantity);
+
             priceElement.text(formatCurrency(mround(newSubtotal, 500)));
         } else {
             // Add new product to the cart
@@ -1135,8 +1136,9 @@ $(document).ready(function() {
             quantityElement.text(`${newQuantity} Kg`);
 
             const priceElement = existingProduct.find('.price');
-            const discountElement = existingProduct.find('.discount').text().replace(/[^\d]/g, '');
+            const discountElement = existingProduct.find('.discount').text().replace(/[^\d]/g, '') | 0;
             const newSubtotal = productPrice * newQuantity;
+
             priceElement.text(formatCurrency(mround(newSubtotal, 500) - parseFloat(discountElement)));
         }
 

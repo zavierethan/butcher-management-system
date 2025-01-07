@@ -131,6 +131,9 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/', [App\Http\Controllers\SupplierController::class, 'index'])->name('index');
             Route::get('/lists', [App\Http\Controllers\SupplierController::class, 'getLists'])->name('get-lists');
             Route::get('/create', [App\Http\Controllers\SupplierController::class, 'create'])->name('create');
+            Route::post('/save', [App\Http\Controllers\SupplierController::class, 'save'])->name('save');
+            Route::get('/edit/{id}', [App\Http\Controllers\SupplierController::class, 'edit'])->name('edit');
+            Route::post('/update', [App\Http\Controllers\SupplierController::class, 'update'])->name('update');
         });
     });
 
@@ -160,6 +163,93 @@ Route::group(['middleware' => ['auth']], function() {
     Route::prefix('productions')->group(function () {
         Route::name('productions.')->group(function () {
             Route::get('/', [App\Http\Controllers\ProductionController::class, 'index'])->name('index');
+        });
+    });
+
+    // Procurement
+    Route::prefix('procurement')->group(function () {
+        Route::name('procurement.')->group(function () {
+
+            Route::prefix('purchase-request')->group(function () {
+                Route::name('purchase-request.')->group(function () {
+                    Route::get('/', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'index'])->name('index');
+                    Route::get('/lists', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'getLists'])->name('get-lists');
+                    Route::get('/create', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'create'])->name('create');
+                    Route::post('/save', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'save'])->name('save');
+                    Route::get('/edit/{id}', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'edit'])->name('edit');
+                });
+            });
+
+            Route::prefix('purchase-order')->group(function () {
+                Route::name('purchase-order.')->group(function () {
+                    Route::get('/', [App\Http\Controllers\Procurements\PurchaseOrderController::class, 'index'])->name('index');
+                });
+            });
+
+            Route::prefix('goods-receive')->group(function () {
+                Route::name('goods-receive.')->group(function () {
+                    Route::get('/', [App\Http\Controllers\Procurements\GoodsReceiveController::class, 'index'])->name('index');
+                });
+            });
+
+        });
+    });
+
+    // Finances
+    Route::prefix('finances')->group(function () {
+        Route::name('finances.')->group(function () {
+
+            Route::prefix('chart-of-accounts')->group(function () {
+                Route::name('chart-of-accounts.')->group(function () {
+                    Route::get('/', [App\Http\Controllers\Finances\ChartOfAccountController::class, 'index'])->name('index');
+                    Route::get('/lists', [App\Http\Controllers\Finances\ChartOfAccountController::class, 'getLists'])->name('get-lists');
+                    Route::get('/create', [App\Http\Controllers\Finances\ChartOfAccountController::class, 'create'])->name('create');
+                    Route::post('/save', [App\Http\Controllers\Finances\ChartOfAccountController::class, 'save'])->name('save');
+                    Route::get('/edit/{id}', [App\Http\Controllers\Finances\ChartOfAccountController::class, 'edit'])->name('edit');
+                    Route::post('/update', [App\Http\Controllers\Finances\ChartOfAccountController::class, 'update'])->name('update');
+                });
+            });
+
+            Route::prefix('journals')->group(function () {
+                Route::name('journals.')->group(function () {
+                    Route::get('/', [App\Http\Controllers\Finances\JournalController::class, 'index'])->name('index');
+                    Route::get('/lists', [App\Http\Controllers\Finances\JournalController::class, 'getLists'])->name('get-lists');
+                    Route::get('/create', [App\Http\Controllers\Finances\JournalController::class, 'create'])->name('create');
+                    Route::post('/save', [App\Http\Controllers\Finances\JournalController::class, 'save'])->name('save');
+                    Route::get('/edit/{id}', [App\Http\Controllers\Finances\JournalController::class, 'edit'])->name('edit');
+                    Route::post('/update', [App\Http\Controllers\Finances\JournalController::class, 'update'])->name('update');
+                });
+            });
+
+            Route::prefix('account-receivable')->group(function () {
+                Route::name('account-receivable.')->group(function () {
+                    Route::get('/', [App\Http\Controllers\Finances\AccountReceivableController::class, 'index'])->name('index');
+                });
+            });
+
+            Route::prefix('account-payable')->group(function () {
+                Route::name('account-payable.')->group(function () {
+                    Route::get('/', [App\Http\Controllers\Finances\AccountPayableController::class, 'index'])->name('index');
+                });
+            });
+
+            Route::prefix('expenses')->group(function () {
+                Route::name('expenses.')->group(function () {
+                    Route::get('/', [App\Http\Controllers\Finances\ExpenseController::class, 'index'])->name('index');
+                    Route::get('/lists', [App\Http\Controllers\Finances\ExpenseController::class, 'getLists'])->name('get-lists');
+                    Route::get('/create', [App\Http\Controllers\Finances\ExpenseController::class, 'create'])->name('create');
+                    Route::post('/save', [App\Http\Controllers\Finances\ExpenseController::class, 'save'])->name('save');
+                    Route::get('/edit/{id}', [App\Http\Controllers\Finances\ExpenseController::class, 'edit'])->name('edit');
+                    Route::post('/update', [App\Http\Controllers\Finances\ExpenseController::class, 'update'])->name('update');
+                });
+            });
+
+            Route::prefix('reports')->group(function () {
+                Route::name('reports.')->group(function () {
+                    Route::get('/', [App\Http\Controllers\Finances\ReportController::class, 'index'])->name('index');
+                });
+            });
+
         });
     });
 });

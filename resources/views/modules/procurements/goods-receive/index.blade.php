@@ -11,13 +11,13 @@
                 <!--begin::Page title-->
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
-                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Supliers</h1>
+                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Goods Receive</h1>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
                         <!--begin::Item-->
                         <li class="breadcrumb-item text-muted">
-                            <a href="index.html" class="text-muted text-hover-primary">Master Data</a>
+                            <a href="index.html" class="text-muted text-hover-primary">Procurements</a>
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
@@ -26,7 +26,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Supliers</li>
+                        <li class="breadcrumb-item text-muted">Goods Receive</li>
                         <!--end::Item-->
                     </ul>
                     <!--end::Breadcrumb-->
@@ -85,9 +85,10 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">Nama Supplier</th>
-                                        <th class="min-w-125px">Nama Peternak</th>
-                                        <th class="min-w-125px">Alamat</th>
+                                        <th class="min-w-125px">Tanggal</th>
+                                        <th class="min-w-125px">Cabang</th>
+                                        <th class="min-w-125px">PIC</th>
+                                        <th class="min-w-125px">Status Approval</th>
                                         <th class="min-w-125px">Active</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
@@ -117,48 +118,48 @@
 
 @section('script')
 <script>
-    $("#kt_suppliers_table").DataTable({
-        processing: true,
-        serverSide: true,
-        paging: true, // Enable pagination
-        pageLength: 10, // Number of rows per page
-        ajax: {
-            url: `{{route('suppliers.get-lists')}}`, // Replace with your route
-            type: 'GET',
-            dataSrc: function (json) {
-                return json.data; // Map the 'data' field
-            }
-        },
-        columns: [
-            { data: 'name', name: 'name' },
-            { data: 'farmer_name', name: 'ktp_number' },
-            { data: 'address', name: 'phone_number' },
-            {
-                data: 'is_active',
-                name: 'is_active',
-                render: function (data, type, row) {
-                    let status = "Aktif"
+    // $("#kt_suppliers_table").DataTable({
+    //     processing: true,
+    //     serverSide: true,
+    //     paging: true, // Enable pagination
+    //     pageLength: 10, // Number of rows per page
+    //     ajax: {
+    //         url: `{{route('suppliers.get-lists')}}`, // Replace with your route
+    //         type: 'GET',
+    //         dataSrc: function (json) {
+    //             return json.data; // Map the 'data' field
+    //         }
+    //     },
+    //     columns: [
+    //         { data: 'name', name: 'name' },
+    //         { data: 'farmer_name', name: 'ktp_number' },
+    //         { data: 'address', name: 'phone_number' },
+    //         {
+    //             data: 'is_active',
+    //             name: 'is_active',
+    //             render: function (data, type, row) {
+    //                 let status = "Aktif"
 
-                    if(row.is_active != 1)
-                        status = "Non Aktif"
+    //                 if(row.is_active != 1)
+    //                     status = "Non Aktif"
 
-                    return status;
-                }
-            },
-            {
-                data: null, // No direct field from the server
-                name: 'action',
-                orderable: false, // Disable ordering for this column
-                searchable: false, // Disable searching for this column
-                render: function (data, type, row) {
-                    return `
-                        <div class="text-center">
-                            <a href="/suppliers/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Edit</a>
-                        <div>
-                    `;
-                }
-            }
-        ]
-    });
+    //                 return status;
+    //             }
+    //         },
+    //         {
+    //             data: null, // No direct field from the server
+    //             name: 'action',
+    //             orderable: false, // Disable ordering for this column
+    //             searchable: false, // Disable searching for this column
+    //             render: function (data, type, row) {
+    //                 return `
+    //                     <div class="text-center">
+    //                         <a href="/suppliers/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Edit</a>
+    //                     <div>
+    //                 `;
+    //             }
+    //         }
+    //     ]
+    // });
 </script>
 @endsection

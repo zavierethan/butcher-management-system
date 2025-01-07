@@ -11,13 +11,14 @@
                 <!--begin::Page title-->
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
-                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Supliers</h1>
+                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
+                        Chart of Accounts</h1>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
                         <!--begin::Item-->
                         <li class="breadcrumb-item text-muted">
-                            <a href="index.html" class="text-muted text-hover-primary">Master Data</a>
+                            <a href="index.html" class="text-muted text-hover-primary">Finances</a>
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
@@ -26,7 +27,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Supliers</li>
+                        <li class="breadcrumb-item text-muted">Chart of Accounts</li>
                         <!--end::Item-->
                     </ul>
                     <!--end::Breadcrumb-->
@@ -34,9 +35,9 @@
                 <!--end::Page title-->
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
-                    <!--begin::Primary button-->
-                    <a href="{{route('suppliers.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
-                    <!--end::Primary button-->
+                    <!--begin::Secondary button-->
+                    <a href="{{route('finances.chart-of-accounts.create')}}" class="btn btn-sm fw-bold btn-secondary">New</a>
+                    <!--end::Secondary button-->
                 </div>
                 <!--end::Actions-->
             </div>
@@ -51,6 +52,7 @@
                 <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
                     <!--begin::Table-->
                     <div class="card">
+                        <!--begin::Card header-->
                         <div class="card-header border-0 pt-6">
                             <!--begin::Card title-->
                             <div class="card-title">
@@ -65,31 +67,37 @@
                                 <div class="d-flex align-items-center position-relative my-1">
                                     <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
                                     <span class="svg-icon svg-icon-1 position-absolute ms-6">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                            <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
-                                            <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="black" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none">
+                                            <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2"
+                                                rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
+                                            <path
+                                                d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z"
+                                                fill="black" />
                                         </svg>
                                     </span>
                                     <!--end::Svg Icon-->
-                                    <input type="text" data-kt-customer-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Search" />
+                                    <input type="text" data-kt-customer-table-filter="search"
+                                        class="form-control form-control-solid w-250px ps-15" placeholder="kode COA" />
                                 </div>
                                 <!--end::Toolbar-->
                             </div>
                             <!--end::Card toolbar-->
                         </div>
+                        <!--end::Card header-->
                         <!--begin::Card body-->
                         <div class="card-body pt-0 overflow-x-auto">
                             <!--begin::Table-->
-                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_suppliers_table">
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_transactions_table">
                                 <!--begin::Table head-->
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">Nama Supplier</th>
-                                        <th class="min-w-125px">Nama Peternak</th>
-                                        <th class="min-w-125px">Alamat</th>
-                                        <th class="min-w-125px">Active</th>
-                                        <th class="text-center min-w-70px">Actions</th>
+                                        <th class="min-w-125px">KODE</th>
+                                        <th class="min-w-125px">NAME</th>
+                                        <th class="min-w-125px">TYPE</th>
+                                        <th class="min-w-125px">CATEGORY</th>
+                                        <th class="text-center min-w-70px">ACTIONS</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -117,48 +125,55 @@
 
 @section('script')
 <script>
-    $("#kt_suppliers_table").DataTable({
+$(document).ready(function() {
+    const table = $("#kt_transactions_table").DataTable({
         processing: true,
         serverSide: true,
         paging: true, // Enable pagination
         pageLength: 10, // Number of rows per page
         ajax: {
-            url: `{{route('suppliers.get-lists')}}`, // Replace with your route
+            url: `{{route('finances.chart-of-accounts.get-lists')}}`, // Replace with your route
             type: 'GET',
-            dataSrc: function (json) {
+            dataSrc: function(json) {
                 return json.data; // Map the 'data' field
             }
         },
-        columns: [
-            { data: 'name', name: 'name' },
-            { data: 'farmer_name', name: 'ktp_number' },
-            { data: 'address', name: 'phone_number' },
+        columns: [{
+                data: 'code',
+                name: 'code'
+            },
             {
-                data: 'is_active',
-                name: 'is_active',
-                render: function (data, type, row) {
-                    let status = "Aktif"
-
-                    if(row.is_active != 1)
-                        status = "Non Aktif"
-
-                    return status;
-                }
+                data: 'name',
+                name: 'name',
+            },
+            {
+                data: 'type',
+                name: 'type'
+            },
+            {
+                data: 'category',
+                name: 'category'
             },
             {
                 data: null, // No direct field from the server
                 name: 'action',
                 orderable: false, // Disable ordering for this column
                 searchable: false, // Disable searching for this column
-                render: function (data, type, row) {
+                render: function(data, type, row) {
                     return `
                         <div class="text-center">
-                            <a href="/suppliers/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Edit</a>
+                            <a href="/finances/chart-of-accounts/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Edit"><i class="fa-solid fa-edit"></i></a>
                         <div>
                     `;
                 }
             }
         ]
     });
+
+    $('[data-kt-customer-table-filter="search"]').on('keyup', function() {
+        const searchTerm = $(this).val(); // Get the value from the search input
+        table.search(searchTerm).draw(); // Trigger the search and refresh the DataTable
+    });
+});
 </script>
 @endsection
