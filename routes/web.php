@@ -249,6 +249,8 @@ Route::group(['middleware' => ['auth']], function() {
                     Route::get('/', [App\Http\Controllers\Finances\ReportController::class, 'index'])->name('index');
                 });
             });
+        });
+    });
 
     // Inventory Management
 
