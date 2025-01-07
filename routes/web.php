@@ -166,7 +166,6 @@ Route::group(['middleware' => ['auth']], function() {
         });
     });
 
-<<<<<<< HEAD
     // Procurement
     Route::prefix('procurement')->group(function () {
         Route::name('procurement.')->group(function () {
@@ -251,7 +250,6 @@ Route::group(['middleware' => ['auth']], function() {
                 });
             });
 
-=======
     // Inventory Management
 
     Route::prefix('stocks')->group(function () {
@@ -273,7 +271,6 @@ Route::group(['middleware' => ['auth']], function() {
             // Route::post('/save', [App\Http\Controllers\StockController::class, 'save'])->name('save');
             // Route::get('/edit/{id}', [App\Http\Controllers\StockController::class, 'edit'])->name('edit');
             // Route::post('/update', [App\Http\Controllers\StockController::class, 'update'])->name('update');
->>>>>>> 89c6eeb774ef1f785e616ad2d19571dc93b4b3d6
         });
     });
 });
