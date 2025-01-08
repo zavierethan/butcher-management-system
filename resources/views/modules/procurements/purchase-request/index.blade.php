@@ -90,6 +90,7 @@
                                         <th class="min-w-125px">Alokasi</th>
                                         <th class="min-w-125px">PIC</th>
                                         <th class="min-w-125px">Kategori</th>
+                                        <th class="min-w-125px">Nominal Pengajuan</th>
                                         <th class="min-w-125px">Status Approval</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
@@ -137,7 +138,28 @@
             { data: 'alocation', name: 'alocation' },
             { data: 'pic', name: 'pic' },
             { data: 'category', name: 'category' },
-            { data: 'status', name: 'status' },
+            { data: 'nominal_application', name: 'nominal_application' },
+            {
+                data: 'status',
+                name: 'status',
+                render: function(data, type, row) {
+                    var status = "";
+
+                    if (row.status == "pending") {
+                        status = `<span class="badge bg-warning text-white">PENDING</span>`
+                    }
+
+                    if (row.status == "approve") {
+                        status = `<span class="badge bg-success text-white">APPROVE</span>`
+                    }
+
+                    if (row.status == "decline") {
+                        status = `<span class="badge bg-danger text-white">DECLINE</span>`
+                    }
+
+                    return status;
+                }
+            },
             {
                 data: null, // No direct field from the server
                 name: 'action',
@@ -146,7 +168,7 @@
                 render: function (data, type, row) {
                     return `
                         <div class="text-center">
-                            <a href="/procurement/purchase-request/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Edit</a>
+                            <a href="/procurement/purchase-request/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Approval</a>
                         <div>
                     `;
                 }

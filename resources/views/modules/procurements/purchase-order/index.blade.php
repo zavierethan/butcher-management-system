@@ -35,7 +35,7 @@
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
                     <!--begin::Primary button-->
-                    <a href="{{route('suppliers.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
+                    <a href="{{route('procurement.purchase-order.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
                     <!--end::Primary button-->
                 </div>
                 <!--end::Actions-->
@@ -71,7 +71,7 @@
                                         </svg>
                                     </span>
                                     <!--end::Svg Icon-->
-                                    <input type="text" data-kt-customer-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Search" />
+                                    <input type="text" data-kt-purchase-order-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Search" />
                                 </div>
                                 <!--end::Toolbar-->
                             </div>
@@ -87,8 +87,10 @@
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">Kode Pembelian</th>
                                         <th class="min-w-125px">Tanggal</th>
+                                        <th class="min-w-125px">Kategori</th>
                                         <th class="min-w-125px">Supplier</th>
-                                        <th class="min-w-125px">PIC</th>
+                                        <th class="min-w-125px">Total Pembelian</th>
+                                        <th class="min-w-125px">Status</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -117,48 +119,61 @@
 
 @section('script')
 <script>
-    // $("#kt_suppliers_table").DataTable({
-    //     processing: true,
-    //     serverSide: true,
-    //     paging: true, // Enable pagination
-    //     pageLength: 10, // Number of rows per page
-    //     ajax: {
-    //         url: `{{route('suppliers.get-lists')}}`, // Replace with your route
-    //         type: 'GET',
-    //         dataSrc: function (json) {
-    //             return json.data; // Map the 'data' field
-    //         }
-    //     },
-    //     columns: [
-    //         { data: 'name', name: 'name' },
-    //         { data: 'farmer_name', name: 'ktp_number' },
-    //         { data: 'address', name: 'phone_number' },
-    //         {
-    //             data: 'is_active',
-    //             name: 'is_active',
-    //             render: function (data, type, row) {
-    //                 let status = "Aktif"
+    let table = $("#kt_suppliers_table").DataTable({
+        processing: true,
+        serverSide: true,
+        paging: true, // Enable pagination
+        pageLength: 10, // Number of rows per page
+        ajax: {
+            url: `{{route('procurement.purchase-order.get-lists')}}`, // Replace with your route
+            type: 'GET',
+            dataSrc: function (json) {
+                return json.data; // Map the 'data' field
+            }
+        },
+        columns: [
+            { data: 'purchase_order_number', name: 'purchase_order_number' },
+            { data: 'order_date', name: 'order_date' },
+            { data: 'category', name: 'category' },
+            { data: 'supplier_name', name: 'supplier_name' },
+            { data: 'total_amount', name: 'total_amount' },
+            {
+                data: 'status',
+                name: 'status',
+                render: function(data, type, row) {
+                    var status = "";
 
-    //                 if(row.is_active != 1)
-    //                     status = "Non Aktif"
+                    if (row.status == "pending") {
+                        status = `<span class="badge bg-warning text-white">PENDING</span>`
+                    }
 
-    //                 return status;
-    //             }
-    //         },
-    //         {
-    //             data: null, // No direct field from the server
-    //             name: 'action',
-    //             orderable: false, // Disable ordering for this column
-    //             searchable: false, // Disable searching for this column
-    //             render: function (data, type, row) {
-    //                 return `
-    //                     <div class="text-center">
-    //                         <a href="/suppliers/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Edit</a>
-    //                     <div>
-    //                 `;
-    //             }
-    //         }
-    //     ]
-    // });
+                    if (row.status == "completed") {
+                        status = `<span class="badge bg-success text-white">APPROVE</span>`
+                    }
+
+                    return status;
+                }
+            },
+            {
+                data: null, // No direct field from the server
+                name: 'action',
+                orderable: false, // Disable ordering for this column
+                searchable: false, // Disable searching for this column
+                render: function (data, type, row) {
+                    return `
+                        <div class="text-center">
+                            <a href="/procurement/purchase-order/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Goods Receive</a>
+                            <a href="/procurement/purchase-order/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Edit</a>
+                        <div>
+                    `;
+                }
+            }
+        ]
+    });
+
+    $('[data-kt-purchase-order-table-filter="search"]').on('keyup', function() {
+        const searchTerm = $(this).val(); // Get the value from the search input
+        table.search(searchTerm).draw(); // Trigger the search and refresh the DataTable
+    });
 </script>
 @endsection

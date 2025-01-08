@@ -24,3 +24,5 @@ Route::get('products/', [App\Http\Controllers\ProductController::class, 'getList
 
 Route::get('customers/', [App\Http\Controllers\CustomerController::class, 'getListFiltered']);
 Route::post('customers/save', [App\Http\Controllers\CustomerController::class, 'saveNewCustomerFromPOS']);
+
+Route::get('get-purchase-request-items/', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'getPurchaseRequestItem'])->name('get-purchase-request-item');

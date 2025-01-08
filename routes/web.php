@@ -177,18 +177,31 @@ Route::group(['middleware' => ['auth']], function() {
                     Route::get('/create', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'create'])->name('create');
                     Route::post('/save', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'save'])->name('save');
                     Route::get('/edit/{id}', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'edit'])->name('edit');
+                    Route::post('/update', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'update'])->name('update');
+
+                    Route::post('/approve-item', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'approveItem'])->name('approve-item');
                 });
             });
 
             Route::prefix('purchase-order')->group(function () {
                 Route::name('purchase-order.')->group(function () {
                     Route::get('/', [App\Http\Controllers\Procurements\PurchaseOrderController::class, 'index'])->name('index');
+                    Route::get('/lists', [App\Http\Controllers\Procurements\PurchaseOrderController::class, 'getLists'])->name('get-lists');
+                    Route::get('/create', [App\Http\Controllers\Procurements\PurchaseOrderController::class, 'create'])->name('create');
+                    Route::post('/save', [App\Http\Controllers\Procurements\PurchaseOrderController::class, 'save'])->name('save');
+                    Route::get('/edit/{id}', [App\Http\Controllers\Procurements\PurchaseOrderController::class, 'edit'])->name('edit');
+
+                    Route::get('/print/{id}', [App\Http\Controllers\Procurements\PurchaseOrderController::class, 'print'])->name('print-po');
                 });
             });
 
             Route::prefix('goods-receive')->group(function () {
                 Route::name('goods-receive.')->group(function () {
                     Route::get('/', [App\Http\Controllers\Procurements\GoodsReceiveController::class, 'index'])->name('index');
+                    Route::get('/lists', [App\Http\Controllers\Procurements\GoodsReceiveController::class, 'getLists'])->name('get-lists');
+                    Route::get('/create', [App\Http\Controllers\Procurements\GoodsReceiveController::class, 'create'])->name('create');
+                    Route::post('/save', [App\Http\Controllers\Procurements\GoodsReceiveController::class, 'save'])->name('save');
+                    Route::get('/edit/{id}', [App\Http\Controllers\Procurements\GoodsReceiveController::class, 'edit'])->name('edit');
                 });
             });
 

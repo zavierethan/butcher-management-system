@@ -11,12 +11,7 @@
                 <!--begin::Page title-->
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
-<<<<<<< HEAD
-                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-                        Suppliers</h1>
-=======
                     <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Suppliers</h1>
->>>>>>> 89c6eeb774ef1f785e616ad2d19571dc93b4b3d6
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
@@ -39,11 +34,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-<<<<<<< HEAD
-                        <li class="breadcrumb-item text-muted">Create</li>
-=======
                         <li class="breadcrumb-item text-muted">Edit</li>
->>>>>>> 89c6eeb774ef1f785e616ad2d19571dc93b4b3d6
                         <!--end::Item-->
                     </ul>
                     <!--end::Breadcrumb-->
@@ -63,64 +54,6 @@
                         <div class="card-body pt-10">
                             <form class="w-[60%]" method="POST" action="{{route('suppliers.update')}}">
                                 @csrf
-<<<<<<< HEAD
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="fv-row mb-5">
-                                            <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Nama Supplier</label>
-                                                <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid"
-                                                        type="text" name="name" value="{{$supplier->name}}" required/>
-                                                    <input type="hidden" value="{{$supplier->id}}" name="id" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="separator my-5"></div>
-                                        <div class="fv-row mb-5">
-                                            <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Nama Peternak</label>
-                                                <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid"
-                                                        type="text" name="farmer_name" value="{{$supplier->farmer_name}}" required/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="separator my-5"></div>
-                                        <div class="fv-row mb-5">
-                                            <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Nama Perusahaan</label>
-                                                <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid"
-                                                        type="text" name="company_name" value="{{$supplier->company_name}}" required/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="separator my-5"></div>
-                                        <div class="fv-row mb-5">
-                                            <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Alamat</label>
-                                                <div class="position-relative mb-3">
-                                                    <textarea class="form-control form-control-md form-control-solid"type="text" name="address" required>{{$supplier->address}}</textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="separator my-5"></div>
-                                        <div class="fv-row mb-5">
-                                            <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Aktif</label>
-                                                <div class="position-relative mb-3">
-                                                    <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="is_active" required>
-                                                        <option value="1" <?php echo ($supplier->is_active == 1) ? "selected" : ""; ?>>Ya</option>
-                                                        <option value="0" <?php echo ($supplier->is_active == 0) ? "selected" : ""; ?>>Tidak</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="separator my-5"></div>
-                                    </div>
-                                </div>
-=======
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Nama</label>
@@ -162,7 +95,6 @@
                                     </div>
                                 </div>
                                 <div class="separator my-5"></div>
->>>>>>> 89c6eeb774ef1f785e616ad2d19571dc93b4b3d6
                                 <div class="flex justify-end">
                                     <button type="submit" class="btn btn-primary">Submit</button>
                                     <a href="{{route('suppliers.index')}}" class="btn btn-danger">Cancel</a>

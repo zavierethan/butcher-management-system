@@ -1205,9 +1205,8 @@ $(document).ready(function() {
 
                     const discount = $('#discount').text().replace(/[^\d]/g, '') | 0;
                     const shippingCost = $('#shipping-cost').text().replace(/[^\d]/g, '') | 0;
-                    const totalAmount = $('#total-amount').text().replace(/[^\d]/g, '');
-                    const paymentMethod = $('#payment-method').find(
-                        'input[type="radio"]:checked').val();
+                    const totalAmount = $('#subtotal-amount').text().replace(/[^\d]/g, '');
+                    const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
                     const customerId = $('#customer').val();
                     const butcherName = $('#butcher-name').val();
                     const branchId = $('#branch-id').val();

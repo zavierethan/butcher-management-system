@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use DB;
+use Auth;
 
 class PurchaseRequestController extends Controller
 {
@@ -25,6 +26,7 @@ class PurchaseRequestController extends Controller
                     'purchase_requests.category',
                     'purchase_requests.status',
                     'branches.name as alocation',
+                    'purchase_requests.nominal_application',
                 )
                 ->leftJoin('branches', 'branches.id', '=', 'purchase_requests.alocation');
 
@@ -62,7 +64,8 @@ class PurchaseRequestController extends Controller
 
     public function create() {
         $branches = DB::table('branches')->where('is_active', 1)->get();
-        return view('modules.procurements.purchase-request.create', compact('branches'));
+        $items = DB::table('products')->get();
+        return view('modules.procurements.purchase-request.create', compact('branches', 'items'));
     }
 
     public function save(Request $request) {
@@ -81,6 +84,8 @@ class PurchaseRequestController extends Controller
                 "pic" => $payloads["header"]["pic"],
                 "category" => $payloads["header"]["category"],
                 "status" => "pending",
+                "nominal_application" => $payloads["header"]["nominal_application"],
+                "nominal_realization" => 0,
             ]);
 
             // Save the transaction details
@@ -117,9 +122,64 @@ class PurchaseRequestController extends Controller
 
     public function edit($id) {
         $branches = DB::table('branches')->where('is_active', 1)->get();
+
         $purchaseRequest = DB::table('purchase_requests')->where('id', $id)->first();
-        $purchaseRequestItems = DB::table('purchase_requests')->where('id', $id);
+        $purchaseRequestItems = DB::table('purchase_request_items')
+                            ->select(
+                                'products.name as product_name',
+                                'purchase_request_items.*'
+                            )
+                            ->leftJoin('products', 'products.id', '=', 'purchase_request_items.item_id')
+                            ->where('purchase_request_id', $purchaseRequest->id)->get();
 
         return view('modules.procurements.purchase-request.edit', compact('branches','purchaseRequest', 'purchaseRequestItems'));
+    }
+
+    public function update(Request $request) {
+
+        DB::table('purchase_requests')->where('id', $request->id)->update([
+            "approval_date" => date('Y-m-d H:i:s'),
+            "approved_by" => Auth::user()->name,
+            "status" => $request->status
+        ]);
+
+        return response()->json([
+            'message' => 'Purchase Order successfully updated'
+        ], 200);
+
+    }
+
+    public function getPurchaseRequestItem(Request $request) {
+        $params = $request->purchase_request_id;
+        $response = DB::table('purchase_request_items')
+                ->select(
+                    'purchase_requests.request_number',
+                    'purchase_request_items.id as purchase_request_item_id',
+                    'purchase_request_items.item_id',
+                    'products.name',
+                    'purchase_request_items.category',
+                    'purchase_request_items.quantity',
+                    'purchase_request_items.price'
+                )
+                ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_request_items.purchase_request_id')
+                ->leftJoin('products', 'products.id', '=', 'purchase_request_items.item_id')
+                ->where('approval_status', 1)
+                ->where('purchase_request_id', $params)
+                ->get();
+
+        return response()->json($response);
+    }
+
+    public function approveItem(Request $request) {
+
+        DB::table('purchase_request_items')->where('id', $request->id)->update([
+            "quantity" => $request->quantity,
+            "price" => $request->price,
+            "approval_status" => $request->approval_status
+        ]);
+
+        return response()->json([
+            'message' => 'Purchase Order successfully updated'
+        ], 200);
     }
 }
