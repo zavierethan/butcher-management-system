@@ -300,6 +300,7 @@ $(document).on('click', '#btn-submit-request', function(e) {
         }).then((result) => {
             if (result.isConfirmed) {
                 const itemLists = [];
+                let sub_total = 0;
 
                 $('#kt_items_table tbody tr').each(function() {
 
@@ -318,6 +319,8 @@ $(document).on('click', '#btn-submit-request', function(e) {
                         price: itemPrice,
                         total_price: itemTotalPrice,
                     });
+
+                    sub_total += parseFloat(itemTotalPrice) || 0;
                 });
 
                 var requestDate = $('#request-date').val();
@@ -332,6 +335,7 @@ $(document).on('click', '#btn-submit-request', function(e) {
                         supplier: supplier,
                         pic: pic,
                         category: category,
+                        total_amount: sub_total || 0,
                     },
                     details: itemLists
                 };

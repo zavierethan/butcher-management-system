@@ -12,7 +12,7 @@
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
                     <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-                        Purchase Orders</h1>
+                        Goods Received</h1>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
@@ -27,7 +27,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Purchase Orders</li>
+                        <li class="breadcrumb-item text-muted">Goods Received</li>
                         <!--end::Item-->
                         <!--begin::Item-->
                         <li class="breadcrumb-item">
@@ -58,53 +58,32 @@
                                 <div class="col-md-6">
                                     <div class="fv-row mb-5">
                                         <div class="mb-1">
-                                            <label class="form-label fw-bold fs-6 mb-2">Tanggal</label>
+                                            <label class="form-label fw-bold fs-6 mb-2">Nomor Purchase Order</label>
                                             <div class="position-relative mb-3">
                                                 <input class="form-control form-control-md form-control-solid"
-                                                    type="date" name="request_date" value="{{$purchaseOrder->order_date}}"
-                                                    id="order-date" readonly/>
-                                                <input type="hidden" name="id" value="{{$purchaseOrder->id}}" id="id"/>
+                                                    type="text" name="total_amount" id="received-by" value="{{$purchaseOrder->purchase_order_number}}" readonly/>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="separator my-5"></div>
                                     <div class="fv-row mb-5">
                                         <div class="mb-1">
-                                            <label class="form-label fw-bold fs-6 mb-2">Supplier</label>
+                                            <label class="form-label fw-bold fs-6 mb-2">Tanggal Terima</label>
                                             <div class="position-relative mb-3">
-                                                <select class="form-select form-select-solid" data-control="select2"
-                                                    data-placeholder="-" name="alocation" id="supplier" disabled>
-                                                    <option value="">-</option>
-                                                    @foreach($suppliers as $supplier)
-                                                    <option value="{{$supplier->id}}" <?php echo ($purchaseOrder->supplier_id == $supplier->id) ? 'selected' : ''; ?>>{{$supplier->name}}</option>
-                                                    @endforeach
-                                                </select>
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    type="date" name="request_date" value="{{$purchaseOrder->received_date}}" id="received-date" readonly/>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="separator my-5"></div>
-                                    <!-- <div class="fv-row mb-5">
-                                        <div class="mb-1">
-                                            <label class="form-label fw-bold fs-6 mb-2">Kategori</label>
-                                            <div class="position-relative mb-3">
-                                                <select class="form-select form-select-solid" data-control="select2"
-                                                    data-placeholder="-" name="category" id="category" disabled>
-                                                    <option value="">-</option>
-                                                    <option value="OP" <?php echo ($purchaseOrder->category == 'OP') ? 'selected' : ''; ?>>OPERATIONAL (OP)</option>
-                                                    <option value="PR" <?php echo ($purchaseOrder->category == 'PR') ? 'selected' : ''; ?>>PRODUCT (PR)</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="separator my-5"></div> -->
                                 </div>
                                 <div class="col-md-6">
                                     <div class="fv-row mb-5">
                                         <div class="mb-1">
-                                            <label class="form-label fw-bold fs-6 mb-2">Total Pembelian</label>
+                                            <label class="form-label fw-bold fs-6 mb-2">Diterima Oleh</label>
                                             <div class="position-relative mb-3">
                                                 <input class="form-control form-control-md form-control-solid"
-                                                    type="text" name="total_amount" id="total-amount" value="@php echo number_format($purchaseOrder->total_amount, 0, '.', ',') @endphp" readonly/>
+                                                    type="text" name="total_amount" id="received-by" value="{{$purchaseOrder->received_by}}" readonly/>
                                             </div>
                                         </div>
                                     </div>
@@ -113,19 +92,21 @@
                                         <div class="mb-1">
                                             <label class="form-label fw-bold fs-6 mb-2">Status</label>
                                             <div class="position-relative mb-3">
-                                                <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="status" id="status">
+                                                <select class="form-select form-select-solid" data-control="select2"
+                                                    data-placeholder="-" name="status" id="status" disabled>
                                                     <option value="">-</option>
                                                     <option value="pending" <?php echo ($purchaseOrder->status == 'pending') ? 'selected' : ''; ?>>PENDING</option>
-                                                    <option value="completed" <?php echo ($purchaseOrder->status == 'goods_received') ? 'selected' : ''; ?>>GOODS RECEIVED</option>
+                                                    <option value="goods_received" <?php echo ($purchaseOrder->status == 'goods_received') ? 'selected' : ''; ?>>GOODS RECEIVED</option>
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="separator my-5"></div>
                                     <div class="text-end">
-                                        <a href="{{route('procurement.purchase-order.index')}}" class="btn btn-sm btn-danger">Cancel</a>
-                                        <a href="{{route('procurement.purchase-order.print-po', ['id' => $purchaseOrder->id])}}" target="_blank" class="btn btn-sm btn-primary" id="btn-print-po">Cetak PO</a>
-                                        <a href="#" class="btn btn-sm btn-primary" id="btn-update-order">Update PO</a>
+                                        <a href="{{route('procurement.goods-receive.index')}}"
+                                            class="btn btn-sm btn-danger">Cancel</a>
+                                        <a href="#" class="btn btn-sm btn-primary"
+                                            id="btn-submit-goods-received">Transfer ke Stok</a>
                                     </div>
                                 </div>
                             </div>
@@ -146,9 +127,11 @@
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-20px">No.</th>
                                         <th class="min-w-125px">Item</th>
-                                        <th class="min-w-125px text-center">Jumlah</th>
-                                        <th class="min-w-125px text-end">Harga</th>
-                                        <th class="min-w-125px text-end">Total Harga</th>
+                                        <th class="min-w-125px text-center">Harga</th>
+                                        <th class="min-w-100px text-center">Jumlah</th>
+                                        <th class="min-w-125px text-center">Harga Terima</th>
+                                        <th class="min-w-100px text-center">Jumlah Terima</th>
+                                        <th class="min-w-100px">Catatan</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -158,11 +141,13 @@
                                     <?php $no = 1; ?>
                                     @foreach($items as $item)
                                     <tr>
-                                        <td><?php echo $no++; ?>.</td>
+                                        <td class=""><?php echo $no++; ?>.</td>
                                         <td>{{$item->name}}</td>
-                                        <td class="text-center">{{$item->quantity}}</td>
-                                        <td class="text-end">{{$item->price}}</td>
-                                        <td class="text-end item-total-price">@php echo number_format($item->total, 0, '.', ',') @endphp</td>
+                                        <td class="item-price text-center">{{$item->price}}</td>
+                                        <td class="item-quantity text-center">{{$item->quantity}}</td>
+                                        <td class="text-center">{{$item->received_price}}</td>
+                                        <td class="text-center">{{$item->received_quantity}}</td>
+                                        <td class="">{{$item->remarks}}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -184,43 +169,39 @@
 
 @section('script')
 <script>
-$("#btn-form-add-item").on("click", function() {
+$("#purchase-order-id").on("change", function() {
 
     // Retrieve values from input fields
-    var selectedOption = $("#purhcase-request option:selected");
-    var purchaseRequestId = selectedOption.val();
+    var selectedOption = $("#purchase-order-id option:selected");
+    var purchaseOrderId = selectedOption.val();
 
     $.ajax({
-        url: `/api/get-purchase-request-items`, // Laravel route to fetch products
+        url: `/api/get-purchase-order-items`, // Laravel route to fetch products
         type: 'GET',
         data: {
-            purchase_request_id: purchaseRequestId,
+            purchase_order_id: purchaseOrderId,
         },
         dataType: 'json',
         success: function(response) {
             // Loop through each product in the JSON response
+            $("#kt_items_table tbody").empty();
             var data = response;
             console.log(data)
+            var no = 1;
             data.forEach(function(items) {
                 // Construct HTML for each product
                 var row = `
                         <tr>
-                            <td class="item-request-number">
-                                ${items.request_number}
-                                <input type="hidden" value="${items.purchase_request_item_id}" class="purchase-request-item-id" />
-                            </td>
+                            <td class="">${no++}.</td>
                             <td>
                                 ${items.name}
-                                <input type="hidden" value="${items.item_id}" class="item-id" />
+                                <input type="hidden" value="${items.purchase_order_item_id}" class="purchase-order-item-id" />
                             </td>
-                            <td class="item-category">${items.category}</td>
-                            <td class="item-quantity">${items.quantity}</td>
-                            <td class="item-unit">Kilogram</td>
-                            <td class="item-price text-end">${items.price}</td>
-                            <td class="item-total-price text-end">${items.price * items.quantity}</td>
-                            <td class="text-center">
-                                <a href="#" class="btn btn-sm btn-danger" onclick="deleteRow(this)">Hapus</i></a>
-                            </td>
+                            <td class="item-price text-center">${items.price}</td>
+                            <td class="item-quantity text-center">${items.quantity}</td>
+                            <td class="text-center"><input class="form-control form-control-sm me-2 item-received-price" type="text" name="received_price" value="" /></td>
+                            <td class="text-center"><input class="form-control form-control-sm me-2 item-received-quantity" type="text" name="received_quantity" value="" /></td>
+                            <td class="text-center"><input class="form-control form-control-sm me-2 item-remarks" type="text" name="remarks" value="" /></td>
                         </tr>
                     `;
                 // Append the product to the product list container
@@ -228,7 +209,6 @@ $("#btn-form-add-item").on("click", function() {
             });
 
             // Hide the modal
-            $('#kt_modal_add_item').modal('hide');
         },
         error: function(xhr, status, error) {
             console.error('Error fetching products:', error);
@@ -236,58 +216,51 @@ $("#btn-form-add-item").on("click", function() {
     });
 });
 
-$("#category").on("change", function() {
-    $("#item-categories").val($(this).val());
-});
 
-$(document).on('click', '#btn-update-order', function(e) {
+$(document).on('click', '#btn-submit-goods-received', function(e) {
     e.preventDefault();
 
-    if (!validate()) {
+    if (true) {
         Swal.fire({
-            title: 'Apakah anda yakin untuk memperbaharui purchase order ?',
+            title: 'Apakah anda yakin untuk memproses penerimaan ?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             cancelButtonText: 'Batalkan',
-            confirmButtonText: 'Ya, Perbaharui Order'
+            confirmButtonText: 'Ya, Proses Penerimaan'
         }).then((result) => {
             if (result.isConfirmed) {
-
-                let id = $("#id").val();
-                let status = $("#status").val();
-                let sub_total = 0;
-
                 const itemLists = [];
 
                 $('#kt_items_table tbody tr').each(function() {
 
-                    var itemId = $(this).find(".item-id").val();
-                    var purchaseRequestItemId = $(this).find(".purchase-request-item-id").val();
-                    var itemCategory = $(this).find(".item-category").text().trim();
-                    var itemQuantity = $(this).find(".item-quantity").text().trim();
-                    var itemPrice = $(this).find(".item-price").text().trim();
-                    var itemTotalPrice = $(this).find(".item-total-price").text().replace(/,/g, '');
+                    var purchaseOrderItemId = $(this).find(".purchase-order-item-id").val();
+                    var itemReceivedQuantity = $(this).find(".item-received-quantity").val()
+                        .trim();
+                    var itemReceivedPrice = $(this).find(".item-received-price").val().trim();
+                    var itemRemarks = $(this).find(".item-remarks").val().trim();
 
                     itemLists.push({
-                        item_id: itemId,
-                        purchase_request_item_id: purchaseRequestItemId,
-                        category: itemCategory,
-                        quantity: itemQuantity,
-                        price: itemPrice,
-                        total_price: itemTotalPrice,
+                        purchase_order_item_id: purchaseOrderItemId,
+                        received_quantity: itemReceivedQuantity,
+                        received_price: itemReceivedPrice,
+                        remarks: itemRemarks,
                     });
-
-                    sub_total += parseFloat(itemTotalPrice) || 0;
                 });
+
+                var purchaseOrderId = $('#purchase-order-id').val();
+                var receivedDate = $('#received-date').val();
+                var receivedBy = $('#received-by').val();
+                var status = $('#status').val();
 
                 // Build the JSON payload
                 const payload = {
                     header: {
-                        id: id,
-                        status: status,
-                        sub_total: sub_total,
+                        purchase_order_id: purchaseOrderId,
+                        received_date: receivedDate,
+                        received_by: receivedBy,
+                        status: status
                     },
                     details: itemLists
                 };
@@ -295,7 +268,7 @@ $(document).on('click', '#btn-update-order', function(e) {
                 console.log(payload)
 
                 $.ajax({
-                    url: `{{route('procurement.purchase-order.update')}}`,
+                    url: `{{route('procurement.goods-receive.save')}}`,
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {
@@ -305,10 +278,15 @@ $(document).on('click', '#btn-update-order', function(e) {
                     success: function(response) {
                         Swal.fire({
                             title: 'Suceess !',
-                            text: `Purchase Order berhasil diperbaharui.`,
+                            text: `Goods Received berhasil di simpan`,
                             icon: 'success',
                             confirmButtonText: 'Ok',
                             allowOutsideClick: false
+                        }).then((result) => {
+
+                            // Redirect the current page to the transaction index
+                            location.href =
+                                `{{ route('procurement.goods-receive.index') }}`;
                         });
                     },
                     error: function(xhr, status, error) {
@@ -323,68 +301,5 @@ $(document).on('click', '#btn-update-order', function(e) {
         });
     }
 });
-
-// Function to delete a row
-function deleteRow(button) {
-    $(button).closest('tr').remove();
-}
-
-function validate() {
-    var toReturn = true;
-    const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
-    const customerId = $('#customer').val();
-    const butcherName = $('#butcher-name').val();
-    const branchId = $('#branch-id').val();
-
-    if (!paymentMethod) {
-        Swal.fire({
-            title: 'Warning !',
-            text: 'Metode Pembayaran tidak boleh kosong',
-            icon: 'warning',
-            confirmButtonText: 'OK',
-            allowOutsideClick: false
-        });
-
-        toReturn = false;
-    }
-
-    if (!customerId) {
-        Swal.fire({
-            title: 'Warning !',
-            text: 'Nama customer harus di pilih',
-            icon: 'warning',
-            confirmButtonText: 'OK',
-            allowOutsideClick: false
-        });
-
-        toReturn = false;
-    }
-
-    if (!butcherName) {
-        Swal.fire({
-            title: 'Warning !',
-            text: 'Nama Butcherees tidak boleh kosong',
-            icon: 'warning',
-            confirmButtonText: 'OK',
-            allowOutsideClick: false
-        });
-
-        toReturn = false;
-    }
-
-    if (!branchId) {
-        Swal.fire({
-            title: 'Warning !',
-            text: 'Branch / Store harus di pilih',
-            icon: 'warning',
-            confirmButtonText: 'OK',
-            allowOutsideClick: false
-        });
-
-        toReturn = false;
-    }
-
-    return toReturn;
-}
 </script>
 @endsection

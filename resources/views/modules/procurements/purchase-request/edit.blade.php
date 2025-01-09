@@ -58,6 +58,17 @@
                                 <div class="col-md-6">
                                     <div class="fv-row mb-5">
                                         <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Request Number</label>
+                                            <div class="position-relative mb-3">
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    type="text" name="pic" value="{{$purchaseRequest->request_number}}" id="request-number"
+                                                    readonly />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5"></div>
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
                                             <label class="form-label fw-bold fs-6 mb-2">Tanggal</label>
                                             <div class="position-relative mb-3">
                                                 <input class="form-control form-control-md form-control-solid"
@@ -97,6 +108,8 @@
                                         </div>
                                     </div>
                                     <div class="separator my-5"></div>
+                                </div>
+                                <div class="col-md-6">
                                     <div class="fv-row mb-5">
                                         <div class="mb-1">
                                             <label class="form-label fw-bold fs-6 mb-2">Kategori</label>
@@ -115,8 +128,6 @@
                                         </div>
                                     </div>
                                     <div class="separator my-5"></div>
-                                </div>
-                                <div class="col-md-6">
                                     <div class="fv-row mb-5">
                                         <div class="mb-1">
                                             <label class="form-label fw-bold fs-6 mb-2">Nominal Pengajuan</label>
@@ -134,7 +145,7 @@
                                             <label class="form-label fw-bold fs-6 mb-2">Nominal Realisasi</label>
                                             <div class="position-relative mb-3">
                                                 <input class="form-control form-control-md form-control-solid"
-                                                    type="text" name="remarks" value="" id="nominal-realization"
+                                                    type="text" name="remarks" value="@php echo number_format($purchaseRequest->nominal_realization, 0, '.', ',') @endphp" id="nominal-realization"
                                                     readonly />
                                             </div>
                                         </div>
@@ -203,11 +214,11 @@
                                         <td><?php echo $no++; ?>.</td>
                                         <td>{{$item->product_name}}</td>
                                         <td>
-                                            <input class="form-control form-control-sm me-2 price" type="text" name="price" value="{{$item->price}}" />
+                                            <input class="form-control form-control-sm me-2 price" type="text" name="price" value="{{$item->price}}" readonly/>
                                             <input class="form-control form-control-sm me-2 id" type="hidden" name="id" value="{{$item->id}}" />
                                         </td>
                                         <td><input class="form-control form-control-sm me-2 quantity" type="text" name="quantity" value="{{$item->quantity}}" /></td>
-                                        <td><input class="form-control form-control-sm me-2 total-price" type="text"  name="total_price" value="{{$item->quantity * $item->price}}" /></td>
+                                        <td><input class="form-control form-control-sm me-2 total-price" type="text" name="total_price" value="{{$item->quantity * $item->price}}" /></td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center">
                                                 <label
@@ -218,16 +229,6 @@
                                                 </label>
                                             </div>
                                         </td>
-                                        <!-- <td>
-                                            <div class="d-flex justify-content-center">
-                                                <label
-                                                    class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                                    <input class="form-check-input toggle-realisasi-status"
-                                                        name="realisasi" type="checkbox" data-id="{{$item->id}}" <?php echo ($item->realisation == 1) ? 'checked' : ''; ?>>
-                                                    <span class="form-check-label fw-bold text-muted"></span>
-                                                </label>
-                                            </div>
-                                        </td> -->
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -265,6 +266,19 @@ $(document).on('click', '#btn-update-request', function(e) {
             if (result.isConfirmed) {
                 let id = $("#id").val();
                 let status = $("#status").val();
+                let sub_total = 0;
+
+                $('input.toggle-approve-status:checked').each(function () {
+                    // Find the corresponding total-price input in the same row
+                    const totalPrice = $(this)
+                        .closest('tr')
+                        .find('input.total-price')
+                        .val();
+
+                    // Parse the value as a number and add it to the total
+                    sub_total += parseFloat(totalPrice) || 0; // Use 0 if the value is empty or invalid
+                });
+
                 $.ajax({
                     url: `{{route('procurement.purchase-request.update')}}`,
                     type: 'POST',
@@ -274,6 +288,7 @@ $(document).on('click', '#btn-update-request', function(e) {
                     data: {
                         id: id,
                         status: status,
+                        sub_total: sub_total
                     },
                     success: function(response) {
                         Swal.fire({
@@ -323,7 +338,11 @@ $(document).on('click', '.toggle-approve-status', function(e) {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
         },
         success: function(response) {
-            alert(`Approval status updated successfully for ${itemName}`);
+            Swal.fire({
+                title: 'Suceess !',
+                text: `Status Item berhasil di perbaharui`,
+                icon: 'success'
+            });
         },
         error: function(xhr, status, error) {
             alert(`Failed to update approval status for ${itemName}: ${error}`);

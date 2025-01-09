@@ -71,7 +71,7 @@
                                         </svg>
                                     </span>
                                     <!--end::Svg Icon-->
-                                    <input type="text" data-kt-customer-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Search" />
+                                    <input type="text" data-kt-goods-receive-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Search" />
                                 </div>
                                 <!--end::Toolbar-->
                             </div>
@@ -80,16 +80,15 @@
                         <!--begin::Card body-->
                         <div class="card-body pt-0 overflow-x-auto">
                             <!--begin::Table-->
-                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_suppliers_table">
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_goods_received_table">
                                 <!--begin::Table head-->
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">Tanggal</th>
-                                        <th class="min-w-125px">Cabang</th>
-                                        <th class="min-w-125px">PIC</th>
-                                        <th class="min-w-125px">Status Approval</th>
-                                        <th class="min-w-125px">Active</th>
+                                        <th class="min-w-125px">Nomor Pembelian</th>
+                                        <th class="min-w-125px">Tanggal Penerimaan</th>
+                                        <th class="min-w-125px">Diterima Oleh</th>
+                                        <th class="min-w-125px">Status</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -118,48 +117,60 @@
 
 @section('script')
 <script>
-    // $("#kt_suppliers_table").DataTable({
-    //     processing: true,
-    //     serverSide: true,
-    //     paging: true, // Enable pagination
-    //     pageLength: 10, // Number of rows per page
-    //     ajax: {
-    //         url: `{{route('suppliers.get-lists')}}`, // Replace with your route
-    //         type: 'GET',
-    //         dataSrc: function (json) {
-    //             return json.data; // Map the 'data' field
-    //         }
-    //     },
-    //     columns: [
-    //         { data: 'name', name: 'name' },
-    //         { data: 'farmer_name', name: 'ktp_number' },
-    //         { data: 'address', name: 'phone_number' },
-    //         {
-    //             data: 'is_active',
-    //             name: 'is_active',
-    //             render: function (data, type, row) {
-    //                 let status = "Aktif"
+    let table = $("#kt_goods_received_table").DataTable({
+        order: [[0, 'desc']],
+        processing: true,
+        serverSide: true,
+        paging: true, // Enable pagination
+        pageLength: 10, // Number of rows per page
+        ajax: {
+            url: `{{route('procurement.goods-receive.get-lists')}}`, // Replace with your route
+            type: 'GET',
+            dataSrc: function (json) {
+                return json.data; // Map the 'data' field
+            }
+        },
+        columns: [
+            { data: 'purchase_order_number', name: 'purchase_order_number' },
+            { data: 'received_date', name: 'received_date' },
+            { data: 'received_by', name: 'received_by' },
+            {
+                data: 'status',
+                name: 'status',
+                render: function(data, type, row) {
+                    var status = "";
 
-    //                 if(row.is_active != 1)
-    //                     status = "Non Aktif"
+                    if (row.status == "pending") {
+                        status = `<span class="badge bg-warning text-white">PENDING</span>`
+                    }
 
-    //                 return status;
-    //             }
-    //         },
-    //         {
-    //             data: null, // No direct field from the server
-    //             name: 'action',
-    //             orderable: false, // Disable ordering for this column
-    //             searchable: false, // Disable searching for this column
-    //             render: function (data, type, row) {
-    //                 return `
-    //                     <div class="text-center">
-    //                         <a href="/suppliers/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Edit</a>
-    //                     <div>
-    //                 `;
-    //             }
-    //         }
-    //     ]
-    // });
+                    if (row.status == "goods_received") {
+                        status = `<span class="badge bg-success text-white">Goods Received</span>`
+                    }
+
+                    return status;
+                }
+            },
+            {
+                data: null, // No direct field from the server
+                name: 'action',
+                orderable: false, // Disable ordering for this column
+                searchable: false, // Disable searching for this column
+                render: function (data, type, row) {
+                    return `
+                        <div class="text-center">
+                            <a href="/procurement/goods-receive/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Lihat</a>
+                            <a href="#" class="btn btn-sm btn-light btn-active-light-primary" title="Sync Jurnal"><i class="fa-solid fa-arrow-right-arrow-left"></i></a>
+                        <div>
+                    `;
+                }
+            }
+        ]
+    });
+
+    $('[data-kt-goods-receive-table-filter="search"]').on('keyup', function() {
+        const searchTerm = $(this).val(); // Get the value from the search input
+        table.search(searchTerm).draw(); // Trigger the search and refresh the DataTable
+    });
 </script>
 @endsection

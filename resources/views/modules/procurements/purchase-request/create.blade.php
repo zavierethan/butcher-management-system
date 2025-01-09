@@ -74,7 +74,7 @@
                                                     data-placeholder="-" name="alocation" id="alocation">
                                                     <option value="">-</option>
                                                     @foreach($branches as $branch)
-                                                    <option value="{{$branch->id}}">{{$branch->code}}</option>
+                                                    <option value="{{$branch->id}}">{{$branch->name}} ({{$branch->code}})</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -364,6 +364,9 @@ $(document).on('click', '#btn-submit-request', function(e) {
                             icon: 'success',
                             confirmButtonText: 'Ok',
                             allowOutsideClick: false
+                        }).then((result) => {
+                                location.href =
+                                    `{{ route('procurement.purchase-request.index') }}`;
                         });
                     },
                     error: function(xhr, status, error) {

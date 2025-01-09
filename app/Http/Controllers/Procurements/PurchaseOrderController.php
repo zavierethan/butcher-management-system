@@ -25,7 +25,7 @@ class PurchaseOrderController extends Controller
                     'purchase_orders.category',
                     'purchase_orders.status',
                     'suppliers.name as supplier_name',
-                    'purchase_orders.total_amount',
+                    DB::raw("TO_CHAR(purchase_orders.total_amount, 'FM999,999,999') as total_amount")
                 )
                 ->leftJoin('suppliers', 'suppliers.id', '=', 'purchase_orders.supplier_id');
 
@@ -82,6 +82,7 @@ class PurchaseOrderController extends Controller
                 "supplier_id" => $payloads["header"]["supplier"],
                 // "pic" => $payloads["header"]["pic"],
                 "category" => $payloads["header"]["category"],
+                "total_amount" => $payloads["header"]["total_amount"],
                 "status" => "pending",
             ]);
 
@@ -138,6 +139,19 @@ class PurchaseOrderController extends Controller
         return view('modules.procurements.purchase-order.edit', compact('suppliers', 'purchaseOrder', 'items'));
     }
 
+    public function update(Request $request) {
+        $payloads = $request->all();
+
+        DB::table('purchase_orders')->where('id', $payloads["header"]["id"])->update([
+            "status" => $payloads["header"]["status"],
+            "total_amount" => $payloads["header"]["sub_total"]
+        ]);
+
+        return response()->json([
+            'message' => 'Purchase Order successfully updated'
+        ], 200);
+    }
+
     public function print($id) {
 
         $purchaseOrder = DB::table('purchase_orders')
@@ -146,6 +160,7 @@ class PurchaseOrderController extends Controller
                         'purchase_orders.purchase_order_number',
                         DB::raw("TO_CHAR(purchase_orders.order_date, 'dd/mm/YYYY') as order_date"),
                         'suppliers.name as supplier_name',
+                        DB::raw("TO_CHAR(purchase_orders.total_amount, 'FM999,999,999') as total_amount")
                     )
                     ->leftJoin('suppliers', 'suppliers.id', '=', 'purchase_orders.supplier_id')
                     ->where('purchase_orders.id', $id)->first();
@@ -170,5 +185,22 @@ class PurchaseOrderController extends Controller
         ]);
 
         return $pdf->stream('purchase_order.pdf'); // To display
+    }
+
+    public function getPurchaseOrderItem(Request $request) {
+        $params = $request->purchase_order_id;
+        $response = DB::table('purchase_order_items')
+                ->select(
+                    'purchase_order_items.id as purchase_order_item_id',
+                    'products.name',
+                    'purchase_order_items.quantity',
+                    DB::raw("TO_CHAR(purchase_order_items.price, 'FM999,999,999') as price")
+                )
+                ->join('purchase_orders', 'purchase_orders.id', '=', 'purchase_order_items.purchase_order_id')
+                ->leftJoin('products', 'products.id', '=', 'purchase_order_items.item_id')
+                ->where('purchase_order_items.purchase_order_id', $params)
+                ->get();
+
+        return response()->json($response);
     }
 }

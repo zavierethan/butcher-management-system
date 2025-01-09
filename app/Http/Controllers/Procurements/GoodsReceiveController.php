@@ -13,8 +13,114 @@ class GoodsReceiveController extends Controller
         return view('modules.procurements.goods-receive.index');
     }
 
+    public function getLists(Request $request){
+        $params = $request->all();
+
+        $query = DB::table('purchase_orders')
+                ->select(
+                    'purchase_orders.id',
+                    'purchase_orders.purchase_order_number',
+                    DB::raw("TO_CHAR(purchase_orders.received_date, 'DD/MM/YYYY') as received_date"),
+                    'purchase_orders.received_by',
+                    'purchase_orders.status'
+                )
+                ->leftJoin('suppliers', 'suppliers.id', '=', 'purchase_orders.supplier_id')
+                ->where('purchase_orders.status', 'goods_received');
+
+        // Apply global search if provided
+        $searchValue = $request->input('search.value'); // This is where DataTables sends the search input
+        if (!empty($searchValue)) {
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('purchase_orders.purchase_order_number', 'like', '%' . strtoupper($searchValue) . '%');
+            });
+        }
+
+        // Apply sorting
+        if ($request->has('order') && $request->order) {
+            $columnIndex = $request->order[0]['column']; // Column index from the DataTable
+            $sortDirection = $request->order[0]['dir']; // 'asc' or 'desc'
+            $columnName = $request->columns[$columnIndex]['data']; // Column name
+
+            $query->orderBy($columnName, $sortDirection);
+        }
+
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 10);
+
+        $totalRecords = $query->count();
+        $filteredRecords = $query->count();
+        $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get();
+
+        return response()->json([
+            'draw' => $request->input('draw'),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $data
+        ]);
+    }
+
     public function create() {
-        $purchaseOrders = DB::table('purchase_orders')->where('status', 'pending')->get();
+        $purchaseOrders = DB::table('purchase_orders')->where('status','!=', 'goods_received')->get();
         return view('modules.procurements.goods-receive.create', compact('purchaseOrders'));
+    }
+
+    public function save(Request $request) {
+        $payloads = $request->all();
+
+        try {
+            // Start a database transaction
+            DB::beginTransaction();
+
+            $orderId = DB::table('purchase_orders')->where('id', $payloads["header"]["purchase_order_id"])->update([
+                "received_date" => $payloads["header"]["received_date"],
+                "received_by" => $payloads["header"]["received_by"],
+                "status" => $payloads["header"]["status"],
+            ]);
+
+            // Save the transaction details
+            foreach ($payloads['details'] as $detail) {
+                DB::table('purchase_order_items')->where('id', $detail["purchase_order_item_id"])->update([
+                    "received_quantity" => $detail["received_quantity"],
+                    "received_price" => $detail["received_price"],
+                    "remarks" => $detail["remarks"]
+                ]);
+            }
+
+            // Commit the transaction
+            DB::commit();
+
+            // Return success response
+            return response()->json([
+                'message' => 'Goods Received successfully created',
+            ], 201);
+
+        } catch (\Exception $e) {
+            // Rollback transaction in case of error
+            DB::rollBack();
+
+            // Return error response
+            return response()->json([
+                'message' => 'Failed to create transaction',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function edit($id){
+        $purchaseOrder = DB::table('purchase_orders')->where('id', $id)->first();
+        $items = DB::table('purchase_order_items')
+                    ->select(
+                        'purchase_order_items.id',
+                        'products.name',
+                        'purchase_order_items.quantity',
+                        DB::raw("TO_CHAR(purchase_order_items.price, 'FM999,999,999') as price"),
+                        'purchase_order_items.received_quantity',
+                        DB::raw("TO_CHAR(purchase_order_items.received_price, 'FM999,999,999') as received_price"),
+                        'purchase_order_items.remarks',
+                    )
+                    ->leftJoin('products', 'products.id', '=', 'purchase_order_items.item_id')
+                    ->where('purchase_order_id', $purchaseOrder->id)->get();
+
+        return view('modules.procurements.goods-receive.edit', compact('purchaseOrder', 'items'));
     }
 }

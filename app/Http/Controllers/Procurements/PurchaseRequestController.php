@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Procurements;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Exports\PurchaseRequestExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 use DB;
 use Auth;
@@ -26,7 +28,8 @@ class PurchaseRequestController extends Controller
                     'purchase_requests.category',
                     'purchase_requests.status',
                     'branches.name as alocation',
-                    'purchase_requests.nominal_application',
+                    DB::raw("TO_CHAR(purchase_requests.nominal_application, 'FM999,999,999') as nominal_application"),
+                    DB::raw("TO_CHAR(purchase_requests.nominal_realization, 'FM999,999,999') as nominal_realization")
                 )
                 ->leftJoin('branches', 'branches.id', '=', 'purchase_requests.alocation');
 
@@ -138,13 +141,14 @@ class PurchaseRequestController extends Controller
     public function update(Request $request) {
 
         DB::table('purchase_requests')->where('id', $request->id)->update([
+            "nominal_realization" => $request->sub_total,
             "approval_date" => date('Y-m-d H:i:s'),
             "approved_by" => Auth::user()->name,
             "status" => $request->status
         ]);
 
         return response()->json([
-            'message' => 'Purchase Order successfully updated'
+            'message' => 'Purchase Request successfully updated'
         ], 200);
 
     }
@@ -171,7 +175,6 @@ class PurchaseRequestController extends Controller
     }
 
     public function approveItem(Request $request) {
-
         DB::table('purchase_request_items')->where('id', $request->id)->update([
             "quantity" => $request->quantity,
             "price" => $request->price,
@@ -181,5 +184,20 @@ class PurchaseRequestController extends Controller
         return response()->json([
             'message' => 'Purchase Order successfully updated'
         ], 200);
+    }
+
+    public function export(Request $request) {
+        // Generate raw Excel data
+        $export = new PurchaseRequestExport($request->start_date, $request->end_date);
+        $excelData = Excel::raw($export, \Maatwebsite\Excel\Excel::XLSX);
+
+        // Return the data as a proper response
+        return response($excelData, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="transaction-reports.xlsx"',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+        ]);
     }
 }

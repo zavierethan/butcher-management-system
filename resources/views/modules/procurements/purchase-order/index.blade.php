@@ -120,6 +120,7 @@
 @section('script')
 <script>
     let table = $("#kt_suppliers_table").DataTable({
+        order: [[0, 'desc']],
         processing: true,
         serverSide: true,
         paging: true, // Enable pagination
@@ -147,8 +148,8 @@
                         status = `<span class="badge bg-warning text-white">PENDING</span>`
                     }
 
-                    if (row.status == "completed") {
-                        status = `<span class="badge bg-success text-white">APPROVE</span>`
+                    if (row.status == "goods_received") {
+                        status = `<span class="badge bg-success text-white">GOODS RECEIVED</span>`
                     }
 
                     return status;

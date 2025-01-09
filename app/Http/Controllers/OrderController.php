@@ -25,7 +25,7 @@ class OrderController extends Controller
                     'transactions.code',
                     DB::raw("TO_CHAR(transactions.transaction_date, 'DD/MM/YYYY') as transaction_date"),
                     'transactions.payment_method',
-                    'transactions.total_amount',
+                    DB::raw("TO_CHAR(transactions.total_amount, 'FM999,999,999') as total_amount"),
                     'transactions.status',
                     'customers.name as customer_name',
                     'users.name as created_by'

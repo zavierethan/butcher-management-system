@@ -97,8 +97,8 @@
             </div>
             <div class="company-details">
                 <h2>Pryadis Butchers</h2>
-                <p>123 Business Road, City, Country</p>
-                <p>Phone: +123-456-7890</p>
+                <p>Jl. Ciledug no 273 Kec. Kota kulon Kel. Garut Kota Kab. Garut 44112</p>
+                <p>Phone: 082114139759</p>
             </div>
         </div>
 
@@ -141,8 +141,8 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="4" style="text-align: right;"><strong>Grand Total</strong></td>
-                        <td style="text-align: right"><strong>1,000,000</strong></td>
+                        <td colspan="4" style="text-align: right;"><strong>Total Pembelian</strong></td>
+                        <td style="text-align: right"><strong>{{$purchaseOrder->total_amount}}</strong></td>
                     </tr>
                 </tfoot>
             </table>
