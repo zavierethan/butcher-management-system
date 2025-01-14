@@ -38,10 +38,9 @@ class TransactionExport implements FromCollection, WithHeadings, WithCustomStart
                 'products.code',
                 'products.name',
                 'transaction_items.quantity',
-                'transaction_items.base_price',
-                'transaction_items.unit_price as sell_price',
+                DB::raw("TO_CHAR(transaction_items.base_price, 'FM999,999,999') as base_price"),
                 'transaction_items.discount',
-                DB::raw('transaction_items.unit_price - transaction_items.discount AS total'),
+                DB::raw("TO_CHAR(transaction_items.unit_price, 'FM999,999,999') as sell_price"),
                 DB::raw("
                     CASE
                         WHEN transactions.payment_method = '1' THEN 'TUNAI'
@@ -91,7 +90,6 @@ class TransactionExport implements FromCollection, WithHeadings, WithCustomStart
             'ITEM',
             'BERAT (KG)',
             'HARGA / KG',
-            'HARGA JUAL',
             'DISKON',
             'TOTAL',
             'JENIS PEMBAYARAN',

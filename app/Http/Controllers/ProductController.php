@@ -152,6 +152,7 @@ class ProductController extends Controller
 
         if($params != null) {
             $query->where('products.name', 'like', '%'.strtoupper($params).'%');
+            // $query->orWhere('products.code', 'like', '%'.strtoupper($params).'%');
         }
 
         $totalRecords = $query->count();

@@ -11,6 +11,7 @@
     border-radius: 50%;
     margin: 30px auto;
     top: 190px;
+    z-index: 999999;
 }
 
 .hourglassContainer {
@@ -23,6 +24,7 @@
     animation: hourglassRotate 2s ease-in 0s infinite;
     transform-style: preserve-3d;
     perspective: 1000px;
+    z-index: 999999;
 }
 
 .hourglassContainer div,
@@ -481,7 +483,7 @@
 @section('main-content')
 <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
     <div class="d-flex flex-column flex-column-fluid">
-        <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
+        <!-- <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
             <div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
@@ -507,8 +509,8 @@
                     </select>
                 </div>
             </div>
-        </div>
-        <div id="kt_app_content" class="app-content flex-column-fluid">
+        </div> -->
+        <div id="kt_app_content" class="app-content flex-column-fluid mt-5">
             <!--begin::Content container-->
             <div id="kt_app_content_container" class="app-container">
                 <!--begin::Layout-->
@@ -561,10 +563,20 @@
                                             <option value=""></option>
                                         </select>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-1">
                                         <button class="btn btn-md" data-bs-toggle="modal"
                                             data-bs-target="#kt_modal_add_customer"><i
                                                 class="fa-solid fa-user-plus"></i></button>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Store"
+                                            id="branch-id">
+                                            @foreach($branches as $branch)
+                                            <option value="{{$branch->id}}"
+                                                <?php echo ($branch->id == Auth::user()->branch_id) ? "selected" : ""; ?>>{{$branch->code}}
+                                            </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -592,7 +604,7 @@
                                         <div class="hourglassGlass"></div>
                                     </div>
                                 </div>
-                                <div class="row overflow-y-auto" style="height: 800px;" id="product-list">
+                                <div class="row overflow-y-auto" style="height: 772px;" id="product-list">
 
                                 </div>
                             </div>
@@ -626,8 +638,7 @@
                                     <!--begin::Content-->
                                     <div class="fs-6 fw-bold text-white">
                                         <span class="d-block lh-1 mb-2">Subtotal</span>
-                                        <span class="d-block mb-2">Discounts <a href="javascript(0);"
-                                                data-bs-toggle="modal" data-bs-target="#kt_modal_add_discount"><i
+                                        <span class="d-block mb-2">Discounts <a href="javascript(0);" data-bs-toggle="modal" data-bs-target="#kt_modal_add_discount"><i
                                                     class="fas fa-edit text-white"></i></a></span>
                                         <span class="d-block mb-2">Ongkos Kirim <a href="javascript(0);"
                                                 data-bs-toggle="modal" data-bs-target="#kt_modal_add_shipping_cost"><i
@@ -824,6 +835,15 @@
                 <div class="separator my-5"></div>
                 <div class="fv-row mb-5">
                     <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Diskon</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid" type="number" id="diskon" />
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
                         <label class="form-label fw-bold fs-6 mb-2">Quantity (kg)</label>
                         <div class="position-relative mb-3">
                             <input class="form-control form-control-md form-control-solid" type="number"
@@ -834,6 +854,85 @@
                 <div class="separator my-5"></div>
                 <div class="flex justify-content-center">
                     <button type="button" class="btn btn-primary" id="update-item">Update</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="btn-close">Cancel</button>
+                </div>
+            </div>
+            <!--end::Modal body-->
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div>
+
+<!--begin::Modal - Edit Product-->
+<div class="modal fade" id="kt_modal_add_product_item" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog mw-650px">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div class="modal-header pb-0 border-0 justify-content-end">
+                <!--begin::Close-->
+                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                    <i class="ki-duotone ki-cross fs-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </div>
+                <!--end::Close-->
+            </div>
+            <!--begin::Modal header-->
+            <!--begin::Modal body-->
+            <div class="modal-body scroll-y mx-5 mx-xl-18 pt-0 pb-15">
+                <!--begin::Heading-->
+                <div class="text-center mb-13">
+                    <!--begin::Title-->
+                    <h1 class="mb-3">Add to Cart</h1>
+                    <!--end::Title-->
+                </div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Nama Product</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid" type="text" id="product_name"
+                                readonly />
+                            <input class="form-control form-control-md form-control-solid" type="hidden"
+                                id="product_id" />
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Harga Product</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid" type="text"
+                                id="product_price" />
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Diskon</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid" type="number" id="diskon" />
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Quantity (kg)</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid" type="number"
+                                id="quantity" />
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="flex justify-content-center">
+                    <button type="button" class="btn btn-primary" id="add-item">Tambahkan</button>
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="btn-close">Cancel</button>
                 </div>
             </div>
@@ -1015,64 +1114,12 @@ $(document).ready(function() {
         var productName = $(this).data('product-name');
         var productPrice = parseFloat($(this).data('product-price')); // Ensure price is a number
         var productDiscount = parseFloat($(this).data('product-discount')) | 0;
-        var productImgUrl = $(this).find('img').attr('src');
 
-        // Check if the product already exists in the cart
-        var existingProduct = $(`#product-id-${productId}`);
+        $("#kt_modal_add_product_item #product_id").val(productId);
+        $("#kt_modal_add_product_item #product_name").val(productName);
+        $("#kt_modal_add_product_item #product_price").val(productPrice);
+        $("#kt_modal_add_product_item #diskon").val(productDiscount);
 
-        var dicountElem = `<span class="badge bg-warning text-dark discount"></span>`;
-
-        if(productDiscount > 0) {
-            dicountElem = `<span class="badge bg-warning text-dark discount">- ${productDiscount}</span>`
-        }
-
-        if (existingProduct.length > 0) {
-            // Update quantity and subtotal for existing product
-            const quantityElement = existingProduct.find('.qty');
-            const currentQuantity = parseFloat(quantityElement.text()) || 1;
-            const newQuantity = currentQuantity + 1;
-            quantityElement.text(`${newQuantity} Kg`);
-
-            const priceElement = existingProduct.find('.price');
-            const newSubtotal = (productPrice * newQuantity);
-
-            priceElement.text(formatCurrency(mround(newSubtotal, 500)));
-        } else {
-            // Add new product to the cart
-            var productItem = `<div class="container py-1 cart-item-lists" id="product-id-${productId}">
-                            <div class="pb-3 mb-3">
-                                <div class="d-flex">
-                                    <img src="${productImgUrl}" alt="Item" class="rounded me-3" style="width: 60px; height: 60px;">
-                                    <div class="flex-grow-1 mt-3">
-                                        <h5 class="mb-1">${productName}</h5>
-                                        <div class="d-none product-id">${productId}</div>
-                                        <div class="d-none base-price">${productPrice}</div>
-                                        <span class="badge bg-warning text-dark qty">1 Kg</span>
-                                    </div>
-                                    <div class="text-end me-3 mt-3">
-                                        <h6 class="mb-1 price">${formatCurrency(productPrice - productDiscount)}</h6>
-                                        ${dicountElem}
-                                    </div>
-                                </div>
-                                <div class="d-flex flex-row-reverse">
-                                    <div class="text-end">
-                                        <a href="#" class="btn btn-outline-primary btn-sm me-2 edit-item" data-bs-toggle="modal" data-bs-target="#kt_modal_edit_product_item" data-product-id="${productId}" data-product-name="${productName}" data-product-price="${productPrice}">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button class="btn btn-outline-danger btn-sm remove-item" data-product-id="${productId}">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        <div class="separator separator-dashed my-5"></div>
-                    </div>`;
-
-            $('#cart-item').append(productItem);
-        }
-
-        // Recalculate totals
-        calculateTotals();
     });
 
     $(document).on('keyup', '#product-search', function(e) {
@@ -1109,12 +1156,92 @@ $(document).ready(function() {
         const productId = $(this).data('product-id');
         const productName = $(this).data('product-name');
         const productPrice = $(this).data('product-price');
+        const productDiscount = $(this).data('product-discount');
 
         $("#kt_modal_edit_product_item #product_id").val(productId);
         $("#kt_modal_edit_product_item #product_name").val(productName);
         $("#kt_modal_edit_product_item #product_price").val(productPrice);
+        $("#kt_modal_edit_product_item #diskon").val(productDiscount);
 
         $("#kt_modal_edit_product_item #quantity").val("");
+    });
+
+    $(document).on('click', '#add-item', function(e) {
+
+        e.preventDefault();
+
+        var productId = $("#kt_modal_add_product_item #product_id").val();
+        var productName = $("#kt_modal_add_product_item #product_name").val();
+        var productQuantity = parseFloat($("#kt_modal_add_product_item #quantity").val());
+        var productPrice = parseFloat($("#kt_modal_add_product_item #product_price").val()); // Ensure price is a number
+        var productDiscount = parseFloat($("#kt_modal_add_product_item #diskon").val()) | 0;
+        var productImgUrl = $(this).find('img').attr('src');
+
+        // Check if the product already exists in the cart
+        var existingProduct = $(`#product-id-${productId}`);
+
+        var dicountElem = `<span class="badge bg-warning text-dark discount"></span>`;
+
+        if(productDiscount > 0) {
+            dicountElem = `<span class="badge bg-warning text-dark discount">- ${productDiscount}</span>`
+        }
+
+        if (existingProduct.length > 0) {
+            // Update quantity and subtotal for existing product
+            const quantityElement = existingProduct.find('.qty');
+            const currentQuantity = parseFloat(productQuantity) || 1;
+            const newQuantity = currentQuantity + 1;
+            quantityElement.text(`${newQuantity} Kg`);
+
+            const priceElement = existingProduct.find('.price');
+            const newSubtotal = (productPrice * newQuantity);
+
+            priceElement.text(formatCurrency(mround(newSubtotal, 500)));
+        } else {
+            // Add new product to the cart
+            var productItem = `<div class="container py-1 cart-item-lists" id="product-id-${productId}">
+                            <div class="pb-3 mb-3">
+                                <div class="d-flex">
+                                    <img src="${productImgUrl}" alt="Item" class="rounded me-3" style="width: 60px; height: 60px;">
+                                    <div class="flex-grow-1 mt-3">
+                                        <h5 class="mb-1">${productName}</h5>
+                                        <div class="d-none product-id">${productId}</div>
+                                        <div class="d-none base-price">${productPrice}</div>
+                                        <span class="badge bg-warning text-dark qty">${productQuantity} Kg</span>
+                                    </div>
+                                    <div class="text-end me-3 mt-3">
+                                        <h6 class="mb-1 price">${formatCurrency(mround((productPrice - productDiscount) * productQuantity, 500))}</h6>
+                                        ${dicountElem}
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-row-reverse">
+                                    <div class="text-end">
+                                        <a href="#" class="btn btn-outline-primary btn-sm me-2 edit-item" data-bs-toggle="modal" data-bs-target="#kt_modal_edit_product_item" data-product-id="${productId}" data-product-name="${productName}" data-product-price="${productPrice}" data-product-discount="${productDiscount}">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button class="btn btn-outline-danger btn-sm remove-item" data-product-id="${productId}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="separator separator-dashed my-5"></div>
+                    </div>`;
+
+            $('#cart-item').append(productItem);
+        }
+
+        // Recalculate totals
+        calculateTotals();
+
+        $('#kt_modal_add_product_item').modal('hide');
+
+        $("#kt_modal_add_product_item #product_id").val("");
+        $("#kt_modal_add_product_item #product_name").val("");
+        $("#kt_modal_add_product_item #quantity").val("");
+        $("#kt_modal_add_product_item #product_price").val("");
+        $("#kt_modal_add_product_item #diskon").val("");
+
     });
 
     $(document).on('click', '#update-item', function(e) {
@@ -1137,9 +1264,9 @@ $(document).ready(function() {
 
             const priceElement = existingProduct.find('.price');
             const discountElement = existingProduct.find('.discount').text().replace(/[^\d]/g, '') | 0;
-            const newSubtotal = productPrice * newQuantity;
+            const newSubtotal = (productPrice - discountElement) * newQuantity;
 
-            priceElement.text(formatCurrency(mround(newSubtotal, 500) - parseFloat(discountElement)));
+            priceElement.text(formatCurrency(mround(newSubtotal, 500)));
         }
 
         calculateTotals();
@@ -1374,7 +1501,7 @@ $(document).ready(function() {
                         `<span>Diskon</span> <span class="fs-6 text-muted">${formatCurrency(parseFloat(product.discount))}</span>` :
                         '';
 
-                    const productItem = `<div class="col-md-3 mb-3 product-l"><div class="card p-6 pb-5 mw-100 product" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}" data-product-discount="${product.discount}">
+                    const productItem = `<div class="col-md-3 mb-3 product-l"><div class="card p-6 pb-5 mw-100 product" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}" data-product-discount="${product.discount}" data-bs-toggle="modal" data-bs-target="#kt_modal_add_product_item">
                                             <div class="card-body text-center">
                                                 <img src="${product.url_path}" class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px" alt="" />
                                                 <div class="mb-2">
@@ -1387,7 +1514,7 @@ $(document).ready(function() {
                                                 </div>
                                                 ${discountHTML}
                                             </div>
-                                        </div></div>`;
+                                        </div>`;
                     // Append the product to the product list container
                     $('#product-list').append(productItem);
                 });
