@@ -17,9 +17,9 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-Auth::routes();
+// Auth::routes();
 
-// Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'login'])->name('login');
+Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'login'])->name('login');
 // Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'create'])->name('register');
 
 Route::group(['middleware' => ['auth']], function() {
