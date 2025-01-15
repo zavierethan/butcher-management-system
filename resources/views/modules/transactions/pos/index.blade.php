@@ -1202,7 +1202,6 @@ $(document).ready(function() {
             var productItem = `<div class="container py-1 cart-item-lists" id="product-id-${productId}">
                             <div class="pb-3 mb-3">
                                 <div class="d-flex">
-                                    <img src="${productImgUrl}" alt="Item" class="rounded me-3" style="width: 60px; height: 60px;">
                                     <div class="flex-grow-1 mt-3">
                                         <h5 class="mb-1">${productName}</h5>
                                         <div class="d-none product-id">${productId}</div>
