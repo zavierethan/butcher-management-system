@@ -127,13 +127,24 @@ class PurchaseRequestController extends Controller
         $branches = DB::table('branches')->where('is_active', 1)->get();
 
         $purchaseRequest = DB::table('purchase_requests')->where('id', $id)->first();
-        $purchaseRequestItems = DB::table('purchase_request_items')
+
+        if($purchaseRequest->category == 'PR') {
+            $purchaseRequestItems = DB::table('purchase_request_items')
                             ->select(
                                 'products.name as product_name',
                                 'purchase_request_items.*'
                             )
                             ->leftJoin('products', 'products.id', '=', 'purchase_request_items.item_id')
                             ->where('purchase_request_id', $purchaseRequest->id)->get();
+        } else {
+            $purchaseRequestItems = DB::table('purchase_request_items')
+                            ->select(
+                                'inventories.name as product_name',
+                                'purchase_request_items.*'
+                            )
+                            ->leftJoin('inventories', 'inventories.id', '=', 'purchase_request_items.item_id')
+                            ->where('purchase_request_id', $purchaseRequest->id)->get();
+        }
 
         return view('modules.procurements.purchase-request.edit', compact('branches','purchaseRequest', 'purchaseRequestItems'));
     }
@@ -155,7 +166,11 @@ class PurchaseRequestController extends Controller
 
     public function getPurchaseRequestItem(Request $request) {
         $params = $request->purchase_request_id;
-        $response = DB::table('purchase_request_items')
+
+        $category = DB::table('purchase_requests')->where('id', $params)->value('category');
+
+        if($category == 'PR') {
+            $response = DB::table('purchase_request_items')
                 ->select(
                     'purchase_requests.request_number',
                     'purchase_request_items.id as purchase_request_item_id',
@@ -170,6 +185,23 @@ class PurchaseRequestController extends Controller
                 ->where('approval_status', 1)
                 ->where('purchase_request_id', $params)
                 ->get();
+        } else {
+            $response = DB::table('purchase_request_items')
+                ->select(
+                    'purchase_requests.request_number',
+                    'purchase_request_items.id as purchase_request_item_id',
+                    'purchase_request_items.item_id',
+                    'inventories.name',
+                    'purchase_request_items.category',
+                    'purchase_request_items.quantity',
+                    'purchase_request_items.price'
+                )
+                ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_request_items.purchase_request_id')
+                ->leftJoin('inventories', 'inventories.id', '=', 'purchase_request_items.item_id')
+                ->where('approval_status', 1)
+                ->where('purchase_request_id', $params)
+                ->get();
+        }
 
         return response()->json($response);
     }

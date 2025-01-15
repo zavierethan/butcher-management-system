@@ -138,10 +138,9 @@
                                         <th class="min-w-125px">Nomor request</th>
                                         <th class="min-w-125px">Item</th>
                                         <th class="min-w-125px">Tipe Item</th>
+                                        <th class="min-w-125px">Harga</th>
                                         <th class="min-w-125px">Jumlah</th>
-                                        <th class="min-w-125px">Satuan</th>
-                                        <th class="min-w-125px text-end">Harga</th>
-                                        <th class="min-w-125px text-end">Total Harga</th>
+                                        <th class="min-w-125px">Total Harga</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -259,10 +258,9 @@ $("#btn-form-add-item").on("click", function() {
                                 <input type="hidden" value="${items.item_id}" class="item-id" />
                             </td>
                             <td class="item-category">${items.category}</td>
+                            <td class="item-price">${items.price}</td>
                             <td class="item-quantity">${items.quantity}</td>
-                            <td class="item-unit">Kilogram</td>
-                            <td class="item-price text-end">${items.price}</td>
-                            <td class="item-total-price text-end">${items.price * items.quantity}</td>
+                            <td class="item-total-price">${items.price * items.quantity}</td>
                             <td class="text-center">
                                 <a href="#" class="btn btn-sm btn-danger" onclick="deleteRow(this)">Hapus</i></a>
                             </td>

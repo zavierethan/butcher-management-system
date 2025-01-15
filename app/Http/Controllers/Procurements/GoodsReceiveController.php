@@ -108,7 +108,9 @@ class GoodsReceiveController extends Controller
 
     public function edit($id){
         $purchaseOrder = DB::table('purchase_orders')->where('id', $id)->first();
-        $items = DB::table('purchase_order_items')
+
+        if($purchaseOrder->category == 'PR') {
+            $items = DB::table('purchase_order_items')
                     ->select(
                         'purchase_order_items.id',
                         'products.name',
@@ -120,6 +122,20 @@ class GoodsReceiveController extends Controller
                     )
                     ->leftJoin('products', 'products.id', '=', 'purchase_order_items.item_id')
                     ->where('purchase_order_id', $purchaseOrder->id)->get();
+        } else {
+            $items = DB::table('purchase_order_items')
+                    ->select(
+                        'purchase_order_items.id',
+                        'inventories.name',
+                        'purchase_order_items.quantity',
+                        DB::raw("TO_CHAR(purchase_order_items.price, 'FM999,999,999') as price"),
+                        'purchase_order_items.received_quantity',
+                        DB::raw("TO_CHAR(purchase_order_items.received_price, 'FM999,999,999') as received_price"),
+                        'purchase_order_items.remarks',
+                    )
+                    ->leftJoin('inventories', 'inventories.id', '=', 'purchase_order_items.item_id')
+                    ->where('purchase_order_id', $purchaseOrder->id)->get();
+        }
 
         return view('modules.procurements.goods-receive.edit', compact('purchaseOrder', 'items'));
     }

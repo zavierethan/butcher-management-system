@@ -122,7 +122,9 @@ class PurchaseOrderController extends Controller
     public function edit($id) {
         $suppliers = DB::table('suppliers')->where('is_active', 1)->get();
         $purchaseOrder = DB::table('purchase_orders')->where('id', $id)->first();
-        $items = DB::table('purchase_order_items')
+
+        if($purchaseOrder->category == 'PR') {
+            $items = DB::table('purchase_order_items')
                     ->select(
                         'products.name',
                         'purchase_order_items.quantity',
@@ -135,6 +137,21 @@ class PurchaseOrderController extends Controller
                         $item->price = number_format($item->price, 0, '.', ',');// Format for money
                         return $item;
                     });
+        } else {
+            $items = DB::table('purchase_order_items')
+                    ->select(
+                        'inventories.name',
+                        'purchase_order_items.quantity',
+                        'purchase_order_items.price',
+                        DB::raw("purchase_order_items.price * purchase_order_items.quantity as total")
+                    )
+                    ->leftJoin('inventories', 'inventories.id', '=', 'purchase_order_items.item_id')
+                    ->where('purchase_order_id', $purchaseOrder->id)->get()->map(function ($item) {
+                        // Format the prices using number_format
+                        $item->price = number_format($item->price, 0, '.', ',');// Format for money
+                        return $item;
+                    });
+        }
 
         return view('modules.procurements.purchase-order.edit', compact('suppliers', 'purchaseOrder', 'items'));
     }
@@ -157,6 +174,7 @@ class PurchaseOrderController extends Controller
         $purchaseOrder = DB::table('purchase_orders')
                     ->select(
                         'purchase_orders.id',
+                        'purchase_orders.category',
                         'purchase_orders.purchase_order_number',
                         DB::raw("TO_CHAR(purchase_orders.order_date, 'dd/mm/YYYY') as order_date"),
                         'suppliers.name as supplier_name',
@@ -165,7 +183,8 @@ class PurchaseOrderController extends Controller
                     ->leftJoin('suppliers', 'suppliers.id', '=', 'purchase_orders.supplier_id')
                     ->where('purchase_orders.id', $id)->first();
 
-        $detailItems = DB::table('purchase_order_items')
+        if($purchaseOrder->category == 'PR') {
+            $detailItems = DB::table('purchase_order_items')
                     ->select(
                         'products.name',
                         'purchase_order_items.quantity',
@@ -178,6 +197,21 @@ class PurchaseOrderController extends Controller
                         $item->price = number_format($item->price, 0, '.', ',');// Format for money
                         return $item;
                     });
+        } else {
+            $detailItems = DB::table('purchase_order_items')
+                    ->select(
+                        'inventories.name',
+                        'purchase_order_items.quantity',
+                        'purchase_order_items.price',
+                        DB::raw("purchase_order_items.price * purchase_order_items.quantity as total")
+                    )
+                    ->leftJoin('inventories', 'inventories.id', '=', 'purchase_order_items.item_id')
+                    ->where('purchase_order_id', $purchaseOrder->id)->get()->map(function ($item) {
+                        // Format the prices using number_format
+                        $item->price = number_format($item->price, 0, '.', ',');// Format for money
+                        return $item;
+                    });
+        }
 
         $pdf = PDF::loadView('modules.procurements.purchase-order.print', [
             "purchaseOrder" => $purchaseOrder,
@@ -189,7 +223,11 @@ class PurchaseOrderController extends Controller
 
     public function getPurchaseOrderItem(Request $request) {
         $params = $request->purchase_order_id;
-        $response = DB::table('purchase_order_items')
+
+        $category = DB::table('purchase_orders')->where('id', $params)->value('category');
+
+        if($category == 'PR') {
+            $response = DB::table('purchase_order_items')
                 ->select(
                     'purchase_order_items.id as purchase_order_item_id',
                     'products.name',
@@ -200,6 +238,19 @@ class PurchaseOrderController extends Controller
                 ->leftJoin('products', 'products.id', '=', 'purchase_order_items.item_id')
                 ->where('purchase_order_items.purchase_order_id', $params)
                 ->get();
+        } else {
+            $response = DB::table('purchase_order_items')
+                ->select(
+                    'purchase_order_items.id as purchase_order_item_id',
+                    'inventories.name',
+                    'purchase_order_items.quantity',
+                    DB::raw("TO_CHAR(purchase_order_items.price, 'FM999,999,999') as price")
+                )
+                ->join('purchase_orders', 'purchase_orders.id', '=', 'purchase_order_items.purchase_order_id')
+                ->leftJoin('inventories', 'inventories.id', '=', 'purchase_order_items.item_id')
+                ->where('purchase_order_items.purchase_order_id', $params)
+                ->get();
+        }
 
         return response()->json($response);
     }
