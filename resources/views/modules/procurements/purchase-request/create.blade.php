@@ -305,7 +305,7 @@ $("#category").on("change", function() {
 $(document).on('click', '#btn-submit-request', function(e) {
     e.preventDefault();
 
-    if (!validate()) {
+    if (true) {
         Swal.fire({
             title: 'Apakah anda yakin untuk memproses request ?',
             icon: 'warning',
