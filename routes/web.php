@@ -75,6 +75,8 @@ Route::group(['middleware' => ['auth']], function() {
             Route::post('/save', [App\Http\Controllers\ProductController::class, 'save'])->name('save');
             Route::get('/edit/{id}', [App\Http\Controllers\ProductController::class, 'edit'])->name('edit');
             Route::post('/update', [App\Http\Controllers\ProductController::class, 'update'])->name('update');
+            Route::get('/carcass-items', [App\Http\Controllers\ProductController::class, 'getListProductsForCarcass'])->name('get-lists-carcass');
+            Route::post('/update-formula', [App\Http\Controllers\ProductController::class, 'updateFormula'])->name('update-formula');
         });
     });
 

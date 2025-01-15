@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 use Auth;
+use App\Http\Controllers\ProductController;
+use Illuminate\Support\Facades\Log;
 
 class ProductDetailController extends Controller
 {
@@ -105,13 +107,15 @@ class ProductDetailController extends Controller
         return view('modules.master.product-detail.edit', compact('productDetails', 'products', 'branches', 'selectedProductId', 'selectedBranchId'));
     }
 
-    public function update(Request $request) {
+    public function update(Request $request)
+    {
         $rules = [
             'id' => 'required|integer|exists:product_details,id',
             'price' => 'nullable|numeric',
             'discount' => 'nullable|numeric',
             'start_period' => 'nullable|date',
             'end_period' => 'nullable|date',
+            'product_name' => 'nullable|string'
         ];
 
         // Validate the request
@@ -126,6 +130,47 @@ class ProductDetailController extends Controller
         $updated = DB::table('product_details')
             ->where('id', $validatedData['id'])
             ->update($updateData);
+
+        Log::info('CEK UPDATE', ['product_name' => $request->product_name]);
+
+        // Trigger the `updateFormula` method in the `ProductController`
+        if ($updated && $request->product_name === 'KARKAS') {
+            // Get the branch ID and price for the updated KARKAS
+            $karkasDetails = DB::table('product_details')
+                ->select('branch_id', 'price')
+                ->where('id', $validatedData['id'])
+                ->first();
+
+            if ($karkasDetails) {
+                $karkasPrice = $karkasDetails->price;
+                $branchId = $karkasDetails->branch_id;
+
+                // Get all products with a formula linked to KARKAS
+                $products = DB::table('products')
+                    ->whereNotNull('formula')
+                    ->get();
+
+                foreach ($products as $product) {
+                    try {
+                        // Replace 'carcass' in the formula with the KARKAS price
+                        $formula = str_replace('carcass', "({$karkasPrice})", $product->formula);
+                        Log::debug("Evaluating formula for product {$product->name}: {$formula}");
+                        $updatedPrice = eval('return ' . $formula . ';');
+
+                        // Update product details price for the current product and branch
+                        DB::table('product_details')
+                            ->where('product_id', $product->id)
+                            ->where('branch_id', $branchId)
+                            ->update(['price' => $updatedPrice]);
+
+                    } catch (\Throwable $e) {
+                        Log::error("Error updating prices for product {$product->id}: {$e->getMessage()}");
+                    }
+                }
+            } else {
+                Log::warning("KARKAS details not found for product_detail ID: {$validatedData['id']}");
+            }
+        }
 
         // Return JSON response
         return response()->json(['success' => (bool) $updated]);
@@ -150,37 +195,10 @@ class ProductDetailController extends Controller
         }
     }
 
-    // public function updateRow(Request $request)
-    // {
-    //     $rules = [
-    //         'id' => 'required|integer|exists:product_details,id',
-    //         'price' => 'nullable|numeric',
-    //         'discount' => 'nullable|numeric',
-    //         'start_period' => 'nullable|date',
-    //         'end_period' => 'nullable|date',
-    //     ];
-
-    //     // Validate the request
-    //     $validatedData = $request->validate($rules);
-
-    //     // Prepare data for update
-    //     $updateData = array_filter($validatedData, function ($key) {
-    //         return in_array($key, ['price', 'discount', 'start_period', 'end_period']);
-    //     }, ARRAY_FILTER_USE_KEY);
-
-    //     // Perform the update
-    //     $updated = DB::table('product_details')
-    //         ->where('id', $validatedData['id'])
-    //         ->update($updateData);
-
-    //     // Return JSON response
-    //     return response()->json(['success' => (bool) $updated]);
-    // }
-
-
     public function updateAllPrice(Request $request)
     {
         $price = $request->input('price');
+        $productId = $request->input('product_id');
 
         // Check if the price is empty and set it to null if true
         if (empty($price)) {
@@ -189,8 +207,48 @@ class ProductDetailController extends Controller
 
         try {
             // Update all rows
-            DB::table('product_details')->update(['price' => $price]);
+            $updated = DB::table('product_details')
+                ->where('product_id', $productId)
+                ->update(['price' => $price]);
 
+            Log::info('CEK SINI', ['product_name' => $request->product_name]);
+
+            if ($updated && $request->product_name === 'KARKAS') {
+                // Fetch all branches where KARKAS price was updated
+                $branches = DB::table('product_details')
+                    ->select('branch_id', 'price')
+                    ->where('product_id', $productId)
+                    ->get();
+
+                foreach ($branches as $branch) {
+                    $karkasPrice = $branch->price;
+                    $branchId = $branch->branch_id;
+
+                    // Get all products with a formula linked to KARKAS
+                    $products = DB::table('products')
+                        ->select('id', 'formula')
+                        ->whereNotNull('formula')
+                        ->get();
+
+                    foreach ($products as $product) {
+                        try {
+                            // Replace 'carcass' in the formula with the KARKAS price
+                            $formula = str_replace('carcass', "({$karkasPrice})", $product->formula);
+                            Log::debug("Evaluating formula for product ID {$product->id}: {$formula}");
+                            $updatedPrice = eval('return ' . $formula . ';');
+
+                            // Update the price in product_details for the current product and branch
+                            DB::table('product_details')
+                                ->where('product_id', $product->id)
+                                ->where('branch_id', $branchId)
+                                ->update(['price' => $updatedPrice]);
+
+                        } catch (\Throwable $e) {
+                            Log::error("Error calculating price for product ID {$product->id} in branch {$branchId}: {$e->getMessage()}");
+                        }
+                    }
+                }
+            }
             return response()->json(['success' => true, 'message' => 'All rows updated successfully']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Error updating rows', 'error' => $e->getMessage()]);
@@ -200,6 +258,7 @@ class ProductDetailController extends Controller
     public function updateAllDiscount(Request $request)
     {
         $discount = $request->input('discount');
+        $productId = $request->input('product_id');
 
         // Check if the discount is empty and set it to null if true
         if (empty($discount)) {
@@ -208,7 +267,9 @@ class ProductDetailController extends Controller
 
         try {
             // Update all rows
-            DB::table('product_details')->update(['discount' => $discount]);
+            DB::table('product_details')
+                ->where('product_id', $productId)
+                ->update(['discount' => $discount]);
 
             return response()->json(['success' => true, 'message' => 'All rows updated successfully']);
         } catch (\Exception $e) {
@@ -218,7 +279,8 @@ class ProductDetailController extends Controller
 
     public function updateAllDiscountDate(Request $request)
     {
-        
+        $productId = $request->input('product_id');
+
         if ($request->has('discountStartDate')) {
             $discountStartDate = $request->input('discountStartDate');
             if (empty($discountStartDate)) {
@@ -227,7 +289,9 @@ class ProductDetailController extends Controller
 
             try {
                 // Update all rows
-                DB::table('product_details')->update(['start_period' => $discountStartDate]);
+                DB::table('product_details')
+                    ->where('product_id', $productId)
+                    ->update(['start_period' => $discountStartDate]);
 
                 return response()->json(['success' => true, 'message' => 'All rows updated successfully']);
             } catch (\Exception $e) {
@@ -242,7 +306,9 @@ class ProductDetailController extends Controller
 
             try {
                 // Update all rows
-                DB::table('product_details')->update(['end_period' => $discountEndDate]);
+                DB::table('product_details')
+                    ->where('product_id', $productId)
+                    ->update(['end_period' => $discountEndDate]);
 
                 return response()->json(['success' => true, 'message' => 'All rows updated successfully']);
             } catch (\Exception $e) {
