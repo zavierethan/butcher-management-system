@@ -75,6 +75,8 @@ Route::group(['middleware' => ['auth']], function() {
             Route::post('/save', [App\Http\Controllers\ProductController::class, 'save'])->name('save');
             Route::get('/edit/{id}', [App\Http\Controllers\ProductController::class, 'edit'])->name('edit');
             Route::post('/update', [App\Http\Controllers\ProductController::class, 'update'])->name('update');
+            Route::get('/carcass-items', [App\Http\Controllers\ProductController::class, 'getListProductsForCarcass'])->name('get-lists-carcass');
+            Route::post('/update-formula', [App\Http\Controllers\ProductController::class, 'updateFormula'])->name('update-formula');
         });
     });
 
@@ -134,6 +136,17 @@ Route::group(['middleware' => ['auth']], function() {
             Route::post('/save', [App\Http\Controllers\SupplierController::class, 'save'])->name('save');
             Route::get('/edit/{id}', [App\Http\Controllers\SupplierController::class, 'edit'])->name('edit');
             Route::post('/update', [App\Http\Controllers\SupplierController::class, 'update'])->name('update');
+        });
+    });
+
+    Route::prefix('inventories')->group(function () {
+        Route::name('inventories.')->group(function () {
+            Route::get('/', [App\Http\Controllers\InventoryController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\InventoryController::class, 'getLists'])->name('get-lists');
+            Route::get('/create', [App\Http\Controllers\InventoryController::class, 'create'])->name('create');
+            Route::post('/save', [App\Http\Controllers\InventoryController::class, 'save'])->name('save');
+            Route::get('/edit/{id}', [App\Http\Controllers\InventoryController::class, 'edit'])->name('edit');
+            Route::post('/update', [App\Http\Controllers\InventoryController::class, 'update'])->name('update');
         });
     });
 

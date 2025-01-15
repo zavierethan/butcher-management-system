@@ -29,6 +29,4 @@ Route::get('get-purchase-request-items/', [App\Http\Controllers\Procurements\Pur
 
 Route::get('get-purchase-order-items/', [App\Http\Controllers\Procurements\PurchaseOrderController::class, 'getPurchaseOrderItem'])->name('get-purchase-order-item');
 
-
-// API for Dashboard
-
+Route::get('inventories/', [App\Http\Controllers\InventoryController::class, 'getListInventories']);

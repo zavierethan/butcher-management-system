@@ -180,4 +180,104 @@ class ProductController extends Controller
         return response()->json($response);
     }
 
+    public function getListProductsForCarcass(Request $request) {
+        $params = $request->q;
+
+        $query = DB::table('products')
+            ->select(
+                'products.id',
+                'products.code',
+                'products.name',
+                'products.formula'
+            )
+            ->where('category_id', function ($query) {
+                $query->select('category_id')
+                    ->from('products')
+                    ->where('name', 'KARKAS')
+                    ->limit(1);
+            })
+            ->where('products.name', '!=', 'KARKAS')
+            ->where('products.is_active', '=', 1);
+
+        $totalRecords = $query->count();
+        $filteredRecords = $query->count();
+
+        $data = $query->orderBy('products.name', 'asc')->get();
+
+        $response = [
+            'draw' => $request->input('draw'),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $data
+        ];
+
+        return response()->json($response);
+    }
+
+    public function updateFormula(Request $request) {
+        // Update the formula in the products table
+        $updateData = [
+            'formula' => $request->formula,
+        ];
+
+        $updated = DB::table('products')
+            ->where('id', $request->id)
+            ->update($updateData);
+
+        if ($updated) {
+            // Fetch the updated product
+            $product = DB::table('products')
+                ->where('id', $request->id)
+                ->select('id', 'formula', 'code')
+                ->first();
+
+            if ($product && $product->formula) {
+                // Get all branches where this product has entries in product_details
+                $branches = DB::table('product_details')
+                    ->where('product_id', $product->id)
+                    ->pluck('branch_id');
+
+
+                foreach ($branches as $branchId) {
+                    // Get the price of KARKAS for the current branch
+                    $carcassPrice = DB::table('product_details')
+                        ->join('products', 'product_details.product_id', '=', 'products.id')
+                        ->where('products.name', 'KARKAS') // Fix the query
+                        ->where('product_details.branch_id', $branchId)
+                        ->value('product_details.price');
+
+                    if ($carcassPrice) {
+                        try {
+                            // Replace 'carcass' with the price, and ensure proper numeric handling
+                            $formula = str_replace('carcass', "({$carcassPrice})", $product->formula);
+
+                            // Debug the final formula
+                            \Log::debug("Evaluating formula: {$formula}");
+
+                            // Safely evaluate the formula
+                            $updatedPrice = eval('return ' . $formula . ';');
+
+                            // Update the price in product_details
+                            DB::table('product_details')
+                                ->where('product_id', $product->id)
+                                ->where('branch_id', $branchId)
+                                ->update(['price' => $updatedPrice]);
+                        } catch (\Throwable $e) {
+                            // Log evaluation errors
+                            \Log::error("Error evaluating formula for product ID {$product->id} in branch {$branchId}: {$e->getMessage()}");
+                        }
+                    } else {
+                        // Log if KARKAS price is not found for the branch
+                        \Log::warning("KARKAS price not found for branch {$branchId}");
+                    }
+                }
+            } else {
+                \Log::warning("Product or formula not found for product ID {$request->id}");
+            }
+        }
+
+        return response()->json(['success' => (bool) $updated]);
+    }
+
+
 }

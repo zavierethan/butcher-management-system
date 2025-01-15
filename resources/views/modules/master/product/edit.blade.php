@@ -137,7 +137,7 @@
             </div>
             <!--end::Content container-->
 
-            <!--begin::Toolbar-->
+             <!--begin::Toolbar-->
             <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
                 <!--begin::Toolbar container-->
                 <div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
@@ -165,23 +165,6 @@
                     <!--begin::Table-->
                     <div class="card">
                         <div class="card-header border-0 pt-6">
-                            {{-- <!--begin::Card toolbar-->
-                            <div class="card-toolbar">
-                                <!--begin::Toolbar-->
-                                <div class="d-flex align-items-center position-relative my-1">
-                                        <!-- Input fields for setting values for all rows -->
-                                    <input type="text" id="setAllPrice" class="form-control form-control-sm me-2" placeholder="Set Price for All">
-                                    <button id="applyPriceToAll" class="btn btn-primary btn-sm">Apply Price to All</button>
-                                    <input type="text" id="setAllDiscount" class="form-control form-control-sm me-2" placeholder="Set Discount for All">
-                                    <button id="applyDiscountToAll" class="btn btn-primary btn-sm">Apply Discount to All</button>
-                                    <input class="form-control form-control-solid" name="calendar_event_start_date" placeholder="Pick a start date" id="kt_calendar_datepicker_start_date"/>
-                                    <button id="applyDiscountStartDateToAll" class="btn btn-primary btn-sm">Apply Discount Start to All</button>
-                                    <input class="form-control form-control-solid" name="calendar_event_end_date" placeholder="Pick an end date" id="kt_calendar_datepicker_end_date"/>
-                                    <button id="applyDiscountEndDateToAll" class="btn btn-primary btn-sm">Apply Discount End to All</button>
-                                </div>
-                                <!--end::Toolbar-->
-                            </div>
-                            <!--end::Card toolbar--> --}}
                             <!--begin::Card toolbar-->
                             <div class="card-toolbar">
                                 <!--begin::Toolbar-->
@@ -241,6 +224,70 @@
                 <!--end::Row-->
             </div>
             <!--end::Content container-->
+            
+            @if($product->name === 'KARKAS')
+            <input type="hidden" id="product_name" value="{{ $product->name }}">
+                <!--begin::Toolbar-->
+                <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
+                    <!--begin::Toolbar container-->
+                    <div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
+                        <!--begin::Page title-->
+                        <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+                            <!--begin::Title-->
+                            <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Pengaturan Byproduct Karkas</h1>
+                            <!--end::Title-->
+                            <!--begin::Breadcrumb-->
+                            <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
+                                <li class="breadcrumb-item text-muted">List Byproduct Karkas</li>
+                            </ul>
+                            <!--end::Breadcrumb-->
+                        </div>
+                        <!--end::Page title-->
+                    </div>
+                    <!--end::Toolbar container-->
+                </div>
+                <!--end::Toolbar-->
+                <!--begin::Content container-->
+                <div id="kt_app_content_container" class="app-container container-fluid">
+                    <!--begin::Row-->
+                    <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
+                        <!--begin::Table-->
+                        <div class="card">
+                            <div class="card-header border-0 pt-6">
+                                <!--begin::Card toolbar-->
+                            </div>
+                            <!--begin::Card body-->
+                            <div class="card-body pt-0 overflow-x-auto">
+                                <!--begin::Table-->
+                                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_byproduct_details_table">
+                                    <!--begin::Table head-->
+                                    <thead>
+                                        <!--begin::Table row-->
+                                        <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                            <th class="min-w-125px">Byproduct Code</th>
+                                            <th class="min-w-125px">Byproduct Name</th>
+                                            <th class="min-w-125px">Formula Harga</th>
+                                            <th class="text-center min-w-70px">Actions</th>
+                                        </tr>
+                                        <!--end::Table row-->
+                                    </thead>
+                                    <!--end::Table head-->
+                                    <!--begin::Table body-->
+                                    <tbody class="fw-bold text-gray-600">
+                                    </tbody>
+                                    <!--end::Table body-->
+                                </table>
+                                <!--end::Table-->
+                            </div>
+                            <!--end::Card body-->
+                        </div>
+                        <!--end::Table-->
+                    </div>
+                    <!--end::Row-->
+                </div>
+                <!--end::Content container-->
+            @endif
+
         </div>
         <!--end::Content-->
     </div>
@@ -251,123 +298,57 @@
 @section('script')
 
 <script>
-    // $("#kt_product_details_table").DataTable({
-    //     processing: true,
-    //     serverSide: true,
-    //     paging: true, // Enable pagination
-    //     pageLength: 10, // Number of rows per page
-    //     ajax: {
-    //         url: `{{ route('product-details.get-lists', ['id' => $product->id]) }}`,
-    //         type: 'GET',
-    //         dataSrc: function (json) {
-    //             return json.data; // Map the 'data' field
-    //         }
-    //     },
-    //     columns: [
-    //         { data: 'branch_name', name: 'branch_name' },
-    //         {
-    //             data: 'price',
-    //             name: 'price',
-    //             render: function (data, type, row) {
-    //                 const displayValue = data !== null ? data : '-';
-    //                 return `
-    //                     <div class="d-flex align-items-center">
-    //                         <input type="text" 
-    //                             class="form-control form-control-sm inline-edit-price me-2" 
-    //                             value="${displayValue}" 
-    //                             data-id="${row.id}" 
-    //                             data-field="price" />
-    //                     </div>
-    //                 `;
-    //             }
-    //         },
-    //         {
-    //             data: 'discount',
-    //             name: 'discount',
-    //             render: function (data, type, row) {
-    //                 const displayValue = data !== null ? data : '-';
-    //                 return `
-    //                     <div class="d-flex align-items-center">
-    //                         <input type="text" 
-    //                             class="form-control form-control-sm inline-edit-discount me-2" 
-    //                             value="${displayValue}" 
-    //                             data-id="${row.id}" 
-    //                             data-field="discount" />
-    //                     </div>
-    //                 `;
-    //             }
-    //         },
-    //         {
-    //             data: 'start_period',
-    //             name: 'start_period',
-    //             render: function (data, type, row) {
-    //                 const displayValue = data !== null ? data : '-';
-    //                 return `
-    //                     <div class="d-flex align-items-center">
-    //                         <input type="date" 
-    //                             class="form-control form-control-sm inline-edit-start-period me-2" 
-    //                             value="${displayValue}" 
-    //                             data-id="${row.id}" 
-    //                             data-field="start_period" />
-    //                     </div>
-    //                 `;
-    //             }
-    //         },
-    //         {
-    //             data: 'end_period',
-    //             name: 'end_period',
-    //             render: function (data, type, row) {
-    //                 const displayValue = data !== null ? data : '-';
-    //                 return `
-    //                     <div class="d-flex align-items-center">
-    //                         <input type="date" 
-    //                             class="form-control form-control-sm inline-edit-end-period me-2" 
-    //                             value="${displayValue}" 
-    //                             data-id="${row.id}" 
-    //                             data-field="end_period" />
-    //                     </div>
-    //                 `;
-    //             }
-    //         },
-    //         {
-    //             data: 'is_active', // Assuming you have this field in your data
-    //             name: 'is_active',
-    //             orderable: false, // Disable ordering for this column
-    //             searchable: false, // Disable searching for this column
-    //             render: function (data, type, row) {
-    //                 return `
-    //                     <div class="d-flex justify-content-center">
-    //                         <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-    //                             <input class="form-check-input toggle-status" 
-    //                                 type="checkbox" 
-    //                                 data-id="${row.id}"
-    //                                 ${data ? 'checked' : ''}>
-    //                             <span class="form-check-label fw-bold text-muted"></span>
-    //                         </label>
-    //                     </div>
-    //                 `;
-    //             }
-    //         },
-    //         {
-    //             data: null, // No direct field from the server
-    //             name: 'action',
-    //             orderable: false, // Disable ordering for this column
-    //             searchable: false, // Disable searching for this column
-    //             render: function (data, type, row) {
-    //                 return `
-    //                     <div class="text-center">
-    //                         <a href="/product-details/update/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Update</a>
-    //                     <div>
-    //                 `;
-    //             }
-    //         },
-    //     ]
-    // });
-
     // Utility function to sanitize input values
     const sanitizeValue = (value) => {
         return value === '-' || value === '' ? null : value;
     };
+
+    $("#kt_byproduct_details_table").DataTable({
+        processing: true,
+        serverSide: true,
+        paging: true,
+        pageLength: 10,
+        ajax: {
+            url: `{{ route('products.get-lists-carcass') }}`,
+            type: 'GET',
+            dataSrc: function (json) {
+                return json.data;
+            }
+        },
+        columns: [
+            { data: 'code', name: 'code' },
+            { data: 'name', name: 'name' },
+            {
+                data: 'formula',
+                name: 'formula',
+                render: function (data, type, row) {
+                    const displayValue = data !== null ? data : '';
+                    return `
+                        <div class="d-flex align-items-center">
+                            <input type="text" 
+                                class="form-control form-control-sm inline-edit-formula me-2" 
+                                value="${displayValue}" 
+                                data-id="${row.id}" 
+                                data-field="formula" />
+                        </div>
+                    `;
+                }
+            },
+            {
+                data: null,
+                name: 'action',
+                orderable: false,
+                searchable: false,
+                render: function (data, type, row) {
+                    return `
+                        <div class="text-center">
+                            <button type="button" class="btn btn-sm btn-light btn-active-light-primary btn-update-formula" data-id="${row.id}">Update</button>
+                        <div>
+                    `;
+                }
+            },
+        ]
+    });
 
     // Initialize the DataTable
     $("#kt_product_details_table").DataTable({
@@ -475,7 +456,7 @@
                 render: function (data, type, row) {
                     return `
                         <div class="text-center">
-                            <button type="button" class="btn btn-sm btn-light btn-active-light-primary" data-id="${row.id}">Update</button>
+                            <button type="button" class="btn btn-sm btn-light btn-active-light-primary btn-update-product-details" data-id="${row.id}">Update</button>
                         <div>
                     `;
                 }
@@ -483,8 +464,57 @@
         ]
     });
 
+    // Handle the Update button click with SweetAlert for formula
+    $(document).on('click', '.btn-update-formula', function (e) {
+        e.preventDefault();
+
+        const row = $(this).closest('tr');
+        const id = $(this).data('id');
+        const formula = sanitizeValue(row.find('.inline-edit-formula').val());
+
+        const data = {
+            _token: '{{ csrf_token() }}',
+            id: id,
+            formula: formula
+        };
+
+        // Show SweetAlert confirmation dialog
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you want to update this row?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, update it!',
+            cancelButtonText: 'Cancel',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Send the AJAX request
+                $.ajax({
+                    url: '{{ route("products.update-formula") }}',
+                    type: 'POST',
+                    data: data,
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('Updated!', 'The row has been updated successfullys.', 'success');
+                        } else {
+                            Swal.fire('Error!', 'Failed to update the rowff.', 'error');
+                        }
+                    },
+                    error: function (xhr) {
+                        const errors = xhr.responseJSON.errors;
+                        let errorMsg = '';
+                        for (const key in errors) {
+                            errorMsg += `${errors[key]}<br>`;
+                        }
+                        Swal.fire('Error!', errorMsg, 'error');
+                    },
+                });
+            }
+        });
+    });
+
     // Handle the Update button click with SweetAlert
-    $(document).on('click', '.btn-active-light-primary', function (e) {
+    $(document).on('click', '.btn-update-product-details', function (e) {
         e.preventDefault();
 
         const row = $(this).closest('tr');
@@ -494,6 +524,8 @@
         const startPeriod = row.find('.inline-edit-start-period').val();
         const endPeriod = row.find('.inline-edit-end-period').val();
 
+        const productName = $('#product_name').val();
+
         const data = {
             _token: '{{ csrf_token() }}',
             id: id,
@@ -501,6 +533,7 @@
             discount: discount,
             start_period: startPeriod,
             end_period: endPeriod,
+            product_name: productName
         };
 
         // Show SweetAlert confirmation dialog
@@ -590,13 +623,14 @@
     // apply price to all
     $(document).on('click', '#applyPriceToAll', function () {
         var newPrice = $('#setAllPrice').val();
+        var productId = $('#id').val();
+        var productName = $('#product_name').val();
 
         // If the input is empty, set price to null
         if (newPrice === '') {
             newPrice = null;
         }
 
-        // Show confirmation dialog before proceeding
         Swal.fire({
             title: 'Are you sure?',
             text: 'This will apply the new price to all items. Do you want to continue?',
@@ -606,13 +640,14 @@
             cancelButtonText: 'Cancel',
         }).then((result) => {
             if (result.isConfirmed) {
-                // Send AJAX request to update all rows
                 $.ajax({
-                    url: '{{ route('product-details.update-all-price') }}', // Define a route for updating all rows
+                    url: '{{ route('product-details.update-all-price') }}',
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',
+                        product_id: productId,
                         price: newPrice,
+                        product_name: productName
                     },
                     success: function (response) {
                         if (response.success) {
@@ -651,13 +686,13 @@
     // apply discount to all
     $(document).on('click', '#applyDiscountToAll', function () {
         var newDiscount = $('#setAllDiscount').val();
+        var productId = $('#id').val();
 
         // If the input is empty, set discount to null
         if (newDiscount === '') {
             newDiscount = null;
         }
 
-        // Show confirmation dialog before proceeding
         Swal.fire({
             title: 'Are you sure?',
             text: 'This will apply the discount to all items. Do you want to continue?',
@@ -667,12 +702,12 @@
             cancelButtonText: 'Cancel',
         }).then((result) => {
             if (result.isConfirmed) {
-                // Send AJAX request to update all rows
                 $.ajax({
-                    url: '{{ route('product-details.update-all-discount') }}', // Define a route for updating all rows
+                    url: '{{ route('product-details.update-all-discount') }}',
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',
+                        product_id: productId,
                         discount: newDiscount,
                     },
                     success: function (response) {
@@ -712,13 +747,13 @@
     // apply discount start date to all
     $(document).on('click', '#applyDiscountStartDateToAll', function () {
         var newDiscountStartDate = $('#kt_calendar_datepicker_start_date').val();
+        var productId = $('#id').val();
 
         // If the input is empty, set discount to null
         if (newDiscountStartDate === '') {
             newDiscountStartDate = null;
         }
 
-        // Show confirmation dialog before proceeding
         Swal.fire({
             title: 'Are you sure?',
             text: 'This will apply the discount start date to all items. Do you want to continue?',
@@ -728,12 +763,12 @@
             cancelButtonText: 'Cancel',
         }).then((result) => {
             if (result.isConfirmed) {
-                // Send AJAX request to update all rows
                 $.ajax({
-                    url: '{{ route('product-details.update-all-discount-date') }}', // Define a route for updating all rows
+                    url: '{{ route('product-details.update-all-discount-date') }}',
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',
+                        product_id: productId,
                         discountStartDate: newDiscountStartDate,
                     },
                     success: function (response) {
@@ -773,13 +808,13 @@
     // apply discount end date to all
     $(document).on('click', '#applyDiscountEndDateToAll', function () {
         var newDiscountEndDate = $('#kt_calendar_datepicker_end_date').val();
+        var productId = $('#id').val();
 
         // If the input is empty, set discount to null
         if (newDiscountEndDate === '') {
             newDiscountEndDate = null;
         }
 
-        // Show confirmation dialog before proceeding
         Swal.fire({
             title: 'Are you sure?',
             text: 'This will apply the discount end date to all items. Do you want to continue?',
@@ -789,12 +824,12 @@
             cancelButtonText: 'Cancel',
         }).then((result) => {
             if (result.isConfirmed) {
-                // Send AJAX request to update all rows
                 $.ajax({
-                    url: '{{ route('product-details.update-all-discount-date') }}', // Define a route for updating all rows
+                    url: '{{ route('product-details.update-all-discount-date') }}',
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',
+                        product_id: productId,
                         discountEndDate: newDiscountEndDate,
                     },
                     success: function (response) {

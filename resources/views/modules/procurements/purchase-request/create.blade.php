@@ -200,11 +200,9 @@
                     <div class="mb-1">
                         <label class="form-label fw-bold fs-6 mb-2">Item</label>
                         <div class="position-relative mb-3">
-                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="item" id="item">
+                            <select class="form-select form-select-solid" data-control="select2" name="item" id="item">
                                 <option value="">-</option>
-                                @foreach($items as $item)
-                                <option value="{{$item->id}}">{{$item->name}}</option>
-                                @endforeach
+
                             </select>
                         </div>
                     </div>
@@ -239,6 +237,9 @@
 
 @section('script')
 <script>
+$(document).ready(function() {
+    getItems();
+});
 $("#btn-form-add-item").on("click", function() {
 
     // Retrieve values from input fields
@@ -289,6 +290,16 @@ $("#btn-form-add-item").on("click", function() {
 
 $("#category").on("change", function() {
     $("#item-categories").val($(this).val());
+
+    let url = "";
+
+    if($(this).val() === 'PR') {
+        url = `{{route('products.get-lists')}}`;
+    } else {
+        url = `{{route('inventories.get-lists')}}`;
+    }
+
+    getItems(url);
 });
 
 $(document).on('click', '#btn-submit-request', function(e) {
@@ -387,62 +398,29 @@ function deleteRow(button) {
     $(button).closest('tr').remove();
 }
 
-function validate() {
-    var toReturn = true;
-    const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
-    const customerId = $('#customer').val();
-    const butcherName = $('#butcher-name').val();
-    const branchId = $('#branch-id').val();
+function getItems(url) {
+    $.ajax({
+        url: url, // Laravel route to fetch products
+        type: 'GET',
+        dataType: 'json',
+        beforeSend: function() {
+            // Clear existing options before the request
+            $('#item').html('<option value="">-</option>');
+        },
+        success: function(response) {
+            // Loop through each product in the JSON response
+            var data = response.data;
+            const selectBox = $('#item');
 
-    if (!paymentMethod) {
-        Swal.fire({
-            title: 'Warning !',
-            text: 'Metode Pembayaran tidak boleh kosong',
-            icon: 'warning',
-            confirmButtonText: 'OK',
-            allowOutsideClick: false
-        });
-
-        toReturn = false;
-    }
-
-    if (!customerId) {
-        Swal.fire({
-            title: 'Warning !',
-            text: 'Nama customer harus di pilih',
-            icon: 'warning',
-            confirmButtonText: 'OK',
-            allowOutsideClick: false
-        });
-
-        toReturn = false;
-    }
-
-    if (!butcherName) {
-        Swal.fire({
-            title: 'Warning !',
-            text: 'Nama Butcherees tidak boleh kosong',
-            icon: 'warning',
-            confirmButtonText: 'OK',
-            allowOutsideClick: false
-        });
-
-        toReturn = false;
-    }
-
-    if (!branchId) {
-        Swal.fire({
-            title: 'Warning !',
-            text: 'Branch / Store harus di pilih',
-            icon: 'warning',
-            confirmButtonText: 'OK',
-            allowOutsideClick: false
-        });
-
-        toReturn = false;
-    }
-
-    return toReturn;
+            data.forEach(item => {
+                selectBox.append(new Option(item.name, item.id));
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching products:', error);
+        }
+    });
 }
+
 </script>
 @endsection
