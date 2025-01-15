@@ -139,6 +139,17 @@ Route::group(['middleware' => ['auth']], function() {
         });
     });
 
+    Route::prefix('inventories')->group(function () {
+        Route::name('inventories.')->group(function () {
+            Route::get('/', [App\Http\Controllers\InventoryController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\InventoryController::class, 'getLists'])->name('get-lists');
+            Route::get('/create', [App\Http\Controllers\InventoryController::class, 'create'])->name('create');
+            Route::post('/save', [App\Http\Controllers\InventoryController::class, 'save'])->name('save');
+            Route::get('/edit/{id}', [App\Http\Controllers\InventoryController::class, 'edit'])->name('edit');
+            Route::post('/update', [App\Http\Controllers\InventoryController::class, 'update'])->name('update');
+        });
+    });
+
     //Transaction
 
     // Point of Sales

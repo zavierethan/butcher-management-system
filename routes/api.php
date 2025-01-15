@@ -28,3 +28,5 @@ Route::post('customers/save', [App\Http\Controllers\CustomerController::class, '
 Route::get('get-purchase-request-items/', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'getPurchaseRequestItem'])->name('get-purchase-request-item');
 
 Route::get('get-purchase-order-items/', [App\Http\Controllers\Procurements\PurchaseOrderController::class, 'getPurchaseOrderItem'])->name('get-purchase-order-item');
+
+Route::get('inventories/', [App\Http\Controllers\InventoryController::class, 'getListInventories']);
