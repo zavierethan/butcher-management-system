@@ -288,7 +288,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/lists', [App\Http\Controllers\StockController::class, 'getLists'])->name('get-lists');
             Route::get('/create', [App\Http\Controllers\StockController::class, 'create'])->name('create');
             Route::post('/save', [App\Http\Controllers\StockController::class, 'save'])->name('save');
-            Route::post('/update-opname', [App\Http\Controllers\StockController::class, 'updateOpname'])->name('update-opname');
+            // Route::post('/update-opname', [App\Http\Controllers\StockController::class, 'updateOpname'])->name('update-opname');
             // Route::get('/edit/{id}', [App\Http\Controllers\StockController::class, 'edit'])->name('edit');
             // Route::post('/update', [App\Http\Controllers\StockController::class, 'update'])->name('update');
         });
@@ -309,6 +309,9 @@ Route::group(['middleware' => ['auth']], function() {
         Route::name('opnames.')->group(function () {
             Route::get('/', [App\Http\Controllers\OpnameController::class, 'index'])->name('index');
             Route::get('/lists', [App\Http\Controllers\OpnameController::class, 'getLists'])->name('get-lists');
+            Route::get('/date={date}&branch-id={branchId}', [App\Http\Controllers\OpnameController::class, 'opnameDetails'])->name('opname-details');
+            Route::get('/details/{date}{branchId}', [App\Http\Controllers\OpnameController::class, 'getDetails'])->name('get-details');
+            Route::post('/update-opname', [App\Http\Controllers\OpnameController::class, 'updateOpname'])->name('update-opname');
             // Route::get('/create', [App\Http\Controllers\StockController::class, 'create'])->name('create');
             // Route::post('/save', [App\Http\Controllers\StockController::class, 'save'])->name('save');
             // Route::get('/edit/{id}', [App\Http\Controllers\StockController::class, 'edit'])->name('edit');

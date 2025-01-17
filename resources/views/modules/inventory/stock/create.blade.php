@@ -30,6 +30,18 @@
                 <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
                     <div class="card">
                         <div class="card-body pt-10">
+
+                            <!-- Display Errors --> <!-- ADDED -->
+                            @if ($errors->any()) <!-- ADDED -->
+                                <div class="alert alert-danger"> <!-- ADDED -->
+                                    <ul> <!-- ADDED -->
+                                        @foreach ($errors->all() as $error) <!-- ADDED -->
+                                            <li>{{ $error }}</li> <!-- ADDED -->
+                                        @endforeach <!-- ADDED -->
+                                    </ul> <!-- ADDED -->
+                                </div> <!-- ADDED -->
+                            @endif <!-- ADDED -->
+
                             <form class="w-[60%]" method="POST" action="{{route('stocks.save')}}" enctype="multipart/form-data">
                                 @csrf
                                 {{-- <input class="form-control form-control-md form-control-solid" type="hidden" name="product_id" id="product_id" value="{{$product_id}}" /> --}}
