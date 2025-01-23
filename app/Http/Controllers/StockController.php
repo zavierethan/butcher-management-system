@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use Log;
+use Illuminate\Database\QueryException;
 
 class StockController extends Controller
 {
@@ -53,13 +55,41 @@ class StockController extends Controller
     public function save(Request $request) {
         $baseUrl = config('app.url');
 
-        DB::table('stocks')->insertGetId([
-            "product_id" => $request->product_id,
-            "branch_id" => $request->branch_id,
-            "quantity" => $request->quantity,
-            "date" => $request->calendar_event_date
+        try {
+            DB::table('stocks')->insertGetId([
+                "product_id" => $request->product_id,
+                "branch_id" => $request->branch_id,
+                "quantity" => $request->quantity,
+                "date" => $request->calendar_event_date
         ]);
+        } catch (QueryException $e) {
+            if ($e->getCode() == 23505) {
+                return back()->withErrors('Entry tersebut sudah ada. 
+                Cek data stocks yang sudah ada atau status active nya di data master products.');
+            }
+            // Handle other errors
+            return back()->withErrors('Something went wrong.');
+        }
 
         return redirect()->route('stocks.index');
     }
+
+    // public function updateOpname(Request $request) {
+    //     $baseUrl = config('app.url');
+    //     $id = $request->id;
+
+    //     \Log::debug("MASUK OPNAME DENGAN ID: {$id}");
+
+    //     $opname = DB::table('stocks')
+    //         ->where('id', $request->id)
+    //         ->update([
+    //             'opname_quantity' => $request->opname_quantity,
+    //         ]);
+
+    //     if ($opname) {
+    //         return response()->json(['success' => true]);
+    //     } else {
+    //         return response()->json(['success' => false], 500);
+    //     }
+    // }
 }

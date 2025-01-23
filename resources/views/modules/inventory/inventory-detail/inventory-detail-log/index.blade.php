@@ -11,7 +11,7 @@
                 <!--begin::Page title-->
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
-                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Stocks</h1>
+                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Inventory Detail Logs Ceks</h1>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
@@ -26,8 +26,12 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Stocks</li>
+                        <li class="breadcrumb-item text-muted">Inventory Details</li>
                         <!--end::Item-->
+                        <li class="breadcrumb-item">
+                            <span class="bullet bg-gray-500 w-5px h-2px"></span>
+                        </li>
+                        <li class="breadcrumb-item text-muted">Inventory Detail Logs</li>
                     </ul>
                     <!--end::Breadcrumb-->
                 </div>
@@ -39,7 +43,7 @@
                         data-bs-target="#kt_modal_create_app">Export</a>
                     <!--end::Secondary button-->
                     <!--begin::Primary button-->
-                    <a href="{{route('stocks.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
+                    <a href="{{route('inventory-detail-logs.create', ['inventoryDetailId' => $inventoryDetailId])}}" class="btn btn-sm fw-bold btn-primary">New</a>
                     <!--end::Primary button-->
                 </div>
                 <!--end::Actions-->
@@ -89,12 +93,11 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">Produk</th>
-                                        <th class="min-w-125px">Cabang</th>
-                                        <th class="min-w-125px">Kuantitas</th>
-                                        {{-- <th class="min-w-125px">Kuantitas Opname</th> --}}
+                                        <th class="min-w-125px">Referensi</th>
+                                        <th class="min-w-125px">Masuk</th>
+                                        <th class="min-w-125px">Keluar</th>
                                         <th class="min-w-125px">Tanggal</th>
-                                        <th class="text-center min-w-70px">Actions</th>
+                                        {{-- <th class="text-center min-w-70px">Actions</th> --}}
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -122,10 +125,7 @@
 
 @section('script')
 <script>
-    // Utility function to sanitize input values
-    const sanitizeValue = (value) => {
-        return value === '-' || value === '' ? null : value;
-    };
+    const inventoryDetailId = "{{ $inventoryDetailId }}"; // Pass the rowId from the Blade template
 
     $("#kt_products_table").DataTable({
         processing: true,
@@ -133,109 +133,21 @@
         paging: true, // Enable pagination
         pageLength: 10, // Number of rows per page
         ajax: {
-            url: `{{route('stocks.get-lists')}}`, // Replace with your route
+            url: `{{route('inventory-detail-logs.get-lists', ['inventoryDetailId' => $inventoryDetailId])}}`, // Replace with your route
             type: 'GET',
+            data: function (d) {
+                d.inventoryDetailId = inventoryDetailId; // Add rowId to the request payload
+            },
             dataSrc: function (json) {
                 return json.data; // Map the 'data' field
             }
         },
         columns: [
-            {
-                data: null,
-                name: 'product_code_name',
-                render: function (data, type, row) {
-                    return `${row.product_code} - ${row.product_name}`;
-                }
-            },
-            {
-                data: null,
-                name: 'branch_code_name',
-                render: function (data, type, row) {
-                    return `${row.branch_code} - ${row.branch_name}`;
-                }
-            },
-            { data: 'quantity', name: 'quantity' },
-            // {
-            //     data: 'opname_quantity',
-            //     name: 'opname_quantity',
-            //     render: function (data, type, row) {
-            //         const displayValue = data !== null ? data : '';
-            //         return `
-            //             <div class="d-flex align-items-center">
-            //                 <input type="text" 
-            //                     class="form-control form-control-sm inline-edit-opname_quantity me-2" 
-            //                     value="${displayValue}" 
-            //                     data-id="${row.id}" 
-            //                     data-field="opname_quantity" />
-            //                 <button type="button" class="btn btn-sm btn-light btn-active-light-primary btn-update-opname" data-id="${row.id}">Update</button>
-            //             </div>
-            //         `;
-            //     }
-            // },
-            { data: 'date', name: 'date' },
-            {
-                data: null, // No direct field from the server
-                name: 'action',
-                orderable: false, // Disable ordering for this column
-                searchable: false, // Disable searching for this column
-                render: function (data, type, row) {
-                    return `
-                        <div class="text-center">
-                            <a href="/stock-logs/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Details</a>
-                        <div>
-                    `;
-                }
-            }
+            { data: 'reference', name: 'reference' },
+            { data: 'in_quantity', name: 'in_quantity' },
+            { data: 'out_quantity', name: 'out_quantity' },
+            { data: 'date', name: 'date' }
         ]
     });
-
-    // Handle the Update button click with SweetAlert
-    // $(document).on('click', '.btn-update-opname', function (e) {
-    //     e.preventDefault();
-
-    //     const row = $(this).closest('tr');
-    //     const id = $(this).data('id');
-    //     const opnameQuantity = sanitizeValue(row.find('.inline-edit-opname_quantity').val());
-
-    //     const data = {
-    //         _token: '{{ csrf_token() }}',
-    //         id: id,
-    //         opname_quantity: opnameQuantity
-    //     };
-
-    //     // Show SweetAlert confirmation dialog
-    //     Swal.fire({
-    //         title: 'Are you sure?',
-    //         text: 'Do you want to update this row?',
-    //         icon: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonText: 'Yes, update it!',
-    //         cancelButtonText: 'Cancel',
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
-    //             // Send the AJAX request
-    //             $.ajax({
-    //                 url: '{{ route("stocks.update-opname") }}',
-    //                 type: 'POST',
-    //                 data: data,
-    //                 success: function (response) {
-    //                     if (response.success) {
-    //                         Swal.fire('Updated!', 'The row has been updated successfully.', 'success');
-    //                     } else {
-    //                         Swal.fire('Error!', 'Failed to update the row.', 'error');
-    //                     }
-    //                 },
-    //                 error: function (xhr) {
-    //                     const errors = xhr.responseJSON.errors;
-    //                     let errorMsg = '';
-    //                     for (const key in errors) {
-    //                         errorMsg += `${errors[key]}<br>`;
-    //                     }
-    //                     Swal.fire('Error!', errorMsg, 'error');
-    //                 },
-    //             });
-    //         }
-    //     });
-    // });
 </script>
 @endsection

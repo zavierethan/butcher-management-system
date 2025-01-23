@@ -288,6 +288,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/lists', [App\Http\Controllers\StockController::class, 'getLists'])->name('get-lists');
             Route::get('/create', [App\Http\Controllers\StockController::class, 'create'])->name('create');
             Route::post('/save', [App\Http\Controllers\StockController::class, 'save'])->name('save');
+            // Route::post('/update-opname', [App\Http\Controllers\StockController::class, 'updateOpname'])->name('update-opname');
             // Route::get('/edit/{id}', [App\Http\Controllers\StockController::class, 'edit'])->name('edit');
             // Route::post('/update', [App\Http\Controllers\StockController::class, 'update'])->name('update');
         });
@@ -301,6 +302,42 @@ Route::group(['middleware' => ['auth']], function() {
             // Route::post('/save', [App\Http\Controllers\StockController::class, 'save'])->name('save');
             // Route::get('/edit/{id}', [App\Http\Controllers\StockController::class, 'edit'])->name('edit');
             // Route::post('/update', [App\Http\Controllers\StockController::class, 'update'])->name('update');
+        });
+    });
+
+    Route::prefix('opnames')->group(function () {
+        Route::name('opnames.')->group(function () {
+            Route::get('/', [App\Http\Controllers\OpnameController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\OpnameController::class, 'getLists'])->name('get-lists');
+            Route::get('/date={date}&branch-id={branchId}', [App\Http\Controllers\OpnameController::class, 'opnameDetails'])->name('opname-details');
+            Route::get('/details/{date}{branchId}', [App\Http\Controllers\OpnameController::class, 'getDetails'])->name('get-details');
+            Route::post('/update-opname', [App\Http\Controllers\OpnameController::class, 'updateOpname'])->name('update-opname');
+            // Route::get('/create', [App\Http\Controllers\StockController::class, 'create'])->name('create');
+            // Route::post('/save', [App\Http\Controllers\StockController::class, 'save'])->name('save');
+            // Route::get('/edit/{id}', [App\Http\Controllers\StockController::class, 'edit'])->name('edit');
+            // Route::post('/update', [App\Http\Controllers\StockController::class, 'update'])->name('update');
+        });
+    });
+
+    Route::prefix('inventory-details')->group(function () {
+        Route::name('inventory-details.')->group(function () {
+            Route::get('/', [App\Http\Controllers\InventoryDetailController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\InventoryDetailController::class, 'getLists'])->name('get-lists');
+            Route::get('/create', [App\Http\Controllers\InventoryDetailController::class, 'create'])->name('create');
+            Route::post('/save', [App\Http\Controllers\InventoryDetailController::class, 'save'])->name('save');
+            // Route::get('/edit/{id}', [App\Http\Controllers\InventoryDetailController::class, 'edit'])->name('edit');
+            // Route::post('/update', [App\Http\Controllers\InventoryDetailController::class, 'update'])->name('update');
+        });
+    });
+
+    Route::prefix('inventory-detail-logs')->group(function () {
+        Route::name('inventory-detail-logs.')->group(function () {
+            Route::get('/{inventoryDetailId}', [App\Http\Controllers\InventoryDetailLogController::class, 'index'])->name('index');
+            Route::get('/lists/{inventoryDetailId}', [App\Http\Controllers\InventoryDetailLogController::class, 'getLists'])->name('get-lists');
+            Route::get('/{inventoryDetailId}/create', [App\Http\Controllers\InventoryDetailLogController::class, 'create'])->name('create');
+            Route::post('/save', [App\Http\Controllers\InventoryDetailLogController::class, 'save'])->name('save');
+            // Route::get('/edit/{id}', [App\Http\Controllers\InventoryDetailLogController::class, 'edit'])->name('edit');
+            // Route::post('/update', [App\Http\Controllers\InventoryDetailLogController::class, 'update'])->name('update');
         });
     });
 });
