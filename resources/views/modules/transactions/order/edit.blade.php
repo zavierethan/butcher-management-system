@@ -77,17 +77,17 @@
                                                 <select class="form-select form-select-solid" data-control="select2"
                                                     data-placeholder="-" name="payment-method" disabled>
                                                     <option value="1"
-                                                        <?php echo ($detailTransaction->customer_name == 1) ? "selected" : ""; ?>>
+                                                        <?php echo ($detailTransaction->payment_method == 1) ? "selected" : ""; ?>>
                                                         Tunai</option>
                                                     <option value="2"
-                                                        <?php echo ($detailTransaction->customer_name == 2) ? "selected" : ""; ?>>
+                                                        <?php echo ($detailTransaction->payment_method == 2) ? "selected" : ""; ?>>
                                                         Piutang</option>
                                                     <option value="3"
-                                                        <?php echo ($detailTransaction->customer_name == 3) ? "selected" : ""; ?>>
-                                                        COD</option>
-                                                    <option value="4"
-                                                        <?php echo ($detailTransaction->customer_name == 4) ? "selected" : ""; ?>>
+                                                        <?php echo ($detailTransaction->payment_method == 3) ? "selected" : ""; ?>>
                                                         Transfer</option>
+                                                    <option value="4"
+                                                        <?php echo ($detailTransaction->payment_method == 4) ? "selected" : ""; ?>>
+                                                        COD</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -127,7 +127,7 @@
                                                         Pending</option>
                                                     <option value="3"
                                                         <?php echo ($detailTransaction->status == 3) ? "selected" : ""; ?>>
-                                                        Batal</option>
+                                                        Retur</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -187,10 +187,6 @@
                                         <tr>
                                             <td colspan="4" class="text-end">Subtotal</td>
                                             <td class="text-end">@php echo number_format($detailTransaction->total_amount, 0, '.', ',') @endphp</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="4" class="text-end">Discount</td>
-                                            <td class="text-end">@php echo number_format($detailTransaction->discount, 0, '.', ',') @endphp</td>
                                         </tr>
                                         <tr>
                                             <td colspan="4" class="text-end">Biaya Pengiriman</td>

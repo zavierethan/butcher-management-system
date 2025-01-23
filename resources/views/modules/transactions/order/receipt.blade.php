@@ -163,13 +163,6 @@
                         <td style="text-align: right;">@php echo number_format($info->total_amount, 0, '.', ',') @endphp</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: bold;">Discount</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td style="text-align: right;">@php echo number_format($info->discount, 0, '.', ',') @endphp</td>
-                    </tr>
-                    <tr>
                         <td style="font-weight: bold;" colspan="2">Ongkos Kirim</td>
                         <td></td>
                         <td></td>

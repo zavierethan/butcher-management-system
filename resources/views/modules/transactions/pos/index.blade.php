@@ -483,33 +483,6 @@
 @section('main-content')
 <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
     <div class="d-flex flex-column flex-column-fluid">
-        <!-- <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
-            <div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
-                <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-                        Transactions</h1>
-                    <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
-                        <li class="breadcrumb-item text-muted">
-                            <a href="index.html" class="text-muted text-hover-primary">Transactions</a>
-                        </li>
-                        <li class="breadcrumb-item">
-                            <span class="bullet bg-gray-500 w-5px h-2px"></span>
-                        </li>
-                        <li class="breadcrumb-item text-muted">Point of Sales</li>
-                    </ul>
-                </div>
-                <div class="d-flex align-items-center gap-2 gap-lg-3">
-                    <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Store"
-                        id="branch-id">
-                        @foreach($branches as $branch)
-                        <option value="{{$branch->id}}"
-                            <?php echo ($branch->id == Auth::user()->branch_id) ? "selected" : ""; ?>>{{$branch->code}}
-                        </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-        </div> -->
         <div id="kt_app_content" class="app-content flex-column-fluid mt-5">
             <!--begin::Content container-->
             <div id="kt_app_content_container" class="app-container">
@@ -557,16 +530,16 @@
                             <!--begin::Body-->
                             <div class="card-body p-3">
                                 <div class="row">
+                                    <div class="col-md-1">
+                                        <button class="btn btn-md" data-bs-toggle="modal"
+                                            data-bs-target="#kt_modal_add_customer"><i
+                                                class="fa-solid fa-user-plus"></i></button>
+                                    </div>
                                     <div class="col-md-8">
                                         <select class="form-select form-select-solid" data-control="select2"
                                             data-placeholder="Pilih Customer" name="customer" id="customer">
                                             <option value=""></option>
                                         </select>
-                                    </div>
-                                    <div class="col-md-1">
-                                        <button class="btn btn-md" data-bs-toggle="modal"
-                                            data-bs-target="#kt_modal_add_customer"><i
-                                                class="fa-solid fa-user-plus"></i></button>
                                     </div>
                                     <div class="col-md-3">
                                         <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Store"
@@ -604,7 +577,7 @@
                                         <div class="hourglassGlass"></div>
                                     </div>
                                 </div>
-                                <div class="row overflow-y-auto" style="height: 772px;" id="product-list">
+                                <div class="row overflow-y-auto" style="height: 745px;" id="product-list">
 
                                 </div>
                             </div>
@@ -638,8 +611,8 @@
                                     <!--begin::Content-->
                                     <div class="fs-6 fw-bold text-white">
                                         <span class="d-block lh-1 mb-2">Subtotal</span>
-                                        <span class="d-block mb-2">Discounts <a href="javascript(0);" data-bs-toggle="modal" data-bs-target="#kt_modal_add_discount"><i
-                                                    class="fas fa-edit text-white"></i></a></span>
+                                        <!-- <span class="d-block mb-2">Discounts <a href="javascript(0);" data-bs-toggle="modal" data-bs-target="#kt_modal_add_discount"><i
+                                                    class="fas fa-edit text-white"></i></a></span> -->
                                         <span class="d-block mb-2">Ongkos Kirim <a href="javascript(0);"
                                                 data-bs-toggle="modal" data-bs-target="#kt_modal_add_shipping_cost"><i
                                                     class="fas fa-edit text-white"></i></a></span>
@@ -650,8 +623,8 @@
                                     <div class="fs-6 fw-bold text-white text-end">
                                         <span class="d-block lh-1 mb-2" data-kt-pos-element="total"
                                             id="subtotal-amount">Rp. 0,00</span>
-                                        <span class="d-block mb-2" id="discount">Rp. 0</span>
-                                        <span class="d-block mb-2" id="shipping-cost">Rp. 0</span>
+                                        <!-- <span class="d-block mb-2" id="discount">Rp. 0</span> -->
+                                        <span class="d-block mb-2" id="shipping-cost">Rp. 0,00</span>
                                         <span class="d-block mb-2" data-kt-pos-element="grand-total"
                                             id="total-amount">Rp. 0,00</span>
                                     </div>
@@ -718,27 +691,21 @@
                                             </i>
                                             <!--end::Icon-->
                                             <!--begin::Title-->
-                                            <span class="fs-7 fw-bold d-block">COD</span>
+                                            <span class="fs-7 fw-bold d-block">Transfer</span>
                                             <!--end::Title-->
                                         </label>
                                         <!--end::Radio-->
                                         <!--begin::Radio-->
-                                        <label
+                                        <!-- <label
                                             class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4"
                                             data-kt-button="true">
-                                            <!--begin::Input-->
                                             <input class="btn-check" type="radio" name="payment_method" value="4" />
-                                            <!--end::Input-->
-                                            <!--begin::Icon-->
                                             <i class="ki-duotone ki-delivery fs-2hx mb-2 pe-0">
                                                 <span class="path1"></span>
                                                 <span class="path2"></span>
                                             </i>
-                                            <!--end::Icon-->
-                                            <!--begin::Title-->
-                                            <span class="fs-7 fw-bold d-block">Transfer</span>
-                                            <!--end::Title-->
-                                        </label>
+                                            <span class="fs-7 fw-bold d-block">COD</span>
+                                        </label> -->
                                         <!--end::Radio-->
                                     </div>
                                     <!--end::Radio group-->

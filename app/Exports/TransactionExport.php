@@ -13,19 +13,11 @@ use Auth;
 
 class TransactionExport implements FromCollection, WithHeadings, WithCustomStartCell, WithEvents
 {
-    protected $startDate;
-    protected $endDate;
-    protected $branchId;
-    protected $branchName;
-    protected $branchCode;
+    protected $filters;
 
-    public function __construct($startDate, $endDate, $branchId, $branchName, $branchCode)
+    public function __construct(array $filters)
     {
-        $this->startDate = $startDate;
-        $this->endDate = $endDate;
-        $this->branchId = $branchId;
-        $this->branchName = $branchName;
-        $this->branchCode = $branchCode;
+        $this->filters = $filters;
     }
 
     public function collection()
@@ -63,12 +55,29 @@ class TransactionExport implements FromCollection, WithHeadings, WithCustomStart
             ->leftJoin('transaction_items', 'transaction_items.transaction_id', '=', 'transactions.id')
             ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')
             ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
-            ->leftJoin('users', 'users.id', '=', 'transactions.created_by')
-            ->where('transactions.branch_id', $this->branchId)
-            ->whereBetween('transactions.transaction_date', [$this->startDate, $this->endDate]);
+            ->leftJoin('users', 'users.id', '=', 'transactions.created_by');
 
         if(Auth::user()->group_id != 1 || Auth::user()->branch_id != 1) {
             $query->where('transactions.branch_id', Auth::user()->branch_id);
+        }
+
+        if (!empty($this->filters['start_date']) && !empty($this->filters['end_date'])) {
+            $query->whereBetween('transactions.transaction_date', [
+                $this->filters['start_date'],
+                $this->filters['end_date']
+            ]);
+        }
+
+        if (!empty($this->filters['payment_method'])) {
+            $query->where('transactions.payment_method', $this->filters['payment_method']);
+        }
+
+        if (!empty($this->filters['status'])) {
+            $query->where('transactions.status', $this->filters['status']);
+        }
+
+        if (!empty($this->filters['branch_id'])) {
+            $query->where('transactions.branch_id', $this->filters['branch_id']);
         }
 
         $data = $query->get();
@@ -112,9 +121,9 @@ class TransactionExport implements FromCollection, WithHeadings, WithCustomStart
 
                 // Add additional information above the table
                 $sheet->setCellValue('A1', 'TANGGAL');
-                $sheet->setCellValue('B1', $this->startDate.' - '.$this->endDate);
+                $sheet->setCellValue('B1', $this->filters['start_date'].' - '.$this->filters['end_date']);
                 $sheet->setCellValue('A2', 'CABANG');
-                $sheet->setCellValue('B2', $this->branchName.' ('.$this->branchCode.')');
+                $sheet->setCellValue('B2', $this->filters['branch_name'].' ('.$this->filters['branch_code'].')');
 
                 // Apply bold styling to the labels
                 $sheet->getStyle('A1:A2')->applyFromArray([

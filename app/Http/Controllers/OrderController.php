@@ -38,6 +38,25 @@ class OrderController extends Controller
             $query->where('transactions.branch_id', Auth::user()->branch_id);
         }
 
+        if (!empty($params['start_date']) && !empty($params['end_date'])) {
+            $query->whereBetween('transactions.transaction_date', [
+                $params['start_date'],
+                $params['end_date']
+            ]);
+        }
+
+        if (!empty($params['payment_method'])) {
+            $query->where('transactions.payment_method', $params['payment_method']);
+        }
+
+        if (!empty($params['status'])) {
+            $query->where('transactions.status', $params['status']);
+        }
+
+        if (!empty($params['branch_id'])) {
+            $query->where('transactions.branch_id', $params['branch_id']);
+        }
+
         // Apply global search if provided
         $searchValue = $request->input('search.value'); // This is where DataTables sends the search input
         if (!empty($searchValue)) {
@@ -118,9 +137,22 @@ class OrderController extends Controller
     }
 
     public function export(Request $request) {
+
+        $filters = [
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'branch_id' => $request->branch_id,
+            'payment_method' => $request->payment_method,
+            'status' => $request->status,
+        ];
+
         // Generate raw Excel data
         $branch = DB::table('branches')->where('id', $request->branch_id)->first();
-        $export = new TransactionExport($request->start_date, $request->end_date, $request->branch_id, $branch->name, $branch->code);
+
+        $filters['branch_name'] = $branch->name ?? null;
+        $filters['branch_code'] = $branch->code ?? null;
+
+        $export = new TransactionExport($filters);
         $excelData = Excel::raw($export, \Maatwebsite\Excel\Excel::XLSX);
 
         // Return the data as a proper response

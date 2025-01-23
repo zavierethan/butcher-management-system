@@ -36,86 +36,7 @@
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
                     <!--begin::Secondary button-->
-                    <div class="m-0">
-                        <!--begin::Menu toggle-->
-                        <a href="#" class="btn btn-sm btn-flex btn-secondary fw-bold" data-kt-menu-trigger="click"
-                            data-kt-menu-placement="bottom-end">
-                            <i class="ki-duotone ki-filter fs-6 text-muted me-1">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                            </i>Filter</a>
-                        <!--end::Menu toggle-->
-                        <!--begin::Menu 1-->
-                        <div class="menu menu-sub menu-sub-dropdown w-250px w-md-300px" data-kt-menu="true"
-                            id="kt_menu_65a12143712c8">
-                            <!--begin::Header-->
-                            <div class="px-7 py-5">
-                                <div class="fs-5 text-gray-900 fw-bold">Filter Options</div>
-                            </div>
-                            <!--end::Header-->
-                            <!--begin::Menu separator-->
-                            <div class="separator border-gray-200"></div>
-                            <!--end::Menu separator-->
-                            <!--begin::Form-->
-                            <div class="px-7 py-5">
-                                <!--begin::Input group-->
-                                <div class="mb-10">
-                                    <!--begin::Label-->
-                                    <label class="form-label fw-semibold">Status:</label>
-                                    <!--end::Label-->
-                                    <!--begin::Input-->
-                                    <div>
-                                        <select class="form-select form-select-solid" data-control="select2"
-                                            data-placeholder="Pilih Customer" name="customer" id="customer">
-                                            <option value=""></option>
-                                        </select>
-                                    </div>
-                                    <!--end::Input-->
-                                </div>
-                                <!--end::Input group-->
-                                <!--begin::Input group-->
-                                <div class="mb-10">
-                                    <!--begin::Label-->
-                                    <label class="form-label fw-semibold">Tanggal Mulai</label>
-                                    <!--end::Label-->
-                                    <!--begin::Options-->
-                                    <div class="d-flex">
-                                        <!--begin::Options-->
-                                        <input type="date" class="form-control form-control-solid" />
-                                        <!--end::Options-->
-                                    </div>
-                                    <!--end::Options-->
-                                </div>
-                                <!--end::Input group-->
-                                <!--begin::Input group-->
-                                <div class="mb-10">
-                                    <!--begin::Label-->
-                                    <label class="form-label fw-semibold">Tanggal Mulai</label>
-                                    <!--end::Label-->
-                                    <!--begin::Options-->
-                                    <div class="d-flex">
-                                        <!--begin::Options-->
-                                        <input type="date" class="form-control form-control-solid" />
-                                        <!--end::Options-->
-                                    </div>
-                                    <!--end::Options-->
-                                </div>
-                                <!--end::Input group-->
-                                <!--begin::Actions-->
-                                <div class="d-flex justify-content-end">
-                                    <button type="reset" class="btn btn-sm btn-light btn-active-light-primary me-2"
-                                        data-kt-menu-dismiss="true">Reset</button>
-                                    <button type="submit" class="btn btn-sm btn-primary"
-                                        data-kt-menu-dismiss="true">Apply</button>
-                                </div>
-                                <!--end::Actions-->
-                            </div>
-                            <!--end::Form-->
-                        </div>
-                        <!--end::Menu 1-->
-                    </div>
-                    <a href="javascript(0);" class="btn btn-sm fw-bold btn-secondary" data-bs-toggle="modal"
-                        data-bs-target="#kt_modal_export_filter">Export ke Excel</a>
+                    <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export ke Excel</a>
                     <!--end::Secondary button-->
                 </div>
                 <!--end::Actions-->
@@ -142,24 +63,88 @@
                             <!--begin::Card title-->
                             <!--begin::Card toolbar-->
                             <div class="card-toolbar">
-                                <!--begin::Toolbar-->
-                                <div class="d-flex align-items-center position-relative my-1">
-                                    <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
-                                    <span class="svg-icon svg-icon-1 position-absolute ms-6">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none">
-                                            <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2"
-                                                rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
-                                            <path
-                                                d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z"
-                                                fill="black" />
-                                        </svg>
-                                    </span>
-                                    <!--end::Svg Icon-->
-                                    <input type="text" data-kt-customer-table-filter="search"
-                                        class="form-control form-control-solid w-250px ps-15" placeholder="kode Transaksi" />
+                                <!--begin::Filters-->
+                                <div class="d-flex flex-stack flex-wrap gap-4">
+                                    <div class="d-flex align-items-center fw-bold">
+                                        <!--begin::Label-->
+                                        <div class="text-gray-500 fs-7 me-2">Tanggal</div>
+                                        <!--end::Label-->
+                                        <!--begin::Select-->
+                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="start-date"/> -
+                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="end-date"/>
+                                        <!--end::Select-->
+                                    </div>
+                                    <!--begin::Destination-->
+                                    <div class="d-flex align-items-center fw-bold">
+                                        <!--begin::Label-->
+                                        <div class="text-gray-500 fs-7 me-2">Pembayaran</div>
+                                        <!--end::Label-->
+                                        <!--begin::Select-->
+                                        <select
+                                            class="form-select form-select-transparent text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
+                                            data-control="select2" data-hide-search="true"
+                                            data-dropdown-css-class="w-150px" data-placeholder="Select an option" id="payment-method">
+                                            <option></option>
+                                            <option value=" " selected="selected">Show All</option>
+                                            <option value="1">Tunai</option>
+                                            <option value="2">Piutang</option>
+                                            <option value="3">Transfer</option>
+                                        </select>
+                                        <!--end::Select-->
+                                    </div>
+                                    <!--end::Destination-->
+                                    <!--begin::Status-->
+                                    <div class="d-flex align-items-center fw-bold">
+                                        <!--begin::Label-->
+                                        <div class="text-gray-500 fs-7 me-2">Status</div>
+                                        <!--end::Label-->
+                                        <!--begin::Select-->
+                                        <select
+                                            class="form-select form-select-transparent text-gray-900 fs-7 lh-1 fw-bold py-0 ps-3 w-auto"
+                                            data-control="select2" data-hide-search="true"
+                                            data-dropdown-css-class="w-150px" data-placeholder="Select an option" id="status">
+                                            <option></option>
+                                            <option value=" " selected="selected">Show All</option>
+                                            <option value="1">Lunas</option>
+                                            <option value="2">Pending</option>
+                                            <option value="3">Retur</option>
+                                        </select>
+                                        <!--end::Select-->
+                                    </div>
+                                    <!--end::Status-->
+                                    <!--begin::Store-->
+                                    <div class="d-flex align-items-center fw-bold">
+                                        <!--begin::Label-->
+                                        <div class="text-gray-500 fs-7 me-2">Store</div>
+                                        <!--end::Label-->
+                                        <!--begin::Select-->
+                                        <select
+                                            class="form-select form-select-transparent text-gray-900 fs-7 lh-1 fw-bold py-0 ps-3 w-auto"
+                                            data-control="select2" data-hide-search="true"
+                                            data-dropdown-css-class="w-150px" data-placeholder="Select an option" id="branch-id" <?php echo (Auth::user()->group_id == 10) ? "disabled" : ""; ?>>
+                                            <!-- <option></option>
+                                            <option value="" selected="selected">Show All</option> -->
+                                            @foreach($branches as $branch)
+                                            <option value="{{$branch->id}}" <?php echo ($branch->id == Auth::user()->branch_id) ? "selected" : ""; ?>> {{$branch->code}}</option>
+                                            @endforeach
+                                        </select>
+                                        <!--end::Select-->
+                                    </div>
+                                    <!--end::Status-->
+                                    <!--begin::Search-->
+                                    <div class="position-relative my-1">
+                                        <i
+                                            class="ki-duotone ki-magnifier fs-2 position-absolute top-50 translate-middle-y ms-4">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                        <input type="text" data-kt-customer-table-filter="search"
+                                            class="form-control form-control-solid w-250px ps-15"
+                                            placeholder="kode Transaksi" />
+                                    </div>
+                                    <!--end::Search-->
                                 </div>
-                                <!--end::Toolbar-->
+                                <!--begin::Filters-->
                             </div>
                             <!--end::Card toolbar-->
                         </div>
@@ -175,7 +160,7 @@
                                         <th class="min-w-125px">KODE TRANSAKSI</th>
                                         <th class="min-w-125px">TANGGAL</th>
                                         <th class="min-w-125px">CUSTOMER</th>
-                                        <th class="min-w-125px">METODE PEMBAYARAN</th>
+                                        <th class="min-w-125px">JENIS PEMBAYARAN</th>
                                         <th class="min-w-125px">TOTAL TRANSAKSI</th>
                                         <th class="min-w-125px">STATUS</th>
                                         <th class="min-w-125px">DIBUAT OLEH</th>
@@ -252,11 +237,14 @@
                     <div class="mb-1">
                         <label class="form-label fw-bold fs-6 mb-2">Store / Cabang</label>
                         <div class="position-relative mb-3">
-                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Store" id="branch-id">
+                            <select class="form-select form-select-solid" data-control="select2"
+                                data-placeholder="Pilih Store" id="branc-id">
                                 @foreach($branches as $branch)
-                                <option value="{{$branch->id}}" <?php echo ($branch->id == Auth::user()->branch_id) ? "selected" : ""; ?>>{{$branch->code}}</option>
+                                <option value="{{$branch->id}}"
+                                    <?php echo ($branch->id == Auth::user()->branch_id) ? "selected" : ""; ?>>
+                                    {{$branch->code}}</option>
                                 @endforeach
-                             </select>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -280,13 +268,23 @@
 $(document).ready(function() {
     const table = $("#kt_transactions_table").DataTable({
         processing: true,
-        order: [[0, 'desc']],
+        order: [
+            [0, 'desc']
+        ],
         serverSide: true,
         paging: true, // Enable pagination
         pageLength: 10, // Number of rows per page
         ajax: {
             url: `{{route('orders.get-lists')}}`, // Replace with your route
             type: 'GET',
+            data: function (d) {
+                // Add filter data to the request
+                d.start_date = $('#start-date').val();
+                d.end_date = $('#end-date').val();
+                d.payment_method = $('#payment-method').val();
+                d.status = $('#status').val();
+                d.branch_id = $('#branch-id').val();
+            },
             dataSrc: function(json) {
                 return json.data; // Map the 'data' field
             }
@@ -380,11 +378,17 @@ $(document).ready(function() {
         table.search(searchTerm).draw(); // Trigger the search and refresh the DataTable
     });
 
+    $('#start-date, #end-date, #payment-method, #status, #branch-id').on('change', function () {
+        table.draw(); // Trigger DataTable redraw with updated filter values
+    });
+
     $("#btn-form-export").on("click", function() {
 
-        const start_date = $("#start-date").val();
-        const end_date = $("#end-date").val();
-        const branch_id = $("#branch-id").val();
+        const start_date = $("#start-date").val() || "";
+        const end_date = $("#end-date").val() || "";
+        const payment_method = $("#payment-method").val() || "";
+        const status = $("#status").val() || "";
+        const branch_id = $("#branch-id").val() || "";
 
         $.ajax({
             url: `{{url('/orders/export')}}`,
@@ -392,6 +396,8 @@ $(document).ready(function() {
             data: {
                 start_date: start_date,
                 end_date: end_date,
+                payment_method: payment_method,
+                status: status,
                 branch_id: branch_id
             },
             xhrFields: {

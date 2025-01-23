@@ -73,7 +73,7 @@
                                     </div>
                                     <!--end::Info-->
                                     <!--begin::Subtitle-->
-                                    <span class="text-gray-500 pt-1 fw-semibold fs-6">Expected Earnings</span>
+                                    <span class="text-gray-500 pt-1 fw-semibold fs-6">Total Pendapatan</span>
                                     <!--end::Subtitle-->
                                 </div>
                                 <!--end::Title-->
