@@ -30,3 +30,7 @@ Route::get('get-purchase-request-items/', [App\Http\Controllers\Procurements\Pur
 Route::get('get-purchase-order-items/', [App\Http\Controllers\Procurements\PurchaseOrderController::class, 'getPurchaseOrderItem'])->name('get-purchase-order-item');
 
 Route::get('inventories/', [App\Http\Controllers\InventoryController::class, 'getListInventories']);
+
+
+// Dashboards Summary
+Route::get('dashboard/store/get-data-summary/', [App\Http\Controllers\Dashboards\StoreDashboardController::class, 'getTransactionSummary']);

@@ -58,18 +58,11 @@
                                     <!--begin::Info-->
                                     <div class="d-flex align-items-center">
                                         <!--begin::Currency-->
-                                        <span class="fs-4 fw-semibold text-gray-500 me-1 align-self-start">$</span>
+                                        <span class="fs-4 fw-semibold text-gray-500 me-1 align-self-start">Rp.</span>
                                         <!--end::Currency-->
                                         <!--begin::Amount-->
-                                        <span class="fs-2hx fw-bold text-gray-900 me-2 lh-1 ls-n2">69,700</span>
+                                        <span class="fs-2hx fw-bold text-gray-900 me-2 lh-1 ls-n2" id="total-ammount">0</span>
                                         <!--end::Amount-->
-                                        <!--begin::Badge-->
-                                        <span class="badge badge-light-success fs-base">
-                                            <i class="ki-duotone ki-arrow-up fs-5 text-success ms-n1">
-                                                <span class="path1"></span>
-                                                <span class="path2"></span>
-                                            </i>2.2%</span>
-                                        <!--end::Badge-->
                                     </div>
                                     <!--end::Info-->
                                     <!--begin::Subtitle-->
@@ -81,53 +74,10 @@
                             <!--end::Header-->
                             <!--begin::Card body-->
                             <div class="card-body pt-2 pb-4 d-flex align-items-center">
-                                <!--begin::Chart-->
-                                <div class="d-flex flex-center me-5 pt-2">
-                                    <div id="kt_card_widget_4_chart" style="min-width: 70px; min-height: 70px"
-                                        data-kt-size="70" data-kt-line="11"></div>
-                                </div>
-                                <!--end::Chart-->
                                 <!--begin::Labels-->
-                                <div class="d-flex flex-column content-justify-center w-100">
+                                <div class="d-flex flex-column content-justify-center w-100" id="total-amount-by-category">
                                     <!--begin::Label-->
-                                    <div class="d-flex fs-6 fw-semibold align-items-center">
-                                        <!--begin::Bullet-->
-                                        <div class="bullet w-8px h-6px rounded-2 bg-danger me-3"></div>
-                                        <!--end::Bullet-->
-                                        <!--begin::Label-->
-                                        <div class="text-gray-500 flex-grow-1 me-4">Shoes</div>
-                                        <!--end::Label-->
-                                        <!--begin::Stats-->
-                                        <div class="fw-bolder text-gray-700 text-xxl-end">$7,660</div>
-                                        <!--end::Stats-->
-                                    </div>
-                                    <!--end::Label-->
-                                    <!--begin::Label-->
-                                    <div class="d-flex fs-6 fw-semibold align-items-center my-3">
-                                        <!--begin::Bullet-->
-                                        <div class="bullet w-8px h-6px rounded-2 bg-primary me-3"></div>
-                                        <!--end::Bullet-->
-                                        <!--begin::Label-->
-                                        <div class="text-gray-500 flex-grow-1 me-4">Gaming</div>
-                                        <!--end::Label-->
-                                        <!--begin::Stats-->
-                                        <div class="fw-bolder text-gray-700 text-xxl-end">$2,820</div>
-                                        <!--end::Stats-->
-                                    </div>
-                                    <!--end::Label-->
-                                    <!--begin::Label-->
-                                    <div class="d-flex fs-6 fw-semibold align-items-center">
-                                        <!--begin::Bullet-->
-                                        <div class="bullet w-8px h-6px rounded-2 me-3"
-                                            style="background-color: #E4E6EF"></div>
-                                        <!--end::Bullet-->
-                                        <!--begin::Label-->
-                                        <div class="text-gray-500 flex-grow-1 me-4">Others</div>
-                                        <!--end::Label-->
-                                        <!--begin::Stats-->
-                                        <div class="fw-bolder text-gray-700 text-xxl-end">$45,257</div>
-                                        <!--end::Stats-->
-                                    </div>
+
                                     <!--end::Label-->
                                 </div>
                                 <!--end::Labels-->
@@ -1028,4 +978,40 @@
     <!--end::Content wrapper-->
 </div>
 <!--end:::Main-->
+@endsection
+
+@section('script')
+<script>
+$(document).ready(function() {
+    getTransactionSummaryByCategory();
+});
+
+function getTransactionSummaryByCategory() {
+    $.ajax({
+        url: `/api/dashboard/store/get-data-summary/`,
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            // Loop through each product in the JSON response
+            var total_amount = response.total_amount;
+            var summary = response.total_amount_by_category;
+
+            $("#total-ammount").text(total_amount);
+
+            summary.forEach(function(data) {
+                var elem = `<div class="d-flex fs-6 fw-semibold align-items-center">
+                                <div class="bullet w-8px h-6px rounded-2 bg-danger me-3"></div>
+                                <div class="text-gray-500 flex-grow-1 me-4">${data.payment_method_name}</div>
+                                <div class="fw-bolder text-gray-700 text-xxl-end">${data.total_amount}</div>
+                            </div>`;
+
+                $("#total-amount-by-category").append(elem);
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching products:', error);
+        }
+    });
+}
+</script>
 @endsection

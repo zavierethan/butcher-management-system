@@ -131,54 +131,67 @@ class ProductController extends Controller
         return redirect()->route('products.index');
     }
 
-    public function getListProducts(Request $request) {
+    public function getListProducts(Request $request){
         $params = $request->q;
         $branchId = $request->branch_id;
 
+        // Build the query
         $query = DB::table('products')
             ->leftJoin('product_details', 'products.id', '=', 'product_details.product_id')
             ->leftJoin('product_categories', 'products.category_id', '=', 'product_categories.id')
             ->select(
-                'products.*',
+                'products.id',
+                'products.name',
+                'products.code',
+                'products.is_active',
                 'product_categories.name as category_name',
                 'product_details.price',
                 'product_details.branch_id',
                 'product_details.discount',
                 'product_details.start_period',
                 'product_details.end_period'
-                )
+            )
             ->where('product_details.branch_id', $branchId)
             ->where('products.is_active', '=', 1);
 
-        if($params != null) {
-            $query->where('products.name', 'like', '%'.strtoupper($params).'%');
-            // $query->orWhere('products.code', 'like', '%'.strtoupper($params).'%');
+        // Apply filtering for name or code
+        if (!empty($params)) {
+            $query->where(function ($q) use ($params) {
+                $q->where('products.name', 'like', '%' . strtoupper($params) . '%')
+                ->orWhere('products.code', 'like', '%' . strtoupper($params) . '%');
+            });
         }
 
+        // Ensure unique results
+        $query->distinct();
+
+        // Count total records (before applying pagination)
         $totalRecords = $query->count();
-        $filteredRecords = $query->count();
 
-        $data = $query->orderBy('products.name', 'asc')->get();
+        // Fetch filtered results
+        $data = $query
+            ->orderBy('products.name', 'asc')
+            ->get();
 
-        // Map url_path
-        $data = $data->map(function ($product) {
-            if ($product->url_path) {
-                $product->url_path = asset('storage/' . $product->url_path);
-            } else {
-                $product->url_path = asset('storage/default.png'); // Optional default image
-            }
-            return $product;
-        });
+        // Map `url_path` with default image if null
+        // $data = $data->map(function ($product) {
+        //     $product->url_path = $product->url_path
+        //         ? asset('storage/' . $product->url_path)
+        //         : asset('storage/default.png');
+        //     return $product;
+        // });
 
+        // Build response
         $response = [
             'draw' => $request->input('draw'),
             'recordsTotal' => $totalRecords,
-            'recordsFiltered' => $filteredRecords,
+            'recordsFiltered' => $totalRecords, // Same as total for now
             'data' => $data
         ];
 
         return response()->json($response);
     }
+
 
     public function getListProductsForCarcass(Request $request) {
         $params = $request->q;
