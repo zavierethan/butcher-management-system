@@ -169,6 +169,32 @@ class PurchaseRequestController extends Controller
         return view('modules.procurements.purchase-request.edit', compact('branches','purchaseRequest', 'purchaseRequestItems'));
     }
 
+    public function approval($id) {
+        $branches = DB::table('branches')->where('is_active', 1)->get();
+
+        $purchaseRequest = DB::table('purchase_requests')->where('id', $id)->first();
+
+        if($purchaseRequest->category == 'PR') {
+            $purchaseRequestItems = DB::table('purchase_request_items')
+                            ->select(
+                                'products.name as product_name',
+                                'purchase_request_items.*'
+                            )
+                            ->leftJoin('products', 'products.id', '=', 'purchase_request_items.item_id')
+                            ->where('purchase_request_id', $purchaseRequest->id)->get();
+        } else {
+            $purchaseRequestItems = DB::table('purchase_request_items')
+                            ->select(
+                                'inventories.name as product_name',
+                                'purchase_request_items.*'
+                            )
+                            ->leftJoin('inventories', 'inventories.id', '=', 'purchase_request_items.item_id')
+                            ->where('purchase_request_id', $purchaseRequest->id)->get();
+        }
+
+        return view('modules.procurements.purchase-request.approval', compact('branches','purchaseRequest', 'purchaseRequestItems'));
+    }
+
     public function update(Request $request) {
 
         DB::table('purchase_requests')->where('id', $request->id)->update([

@@ -35,7 +35,7 @@
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
                     <!--begin::Primary button-->
-                    <a href="javascript(0);" class="btn btn-sm fw-bold btn-secondary" data-bs-toggle="modal" data-bs-target="#kt_modal_export_filter">Export ke Excel</a>
+                    <a href="#" class="btn btn-sm fw-bold btn-secondary" data-bs-toggle="modal" data-bs-target="#kt_modal_export_filter">Export ke Excel</a>
                     <a href="{{route('procurement.goods-receive.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
                     <!--end::Primary button-->
                 </div>
@@ -72,6 +72,39 @@
                                         <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="end-date"/>
                                         <!--end::Select-->
                                     </div>
+                                    <div class="d-flex align-items-center fw-bold">
+                                        <!--begin::Label-->
+                                        <div class="text-gray-500 fs-7 me-2">Supplier</div>
+                                        <!--end::Label-->
+                                        <!--begin::Select-->
+                                        <select
+                                            class="form-select form-select-transparent text-gray-900 fs-7 lh-1 fw-bold py-0 ps-3 w-auto"
+                                            data-control="select2" data-hide-search="true"
+                                            data-dropdown-css-class="w-150px" data-placeholder="Select an option" id="supplier">
+                                            <option value=" " selected="selected">Show All</option>
+                                            @foreach($suppliers as $supplier)
+                                            <option value="{{$supplier->id}}"> {{$supplier->name}}</option>
+                                            @endforeach
+                                        </select>
+                                        <!--end::Select-->
+                                    </div>
+                                    <div class="d-flex align-items-center fw-bold">
+                                        <!--begin::Label-->
+                                        <div class="text-gray-500 fs-7 me-2">Kategori</div>
+                                        <!--end::Label-->
+                                        <!--begin::Select-->
+                                        <select
+                                            class="form-select form-select-transparent text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
+                                            data-control="select2" data-hide-search="true"
+                                            data-dropdown-css-class="w-150px" data-placeholder="Select an option"
+                                            id="category">
+                                            <option></option>
+                                            <option value=" " selected="selected">Show All</option>
+                                            <option value="PR">PR</option>
+                                            <option value="OP">OP</option>
+                                        </select>
+                                        <!--end::Select-->
+                                    </div>
                                     <!--begin::Search-->
                                     <div class="position-relative my-1">
                                         <i
@@ -81,7 +114,7 @@
                                         </i>
                                         <input type="text" data-kt-purchase-order-table-filter="search"
                                             class="form-control form-control-solid w-250px ps-15"
-                                            placeholder="Kode Pembelian" />
+                                            placeholder="Nomor Pembelian" />
                                     </div>
                                     <!--end::Search-->
                                 </div>
@@ -98,6 +131,8 @@
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">Nomor Pembelian</th>
                                         <th class="min-w-125px">Tanggal Penerimaan</th>
+                                        <th class="min-w-125px">Supplier</th>
+                                        <th class="min-w-125px">Category</th>
                                         <th class="min-w-125px">Diterima Oleh</th>
                                         <th class="min-w-125px">Status</th>
                                         <th class="text-center min-w-70px">Actions</th>
@@ -137,6 +172,13 @@
         ajax: {
             url: `{{route('procurement.goods-receive.get-lists')}}`, // Replace with your route
             type: 'GET',
+            data: function (d) {
+                // Add filter data to the request
+                d.start_date = $('#start-date').val();
+                d.end_date = $('#end-date').val();
+                d.supplier = $('#supplier').val();
+                d.category = $('#category').val();
+            },
             dataSrc: function (json) {
                 return json.data; // Map the 'data' field
             }
@@ -144,6 +186,8 @@
         columns: [
             { data: 'purchase_order_number', name: 'purchase_order_number' },
             { data: 'received_date', name: 'received_date' },
+            { data: 'name', name: 'name' },
+            { data: 'category', name: 'category' },
             { data: 'received_by', name: 'received_by' },
             {
                 data: 'status',
@@ -182,6 +226,10 @@
     $('[data-kt-purchase-order-table-filter="search"]').on('keyup', function() {
         const searchTerm = $(this).val(); // Get the value from the search input
         table.search(searchTerm).draw(); // Trigger the search and refresh the DataTable
+    });
+
+    $('#start-date, #end-date, #supplier, #category').on('change', function() {
+        table.draw();
     });
 </script>
 @endsection

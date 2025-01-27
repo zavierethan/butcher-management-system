@@ -10,7 +10,8 @@
                 <!--begin::Page title-->
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
-                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Purchase Orders</h1>
+                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
+                        Purchase Orders</h1>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
@@ -34,7 +35,9 @@
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
                     <!--begin::Primary button-->
-                    <a href="{{route('procurement.purchase-order.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
+                    <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export ke Excel</a>
+                    <a href="{{route('procurement.purchase-order.create')}}"
+                        class="btn btn-sm fw-bold btn-primary">New</a>
                     <!--end::Primary button-->
                 </div>
                 <!--end::Actions-->
@@ -67,8 +70,12 @@
                                         <div class="text-gray-500 fs-7 me-2">Tanggal</div>
                                         <!--end::Label-->
                                         <!--begin::Select-->
-                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="start-date"/> -
-                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="end-date"/>
+                                        <input type="date"
+                                            class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
+                                            id="start-date" /> -
+                                        <input type="date"
+                                            class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
+                                            id="end-date" />
                                         <!--end::Select-->
                                     </div>
                                     <!--begin::Store-->
@@ -80,7 +87,8 @@
                                         <select
                                             class="form-select form-select-transparent text-gray-900 fs-7 lh-1 fw-bold py-0 ps-3 w-auto"
                                             data-control="select2" data-hide-search="true"
-                                            data-dropdown-css-class="w-150px" data-placeholder="Select an option" id="supplier">
+                                            data-dropdown-css-class="w-150px" data-placeholder="Select an option"
+                                            id="supplier">
                                             <option value=" " selected="selected">Show All</option>
                                             @foreach($suppliers as $supplier)
                                             <option value="{{$supplier->id}}"> {{$supplier->name}}</option>
@@ -97,7 +105,8 @@
                                         <select
                                             class="form-select form-select-transparent text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
                                             data-control="select2" data-hide-search="true"
-                                            data-dropdown-css-class="w-150px" data-placeholder="Select an option" id="category">
+                                            data-dropdown-css-class="w-150px" data-placeholder="Select an option"
+                                            id="category">
                                             <option></option>
                                             <option value=" " selected="selected">Show All</option>
                                             <option value="PR">PR</option>
@@ -114,7 +123,8 @@
                                         <select
                                             class="form-select form-select-transparent text-gray-900 fs-7 lh-1 fw-bold py-0 ps-3 w-auto"
                                             data-control="select2" data-hide-search="true"
-                                            data-dropdown-css-class="w-150px" data-placeholder="Select an option" id="status">
+                                            data-dropdown-css-class="w-150px" data-placeholder="Select an option"
+                                            id="status">
                                             <option></option>
                                             <option value=" " selected="selected">Show All</option>
                                             <option value="pending">Pending</option>
@@ -182,74 +192,139 @@
 
 @section('script')
 <script>
-    let table = $("#kt_suppliers_table").DataTable({
-        order: [[0, 'desc']],
-        processing: true,
-        serverSide: true,
-        paging: true, // Enable pagination
-        pageLength: 10, // Number of rows per page
-        ajax: {
-            url: `{{route('procurement.purchase-order.get-lists')}}`, // Replace with your route
-            type: 'GET',
-            data: function (d) {
-                // Add filter data to the request
-                d.start_date = $('#start-date').val();
-                d.end_date = $('#end-date').val();
-                d.category = $('#category').val();
-                d.status = $('#status').val();
-                d.alocation = $('#supplier').val();
-            },
-            dataSrc: function (json) {
-                return json.data; // Map the 'data' field
+let table = $("#kt_suppliers_table").DataTable({
+    order: [
+        [0, 'desc']
+    ],
+    processing: true,
+    serverSide: true,
+    paging: true, // Enable pagination
+    pageLength: 10, // Number of rows per page
+    ajax: {
+        url: `{{route('procurement.purchase-order.get-lists')}}`, // Replace with your route
+        type: 'GET',
+        data: function(d) {
+            // Add filter data to the request
+            d.start_date = $('#start-date').val();
+            d.end_date = $('#end-date').val();
+            d.category = $('#category').val();
+            d.status = $('#status').val();
+            d.supplier = $('#supplier').val();
+        },
+        dataSrc: function(json) {
+            return json.data; // Map the 'data' field
+        }
+    },
+    columns: [{
+            data: 'purchase_order_number',
+            name: 'purchase_order_number'
+        },
+        {
+            data: 'order_date',
+            name: 'order_date'
+        },
+        {
+            data: 'category',
+            name: 'category'
+        },
+        {
+            data: 'supplier_name',
+            name: 'supplier_name'
+        },
+        {
+            data: 'total_amount',
+            name: 'total_amount'
+        },
+        {
+            data: 'status',
+            name: 'status',
+            render: function(data, type, row) {
+                var status = "";
+
+                if (row.status == "pending") {
+                    status = `<span class="badge bg-warning text-white">PENDING</span>`
+                }
+
+                if (row.status == "goods_received") {
+                    status = `<span class="badge bg-success text-white">GOODS RECEIVED</span>`
+                }
+
+                return status;
             }
         },
-        columns: [
-            { data: 'purchase_order_number', name: 'purchase_order_number' },
-            { data: 'order_date', name: 'order_date' },
-            { data: 'category', name: 'category' },
-            { data: 'supplier_name', name: 'supplier_name' },
-            { data: 'total_amount', name: 'total_amount' },
-            {
-                data: 'status',
-                name: 'status',
-                render: function(data, type, row) {
-                    var status = "";
-
-                    if (row.status == "pending") {
-                        status = `<span class="badge bg-warning text-white">PENDING</span>`
-                    }
-
-                    if (row.status == "goods_received") {
-                        status = `<span class="badge bg-success text-white">GOODS RECEIVED</span>`
-                    }
-
-                    return status;
-                }
-            },
-            {
-                data: null, // No direct field from the server
-                name: 'action',
-                orderable: false, // Disable ordering for this column
-                searchable: false, // Disable searching for this column
-                render: function (data, type, row) {
-                    return `
+        {
+            data: null, // No direct field from the server
+            name: 'action',
+            orderable: false, // Disable ordering for this column
+            searchable: false, // Disable searching for this column
+            render: function(data, type, row) {
+                return `
                         <div class="text-center">
                             <a href="/procurement/purchase-order/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Goods Receive</a>
                             <a href="/procurement/purchase-order/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Edit</a>
                         <div>
                     `;
-                }
             }
-        ]
+        }
+    ]
+});
+
+$('[data-kt-purchase-order-table-filter="search"]').on('keyup', function() {
+    const searchTerm = $(this).val(); // Get the value from the search input
+    table.search(searchTerm).draw(); // Trigger the search and refresh the DataTable
+});
+
+$('#start-date, #end-date, #category, #status, #supplier').on('change', function() {
+    table.draw();
+});
+
+$("#btn-form-export").on("click", function() {
+
+    const start_date = $("#start-date").val();
+    const end_date = $("#end-date").val();
+    const category = $("#category").val();
+    const status = $("#status").val();
+    const alocation = $("#alocation").val();
+
+    $.ajax({
+        url: `{{url('procurement/purchase-order/export')}}`,
+        type: 'GET',
+        data: {
+            start_date: start_date,
+            end_date: end_date,
+            category: category,
+            status: status,
+            alocation: alocation,
+        },
+        xhrFields: {
+            responseType: 'blob', // Treat response as binary
+        },
+        success: function(data, status, xhr) {
+            // Create a Blob object from the response
+            const blob = new Blob([data], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            });
+
+            // Create a link element for downloading
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = 'transaction-reports.xlsx'; // Set the filename
+            document.body.appendChild(link); // Append link to the body
+            link.click(); // Trigger the download
+            document.body.removeChild(link); // Clean up the DOM
+
+            Swal.fire({
+                title: 'Success!',
+                text: 'Transaction report exported successfully.',
+                icon: 'success',
+                confirmButtonText: 'OK',
+            });
+        },
+        error: function(xhr, status, error) {
+            Swal.fire('Error!', 'Failed to export the transaction report.', 'error');
+        },
     });
 
-    $('[data-kt-purchase-order-table-filter="search"]').on('keyup', function() {
-        const searchTerm = $(this).val(); // Get the value from the search input
-        table.search(searchTerm).draw(); // Trigger the search and refresh the DataTable
-    });
-
-    $('#start-date, #end-date, #category, #status, #supplier').on('change', function() {
-        table.draw();
-    });
+});
 </script>
 @endsection

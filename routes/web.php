@@ -190,6 +190,7 @@ Route::group(['middleware' => ['auth']], function() {
                     Route::get('/create', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'create'])->name('create');
                     Route::post('/save', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'save'])->name('save');
                     Route::get('/edit/{id}', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'edit'])->name('edit');
+                    Route::get('/approval/{id}', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'approval'])->name('approval');
                     Route::post('/update', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'update'])->name('update');
                     Route::get('/export', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'export'])->name('export');
 
@@ -205,6 +206,8 @@ Route::group(['middleware' => ['auth']], function() {
                     Route::post('/save', [App\Http\Controllers\Procurements\PurchaseOrderController::class, 'save'])->name('save');
                     Route::get('/edit/{id}', [App\Http\Controllers\Procurements\PurchaseOrderController::class, 'edit'])->name('edit');
                     Route::post('/update', [App\Http\Controllers\Procurements\PurchaseOrderController::class, 'update'])->name('update');
+
+                    Route::get('/export', [App\Http\Controllers\Procurements\PurchaseOrderController::class, 'export'])->name('export');
 
                     Route::get('/print/{id}', [App\Http\Controllers\Procurements\PurchaseOrderController::class, 'print'])->name('print-po');
                 });

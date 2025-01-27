@@ -280,7 +280,7 @@ $(document).ready(function() {
                     return `
                         <div class="text-center">
                             <a href="/procurement/purchase-request/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Lihat</a>
-                            <a href="/procurement/purchase-request/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Approval</a>
+                            <a href="/procurement/purchase-request/approval/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Approval</a>
                         <div>
                     `;
                 }

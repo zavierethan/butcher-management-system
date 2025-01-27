@@ -213,15 +213,21 @@
                                     <tr>
                                         <td><?php echo $no++; ?>.</td>
                                         <td>{{$item->product_name}}</td>
-                                        <td>{{$item->price}}</td>
-                                        <td>{{$item->quantity}}</td>
-                                        <td>{{$item->quantity * $item->price}}</td>
+                                        <td>
+                                            <input class="form-control form-control-sm me-2 price" type="text" name="price" value="{{$item->price}}" readonly/>
+                                            <input class="form-control form-control-sm me-2 id" type="hidden" name="id" value="{{$item->id}}" />
+                                        </td>
+                                        <td><input class="form-control form-control-sm me-2 quantity" type="text" name="quantity" value="{{$item->quantity}}" <?php echo ($purchaseRequest->status == 'approve') ? 'readonly' : ''; ?>/></td>
+                                        <td><input class="form-control form-control-sm me-2 total-price" type="text" name="total_price" value="{{$item->quantity * $item->price}}" <?php echo ($purchaseRequest->status == 'approve') ? 'readonly' : ''; ?>/></td>
                                         <td class="text-center">
-                                            @if($item->approval_status)
-                                                <span class="text-success">APPROVE</span>
-                                            @else
-                                                <span class="text-danger">DECLINE</span>
-                                            @endif
+                                            <div class="d-flex justify-content-center">
+                                                <label
+                                                    class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
+                                                    <input class="form-check-input toggle-approve-status" name="approve"
+                                                        type="checkbox" data-id="{{$item->id}}" <?php echo ($item->approval_status == 1) ? 'checked' : ''; ?> <?php echo ($purchaseRequest->status == 'approve') ? 'disabled' : ''; ?>>
+                                                    <span class="form-check-label fw-bold text-muted"></span>
+                                                </label>
+                                            </div>
                                         </td>
                                     </tr>
                                     @endforeach

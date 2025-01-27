@@ -132,8 +132,9 @@
                                         <th class="min-w-125px">Item</th>
                                         <th class="min-w-125px text-center">Harga</th>
                                         <th class="min-w-100px text-center">Jumlah</th>
-                                        <th class="min-w-125px">Harga Terima</th>
-                                        <th class="min-w-100px">Jumlah Terima</th>
+                                        <th class="min-w-125px">Harga Aktual</th>
+                                        <th class="min-w-100px">Jumlah Aktual</th>
+                                        <th class="min-w-100px">Realisasi</th>
                                         <th class="min-w-100px">Catatan</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -193,6 +194,16 @@ $("#purchase-order-id").on("change", function() {
                             <td class="item-quantity text-center">${items.quantity}</td>
                             <td class="text-center"><input class="form-control form-control-sm me-2 item-received-price" type="text" name="received_price" value="" /></td>
                             <td class="text-center"><input class="form-control form-control-sm me-2 item-received-quantity" type="text" name="received_quantity" value="" /></td>
+                            <td class="text-center">
+                                <div class="position-relative">
+                                                <select class="form-select item-realisation" data-control="select2"
+                                                    data-placeholder="-" name="realisation">
+                                                    <option value=" ">-</option>
+                                                    <option value="1">TEREALISASI</option>
+                                                    <option value="0">TIDAK TEREALISASI</option>
+                                                </select>
+                                            </div>
+                            </td>
                             <td class="text-center"><input class="form-control form-control-sm me-2 item-remarks" type="text" name="remarks" value="" /></td>
                         </tr>
                     `;
@@ -230,12 +241,14 @@ $(document).on('click', '#btn-submit-goods-received', function(e) {
                     var purchaseOrderItemId = $(this).find(".purchase-order-item-id").val();
                     var itemReceivedQuantity = $(this).find(".item-received-quantity").val().trim();
                     var itemReceivedPrice = $(this).find(".item-received-price").val().trim();
+                    var itemRealisation = $(this).find(".item-realisation").val().trim();
                     var itemRemarks = $(this).find(".item-remarks").val().trim();
 
                     itemLists.push({
                         purchase_order_item_id: purchaseOrderItemId,
                         received_quantity: itemReceivedQuantity,
                         received_price: itemReceivedPrice,
+                        realisation: itemRealisation,
                         remarks: itemRemarks,
                     });
                 });

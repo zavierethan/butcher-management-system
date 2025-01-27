@@ -129,8 +129,9 @@
                                         <th class="min-w-125px">Item</th>
                                         <th class="min-w-125px text-center">Harga</th>
                                         <th class="min-w-100px text-center">Jumlah</th>
-                                        <th class="min-w-125px text-center">Harga Terima</th>
-                                        <th class="min-w-100px text-center">Jumlah Terima</th>
+                                        <th class="min-w-125px text-center">Harga Aktual</th>
+                                        <th class="min-w-100px text-center">Jumlah Aktual</th>
+                                        <th class="min-w-100px text-center">Realisasi</th>
                                         <th class="min-w-100px">Catatan</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -147,6 +148,7 @@
                                         <td class="item-quantity text-center">{{$item->quantity}}</td>
                                         <td class="text-center">{{$item->received_price}}</td>
                                         <td class="text-center">{{$item->received_quantity}}</td>
+                                        <td class="text-center">{{$item->realisation}}</td>
                                         <td class="">{{$item->remarks}}</td>
                                     </tr>
                                     @endforeach

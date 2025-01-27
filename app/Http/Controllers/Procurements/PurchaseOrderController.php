@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Procurements;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Exports\PurchaseRequestExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 use DB;
 use PDF;
@@ -278,5 +280,29 @@ class PurchaseOrderController extends Controller
         }
 
         return response()->json($response);
+    }
+
+    public function export(Request $request) {
+
+        $filters = [
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'category' => $request->category,
+            'supplier' => $request->supplier,
+            'status' => $request->status,
+        ];
+
+        // Generate raw Excel data
+        $export = new PurchaseOrderExport($filters);
+        $excelData = Excel::raw($export, \Maatwebsite\Excel\Excel::XLSX);
+
+        // Return the data as a proper response
+        return response($excelData, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="transaction-reports.xlsx"',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+        ]);
     }
 }

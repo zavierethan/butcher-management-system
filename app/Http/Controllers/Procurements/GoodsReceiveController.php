@@ -10,7 +10,8 @@ use DB;
 class GoodsReceiveController extends Controller
 {
     public function index() {
-        return view('modules.procurements.goods-receive.index');
+        $suppliers = DB::table('suppliers')->where('is_active', 1)->get();
+        return view('modules.procurements.goods-receive.index', compact('suppliers'));
     }
 
     public function getLists(Request $request){
@@ -21,7 +22,9 @@ class GoodsReceiveController extends Controller
                     'purchase_orders.id',
                     'purchase_orders.purchase_order_number',
                     DB::raw("TO_CHAR(purchase_orders.received_date, 'DD/MM/YYYY') as received_date"),
+                    'purchase_orders.category',
                     'purchase_orders.received_by',
+                    'suppliers.name',
                     'purchase_orders.status'
                 )
                 ->leftJoin('suppliers', 'suppliers.id', '=', 'purchase_orders.supplier_id')
@@ -42,6 +45,21 @@ class GoodsReceiveController extends Controller
             $columnName = $request->columns[$columnIndex]['data']; // Column name
 
             $query->orderBy($columnName, $sortDirection);
+        }
+
+        if (!empty($params['start_date']) && !empty($params['end_date'])) {
+            $query->whereBetween('purchase_orders.order_date', [
+                $params['start_date'],
+                $params['end_date']
+            ]);
+        }
+
+        if (!empty($params['supplier'])) {
+            $query->where('purchase_orders.supplier_id', $params['supplier']);
+        }
+
+        if (!empty($params['category'])) {
+            $query->where('purchase_orders.category', $params['category']);
         }
 
         $start = $request->input('start', 0);
@@ -82,6 +100,7 @@ class GoodsReceiveController extends Controller
                 DB::table('purchase_order_items')->where('id', $detail["purchase_order_item_id"])->update([
                     "received_quantity" => $detail["received_quantity"],
                     "received_price" => $detail["received_price"],
+                    "realisation" => $detail["realisation"],
                     "remarks" => $detail["remarks"]
                 ]);
             }
@@ -118,6 +137,7 @@ class GoodsReceiveController extends Controller
                         DB::raw("TO_CHAR(purchase_order_items.price, 'FM999,999,999') as price"),
                         'purchase_order_items.received_quantity',
                         DB::raw("TO_CHAR(purchase_order_items.received_price, 'FM999,999,999') as received_price"),
+                        'purchase_order_items.realisation',
                         'purchase_order_items.remarks',
                     )
                     ->leftJoin('products', 'products.id', '=', 'purchase_order_items.item_id')
