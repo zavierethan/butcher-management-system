@@ -22,7 +22,7 @@ class ChartOfAccountController extends Controller
         $searchValue = $request->input('search.value'); // This is where DataTables sends the search input
         if (!empty($searchValue)) {
             $query->where(function ($q) use ($searchValue) {
-                $q->where('chart_of_accounts.code', 'like', '%' . strtoupper($searchValue) . '%');
+                $q->where('chart_of_accounts.account_code', 'like', '%' . strtoupper($searchValue) . '%');
             });
         }
 
@@ -57,10 +57,9 @@ class ChartOfAccountController extends Controller
     public function save(Request $request) {
 
         DB::table('chart_of_accounts')->insert([
-            'code' => $request->code,
-            'name' => $request->name,
-            'type' => $request->type,
-            'category' => $request->category
+            'account_code' => $request->code,
+            'account_name' => $request->name,
+            'account_type' => $request->type
         ]);
 
         return redirect()->route('finances.chart-of-accounts.index');
@@ -74,9 +73,9 @@ class ChartOfAccountController extends Controller
     public function update(Request $request) {
 
         DB::table('chart_of_accounts')->where('id', $request->id)->update([
-            'name' => $request->name,
-            'type' => $request->type,
-            'category' => $request->category
+            'account_code' => $request->code,
+            'account_name' => $request->name,
+            'account_type' => $request->type
         ]);
 
         return redirect()->route('finances.chart-of-accounts.index');

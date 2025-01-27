@@ -11,7 +11,8 @@ use PDF;
 class PurchaseOrderController extends Controller
 {
     public function index() {
-        return view('modules.procurements.purchase-order.index');
+        $suppliers = DB::table('suppliers')->where('is_active', 1)->get();
+        return view('modules.procurements.purchase-order.index', compact('suppliers'));
     }
 
     public function getLists(Request $request) {
@@ -46,6 +47,25 @@ class PurchaseOrderController extends Controller
             $query->orderBy($columnName, $sortDirection);
         }
 
+        if (!empty($params['start_date']) && !empty($params['end_date'])) {
+            $query->whereBetween('purchase_orders.order_date', [
+                $params['start_date'],
+                $params['end_date']
+            ]);
+        }
+
+        if (!empty($params['category'])) {
+            $query->where('purchase_orders.category', $params['category']);
+        }
+
+        if (!empty($params['status'])) {
+            $query->where('purchase_orders.status', $params['status']);
+        }
+
+        if (!empty($params['supplier'])) {
+            $query->where('purchase_orders.supplier_id', $params['supplier']);
+        }
+
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
 
@@ -63,7 +83,10 @@ class PurchaseOrderController extends Controller
 
     public function create() {
         $suppliers = DB::table('suppliers')->where('is_active', 1)->get();
-        $purchaseRequests = DB::table('purchase_requests')->where('status', 'approve')->where('has_proccessed', 0)->get();
+        $purchaseRequests = DB::table('purchase_requests')
+                        ->select('purchase_requests.id', 'purchase_requests.request_number', 'branches.name as requestor')
+                        ->leftJoin('branches', 'branches.id', '=', 'purchase_requests.alocation')
+                        ->where('status', 'approve')->where('has_proccessed', 0)->get();
         return view('modules.procurements.purchase-order.create', compact('suppliers', 'purchaseRequests'));
     }
 
@@ -95,6 +118,8 @@ class PurchaseOrderController extends Controller
                     "quantity" => $detail["quantity"],
                     "price" => $detail["price"],
                 ]);
+
+                DB::table('purchase_requests')->where('request_number', $detail["item_req_number"])->update(["has_proccessed" => 1]);
             }
 
             // Commit the transaction

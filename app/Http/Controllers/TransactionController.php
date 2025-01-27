@@ -68,6 +68,11 @@ class TransactionController extends Controller
                     "unit_price" => $detail["price"],
                     "discount" => $detail["discount"],
                 ]);
+
+                // DB::table('stock_logs')->insert([
+                //     "out_quantity" => $detail["quantity"],
+                //     "date" => date('yyy-mm-dd')
+                // ]);
             }
 
             // Commit the transaction

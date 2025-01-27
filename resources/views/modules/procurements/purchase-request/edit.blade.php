@@ -156,7 +156,7 @@
                                             <label class="form-label fw-bold fs-6 mb-2">Status Approval</label>
                                             <div class="position-relative mb-3">
                                                 <select class="form-select form-select-solid" data-control="select2"
-                                                    data-placeholder="-" name="status" id="status">
+                                                    data-placeholder="-" name="status" id="status" <?php echo ($purchaseRequest->status == 'approve') ? 'disabled' : ''; ?>>
                                                     <option value="">-</option>
                                                     <option value="pending"
                                                         <?php echo($purchaseRequest->status == 'pending') ? 'selected' : ''; ?>>
@@ -174,7 +174,7 @@
                                     <div class="separator my-5"></div>
                                     <div class="text-end">
                                         <a href="{{route('procurement.purchase-request.index')}}"
-                                            class="btn btn-sm btn-danger">Cancel</a>
+                                            class="btn btn-sm btn-danger">Kembali</a>
                                         <a href="#" class="btn btn-sm btn-primary" id="btn-update-request">Update
                                             Request</a>
                                     </div>
@@ -217,14 +217,14 @@
                                             <input class="form-control form-control-sm me-2 price" type="text" name="price" value="{{$item->price}}" readonly/>
                                             <input class="form-control form-control-sm me-2 id" type="hidden" name="id" value="{{$item->id}}" />
                                         </td>
-                                        <td><input class="form-control form-control-sm me-2 quantity" type="text" name="quantity" value="{{$item->quantity}}" /></td>
-                                        <td><input class="form-control form-control-sm me-2 total-price" type="text" name="total_price" value="{{$item->quantity * $item->price}}" /></td>
+                                        <td><input class="form-control form-control-sm me-2 quantity" type="text" name="quantity" value="{{$item->quantity}}" <?php echo ($purchaseRequest->status == 'approve') ? 'readonly' : ''; ?>/></td>
+                                        <td><input class="form-control form-control-sm me-2 total-price" type="text" name="total_price" value="{{$item->quantity * $item->price}}" <?php echo ($purchaseRequest->status == 'approve') ? 'readonly' : ''; ?>/></td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center">
                                                 <label
                                                     class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
                                                     <input class="form-check-input toggle-approve-status" name="approve"
-                                                        type="checkbox" data-id="{{$item->id}}" <?php echo ($item->approval_status == 1) ? 'checked' : ''; ?>>
+                                                        type="checkbox" data-id="{{$item->id}}" <?php echo ($item->approval_status == 1) ? 'checked' : ''; ?> <?php echo ($purchaseRequest->status == 'approve') ? 'disabled' : ''; ?>>
                                                     <span class="form-check-label fw-bold text-muted"></span>
                                                 </label>
                                             </div>

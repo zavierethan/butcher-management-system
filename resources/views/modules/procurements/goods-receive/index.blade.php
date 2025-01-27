@@ -35,6 +35,7 @@
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
                     <!--begin::Primary button-->
+                    <a href="javascript(0);" class="btn btn-sm fw-bold btn-secondary" data-bs-toggle="modal" data-bs-target="#kt_modal_export_filter">Export ke Excel</a>
                     <a href="{{route('procurement.goods-receive.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
                     <!--end::Primary button-->
                 </div>
@@ -59,23 +60,33 @@
                                 <!--end::Search-->
                             </div>
                             <!--begin::Card title-->
-                            <!--begin::Card toolbar-->
                             <div class="card-toolbar">
-                                <!--begin::Toolbar-->
-                                <div class="d-flex align-items-center position-relative my-1">
-                                    <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
-                                    <span class="svg-icon svg-icon-1 position-absolute ms-6">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                            <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
-                                            <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="black" />
-                                        </svg>
-                                    </span>
-                                    <!--end::Svg Icon-->
-                                    <input type="text" data-kt-goods-receive-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Search" />
+                                <!--begin::Filters-->
+                                <div class="d-flex flex-stack flex-wrap gap-4">
+                                    <div class="d-flex align-items-center fw-bold">
+                                        <!--begin::Label-->
+                                        <div class="text-gray-500 fs-7 me-2">Tanggal</div>
+                                        <!--end::Label-->
+                                        <!--begin::Select-->
+                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="start-date"/> -
+                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="end-date"/>
+                                        <!--end::Select-->
+                                    </div>
+                                    <!--begin::Search-->
+                                    <div class="position-relative my-1">
+                                        <i
+                                            class="ki-duotone ki-magnifier fs-2 position-absolute top-50 translate-middle-y ms-4">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                        <input type="text" data-kt-purchase-order-table-filter="search"
+                                            class="form-control form-control-solid w-250px ps-15"
+                                            placeholder="Kode Pembelian" />
+                                    </div>
+                                    <!--end::Search-->
                                 </div>
-                                <!--end::Toolbar-->
+                                <!--begin::Filters-->
                             </div>
-                            <!--end::Card toolbar-->
                         </div>
                         <!--begin::Card body-->
                         <div class="card-body pt-0 overflow-x-auto">
@@ -168,9 +179,10 @@
         ]
     });
 
-    $('[data-kt-goods-receive-table-filter="search"]').on('keyup', function() {
+    $('[data-kt-purchase-order-table-filter="search"]').on('keyup', function() {
         const searchTerm = $(this).val(); // Get the value from the search input
         table.search(searchTerm).draw(); // Trigger the search and refresh the DataTable
     });
 </script>
 @endsection
+

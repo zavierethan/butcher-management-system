@@ -59,7 +59,7 @@
                                     <div class="col-md-6">
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Kode Account</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Account Code</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
                                                         type="text" name="code" />
@@ -69,7 +69,7 @@
                                         <div class="separator my-5"></div>
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Nama Account</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Account Name</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
                                                         type="text" name="name" />
@@ -79,7 +79,7 @@
                                         <div class="separator my-5"></div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="fv-row mb-5">
+                                        <!-- <div class="fv-row mb-5">
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Type Account</label>
                                                 <div class="position-relative mb-3">
@@ -91,18 +91,18 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="separator my-5"></div>
+                                        <div class="separator my-5"></div> -->
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Category Account</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Account Type</label>
                                                 <div class="position-relative mb-3">
                                                     <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="category">
                                                         <option value="">-</option>
-                                                        <option value="1">Aset</option>
-                                                        <option value="2">Liabilitas</option>
-                                                        <option value="3">Ekuitas</option>
-                                                        <option value="4">Pendapatan</option>
-                                                        <option value="5">Beban</option>
+                                                        <option value="Asset">Aset</option>
+                                                        <option value="Liability">Liabilitas</option>
+                                                        <option value="Equity">Ekuitas</option>
+                                                        <option value="Revenue">Pendapatan</option>
+                                                        <option value="Expense">Beban</option>
                                                     </select>
                                                 </div>
                                             </div>

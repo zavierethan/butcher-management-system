@@ -13,7 +13,8 @@ use Auth;
 class PurchaseRequestController extends Controller
 {
     public function index() {
-        return view('modules.procurements.purchase-request.index');
+        $branches =  DB::table('branches')->where('is_active', 1)->get();
+        return view('modules.procurements.purchase-request.index', compact('branches'));
     }
 
     public function getLists(Request $request) {
@@ -48,6 +49,25 @@ class PurchaseRequestController extends Controller
             $columnName = $request->columns[$columnIndex]['data']; // Column name
 
             $query->orderBy($columnName, $sortDirection);
+        }
+
+        if (!empty($params['start_date']) && !empty($params['end_date'])) {
+            $query->whereBetween('purchase_requests.request_date', [
+                $params['start_date'],
+                $params['end_date']
+            ]);
+        }
+
+        if (!empty($params['category'])) {
+            $query->where('purchase_requests.category', $params['category']);
+        }
+
+        if (!empty($params['status'])) {
+            $query->where('purchase_requests.status', $params['status']);
+        }
+
+        if (!empty($params['alocation'])) {
+            $query->where('purchase_requests.alocation', $params['alocation']);
         }
 
         $start = $request->input('start', 0);
@@ -164,6 +184,28 @@ class PurchaseRequestController extends Controller
 
     }
 
+    public function getPurchaseRequest(Request $request) {
+
+        $params = $request["category"];
+
+        $query = DB::table('purchase_requests')
+                        ->select('purchase_requests.id', 'purchase_requests.request_number', 'branches.name as requestor')
+                        ->leftJoin('branches', 'branches.id', '=', 'purchase_requests.alocation')
+                        ->where('status', 'approve')->where('has_proccessed', 0);
+
+        if($params == 'OP') {
+            $query->where('purchase_requests.category', 'OP');
+        }
+
+        if($params == 'PR') {
+            $query->where('purchase_requests.category', 'PR');
+        }
+
+        $response = $query->get();
+
+        return response()->json($response);
+    }
+
     public function getPurchaseRequestItem(Request $request) {
         $params = $request->purchase_request_id;
 
@@ -178,7 +220,8 @@ class PurchaseRequestController extends Controller
                     'products.name',
                     'purchase_request_items.category',
                     'purchase_request_items.quantity',
-                    'purchase_request_items.price'
+                    DB::raw("TO_CHAR(purchase_request_items.price, 'FM999,999,999') as price"),
+                    DB::raw("TO_CHAR(purchase_request_items.price * purchase_request_items.quantity , 'FM999,999,999') as total_price")
                 )
                 ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_request_items.purchase_request_id')
                 ->leftJoin('products', 'products.id', '=', 'purchase_request_items.item_id')
@@ -194,7 +237,8 @@ class PurchaseRequestController extends Controller
                     'inventories.name',
                     'purchase_request_items.category',
                     'purchase_request_items.quantity',
-                    'purchase_request_items.price'
+                    DB::raw("TO_CHAR(purchase_request_items.price, 'FM999,999,999') as price"),
+                    DB::raw("TO_CHAR(purchase_request_items.price * purchase_request_items.quantity , 'FM999,999,999') as total_price")
                 )
                 ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_request_items.purchase_request_id')
                 ->leftJoin('inventories', 'inventories.id', '=', 'purchase_request_items.item_id')
@@ -219,8 +263,17 @@ class PurchaseRequestController extends Controller
     }
 
     public function export(Request $request) {
+
+        $filters = [
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'category' => $request->category,
+            'alocation' => $request->alocation,
+            'status' => $request->status,
+        ];
+
         // Generate raw Excel data
-        $export = new PurchaseRequestExport($request->start_date, $request->end_date);
+        $export = new PurchaseRequestExport($filters);
         $excelData = Excel::raw($export, \Maatwebsite\Excel\Excel::XLSX);
 
         // Return the data as a proper response

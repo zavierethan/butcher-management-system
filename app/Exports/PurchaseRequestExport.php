@@ -13,13 +13,11 @@ use Auth;
 
 class PurchaseRequestExport implements FromCollection, WithHeadings, WithCustomStartCell, WithEvents
 {
-    protected $startDate;
-    protected $endDate;
+    protected $filters;
 
-    public function __construct($startDate, $endDate)
+    public function __construct(array $filters)
     {
-        $this->startDate = $startDate;
-        $this->endDate = $endDate;
+        $this->filters = $filters;
     }
 
     public function collection()
@@ -46,8 +44,26 @@ class PurchaseRequestExport implements FromCollection, WithHeadings, WithCustomS
             )
             ->leftJoin('purchase_request_items', 'purchase_request_items.purchase_request_id', '=', 'purchase_requests.id')
             ->leftJoin('products', 'products.id', '=', 'purchase_request_items.item_id')
-            ->leftJoin('branches', 'branches.id', '=', 'purchase_requests.alocation')
-            ->whereBetween('purchase_requests.request_date', [$this->startDate, $this->endDate]);
+            ->leftJoin('branches', 'branches.id', '=', 'purchase_requests.alocation');
+
+            if (!empty($this->filters['start_date']) && !empty($this->filters['end_date'])) {
+                $query->whereBetween('purchase_requests.request_date', [
+                    $this->filters['start_date'],
+                    $this->filters['end_date']
+                ]);
+            }
+
+            if (!empty($this->filters['category'])) {
+                $query->where('purchase_requests.category', $this->filters['category']);
+            }
+
+            if (!empty($this->filters['status'])) {
+                $query->where('purchase_requests.status', $this->filters['status']);
+            }
+
+            if (!empty($this->filters['alocation'])) {
+                $query->where('purchase_requests.alocation', $this->filters['alocation']);
+            }
 
         $data = $query->get();
 
@@ -93,7 +109,7 @@ class PurchaseRequestExport implements FromCollection, WithHeadings, WithCustomS
 
                 // Add additional information above the table
                 $sheet->setCellValue('A1', 'TANGGAL');
-                $sheet->setCellValue('B1', $this->startDate.' - '.$this->endDate);
+                $sheet->setCellValue('B1', $this->filters['start_date'].' - '.$this->filters['end_date']);
 
                 // Apply bold styling to the labels
                 $sheet->getStyle('A1:A2')->applyFromArray([

@@ -1,6 +1,6 @@
 @extends('layouts.main')
-
 @section('main-content')
+<div class="loader"></div>
 <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
     <!--begin::Content wrapper-->
     <div class="d-flex flex-column flex-column-fluid">
@@ -36,10 +36,8 @@
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
                     <!--begin::Primary button-->
-                    <a href="javascript(0);" class="btn btn-sm fw-bold btn-secondary" data-bs-toggle="modal"
-                        data-bs-target="#kt_modal_export_filter">Export ke Excel</a>
-                    <a href="{{route('procurement.purchase-request.create')}}"
-                        class="btn btn-sm fw-bold btn-primary">New</a>
+                    <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export ke Excel</a>
+                    <a href="{{route('procurement.purchase-request.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
                     <!--end::Primary button-->
                 </div>
                 <!--end::Actions-->
@@ -65,24 +63,94 @@
                             <!--begin::Card title-->
                             <!--begin::Card toolbar-->
                             <div class="card-toolbar">
-                                <!--begin::Toolbar-->
-                                <div class="d-flex align-items-center position-relative my-1">
-                                    <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
-                                    <span class="svg-icon svg-icon-1 position-absolute ms-6">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none">
-                                            <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2"
-                                                rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
-                                            <path
-                                                d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z"
-                                                fill="black" />
-                                        </svg>
-                                    </span>
-                                    <!--end::Svg Icon-->
-                                    <input type="text" data-kt-purchase-request-table-filter="search"
-                                        class="form-control form-control-solid w-250px ps-15" placeholder="Search" />
+                                <!--begin::Filters-->
+                                <div class="d-flex flex-stack flex-wrap gap-4">
+                                    <div class="d-flex align-items-center fw-bold">
+                                        <!--begin::Label-->
+                                        <div class="text-gray-500 fs-7 me-2">Tanggal</div>
+                                        <!--end::Label-->
+                                        <!--begin::Select-->
+                                        <input type="date"
+                                            class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
+                                            id="start-date" /> -
+                                        <input type="date"
+                                            class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
+                                            id="end-date" />
+                                        <!--end::Select-->
+                                    </div>
+                                    <!--begin::Destination-->
+                                    <div class="d-flex align-items-center fw-bold">
+                                        <!--begin::Label-->
+                                        <div class="text-gray-500 fs-7 me-2">Kategori</div>
+                                        <!--end::Label-->
+                                        <!--begin::Select-->
+                                        <select
+                                            class="form-select form-select-transparent text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
+                                            data-control="select2" data-hide-search="true"
+                                            data-dropdown-css-class="w-150px" data-placeholder="Select an option"
+                                            id="category">
+                                            <option></option>
+                                            <option value=" " selected="selected">Show All</option>
+                                            <option value="PR">PR</option>
+                                            <option value="OP">OP</option>
+                                        </select>
+                                        <!--end::Select-->
+                                    </div>
+                                    <!--end::Destination-->
+                                    <!--begin::Status-->
+                                    <div class="d-flex align-items-center fw-bold">
+                                        <!--begin::Label-->
+                                        <div class="text-gray-500 fs-7 me-2">Status</div>
+                                        <!--end::Label-->
+                                        <!--begin::Select-->
+                                        <select
+                                            class="form-select form-select-transparent text-gray-900 fs-7 lh-1 fw-bold py-0 ps-3 w-auto"
+                                            data-control="select2" data-hide-search="true"
+                                            data-dropdown-css-class="w-150px" data-placeholder="Select an option"
+                                            id="status">
+                                            <option></option>
+                                            <option value=" " selected="selected">Show All</option>
+                                            <option value="approve">Approve</option>
+                                            <option value="decline">Decline</option>
+                                        </select>
+                                        <!--end::Select-->
+                                    </div>
+                                    <!--end::Status-->
+                                    <!--begin::Store-->
+                                    <div class="d-flex align-items-center fw-bold">
+                                        <!--begin::Label-->
+                                        <div class="text-gray-500 fs-7 me-2">Alokasi</div>
+                                        <!--end::Label-->
+                                        <!--begin::Select-->
+                                        <select
+                                            class="form-select form-select-transparent text-gray-900 fs-7 lh-1 fw-bold py-0 ps-3 w-auto"
+                                            data-control="select2" data-hide-search="true"
+                                            data-dropdown-css-class="w-150px" data-placeholder="Select an option"
+                                            id="alocation">
+                                            <option value=" " selected="selected">Show All</option>
+                                            @foreach($branches as $branch)
+                                            <option value="{{$branch->id}}">
+                                                {{$branch->name}}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                        <!--end::Select-->
+                                    </div>
+                                    <!--end::Status-->
+                                    <!--begin::Search-->
+                                    <div class="position-relative my-1">
+                                        <i
+                                            class="ki-duotone ki-magnifier fs-2 position-absolute top-50 translate-middle-y ms-4">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                        <input type="text" data-kt-purchase-request-table-filter="search"
+                                            class="form-control form-control-solid w-250px ps-15"
+                                            placeholder="Nomor Request" />
+                                    </div>
+                                    <!--end::Search-->
                                 </div>
-                                <!--end::Toolbar-->
+                                <!--begin::Filters-->
                             </div>
                             <!--end::Card toolbar-->
                         </div>
@@ -126,195 +194,157 @@
     </div>
     <!--end::Content wrapper-->
 </div>
-
-<div class="modal fade" id="kt_modal_export_filter" tabindex="-1" aria-hidden="true">
-    <!--begin::Modal dialog-->
-    <div class="modal-dialog mw-650px">
-        <!--begin::Modal content-->
-        <div class="modal-content">
-            <!--begin::Modal header-->
-            <div class="modal-header pb-0 border-0 justify-content-end">
-                <!--begin::Close-->
-                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
-                    <i class="ki-duotone ki-cross fs-1">
-                        <span class="path1"></span>
-                        <span class="path2"></span>
-                    </i>
-                </div>
-                <!--end::Close-->
-            </div>
-            <!--begin::Modal header-->
-            <!--begin::Modal body-->
-            <div class="modal-body scroll-y mx-5 mx-xl-18 pt-0 pb-15">
-                <!--begin::Heading-->
-                <div class="text-center mb-13">
-                    <!--begin::Title-->
-                    <h1 class="mb-3">Export Filters</h1>
-                    <!--end::Title-->
-                </div>
-                <div class="fv-row mb-5">
-                    <div class="mb-1">
-                        <label class="form-label fw-bold fs-6 mb-2">Tanggal Mulai</label>
-                        <div class="position-relative mb-3">
-                            <input class="form-control form-control-md form-control-solid" type="date"
-                                id="start-date" />
-                        </div>
-                    </div>
-                </div>
-                <div class="separator my-5"></div>
-                <div class="fv-row mb-5">
-                    <div class="mb-1">
-                        <label class="form-label fw-bold fs-6 mb-2">Tanggal Akhir</label>
-                        <div class="position-relative mb-3">
-                            <input class="form-control form-control-md form-control-solid" type="date" id="end-date" />
-                        </div>
-                    </div>
-                </div>
-                <div class="separator my-5"></div>
-                <div class="flex justify-content-center">
-                    <button type="button" class="btn btn-primary" id="btn-form-export">Submit</button>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
-                        id="btn-form-close">Batal</button>
-                </div>
-            </div>
-            <!--end::Modal body-->
-        </div>
-        <!--end::Modal content-->
-    </div>
-    <!--end::Modal dialog-->
-</div>
 @endsection
 
 @section('script')
 <script>
-let table = $("#kt_purchase_request_table").DataTable({
-    order: [
-        [0, 'desc']
-    ],
-    processing: true,
-    serverSide: true,
-    paging: true, // Enable pagination
-    pageLength: 10, // Number of rows per page
-    ajax: {
-        url: `{{route('procurement.purchase-request.get-lists')}}`, // Replace with your route
-        type: 'GET',
-        dataSrc: function(json) {
-            return json.data; // Map the 'data' field
-        }
-    },
-    columns: [{
-            data: 'request_number',
-            name: 'request_number'
-        },
-        {
-            data: 'request_date',
-            name: 'request_date'
-        },
-        {
-            data: 'alocation',
-            name: 'alocation'
-        },
-        {
-            data: 'pic',
-            name: 'pic'
-        },
-        {
-            data: 'category',
-            name: 'category'
-        },
-        {
-            data: 'nominal_application',
-            name: 'nominal_application'
-        },
-        {
-            data: 'nominal_realization',
-            name: 'nominal_realization'
-        },
-        {
-            data: 'status',
-            name: 'status',
-            render: function(data, type, row) {
-                var status = "";
-
-                if (row.status == "pending") {
-                    status = `<span class="badge bg-warning text-white">PENDING</span>`
-                }
-
-                if (row.status == "approve") {
-                    status = `<span class="badge bg-success text-white">APPROVE</span>`
-                }
-
-                if (row.status == "decline") {
-                    status = `<span class="badge bg-danger text-white">DECLINE</span>`
-                }
-
-                return status;
+$(document).ready(function() {
+    let table = $("#kt_purchase_request_table").DataTable({
+        order: [
+            [0, 'desc']
+        ],
+        processing: true,
+        serverSide: true,
+        paging: true, // Enable pagination
+        pageLength: 10, // Number of rows per page
+        ajax: {
+            url: `{{route('procurement.purchase-request.get-lists')}}`, // Replace with your route
+            type: 'GET',
+            data: function (d) {
+                // Add filter data to the request
+                d.start_date = $('#start-date').val();
+                d.end_date = $('#end-date').val();
+                d.category = $('#category').val();
+                d.status = $('#status').val();
+                d.supplier = $('#supplier').val();
+            },
+            dataSrc: function(json) {
+                return json.data; // Map the 'data' field
             }
         },
-        {
-            data: null, // No direct field from the server
-            name: 'action',
-            orderable: false, // Disable ordering for this column
-            searchable: false, // Disable searching for this column
-            render: function(data, type, row) {
-                return `
+        columns: [{
+                data: 'request_number',
+                name: 'request_number'
+            },
+            {
+                data: 'request_date',
+                name: 'request_date'
+            },
+            {
+                data: 'alocation',
+                name: 'alocation'
+            },
+            {
+                data: 'pic',
+                name: 'pic'
+            },
+            {
+                data: 'category',
+                name: 'category'
+            },
+            {
+                data: 'nominal_application',
+                name: 'nominal_application'
+            },
+            {
+                data: 'nominal_realization',
+                name: 'nominal_realization'
+            },
+            {
+                data: 'status',
+                name: 'status',
+                render: function(data, type, row) {
+                    var status = "";
+
+                    if (row.status == "pending") {
+                        status = `<span class="badge bg-warning text-white">PENDING</span>`
+                    }
+
+                    if (row.status == "approve") {
+                        status = `<span class="badge bg-success text-white">APPROVE</span>`
+                    }
+
+                    if (row.status == "decline") {
+                        status = `<span class="badge bg-danger text-white">DECLINE</span>`
+                    }
+
+                    return status;
+                }
+            },
+            {
+                data: null,
+                name: 'action',
+                orderable: false,
+                searchable: false,
+                render: function(data, type, row) {
+                    return `
                         <div class="text-center">
+                            <a href="/procurement/purchase-request/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Lihat</a>
                             <a href="/procurement/purchase-request/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Approval</a>
                         <div>
                     `;
+                }
             }
-        }
-    ]
-});
-
-$('[data-kt-purchase-request-table-filter="search"]').on('keyup', function() {
-    const searchTerm = $(this).val(); // Get the value from the search input
-    table.search(searchTerm).draw(); // Trigger the search and refresh the DataTable
-});
-
-$("#btn-form-export").on("click", function() {
-
-    const start_date = $("#start-date").val();
-    const end_date = $("#end-date").val();
-    const branch_id = $("#branch-id").val();
-
-    $.ajax({
-        url: `{{url('procurement/purchase-request/export')}}`,
-        type: 'GET',
-        data: {
-            start_date: start_date,
-            end_date: end_date,
-        },
-        xhrFields: {
-            responseType: 'blob', // Treat response as binary
-        },
-        success: function(data, status, xhr) {
-            $("#kt_modal_export_filter").modal('hide');
-            // Create a Blob object from the response
-            const blob = new Blob([data], {
-                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            });
-
-            // Create a link element for downloading
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = 'transaction-reports.xlsx'; // Set the filename
-            document.body.appendChild(link); // Append link to the body
-            link.click(); // Trigger the download
-            document.body.removeChild(link); // Clean up the DOM
-
-            Swal.fire({
-                title: 'Success!',
-                text: 'Transaction report exported successfully.',
-                icon: 'success',
-                confirmButtonText: 'OK',
-            });
-        },
-        error: function(xhr, status, error) {
-            Swal.fire('Error!', 'Failed to export the transaction report.', 'error');
-        },
+        ]
     });
 
+    $('[data-kt-purchase-request-table-filter="search"]').on('keyup', function() {
+        const searchTerm = $(this).val();
+        table.search(searchTerm).draw();
+    });
+
+    $('#start-date, #end-date, #category, #status, #alocation').on('change', function() {
+        table.draw();
+    });
+
+    $("#btn-form-export").on("click", function() {
+
+        const start_date = $("#start-date").val();
+        const end_date = $("#end-date").val();
+        const category = $("#category").val();
+        const status = $("#status").val();
+        const alocation = $("#alocation").val();
+
+        $.ajax({
+            url: `{{url('procurement/purchase-request/export')}}`,
+            type: 'GET',
+            data: {
+                start_date: start_date,
+                end_date: end_date,
+                category: category,
+                status: status,
+                alocation: alocation,
+            },
+            xhrFields: {
+                responseType: 'blob', // Treat response as binary
+            },
+            success: function(data, status, xhr) {
+                // Create a Blob object from the response
+                const blob = new Blob([data], {
+                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                });
+
+                // Create a link element for downloading
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = 'transaction-reports.xlsx'; // Set the filename
+                document.body.appendChild(link); // Append link to the body
+                link.click(); // Trigger the download
+                document.body.removeChild(link); // Clean up the DOM
+
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Transaction report exported successfully.',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                });
+            },
+            error: function(xhr, status, error) {
+                Swal.fire('Error!', 'Failed to export the transaction report.', 'error');
+            },
+        });
+
+    });
 });
 </script>
 @endsection

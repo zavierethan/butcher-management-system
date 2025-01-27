@@ -1,6 +1,33 @@
 @extends('layouts.main')
+@section('css')
+<style>
+.loader {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    width: fit-content;
+    font-weight: bold;
+    font-family: monospace;
+    font-size: 30px;
+    clip-path: inset(0 100% 0 0);
+    animation: l5 2s steps(11) infinite;
+    z-index: 2;
+}
+
+.loader:before {
+    content: "Exporting..."
+}
+
+@keyframes l5 {
+    to {
+        clip-path: inset(0 -1ch 0 0)
+    }
+}
+</style>
+@endsection
 
 @section('main-content')
+<div class="loader"></div>
 <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
     <!--begin::Content wrapper-->
     <div class="d-flex flex-column flex-column-fluid">
@@ -12,7 +39,7 @@
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
                     <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-                        Order Lists</h1>
+                        Transaction Lists</h1>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
@@ -27,7 +54,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Order Lists</li>
+                        <li class="breadcrumb-item text-muted">Transaction Lists</li>
                         <!--end::Item-->
                     </ul>
                     <!--end::Breadcrumb-->
@@ -107,7 +134,7 @@
                                             <option value=" " selected="selected">Show All</option>
                                             <option value="1">Lunas</option>
                                             <option value="2">Pending</option>
-                                            <option value="3">Retur</option>
+                                            <option value="3">Return</option>
                                         </select>
                                         <!--end::Select-->
                                     </div>
@@ -125,7 +152,7 @@
                                             <!-- <option></option>
                                             <option value="" selected="selected">Show All</option> -->
                                             @foreach($branches as $branch)
-                                            <option value="{{$branch->id}}" <?php echo ($branch->id == Auth::user()->branch_id) ? "selected" : ""; ?>> {{$branch->code}}</option>
+                                            <option value="{{$branch->id}}" <?php echo ($branch->id == Auth::user()->branch_id) ? "selected" : ""; ?>> {{$branch->name}}</option>
                                             @endforeach
                                         </select>
                                         <!--end::Select-->
@@ -266,6 +293,8 @@
 @section('script')
 <script>
 $(document).ready(function() {
+    $('.loader').hide();
+
     const table = $("#kt_transactions_table").DataTable({
         processing: true,
         order: [
@@ -365,7 +394,6 @@ $(document).ready(function() {
                         <div class="text-center">
                             <a href="/orders/receipt/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" target="_blank" title="Cetak Faktur"><i class="fa-solid fa-print"></i></a>
                             <a href="/orders/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail Transaksi"><i class="fa-solid fa-magnifying-glass"></i></a>
-                            <a href="#" class="btn btn-sm btn-light btn-active-light-primary" title="Sync Jurnal"><i class="fa-solid fa-arrow-right-arrow-left"></i></a>
                         <div>
                     `;
                 }
@@ -383,7 +411,7 @@ $(document).ready(function() {
     });
 
     $("#btn-form-export").on("click", function() {
-
+        $('.loader').show();
         const start_date = $("#start-date").val() || "";
         const end_date = $("#end-date").val() || "";
         const payment_method = $("#payment-method").val() || "";
@@ -402,6 +430,10 @@ $(document).ready(function() {
             },
             xhrFields: {
                 responseType: 'blob', // Treat response as binary
+            },
+            beforeSend: function() {
+                // Show the loader before the request is sent
+                $('.loader').show();
             },
             success: function(data, status, xhr) {
                 $("#kt_modal_export_filter").modal('hide');

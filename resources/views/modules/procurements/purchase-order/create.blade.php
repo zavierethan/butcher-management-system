@@ -201,12 +201,8 @@
                     <div class="mb-1">
                         <label class="form-label fw-bold fs-6 mb-2">Nomor Purchase Request</label>
                         <div class="position-relative mb-3">
-                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-"
-                                name="purhcase_request" id="purhcase-request">
+                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="purhcase_request" id="purchase-request">
                                 <option value="">-</option>
-                                @foreach($purchaseRequests as $pr)
-                                <option value="{{$pr->id}}">{{$pr->request_number}}</option>
-                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -228,10 +224,16 @@
 
 @section('script')
 <script>
+$('#kt_modal_add_item').on('shown.bs.modal', function() {
+    $('#purhcase-request').select2({
+        dropdownParent: $('#kt_modal_add_item') // Ensure dropdown stays inside modal
+    });
+});
+
 $("#btn-form-add-item").on("click", function() {
 
     // Retrieve values from input fields
-    var selectedOption = $("#purhcase-request option:selected");
+    var selectedOption = $("#purchase-request option:selected");
     var purchaseRequestId = selectedOption.val();
 
     $.ajax({
@@ -251,16 +253,16 @@ $("#btn-form-add-item").on("click", function() {
                         <tr>
                             <td class="item-request-number">
                                 ${items.request_number}
-                                <input type="hidden" value="${items.purchase_request_item_id}" class="purchase-request-item-id" />
                             </td>
                             <td>
                                 ${items.name}
                                 <input type="hidden" value="${items.item_id}" class="item-id" />
+                                <input type="hidden" value="${items.purchase_request_item_id}" class="purchase-request-item-id" />
                             </td>
                             <td class="item-category">${items.category}</td>
                             <td class="item-price">${items.price}</td>
                             <td class="item-quantity">${items.quantity}</td>
-                            <td class="item-total-price">${items.price * items.quantity}</td>
+                            <td class="item-total-price">${items.total_price}</td>
                             <td class="text-center">
                                 <a href="#" class="btn btn-sm btn-danger" onclick="deleteRow(this)">Hapus</i></a>
                             </td>
@@ -281,7 +283,35 @@ $("#btn-form-add-item").on("click", function() {
 
 $("#category").on("change", function() {
     $("#item-categories").val($(this).val());
+
+    getPurchaseRequest($(this).val());
 });
+
+function getPurchaseRequest(param) {
+    $.ajax({
+        url: '/api/get-purchase-request/', // Laravel route to fetch products
+        type: 'GET',
+        data: {
+            category: param,
+        },
+        dataType: 'json',
+        beforeSend: function() {
+            // Clear existing options before the request
+            $('#purchase-request').html('<option value="">-</option>');
+        },
+        success: function(response) {
+            const selectBox = $('#purchase-request');
+
+            // Loop through the array and add each item as an option
+            response.forEach(item => {
+                selectBox.append(new Option(item.request_number, item.id));
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching products:', error);
+        }
+    });
+}
 
 $(document).on('click', '#btn-submit-request', function(e) {
     e.preventDefault();
@@ -303,14 +333,16 @@ $(document).on('click', '#btn-submit-request', function(e) {
                 $('#kt_items_table tbody tr').each(function() {
 
                     var itemId = $(this).find(".item-id").val();
+                    var itemReqNumber = $(this).find(".item-request-number").text().trim();
                     var purchaseRequestItemId = $(this).find(".purchase-request-item-id").val();
                     var itemCategory = $(this).find(".item-category").text().trim();
                     var itemQuantity = $(this).find(".item-quantity").text().trim();
-                    var itemPrice = $(this).find(".item-price").text().trim();
-                    var itemTotalPrice = $(this).find(".item-total-price").text().trim();
+                    var itemPrice = $(this).find(".item-price").text().trim().replace(/,/g, "");
+                    var itemTotalPrice = $(this).find(".item-total-price").text().trim().replace(/,/g, "");
 
                     itemLists.push({
                         item_id: itemId,
+                        item_req_number: itemReqNumber,
                         purchase_request_item_id: purchaseRequestItemId,
                         category: itemCategory,
                         quantity: itemQuantity,
@@ -356,18 +388,18 @@ $(document).on('click', '#btn-submit-request', function(e) {
                             confirmButtonText: 'Ok',
                             allowOutsideClick: false
                         }).then((result) => {
-                                let receiptUrl =
-                                    `{{ route('procurement.purchase-order.print-po', ['id' => '__order_id__']) }}`;
-                                receiptUrl = receiptUrl.replace(
-                                    '__order_id__', response
-                                    .order_id);
+                            let receiptUrl =
+                                `{{ route('procurement.purchase-order.print-po', ['id' => '__order_id__']) }}`;
+                            receiptUrl = receiptUrl.replace(
+                                '__order_id__', response
+                                .order_id);
 
-                                // Open the receipt in a new tab
-                                window.open(receiptUrl, '_blank');
+                            // Open the receipt in a new tab
+                            window.open(receiptUrl, '_blank');
 
-                                // Redirect the current page to the transaction index
-                                location.href =
-                                    `{{ route('procurement.purchase-order.index') }}`;
+                            // Redirect the current page to the transaction index
+                            location.href =
+                                `{{ route('procurement.purchase-order.index') }}`;
                         });
                     },
                     error: function(xhr, status, error) {

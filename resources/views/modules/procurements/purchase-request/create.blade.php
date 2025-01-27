@@ -100,8 +100,8 @@
                                                 <select class="form-select form-select-solid" data-control="select2"
                                                     data-placeholder="-" name="category" id="category">
                                                     <option value="">-</option>
-                                                    <option value="OP">Operational (OP)</option>
-                                                    <option value="PR">Product (PR)</option>
+                                                    <option value="OP">OPERATIONAL (OP)</option>
+                                                    <option value="PR">PRODUCT (PR)</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -238,8 +238,16 @@
 @section('script')
 <script>
 $(document).ready(function() {
+
+    $('#kt_modal_add_item').on('shown.bs.modal', function() {
+    $('#item').select2({
+        dropdownParent: $('#kt_modal_add_item') // Ensure dropdown stays inside modal
+    });
+
+});
     getItems();
 });
+
 $("#btn-form-add-item").on("click", function() {
 
     // Retrieve values from input fields
@@ -250,12 +258,6 @@ $("#btn-form-add-item").on("click", function() {
     var itemName = selectedOption.text();
     var quantity = $("#quantity").val();
     var price = $("#price").val();
-
-    // Check if all fields are filled
-    // if (!itemId || !itemName || !quantity || !price) {
-    //     alert("Please fill out all fields!");
-    //     return;
-    // }
 
     // Create a new row with the data
     var row = `

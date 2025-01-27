@@ -35,7 +35,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Create</li>
+                        <li class="breadcrumb-item text-muted">Edit</li>
                         <!--end::Item-->
                     </ul>
                     <!--end::Breadcrumb-->
@@ -59,10 +59,10 @@
                                     <div class="col-md-6">
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Kode Account</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Account Code</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="text" name="code" value="{{$data->code}}" readonly/>
+                                                        type="text" name="code" value="{{$data->account_code}}" readonly/>
                                                     <input class="form-control form-control-md form-control-solid"
                                                         type="hidden" name="id" value="{{$data->id}}" />
                                                 </div>
@@ -71,40 +71,40 @@
                                         <div class="separator my-5"></div>
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Nama Account</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Account Name</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="text" name="name" value="{{$data->name}}"/>
+                                                        type="text" name="name" value="{{$data->account_name}}"/>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="separator my-5"></div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="fv-row mb-5">
+                                        <!-- <div class="fv-row mb-5">
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Type Account</label>
                                                 <div class="position-relative mb-3">
                                                     <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="type">
                                                         <option value="">-</option>
-                                                        <option value="debit" <?php echo ($data->type == 'debit') ? 'selected' : ''; ?>>Debit</option>
-                                                        <option value="kredit" <?php echo ($data->type == 'kredit') ? 'selected' : ''; ?>>Kredit</option>
+                                                        <option value="debit" <?php echo ($data->account_type == 'debit') ? 'selected' : ''; ?>>Debit</option>
+                                                        <option value="kredit" <?php echo ($data->account_type == 'kredit') ? 'selected' : ''; ?>>Kredit</option>
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="separator my-5"></div>
+                                        <div class="separator my-5"></div> -->
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Category Account</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Account Type</label>
                                                 <div class="position-relative mb-3">
                                                     <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="category">
                                                         <option value="">-</option>
-                                                        <option value="1" <?php echo ($data->category == 1) ? 'selected' : ''; ?>>Aset</option>
-                                                        <option value="2" <?php echo ($data->category == 2) ? 'selected' : ''; ?>>Liabilitas</option>
-                                                        <option value="3" <?php echo ($data->category == 3) ? 'selected' : ''; ?>>Ekuitas</option>
-                                                        <option value="4" <?php echo ($data->category == 4) ? 'selected' : ''; ?>>Pendapatan</option>
-                                                        <option value="5" <?php echo ($data->category == 5) ? 'selected' : ''; ?>>Beban</option>
+                                                        <option value="Asset" <?php echo ($data->account_type == 'Asset') ? 'selected' : ''; ?>>Aset</option>
+                                                        <option value="Liability" <?php echo ($data->account_type == 'Liability') ? 'selected' : ''; ?>>Liabilitas</option>
+                                                        <option value="Equity" <?php echo ($data->account_type == 'Equity') ? 'selected' : ''; ?>>Ekuitas</option>
+                                                        <option value="Revenue" <?php echo ($data->account_type == 'Revenue') ? 'selected' : ''; ?>>Pendapatan</option>
+                                                        <option value="Expense" <?php echo ($data->account_type == 'Expense') ? 'selected' : ''; ?>>Beban</option>
                                                     </select>
                                                 </div>
                                             </div>

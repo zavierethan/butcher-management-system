@@ -96,7 +96,6 @@
                                         <th class="min-w-125px">KODE</th>
                                         <th class="min-w-125px">NAME</th>
                                         <th class="min-w-125px">TYPE</th>
-                                        <th class="min-w-125px">CATEGORY</th>
                                         <th class="text-center min-w-70px">ACTIONS</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -139,20 +138,16 @@ $(document).ready(function() {
             }
         },
         columns: [{
-                data: 'code',
+                data: 'account_code',
                 name: 'code'
             },
             {
-                data: 'name',
+                data: 'account_name',
                 name: 'name',
             },
             {
-                data: 'type',
+                data: 'account_type',
                 name: 'type'
-            },
-            {
-                data: 'category',
-                name: 'category'
             },
             {
                 data: null, // No direct field from the server

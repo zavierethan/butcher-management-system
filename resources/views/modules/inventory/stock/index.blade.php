@@ -11,7 +11,8 @@
                 <!--begin::Page title-->
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
-                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Stocks</h1>
+                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
+                        Stocks</h1>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
@@ -69,13 +70,18 @@
                                 <div class="d-flex align-items-center position-relative my-1">
                                     <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
                                     <span class="svg-icon svg-icon-1 position-absolute ms-6">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                            <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
-                                            <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="black" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none">
+                                            <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2"
+                                                rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
+                                            <path
+                                                d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z"
+                                                fill="black" />
                                         </svg>
                                     </span>
                                     <!--end::Svg Icon-->
-                                    <input type="text" data-kt-customer-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Search" />
+                                    <input type="text" data-kt-customer-table-filter="search"
+                                        class="form-control form-control-solid w-250px ps-15" placeholder="Search" />
                                 </div>
                                 <!--end::Toolbar-->
                             </div>
@@ -122,120 +128,76 @@
 
 @section('script')
 <script>
-    // Utility function to sanitize input values
-    const sanitizeValue = (value) => {
-        return value === '-' || value === '' ? null : value;
-    };
+// Utility function to sanitize input values
+const sanitizeValue = (value) => {
+    return value === '-' || value === '' ? null : value;
+};
 
-    $("#kt_products_table").DataTable({
-        processing: true,
-        serverSide: true,
-        paging: true, // Enable pagination
-        pageLength: 10, // Number of rows per page
-        ajax: {
-            url: `{{route('stocks.get-lists')}}`, // Replace with your route
-            type: 'GET',
-            dataSrc: function (json) {
-                return json.data; // Map the 'data' field
+$("#kt_products_table").DataTable({
+    processing: true,
+    serverSide: true,
+    paging: true, // Enable pagination
+    pageLength: 10, // Number of rows per page
+    ajax: {
+        url: `{{route('stocks.get-lists')}}`, // Replace with your route
+        type: 'GET',
+        dataSrc: function(json) {
+            return json.data; // Map the 'data' field
+        }
+    },
+    columns: [{
+            data: null,
+            name: 'product_code_name',
+            render: function(data, type, row) {
+                return `${row.product_code} - ${row.product_name}`;
             }
         },
-        columns: [
-            {
-                data: null,
-                name: 'product_code_name',
-                render: function (data, type, row) {
-                    return `${row.product_code} - ${row.product_name}`;
-                }
-            },
-            {
-                data: null,
-                name: 'branch_code_name',
-                render: function (data, type, row) {
-                    return `${row.branch_code} - ${row.branch_name}`;
-                }
-            },
-            { data: 'quantity', name: 'quantity' },
-            // {
-            //     data: 'opname_quantity',
-            //     name: 'opname_quantity',
-            //     render: function (data, type, row) {
-            //         const displayValue = data !== null ? data : '';
-            //         return `
-            //             <div class="d-flex align-items-center">
-            //                 <input type="text" 
-            //                     class="form-control form-control-sm inline-edit-opname_quantity me-2" 
-            //                     value="${displayValue}" 
-            //                     data-id="${row.id}" 
-            //                     data-field="opname_quantity" />
-            //                 <button type="button" class="btn btn-sm btn-light btn-active-light-primary btn-update-opname" data-id="${row.id}">Update</button>
-            //             </div>
-            //         `;
-            //     }
-            // },
-            { data: 'date', name: 'date' },
-            {
-                data: null, // No direct field from the server
-                name: 'action',
-                orderable: false, // Disable ordering for this column
-                searchable: false, // Disable searching for this column
-                render: function (data, type, row) {
-                    return `
+        {
+            data: null,
+            name: 'branch_code_name',
+            render: function(data, type, row) {
+                return `${row.branch_code} - ${row.branch_name}`;
+            }
+        },
+        {
+            data: 'quantity',
+            name: 'quantity'
+        },
+        // {
+        //     data: 'opname_quantity',
+        //     name: 'opname_quantity',
+        //     render: function (data, type, row) {
+        //         const displayValue = data !== null ? data : '';
+        //         return `
+        //             <div class="d-flex align-items-center">
+        //                 <input type="text"
+        //                     class="form-control form-control-sm inline-edit-opname_quantity me-2"
+        //                     value="${displayValue}"
+        //                     data-id="${row.id}"
+        //                     data-field="opname_quantity" />
+        //                 <button type="button" class="btn btn-sm btn-light btn-active-light-primary btn-update-opname" data-id="${row.id}">Update</button>
+        //             </div>
+        //         `;
+        //     }
+        // },
+        {
+            data: 'date',
+            name: 'date'
+        },
+        {
+            data: null, // No direct field from the server
+            name: 'action',
+            orderable: false, // Disable ordering for this column
+            searchable: false, // Disable searching for this column
+            render: function(data, type, row) {
+                return `
                         <div class="text-center">
                             <a href="/stock-logs/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Details</a>
                         <div>
                     `;
-                }
             }
-        ]
-    });
-
-    // Handle the Update button click with SweetAlert
-    // $(document).on('click', '.btn-update-opname', function (e) {
-    //     e.preventDefault();
-
-    //     const row = $(this).closest('tr');
-    //     const id = $(this).data('id');
-    //     const opnameQuantity = sanitizeValue(row.find('.inline-edit-opname_quantity').val());
-
-    //     const data = {
-    //         _token: '{{ csrf_token() }}',
-    //         id: id,
-    //         opname_quantity: opnameQuantity
-    //     };
-
-    //     // Show SweetAlert confirmation dialog
-    //     Swal.fire({
-    //         title: 'Are you sure?',
-    //         text: 'Do you want to update this row?',
-    //         icon: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonText: 'Yes, update it!',
-    //         cancelButtonText: 'Cancel',
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
-    //             // Send the AJAX request
-    //             $.ajax({
-    //                 url: '{{ route("stocks.update-opname") }}',
-    //                 type: 'POST',
-    //                 data: data,
-    //                 success: function (response) {
-    //                     if (response.success) {
-    //                         Swal.fire('Updated!', 'The row has been updated successfully.', 'success');
-    //                     } else {
-    //                         Swal.fire('Error!', 'Failed to update the row.', 'error');
-    //                     }
-    //                 },
-    //                 error: function (xhr) {
-    //                     const errors = xhr.responseJSON.errors;
-    //                     let errorMsg = '';
-    //                     for (const key in errors) {
-    //                         errorMsg += `${errors[key]}<br>`;
-    //                     }
-    //                     Swal.fire('Error!', errorMsg, 'error');
-    //                 },
-    //             });
-    //         }
-    //     });
-    // });
+        }
+    ]
+});
 </script>
 @endsection
