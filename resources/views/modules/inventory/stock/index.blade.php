@@ -98,7 +98,7 @@
                                         <th class="min-w-125px">Produk</th>
                                         <th class="min-w-125px">Cabang</th>
                                         <th class="min-w-125px">Kuantitas</th>
-                                        {{-- <th class="min-w-125px">Kuantitas Opname</th> --}}
+                                        <th class="min-w-125px">Kuantitas Opname</th>
                                         <th class="min-w-125px">Tanggal</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
@@ -152,6 +152,7 @@ $("#kt_products_table").DataTable({
                 return `${row.product_code} - ${row.product_name}`;
             }
         },
+<<<<<<< HEAD
         {
             data: null,
             name: 'branch_code_name',
@@ -191,13 +192,62 @@ $("#kt_products_table").DataTable({
             searchable: false, // Disable searching for this column
             render: function(data, type, row) {
                 return `
+=======
+        columns: [
+            {
+                data: null,
+                name: 'product_code_name',
+                render: function (data, type, row) {
+                    return `${row.product_code} - ${row.product_name}`;
+                }
+            },
+            {
+                data: null,
+                name: 'branch_code_name',
+                render: function (data, type, row) {
+                    return `${row.branch_code} - ${row.branch_name}`;
+                }
+            },
+            { data: 'quantity', name: 'quantity' },
+            { data: 'opname_quantity', name: 'opname_quantity' },
+            // {
+            //     data: 'opname_quantity',
+            //     name: 'opname_quantity',
+            //     render: function (data, type, row) {
+            //         const displayValue = data !== null ? data : '';
+            //         return `
+            //             <div class="d-flex align-items-center">
+            //                 <input type="text" 
+            //                     class="form-control form-control-sm inline-edit-opname_quantity me-2" 
+            //                     value="${displayValue}" 
+            //                     data-id="${row.id}" 
+            //                     data-field="opname_quantity" />
+            //                 <button type="button" class="btn btn-sm btn-light btn-active-light-primary btn-update-opname" data-id="${row.id}">Update</button>
+            //             </div>
+            //         `;
+            //     }
+            // },
+            { data: 'date', name: 'date' },
+            {
+                data: null, // No direct field from the server
+                name: 'action',
+                orderable: false, // Disable ordering for this column
+                searchable: false, // Disable searching for this column
+                render: function (data, type, row) {
+                    return `
+>>>>>>> 762f7a1 (hapus modul opname & pindahkan proses opname kedalam stock & stock_logs)
                         <div class="text-center">
                             <a href="/stock-logs/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Details</a>
                         <div>
                     `;
             }
+<<<<<<< HEAD
         }
     ]
 });
+=======
+        ]
+    });
+>>>>>>> 762f7a1 (hapus modul opname & pindahkan proses opname kedalam stock & stock_logs)
 </script>
 @endsection

@@ -74,22 +74,22 @@ class StockController extends Controller
         return redirect()->route('stocks.index');
     }
 
-    // public function updateOpname(Request $request) {
-    //     $baseUrl = config('app.url');
-    //     $id = $request->id;
+    public function updateOpname(Request $request) {
+        $baseUrl = config('app.url');
+        $id = $request->id;
 
-    //     \Log::debug("MASUK OPNAME DENGAN ID: {$id}");
+        \Log::debug("MASUK OPNAME DENGAN ID: {$id}");
 
-    //     $opname = DB::table('stocks')
-    //         ->where('id', $request->id)
-    //         ->update([
-    //             'opname_quantity' => $request->opname_quantity,
-    //         ]);
+        $opname = DB::table('stocks')
+            ->where('id', $request->id)
+            ->update([
+                'opname_quantity' => $request->opname_quantity,
+            ]);
 
-    //     if ($opname) {
-    //         return response()->json(['success' => true]);
-    //     } else {
-    //         return response()->json(['success' => false], 500);
-    //     }
-    // }
+        if ($opname) {
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false], 500);
+        }
+    }
 }

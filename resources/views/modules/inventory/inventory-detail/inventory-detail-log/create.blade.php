@@ -38,6 +38,14 @@
                                 <input class="form-control form-control-md form-control-solid" type="hidden" name="create_out_flag" id="create_out_flag" value="create_out_flag" />
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
+                                        <label class="form-label fw-bold fs-6 mb-2">Kuantitas Masuk</label>
+                                        <div class="position-relative mb-3">
+                                            <input class="form-control form-control-md form-control-solid" type="text" name="in_quantity" id="in_quantity" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="fv-row mb-5">
+                                    <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Kuantitas Keluar</label>
                                         <div class="position-relative mb-3">
                                             <input class="form-control form-control-md form-control-solid" type="text" name="out_quantity" id="out_quantity" />

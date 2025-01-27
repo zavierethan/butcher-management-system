@@ -79,4 +79,32 @@ class StockLogController extends Controller
             return response()->json(['error' => 'An error occurred while processing the request.'], 500);
         }
     }
+
+    public function getStockHeader(Request $request, $stockId) {
+        $params = $request->all();
+
+        $query = DB::table('stocks')
+            ->join('products', 'products.id', '=', 'stocks.product_id')
+            ->join('branches', 'branches.id', '=', 'stocks.branch_id')
+            ->select('stocks.*', 'products.name as product_name', 'branches.name as branch_name')
+            ->where('stocks.id', '=', $stockId);
+
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 10);
+
+        $totalRecords = $query->count();
+        $filteredRecords = $query->count();
+        $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get();
+
+        $response = [
+            'draw' => $request->input('draw'),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $data
+        ];
+
+        return response()->json($response);
+    }
+
+    
 }
