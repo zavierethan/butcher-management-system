@@ -289,6 +289,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/create', [App\Http\Controllers\StockController::class, 'create'])->name('create');
             Route::post('/save', [App\Http\Controllers\StockController::class, 'save'])->name('save');
             Route::post('/update-opname', [App\Http\Controllers\StockController::class, 'updateOpname'])->name('update-opname');
+            Route::get('/export', [App\Http\Controllers\StockController::class, 'export'])->name('export');
             // Route::get('/edit/{id}', [App\Http\Controllers\StockController::class, 'edit'])->name('edit');
             // Route::post('/update', [App\Http\Controllers\StockController::class, 'update'])->name('update');
         });

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use DB;
 use Log;
 use Illuminate\Database\QueryException;
+use App\Exports\StockExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StockController extends Controller
 {
@@ -14,8 +16,13 @@ class StockController extends Controller
     }
 
     public function getLists(Request $request) {
-
         $params = $request->all();
+
+        // Default date range: today
+        $today = date('Y-m-d');
+        $startDate = $params['startDate'] ?? $today;
+        $endDate = $params['endDate'] ?? $today;
+
 
         $query = DB::table('stocks')
             ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
@@ -28,12 +35,41 @@ class StockController extends Controller
                 'branches.name as branch_name'
             );
 
+        // Apply date range filter (default or provided)
+        $query->whereBetween('stocks.date', [$startDate, $endDate]);
+
+        // Apply global search
+        $searchValue = $request->input('searchTerm'); // DataTables search input
+        if (!empty($searchValue)) {
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('products.name', 'ilike', '%' . $searchValue . '%');
+            });
+        }
+
+        // Apply sorting
+        if ($request->has('order') && $request->order) {
+            $columnIndex = $request->order[0]['column']; // Column index from DataTables
+            $sortDirection = $request->order[0]['dir']; // 'asc' or 'desc'
+            $columnName = $request->columns[$columnIndex]['data']; // Column name
+
+            if (!empty($columnName) && in_array($columnName, [
+                'product_code', 'product_name', 'branch_code', 'branch_name', 'quantity', 'opname_quantity', 'date'
+            ])) {
+                $query->orderBy($columnName, $sortDirection);
+            }
+        }
+
+        if (!$request->has('order')) {
+            $query->orderBy('stocks.date', 'desc');
+        }
+
+        // Pagination parameters
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
 
-        $totalRecords = $query->count();
-        $filteredRecords = $query->count();
-        $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get();
+        $totalRecords = DB::table('stocks')->count(); // Total records without filters
+        $filteredRecords = $query->count(); // Total records after filters
+        $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get(); // Paginated data
 
         $response = [
             'draw' => $request->input('draw'),
@@ -92,4 +128,27 @@ class StockController extends Controller
             return response()->json(['success' => false], 500);
         }
     }
+
+    public function export(Request $request) {
+
+        $filters = [
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+        ];
+
+        // Pass filters to a new StockExport class
+        $export = new StockExport($filters);
+        $excelData = Excel::raw($export, \Maatwebsite\Excel\Excel::XLSX);
+
+        // Return the data as a proper response
+        return response($excelData, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="stock-reports.xlsx"',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+        ]);
+    }
+
+
 }
