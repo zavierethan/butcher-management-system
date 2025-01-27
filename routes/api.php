@@ -32,6 +32,8 @@ Route::get('get-purchase-order-items/', [App\Http\Controllers\Procurements\Purch
 
 Route::get('inventories/', [App\Http\Controllers\InventoryController::class, 'getListInventories']);
 
+Route::get('stock-header/{stockId}', [App\Http\Controllers\StockLogController::class, 'getStockHeader']);
+
 
 // Dashboards Summary
 Route::get('dashboard/store/get-data-summary/', [App\Http\Controllers\Dashboards\StoreDashboardController::class, 'getTransactionSummary']);

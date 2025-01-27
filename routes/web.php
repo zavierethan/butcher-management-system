@@ -291,7 +291,8 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/lists', [App\Http\Controllers\StockController::class, 'getLists'])->name('get-lists');
             Route::get('/create', [App\Http\Controllers\StockController::class, 'create'])->name('create');
             Route::post('/save', [App\Http\Controllers\StockController::class, 'save'])->name('save');
-            // Route::post('/update-opname', [App\Http\Controllers\StockController::class, 'updateOpname'])->name('update-opname');
+            Route::post('/update-opname', [App\Http\Controllers\StockController::class, 'updateOpname'])->name('update-opname');
+            Route::get('/export', [App\Http\Controllers\StockController::class, 'export'])->name('export');
             // Route::get('/edit/{id}', [App\Http\Controllers\StockController::class, 'edit'])->name('edit');
             // Route::post('/update', [App\Http\Controllers\StockController::class, 'update'])->name('update');
         });
@@ -301,20 +302,6 @@ Route::group(['middleware' => ['auth']], function() {
         Route::name('stock-logs.')->group(function () {
             Route::get('/{stockId}', [App\Http\Controllers\StockLogController::class, 'index'])->name('index');
             Route::get('/lists/{stockId}', [App\Http\Controllers\StockLogController::class, 'getLists'])->name('get-lists');
-            // Route::get('/create', [App\Http\Controllers\StockController::class, 'create'])->name('create');
-            // Route::post('/save', [App\Http\Controllers\StockController::class, 'save'])->name('save');
-            // Route::get('/edit/{id}', [App\Http\Controllers\StockController::class, 'edit'])->name('edit');
-            // Route::post('/update', [App\Http\Controllers\StockController::class, 'update'])->name('update');
-        });
-    });
-
-    Route::prefix('opnames')->group(function () {
-        Route::name('opnames.')->group(function () {
-            Route::get('/', [App\Http\Controllers\OpnameController::class, 'index'])->name('index');
-            Route::get('/lists', [App\Http\Controllers\OpnameController::class, 'getLists'])->name('get-lists');
-            Route::get('/date={date}&branch-id={branchId}', [App\Http\Controllers\OpnameController::class, 'opnameDetails'])->name('opname-details');
-            Route::get('/details/{date}{branchId}', [App\Http\Controllers\OpnameController::class, 'getDetails'])->name('get-details');
-            Route::post('/update-opname', [App\Http\Controllers\OpnameController::class, 'updateOpname'])->name('update-opname');
             // Route::get('/create', [App\Http\Controllers\StockController::class, 'create'])->name('create');
             // Route::post('/save', [App\Http\Controllers\StockController::class, 'save'])->name('save');
             // Route::get('/edit/{id}', [App\Http\Controllers\StockController::class, 'edit'])->name('edit');

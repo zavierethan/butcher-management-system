@@ -87,6 +87,34 @@
                         </div>
                         <!--begin::Card body-->
                         <div class="card-body pt-0 overflow-x-auto">
+                            <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Header</h1>
+                            <!--begin::Table-->
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="stock_header">
+                                <!--begin::Table head-->
+                                <thead>
+                                    <!--begin::Table row-->
+                                    <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                        <th class="min-w-125px">Nama Produk</th>
+                                        <th class="min-w-125px">Cabang</th>
+                                        <th class="min-w-125px">Kuantitas</th>
+                                        <th class="min-w-125px">Kuantitas Opname</th>
+                                        <th class="min-w-125px">Tanggal</th>
+                                        {{-- <th class="text-center min-w-70px">Actions</th> --}}
+                                    </tr>
+                                    <!--end::Table row-->
+                                </thead>
+                                <!--end::Table head-->
+                                <!--begin::Table body-->
+                                <tbody class="fw-bold text-gray-600">
+                                </tbody>
+                                <!--end::Table body-->
+                            </table>
+                            <!--end::Table-->
+                        </div>
+                        <!--end::Card body-->
+                        <!--begin::Card body-->
+                        <div class="card-body pt-0 overflow-x-auto">
+                            <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Logs</h1>
                             <!--begin::Table-->
                             <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_products_table">
                                 <!--begin::Table head-->
@@ -147,20 +175,88 @@
             { data: 'in_quantity', name: 'in_quantity' },
             { data: 'out_quantity', name: 'out_quantity' },
             { data: 'date', name: 'date' },
-            // {
-            //     data: null, // No direct field from the server
-            //     name: 'action',
-            //     orderable: false, // Disable ordering for this column
-            //     searchable: false, // Disable searching for this column
-            //     render: function (data, type, row) {
-            //         return `
-            //             <div class="text-center">
-            //                 <a href="/stock-logs/details/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Details</a>
-            //             <div>
-            //         `;
-            //     }
-            // }
         ]
+    });
+
+    // Initialize DataTable for "stock_header"
+    const stockHeaderTable = $("#stock_header").DataTable({
+        processing: true,
+        serverSide: true,
+        paging: true,
+        pageLength: 10,
+        ajax: {
+            url: `/api/stock-header/${stockId}`,
+            type: 'GET',
+        },
+        columns: [
+            { data: 'product_name', name: 'product_name' },
+            { data: 'branch_name', name: 'branch_name' },
+            { data: 'quantity', name: 'quantity' },
+            {
+                data: 'opname_quantity',
+                name: 'opname_quantity',
+                render: function (data, type, row) {
+                    const displayValue = data !== null ? data : '';
+                    return `
+                        <div class="d-flex align-items-center">
+                            <input type="text" 
+                                class="form-control form-control-sm inline-edit-opname_quantity me-2" 
+                                value="${displayValue}" 
+                                data-id="${row.id}" />
+                            <button type="button" 
+                                class="btn btn-sm btn-light btn-active-light-primary btn-update-opname" 
+                                data-id="${row.id}">Update</button>
+                        </div>
+                    `;
+                },
+            },
+            { data: 'date', name: 'date' },
+        ],
+    });
+
+    // Event listener for update button
+    $(document).on('click', '.btn-update-opname', function () {
+        const id = $(this).data('id'); // Get the row ID
+        const inputField = $(this).siblings('input.inline-edit-opname_quantity');
+        const opnameQuantity = inputField.val(); // Get the value from the input field
+
+        // Perform an AJAX request to update the opname quantity
+        $.ajax({
+            url: `{{ route('stocks.update-opname') }}`, // Update-opname route
+            type: 'POST',
+            data: {
+                _token: "{{ csrf_token() }}", // CSRF token for protection
+                id: id,
+                opname_quantity: opnameQuantity
+            },
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Opname quantity has been updated successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        $("#stock_header").DataTable().ajax.reload(); // Reload the table
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to update opname quantity. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function (xhr) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'An error occurred while processing your request.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
     });
 </script>
 @endsection
