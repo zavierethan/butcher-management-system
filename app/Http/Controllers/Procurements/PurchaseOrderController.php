@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Procurements;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Exports\PurchaseRequestExport;
+use App\Exports\PurchaseOrderExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 use DB;

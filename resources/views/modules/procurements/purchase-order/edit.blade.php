@@ -61,9 +61,9 @@
                                             <label class="form-label fw-bold fs-6 mb-2">Tanggal</label>
                                             <div class="position-relative mb-3">
                                                 <input class="form-control form-control-md form-control-solid"
-                                                    type="date" name="request_date" value="{{$purchaseOrder->order_date}}"
-                                                    id="order-date" readonly/>
-                                                <input type="hidden" name="id" value="{{$purchaseOrder->id}}" id="id"/>
+                                                    type="date" name="request_date"
+                                                    value="{{$purchaseOrder->order_date}}" id="order-date" readonly />
+                                                <input type="hidden" name="id" value="{{$purchaseOrder->id}}" id="id" />
                                             </div>
                                         </div>
                                     </div>
@@ -76,7 +76,9 @@
                                                     data-placeholder="-" name="alocation" id="supplier" disabled>
                                                     <option value="">-</option>
                                                     @foreach($suppliers as $supplier)
-                                                    <option value="{{$supplier->id}}" <?php echo ($purchaseOrder->supplier_id == $supplier->id) ? 'selected' : ''; ?>>{{$supplier->name}}</option>
+                                                    <option value="{{$supplier->id}}"
+                                                        <?php echo ($purchaseOrder->supplier_id == $supplier->id) ? 'selected' : ''; ?>>
+                                                        {{$supplier->name}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -104,7 +106,9 @@
                                             <label class="form-label fw-bold fs-6 mb-2">Total Pembelian</label>
                                             <div class="position-relative mb-3">
                                                 <input class="form-control form-control-md form-control-solid"
-                                                    type="text" name="total_amount" id="total-amount" value="@php echo number_format($purchaseOrder->total_amount, 0, '.', ',') @endphp" readonly/>
+                                                    type="text" name="total_amount" id="total-amount"
+                                                    value="@php echo number_format($purchaseOrder->total_amount, 0, '.', ',') @endphp"
+                                                    readonly />
                                             </div>
                                         </div>
                                     </div>
@@ -113,18 +117,26 @@
                                         <div class="mb-1">
                                             <label class="form-label fw-bold fs-6 mb-2">Status</label>
                                             <div class="position-relative mb-3">
-                                                <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="status" id="status">
+                                                <select class="form-select form-select-solid" data-control="select2"
+                                                    data-placeholder="-" name="status" id="status">
                                                     <option value="">-</option>
-                                                    <option value="pending" <?php echo ($purchaseOrder->status == 'pending') ? 'selected' : ''; ?>>PENDING</option>
-                                                    <option value="completed" <?php echo ($purchaseOrder->status == 'goods_received') ? 'selected' : ''; ?>>GOODS RECEIVED</option>
+                                                    <option value="pending"
+                                                        <?php echo ($purchaseOrder->status == 'pending') ? 'selected' : ''; ?>>
+                                                        PENDING</option>
+                                                    <option value="completed"
+                                                        <?php echo ($purchaseOrder->status == 'goods_received') ? 'selected' : ''; ?>>
+                                                        GOODS RECEIVED</option>
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="separator my-5"></div>
                                     <div class="text-end">
-                                        <a href="{{route('procurement.purchase-order.index')}}" class="btn btn-sm btn-danger">Cancel</a>
-                                        <a href="{{route('procurement.purchase-order.print-po', ['id' => $purchaseOrder->id])}}" target="_blank" class="btn btn-sm btn-primary" id="btn-print-po">Cetak PO</a>
+                                        <a href="{{route('procurement.purchase-order.index')}}"
+                                            class="btn btn-sm btn-danger">Cancel</a>
+                                        <a href="{{route('procurement.purchase-order.print-po', ['id' => $purchaseOrder->id])}}"
+                                            target="_blank" class="btn btn-sm btn-primary" id="btn-print-po">Cetak
+                                            PO</a>
                                         <a href="#" class="btn btn-sm btn-primary" id="btn-update-order">Update PO</a>
                                     </div>
                                 </div>
@@ -162,9 +174,16 @@
                                         <td>{{$item->name}}</td>
                                         <td class="text-center">{{$item->quantity}}</td>
                                         <td class="text-end">{{$item->price}}</td>
-                                        <td class="text-end item-total-price">@php echo number_format($item->total, 0, '.', ',') @endphp</td>
+                                        <td class="text-end item-total-price">@php echo number_format($item->total, 0,
+                                            '.', ',') @endphp</td>
                                     </tr>
                                     @endforeach
+                                    <tr>
+                                        <td colspan="4" class="fs-3 text-gray-900 text-end">Grand Total</td>
+                                        <td class="text-gray-900 fs-3 fw-bolder text-end">
+                                            @php echo number_format($purchaseOrder->total_amount, 0, '.', ',') @endphp
+                                        </td>
+                                    </tr>
                                 </tbody>
                                 <!--end::Table body-->
                             </table>
@@ -268,7 +287,8 @@ $(document).on('click', '#btn-update-order', function(e) {
                     var itemCategory = $(this).find(".item-category").text().trim();
                     var itemQuantity = $(this).find(".item-quantity").text().trim();
                     var itemPrice = $(this).find(".item-price").text().trim();
-                    var itemTotalPrice = $(this).find(".item-total-price").text().replace(/,/g, '');
+                    var itemTotalPrice = $(this).find(".item-total-price").text().replace(/,/g,
+                        '');
 
                     itemLists.push({
                         item_id: itemId,

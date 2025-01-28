@@ -666,9 +666,11 @@ $(document).ready(function() {
 });
 
 function getTransactionSummaryByCategory() {
+    let branchId = `{{Auth::user()->branch_id}}`;
     $.ajax({
         url: `/api/dashboard/store/get-data-summary/`,
         type: 'GET',
+        data: {branch_id: branchId},
         dataType: 'json',
         success: function(response) {
             // Loop through each product in the JSON response

@@ -283,7 +283,7 @@ License: For each use you must have a valid license purchased only from above li
                     <!--begin::Logo-->
                     <div class="app-sidebar-logo px-6" id="kt_app_sidebar_logo">
                         <!--begin::Logo image-->
-                        <a href="{{route('home')}}">
+                        <a href="">
                             <img alt="Logo" src="{{asset('assets/media/logos/default-dark.svg')}}"
                                 class="h-25px app-sidebar-logo-default" />
                             <img alt="Logo" src="{{asset('assets/media/logos/default-small.svg')}}"

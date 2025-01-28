@@ -83,6 +83,12 @@ License: For each use you must have a valid license purchased only from above li
                                 <!--end::Title-->
                             </div>
 
+                            @if(session('error'))
+                                <div class="alert alert-danger">
+                                    {{ session('error') }}
+                                </div>
+                            @endif
+
                             <!--end::Separator-->
                             <!--begin::Input group=-->
                             <div class="fv-row mb-8">

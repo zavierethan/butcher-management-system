@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/login', function () {
+    return view('auth.login');
+});
+
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -25,7 +29,11 @@ Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'login']
 Route::group(['middleware' => ['auth']], function() {
     Route::post('/logout', [App\Http\Controllers\Auth\AuthController::class, 'logout'])->name('logout');
 
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::prefix('dashboards')->group(function () {
+        Route::name('dashboards.')->group(function () {
+            Route::get('/store', [App\Http\Controllers\HomeController::class, 'index'])->name('store');
+        });
+    });
 
     //Account
     Route::prefix('users')->group(function () {

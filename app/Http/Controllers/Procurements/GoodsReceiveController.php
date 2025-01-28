@@ -137,7 +137,12 @@ class GoodsReceiveController extends Controller
                         DB::raw("TO_CHAR(purchase_order_items.price, 'FM999,999,999') as price"),
                         'purchase_order_items.received_quantity',
                         DB::raw("TO_CHAR(purchase_order_items.received_price, 'FM999,999,999') as received_price"),
-                        'purchase_order_items.realisation',
+                        DB::raw("
+                                CASE
+                                    WHEN purchase_order_items.realisation = 1 THEN 'TEREALISASI'
+                                    ELSE 'TIDAK TEREALISASI'
+                                END AS realisation
+                            "),
                         'purchase_order_items.remarks',
                     )
                     ->leftJoin('products', 'products.id', '=', 'purchase_order_items.item_id')

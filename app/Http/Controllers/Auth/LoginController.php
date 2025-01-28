@@ -25,7 +25,21 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected function redirectTo()
+    {
+        $groupId = Auth::user()->group_id;
+
+        switch ($groupId) {
+            case 1:
+                return '/dashboards/store'; // Redirect for group_id = 1
+            case 2:
+                return '/dashboards/store'; // Redirect for group_id = 2
+            case 3:
+                return '/dashboards/store'; // Redirect for group_id = 3
+            default:
+                return '/dashboards/store'; // Default redirect for other group_ids
+        }
+    }
 
     /**
      * Create a new controller instance.

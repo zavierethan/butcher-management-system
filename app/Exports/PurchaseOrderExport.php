@@ -24,29 +24,36 @@ class PurchaseOrderExport implements FromCollection, WithHeadings, WithCustomSta
     {
         // Fetching data from the database
         $query = DB::table('purchase_orders')
-            ->select(
-                DB::raw("TO_CHAR(purchase_orders.request_date, 'DD/MM/YYYY') as request_date"),
-                'branches.name as alocation',
-                'purchase_orders.pic',
-                'purchase_request_items.category',
-                'products.name',
-                DB::raw("TO_CHAR(purchase_request_items.price, 'FM999,999,999') as price"),
-                'purchase_request_items.quantity',
-                DB::raw(" ' ' AS satuan"),
-                DB::raw("TO_CHAR(purchase_request_items.quantity * purchase_request_items.price, 'FM999,999,999') as total_price"),
-                DB::raw("
-                    CASE
-                        WHEN purchase_request_items.approval_status = 1 THEN 'APPROVE' ELSE 'DECLINE'
-                    END as approval_status
-                "),
-                'purchase_request_items.realisation'
-            )
-            ->leftJoin('purchase_request_items', 'purchase_request_items.purchase_request_id', '=', 'purchase_orders.id')
-            ->leftJoin('products', 'products.id', '=', 'purchase_request_items.item_id')
-            ->leftJoin('branches', 'branches.id', '=', 'purchase_orders.alocation');
+                ->select(
+                    DB::raw("ROW_NUMBER() OVER (ORDER BY purchase_orders.id) AS numbering"),
+                    DB::raw("TO_CHAR(purchase_orders.order_date, 'DD/MM/YYYY') AS order_date"),
+                    'branches.name as alocation',
+                    'purchase_orders.purchase_order_number',
+                    'products.code',
+                    'products.name',
+                    DB::raw("TO_CHAR(purchase_order_items.price, 'FM999,999,999') AS unit_price"),
+                    'purchase_order_items.quantity',
+                    DB::raw("TO_CHAR(purchase_order_items.price * purchase_order_items.quantity, 'FM999,999,999') AS total_price"),
+                    DB::raw("TO_CHAR(purchase_order_items.received_price, 'FM999,999,999') AS received_price"),
+                    'purchase_order_items.received_quantity',
+                    DB::raw("TO_CHAR(purchase_order_items.received_price * purchase_order_items.received_quantity, 'FM999,999,999') AS actual_total_price"),
+                    DB::raw("TO_CHAR((purchase_order_items.received_price * purchase_order_items.received_quantity) - (purchase_order_items.price * purchase_order_items.quantity), 'FM999,999,999') AS price_gap"),
+                    DB::raw("
+                                CASE
+                                    WHEN purchase_order_items.realisation = 1 THEN 'TEREALISASI'
+                                    ELSE 'TIDAK TEREALISASI'
+                                END AS realisation_status
+                            "),
+                    'purchase_order_items.remarks'
+                )
+                ->leftJoin('purchase_order_items', 'purchase_order_items.purchase_order_id', '=', 'purchase_orders.id')
+                ->leftJoin('purchase_request_items', 'purchase_request_items.id', '=', 'purchase_order_items.purchase_request_item_id')
+                ->leftJoin('purchase_requests', 'purchase_requests.id', '=', 'purchase_request_items.purchase_request_id')
+                ->leftJoin('products', 'products.id', '=', 'purchase_order_items.item_id')
+                ->leftJoin('branches', 'branches.id', '=', 'purchase_requests.alocation');
 
             if (!empty($this->filters['start_date']) && !empty($this->filters['end_date'])) {
-                $query->whereBetween('purchase_orders.request_date', [
+                $query->whereBetween('purchase_orders.order_date', [
                     $this->filters['start_date'],
                     $this->filters['end_date']
                 ]);
@@ -77,27 +84,27 @@ class PurchaseOrderExport implements FromCollection, WithHeadings, WithCustomSta
     public function headings(): array
     {
         return [
+            'NO.',
             'TANGGAL',
             'ALOKASI',
-            'PIC',
+            'NOMOR PO',
             'KODE',
             'ITEM',
-            'KATEGORI',
             'HARGA SATUAN',
             'QTY',
-            'SATUAN',
-            'HARGA (Rp)',
-            'STATUS APPROVAL',
-            'REALISASI',
-            'HARGA AKTUAL',
+            'TOTAL HARGA',
+            'HARGA SATUAN (AKTUAL)',
+            'QTY (AKTUAL)',
+            'TOTAL HARGA (AKTUAL)',
             'SELISIH',
+            'REALISASI',
             'KETERANGAN',
         ];
     }
 
     public function startCell(): string
     {
-        return 'A5'; // Data starts at A5 (after the additional info rows)
+        return 'A1';
     }
 
     public function registerEvents(): array
@@ -106,16 +113,7 @@ class PurchaseOrderExport implements FromCollection, WithHeadings, WithCustomSta
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet;
 
-                // Add additional information above the table
-                $sheet->setCellValue('A1', 'TANGGAL');
-                $sheet->setCellValue('B1', $this->filters['start_date'].' - '.$this->filters['end_date']);
-
-                // Apply bold styling to the labels
-                $sheet->getStyle('A1:A2')->applyFromArray([
-                    'font' => ['bold' => true],
-                ]);
-
-                $sheet->getStyle('A5:M5')->applyFromArray([
+                $sheet->getStyle('A1:O1')->applyFromArray([
                     'font' => ['bold' => true],
                 ]);
 
@@ -123,7 +121,7 @@ class PurchaseOrderExport implements FromCollection, WithHeadings, WithCustomSta
                 $rowCount = $sheet->getDelegate()->getHighestRow(); // Get last row with data
                 $columnCount = $sheet->getDelegate()->getHighestColumn(); // Get last column with data
 
-                $tableRange = "A5:{$columnCount}{$rowCount}";
+                $tableRange = "A1:{$columnCount}{$rowCount}";
 
                 // Apply borders to the table
                 $sheet->getStyle($tableRange)->applyFromArray([

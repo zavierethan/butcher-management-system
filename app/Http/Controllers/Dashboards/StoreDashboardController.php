@@ -9,7 +9,7 @@ use Auth;
 
 class StoreDashboardController extends Controller
 {
-    public function getTransactionSummary() {
+    public function getTransactionSummary(Request $request) {
 
         $results = DB::table('transactions')
             ->selectRaw("
@@ -21,14 +21,14 @@ class StoreDashboardController extends Controller
                 END AS payment_method_name,
                 TO_CHAR(SUM(total_amount), 'FM999,999,999') AS total_amount
             ")
-            ->where('branch_id', Auth::user()->branch_id)
+            ->where('branch_id', $request['branch_id'])
             ->whereDate('transaction_date', today())
             ->groupBy('payment_method')
             ->orderByRaw('payment_method_name')
             ->get();
 
         // Query to get the total amount of all transactions
-        $totalAmount = DB::table('transactions')->where('branch_id', Auth::user()->branch_id)->whereDate('transaction_date', today())->sum('total_amount');
+        $totalAmount = DB::table('transactions')->where('branch_id', $request['branch_id'])->whereDate('transaction_date', today())->sum('total_amount');
 
         $formattedTotalAmount = number_format($totalAmount, 0, ',', ',');
 

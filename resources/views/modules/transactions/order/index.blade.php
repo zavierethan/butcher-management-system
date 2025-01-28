@@ -1,33 +1,9 @@
 @extends('layouts.main')
 @section('css')
-<style>
-.loader {
-    position: fixed;
-    top: 10%;
-    left: 50%;
-    width: fit-content;
-    font-weight: bold;
-    font-family: monospace;
-    font-size: 30px;
-    clip-path: inset(0 100% 0 0);
-    animation: l5 2s steps(11) infinite;
-    z-index: 2;
-}
 
-.loader:before {
-    content: "Exporting..."
-}
-
-@keyframes l5 {
-    to {
-        clip-path: inset(0 -1ch 0 0)
-    }
-}
-</style>
 @endsection
 
 @section('main-content')
-<div class="loader"></div>
 <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
     <!--begin::Content wrapper-->
     <div class="d-flex flex-column flex-column-fluid">
@@ -411,7 +387,6 @@ $(document).ready(function() {
     });
 
     $("#btn-form-export").on("click", function() {
-        $('.loader').show();
         const start_date = $("#start-date").val() || "";
         const end_date = $("#end-date").val() || "";
         const payment_method = $("#payment-method").val() || "";
@@ -430,10 +405,6 @@ $(document).ready(function() {
             },
             xhrFields: {
                 responseType: 'blob', // Treat response as binary
-            },
-            beforeSend: function() {
-                // Show the loader before the request is sent
-                $('.loader').show();
             },
             success: function(data, status, xhr) {
                 $("#kt_modal_export_filter").modal('hide');
