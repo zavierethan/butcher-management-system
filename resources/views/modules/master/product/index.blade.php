@@ -75,7 +75,7 @@
                                         </svg>
                                     </span>
                                     <!--end::Svg Icon-->
-                                    <input type="text" data-kt-customer-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Search" />
+                                    <input type="text" data-kt-customer-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Search Nama/Kode Produk" />
                                 </div>
                                 <!--end::Toolbar-->
                             </div>
@@ -121,16 +121,19 @@
 
 @section('script')
 <script>
-    $("#kt_products_table").DataTable({
+    const table = $("#kt_products_table").DataTable({
         processing: true,
+        order: [
+            [0, 'desc']
+        ],
         serverSide: true,
         paging: true, // Enable pagination
         pageLength: 10, // Number of rows per page
         ajax: {
-            url: `{{route('products.get-lists')}}`, // Replace with your route
+            url: `{{route('products.get-lists')}}`,
             type: 'GET',
-            dataSrc: function (json) {
-                return json.data; // Map the 'data' field
+            data: function(d) {
+                d.searchTerm = $('[data-kt-customer-table-filter="search"]').val(); // Attach search input value
             }
         },
         columns: [
@@ -152,6 +155,11 @@
                 }
             }
         ]
+    });
+
+    // Trigger search on keyup
+    $('[data-kt-customer-table-filter="search"]').on('keyup', function() {
+        table.draw(); // Redraw the DataTable
     });
 </script>
 @endsection
