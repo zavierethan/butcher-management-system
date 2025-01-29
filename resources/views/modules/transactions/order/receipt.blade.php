@@ -126,7 +126,7 @@
         @page {
             size: 58mm 210mm;
             /* Set the correct paper size */
-            margin: 0;
+            margin-bottom: 0;
             /* Remove any default browser margins */
         }
     }
