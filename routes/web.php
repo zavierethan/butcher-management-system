@@ -180,6 +180,31 @@ Route::group(['middleware' => ['auth']], function() {
         });
     });
 
+    Route::prefix('retails')->group(function () {
+        Route::name('retails.')->group(function () {
+
+            Route::prefix('daily-expenses')->group(function () {
+                Route::name('daily-expenses.')->group(function () {
+                    Route::get('/', [App\Http\Controllers\Retails\DailyExpensesController::class, 'index'])->name('index');
+                    Route::get('/lists', [App\Http\Controllers\Retails\DailyExpensesController::class, 'getLists'])->name('get-lists');
+                    Route::get('/create', [App\Http\Controllers\Retails\DailyExpensesController::class, 'create'])->name('create');
+                    Route::post('/save', [App\Http\Controllers\Retails\DailyExpensesController::class, 'save'])->name('save');
+                    Route::get('/edit/{id}', [App\Http\Controllers\Retails\DailyExpensesController::class, 'edit'])->name('edit');
+                    Route::post('/update', [App\Http\Controllers\Retails\DailyExpensesController::class, 'update'])->name('update');
+                });
+            });
+
+            Route::prefix('daily-report')->group(function () {
+                Route::name('daily-report.')->group(function () {
+                    Route::get('/', [App\Http\Controllers\Retails\DailyReportController::class, 'index'])->name('index');
+                    Route::get('/get-data-summary', [App\Http\Controllers\Retails\DailyReportController::class, 'getDataSummary'])->name('summary');
+                    Route::get('/export', [App\Http\Controllers\Retails\DailyReportController::class, 'export'])->name('export');
+                });
+            });
+
+        });
+    });
+
     // Productions
     Route::prefix('productions')->group(function () {
         Route::name('productions.')->group(function () {

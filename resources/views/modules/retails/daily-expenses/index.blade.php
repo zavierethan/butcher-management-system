@@ -11,14 +11,14 @@
                 <!--begin::Page title-->
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
-                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Journal Entries
-                    </h1>
+                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
+                        Daily Expenses</h1>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
                         <!--begin::Item-->
                         <li class="breadcrumb-item text-muted">
-                            <a href="index.html" class="text-muted text-hover-primary">Finances</a>
+                            <a href="index.html" class="text-muted text-hover-primary">Retails</a>
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
@@ -27,7 +27,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Journals</li>
+                        <li class="breadcrumb-item text-muted">Daily Expenses</li>
                         <!--end::Item-->
                     </ul>
                     <!--end::Breadcrumb-->
@@ -36,8 +36,7 @@
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
                     <!--begin::Secondary button-->
-                    <a href="{{route('finances.chart-of-accounts.create')}}"
-                        class="btn btn-sm fw-bold btn-secondary">New</a>
+                    <a href="{{route('retails.daily-expenses.create')}}" class="btn btn-sm fw-bold btn-secondary">New</a>
                     <!--end::Secondary button-->
                 </div>
                 <!--end::Actions-->
@@ -62,7 +61,6 @@
                                 <!--end::Search-->
                             </div>
                             <!--begin::Card title-->
-                            <!--begin::Card toolbar-->
                             <div class="card-toolbar">
                                 <!--begin::Filters-->
                                 <div class="d-flex flex-stack flex-wrap gap-4">
@@ -79,26 +77,6 @@
                                             id="end-date" />
                                         <!--end::Select-->
                                     </div>
-                                    <!--begin::Status-->
-                                    <div class="d-flex align-items-center fw-bold">
-                                        <!--begin::Label-->
-                                        <div class="text-gray-500 fs-7 me-2">Status</div>
-                                        <!--end::Label-->
-                                        <!--begin::Select-->
-                                        <select
-                                            class="form-select form-select-transparent text-gray-900 fs-7 lh-1 fw-bold py-0 ps-3 w-auto"
-                                            data-control="select2" data-hide-search="true"
-                                            data-dropdown-css-class="w-150px" data-placeholder="Select an option"
-                                            id="status">
-                                            <option></option>
-                                            <option value=" " selected="selected">Show All</option>
-                                            <option value="Draft">Draft</option>
-                                            <option value="Approve">Approve</option>
-                                            <option value="Rejected">Rejected</option>
-                                        </select>
-                                        <!--end::Select-->
-                                    </div>
-                                    <!--end::Status-->
                                 </div>
                                 <!--begin::Filters-->
                             </div>
@@ -108,17 +86,17 @@
                         <!--begin::Card body-->
                         <div class="card-body pt-0 overflow-x-auto">
                             <!--begin::Table-->
-                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_journals_table">
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_daily_expenses_table">
                                 <!--begin::Table head-->
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">TANGGAL</th>
                                         <th class="min-w-125px">DESKRIPSI</th>
-                                        <th class="min-w-125px">REFERENCES</th>
-                                        <th class="min-w-125px">STATUS</th>
-                                        <th class="min-w-125px">DIBUAT TANGGAL</th>
-                                        <th class="text-center min-w-70px">Actions</th>
+                                        <th class="min-w-125px">TOTAL</th>
+                                        <th class="min-w-125px">REF.</th>
+                                        <th class="min-w-125px">JENIS PEMBAYARAN</th>
+                                        <th class="text-center min-w-70px">ACTIONS</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -147,63 +125,54 @@
 @section('script')
 <script>
 $(document).ready(function() {
-
-    const table = $("#kt_journals_table").DataTable({
+    const table = $("#kt_daily_expenses_table").DataTable({
         processing: true,
-        order: [
-            [0, 'desc']
-        ],
         serverSide: true,
         paging: true, // Enable pagination
         pageLength: 10, // Number of rows per page
         ajax: {
-            url: `{{route('finances.journals.get-lists')}}`, // Replace with your route
+            url: `{{route('retails.daily-expenses.get-lists')}}`, // Replace with your route
             type: 'GET',
             data: function (d) {
                 // Add filter data to the request
                 d.start_date = $('#start-date').val();
                 d.end_date = $('#end-date').val();
-                d.status = $('#status').val();
             },
             dataSrc: function(json) {
                 return json.data; // Map the 'data' field
             }
         },
         columns: [{
-                data: 'code',
-                name: 'code'
-            },
-            {
                 data: 'date',
-                name: 'date',
+                name: 'date'
             },
             {
                 data: 'description',
-                name: 'description'
+                name: 'description',
+            },
+            {
+                data: 'amount',
+                name: 'amount'
             },
             {
                 data: 'reference',
                 name: 'reference'
             },
             {
-                data: 'status',
-                name: 'status',
+                data: 'payment_method',
+                name: 'payment_method',
                 render: function(data, type, row) {
-                    var status = "";
+                    var payment_method = "";
 
-                    if (row.status == 'Draft') {
-                        status = `<span class="badge bg-warning text-dark">Draft</span>`
+                    if (row.payment_method == 1) {
+                        payment_method = `<span class="badge bg-success text-dark">Tunai</span>`
                     }
 
-                    if (row.status == 'Approved') {
-                        status = `<span class="badge bg-success text-dark">Approved</span>`
+                    if (row.payment_method == 2) {
+                        payment_method = `<span class="badge bg-success text-dark">Piutang</span>`
                     }
 
-                    if (row.status == 'Rejected') {
-                        status = `<span class="badge bg-danger text-dark">Rejected</span>`
-                    }
-
-                    return status;
+                    return payment_method;
                 }
             },
             {
@@ -214,8 +183,7 @@ $(document).ready(function() {
                 render: function(data, type, row) {
                     return `
                         <div class="text-center">
-                            <a href="/orders/receipt/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" target="_blank" title="Cetak Faktur"><i class="fa-solid fa-print"></i></a>
-                            <a href="/orders/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail Transaksi"><i class="fa-solid fa-magnifying-glass"></i></a>
+                            <a href="/retails/daily-expenses/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Edit"><i class="fa-solid fa-edit"></i></a>
                         <div>
                     `;
                 }
@@ -223,7 +191,7 @@ $(document).ready(function() {
         ]
     });
 
-    $('#start-date, #end-date, #status').on('change', function () {
+    $('#start-date, #end-date').on('change', function () {
         table.draw(); // Trigger DataTable redraw with updated filter values
     });
 });

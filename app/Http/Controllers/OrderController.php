@@ -13,7 +13,8 @@ class OrderController extends Controller
 {
     public function index() {
         $branches =  DB::table('branches')->where('is_active', 1)->get();
-        return view('modules.transactions.order.index', compact('branches'));
+        $customers =  DB::table('customers')->orderBy('name', 'asc')->get();
+        return view('modules.transactions.order.index', compact('branches', 'customers'));
     }
 
     public function getLists(Request $request){
@@ -43,6 +44,10 @@ class OrderController extends Controller
                 $params['start_date'],
                 $params['end_date']
             ]);
+        }
+
+        if (!empty($params['customer'])) {
+            $query->where('transactions.customer_id', $params['customer']);
         }
 
         if (!empty($params['payment_method'])) {

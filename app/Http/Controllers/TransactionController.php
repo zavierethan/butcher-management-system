@@ -69,13 +69,13 @@ class TransactionController extends Controller
                     "discount" => $detail["discount"],
                 ]);
 
-                $stock = DB::table('stocks')->where('product_id', $detail["product_id"])->where('branch_id', $payloads["header"]["branch_id"])->where('date', date("Y-m-d"))->first();
+                // $stock = DB::table('stocks')->where('product_id', $detail["product_id"])->where('branch_id', $payloads["header"]["branch_id"])->where('date', date("Y-m-d"))->first();
 
-                DB::table('stock_logs')->insert([
-                    "stock_id" => $stock->id,
-                    "out_quantity" => $detail["quantity"],
-                    "date" => date("Y-m-d")
-                ]);
+                // DB::table('stock_logs')->insert([
+                //     "stock_id" => $stock->id,
+                //     "out_quantity" => $detail["quantity"],
+                //     "date" => date("Y-m-d")
+                // ]);
             }
 
             // Commit the transaction

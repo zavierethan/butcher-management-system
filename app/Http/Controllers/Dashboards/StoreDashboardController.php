@@ -30,12 +30,16 @@ class StoreDashboardController extends Controller
         // Query to get the total amount of all transactions
         $totalAmount = DB::table('transactions')->where('branch_id', $request['branch_id'])->whereDate('transaction_date', today())->sum('total_amount');
 
+        $totalExpenses = DB::table('daily_expenses')->where('branch_id', $request['branch_id'])->whereDate('date', today())->sum('amount');
+
         $formattedTotalAmount = number_format($totalAmount, 0, ',', ',');
+        $formattedTotalExpenses = number_format($totalExpenses, 0, ',', ',');
 
         // Convert results to an array and append total_amount key
         return response()->json([
             'total_amount_by_category' => $results,
-            'total_amount' => $formattedTotalAmount
+            'total_revenue' => $formattedTotalAmount,
+            'total_expense' => $formattedTotalExpenses
         ]);
     }
 }

@@ -93,9 +93,9 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">KODE</th>
-                                        <th class="min-w-125px">NAME</th>
-                                        <th class="min-w-125px">TYPE</th>
+                                        <th class="min-w-125px">ACCOUNT KODE</th>
+                                        <th class="min-w-125px">ACCOUNT NAME</th>
+                                        <th class="min-w-125px">ACCOUNT TYPE</th>
                                         <th class="text-center min-w-70px">ACTIONS</th>
                                     </tr>
                                     <!--end::Table row-->

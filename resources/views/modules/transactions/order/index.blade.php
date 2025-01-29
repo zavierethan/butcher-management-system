@@ -77,6 +77,22 @@
                                         <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="end-date"/>
                                         <!--end::Select-->
                                     </div>
+                                    <div class="d-flex align-items-center fw-bold">
+                                        <!--begin::Label-->
+                                        <div class="text-gray-500 fs-7 me-2">Customer</div>
+                                        <!--end::Label-->
+                                        <!--begin::Select-->
+                                        <select
+                                            class="form-select form-select-transparent text-gray-900 fs-7 lh-1 fw-bold py-0 ps-3 w-auto"
+                                            data-control="select2" data-hide-search="true"
+                                            data-dropdown-css-class="w-150px" data-placeholder="Select an option" id="customer">
+                                            <option value=" " selected="selected">Show All</option>
+                                            @foreach($customers as $customer)
+                                            <option value="{{$customer->id}}"> {{$customer->name}}</option>
+                                            @endforeach
+                                        </select>
+                                        <!--end::Select-->
+                                    </div>
                                     <!--begin::Destination-->
                                     <div class="d-flex align-items-center fw-bold">
                                         <!--begin::Label-->
@@ -87,7 +103,6 @@
                                             class="form-select form-select-transparent text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
                                             data-control="select2" data-hide-search="true"
                                             data-dropdown-css-class="w-150px" data-placeholder="Select an option" id="payment-method">
-                                            <option></option>
                                             <option value=" " selected="selected">Show All</option>
                                             <option value="1">Tunai</option>
                                             <option value="2">Piutang</option>
@@ -125,8 +140,7 @@
                                             class="form-select form-select-transparent text-gray-900 fs-7 lh-1 fw-bold py-0 ps-3 w-auto"
                                             data-control="select2" data-hide-search="true"
                                             data-dropdown-css-class="w-150px" data-placeholder="Select an option" id="branch-id" <?php echo (Auth::user()->group_id == 10) ? "disabled" : ""; ?>>
-                                            <!-- <option></option>
-                                            <option value="" selected="selected">Show All</option> -->
+                                            <option value=" " selected="selected">Show All</option>
                                             @foreach($branches as $branch)
                                             <option value="{{$branch->id}}" <?php echo ($branch->id == Auth::user()->branch_id) ? "selected" : ""; ?>> {{$branch->name}}</option>
                                             @endforeach
@@ -286,6 +300,7 @@ $(document).ready(function() {
                 // Add filter data to the request
                 d.start_date = $('#start-date').val();
                 d.end_date = $('#end-date').val();
+                d.customer = $('#customer').val();
                 d.payment_method = $('#payment-method').val();
                 d.status = $('#status').val();
                 d.branch_id = $('#branch-id').val();
@@ -321,10 +336,6 @@ $(document).ready(function() {
                     }
 
                     if (row.payment_method == 3) {
-                        paymentMethod = "COD"
-                    }
-
-                    if (row.payment_method == 4) {
                         paymentMethod = "Transfer"
                     }
 
@@ -382,7 +393,7 @@ $(document).ready(function() {
         table.search(searchTerm).draw(); // Trigger the search and refresh the DataTable
     });
 
-    $('#start-date, #end-date, #payment-method, #status, #branch-id').on('change', function () {
+    $('#start-date, #end-date, #customer, #payment-method, #status, #branch-id').on('change', function () {
         table.draw(); // Trigger DataTable redraw with updated filter values
     });
 

@@ -1,95 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Priyadis Butchers</title>
     <style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        /* background-color: #f4f4f4; */
+    }
+
+    .receipt {
+        background: #fff;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
+
+    .header h1 {
+        font-size: 23px;
+        font-weight: bold;
+        margin: 5px 0;
+    }
+
+    .header p {
+        font-size: 12px;
+        margin: 3px 0;
+    }
+
+    .line {
+        border-top: 1px dashed #000;
+        margin-bottom: 2px;
+    }
+
+    .info {
+        font-size: 12px;
+    }
+
+    .info p {
+        margin: 3px 0;
+        margin-bottom: 20px;
+    }
+
+    .info strong {
+        display: inline-block;
+        width: 120px;
+    }
+
+    .items {
+        font-size: 12px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .items table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .items th,
+    .items td {
+        text-align: left;
+        padding: 10px 0;
+    }
+
+    .items th {
+        font-weight: bold;
+    }
+
+    .total {
+        font-size: 12px;
+        font-weight: bold;
+        text-align: right;
+        margin-top: 10px;
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 10px;
+        margin-top: 10px;
+    }
+
+    @media print {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
+            align-items: flex-start;
+            height: auto;
             margin: 0;
-            /* background-color: #f4f4f4; */
+            padding: 0;
         }
 
         .receipt {
-            background: #fff;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            margin-top: 20px;
-        }
-
-        .header h1 {
-            font-size: 23px;
-            font-weight: bold;
-            margin: 5px 0;
-        }
-
-        .header p {
-            font-size: 12px;
-            margin: 3px 0;
+            width: 48mm;
+            /* Set to 48mm for content width */
+            max-width: 48mm;
+            height: auto;
+            padding: 2mm;
+            margin: 0;
         }
 
         .line {
             border-top: 1px dashed #000;
-            margin-bottom: 2px;
+            margin: 0;
+            padding: 0;
+            height: 1px;
         }
 
-        .info {
-            font-size: 12px;
+        /* Force the exact paper size */
+        @page {
+            size: 58mm 210mm;
+            /* Set the correct paper size */
+            margin: 0;
+            /* Remove any default browser margins */
         }
-
-        .info p {
-            margin: 3px 0;
-            margin-bottom: 20px;
-        }
-
-        .info strong {
-            display: inline-block;
-            width: 120px;
-        }
-
-        .items {
-            font-size: 12px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
-
-        .items table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .items th, .items td {
-            text-align: left;
-            padding: 10px 0;
-        }
-
-        .items th {
-            font-weight: bold;
-        }
-
-        .total {
-            font-size: 12px;
-            font-weight: bold;
-            text-align: right;
-            margin-top: 10px;
-        }
-
-        .footer {
-            text-align: center;
-            font-size: 10px;
-            margin-top: 10px;
-        }
-
+    }
     </style>
 </head>
+
 <body>
     <div class="receipt">
         <div class="line"></div>
@@ -160,13 +203,15 @@
                         <td style="font-weight: bold;" colspan="2">Subtotal</td>
                         <td></td>
                         <td></td>
-                        <td style="text-align: right;">@php echo number_format($info->total_amount, 0, '.', ',') @endphp</td>
+                        <td style="text-align: right;">@php echo number_format($info->total_amount, 0, '.', ',') @endphp
+                        </td>
                     </tr>
                     <tr>
                         <td style="font-weight: bold;" colspan="2">Ongkos Kirim</td>
                         <td></td>
                         <td></td>
-                        <td style="text-align: right;">@php echo number_format($info->shipping_cost, 0, '.', ',') @endphp</td>
+                        <td style="text-align: right;">@php echo number_format($info->shipping_cost, 0, '.', ',')
+                            @endphp</td>
                     </tr>
                     <tr>
                         <td style="font-weight: bold;">Total</td>
@@ -175,8 +220,8 @@
                         <td></td>
                         <td style="text-align: right;">
                             @php
-                                $grand_total = ($info->total_amount - $info->discount) + $info->shipping_cost;
-                                echo number_format($grand_total, 0, '.', ',');
+                            $grand_total = ($info->total_amount - $info->discount) + $info->shipping_cost;
+                            echo number_format($grand_total, 0, '.', ',');
                             @endphp
                         </td>
                     </tr>
@@ -191,4 +236,5 @@
         </div>
     </div>
 </body>
+
 </html>
