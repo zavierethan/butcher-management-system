@@ -88,28 +88,83 @@
                         <!--begin::Card body-->
                         <div class="card-body pt-0 overflow-x-auto">
                             <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Header</h1>
-                            <!--begin::Table-->
-                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="stock_header">
-                                <!--begin::Table head-->
-                                <thead>
-                                    <!--begin::Table row-->
-                                    <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">Nama Produk</th>
-                                        <th class="min-w-125px">Cabang</th>
-                                        <th class="min-w-125px">Kuantitas</th>
-                                        <th class="min-w-125px">Kuantitas Opname</th>
-                                        <th class="min-w-125px">Tanggal</th>
-                                        {{-- <th class="text-center min-w-70px">Actions</th> --}}
-                                    </tr>
-                                    <!--end::Table row-->
-                                </thead>
-                                <!--end::Table head-->
-                                <!--begin::Table body-->
-                                <tbody class="fw-bold text-gray-600">
-                                </tbody>
-                                <!--end::Table body-->
-                            </table>
-                            <!--end::Table-->
+                            
+                                <div class="card">
+                                    <div class="card-body pt-10">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="fv-row mb-5">
+                                                    <div class="mb-1">
+                                                        <label class="form-label fw-bold fs-6 mb-2">Nama Produk</label>
+                                                        <div class="position-relative mb-3">
+                                                            <input class="form-control form-control-md form-control-solid"
+                                                                type="text" value="{{ $stockHeader->product_code }} - {{ $stockHeader->product_name }}" readonly />
+                                                            <input class="form-control form-control-md form-control-solid"
+                                                                type="hidden" value="{{ $stockHeader->id }}" id="stock-id"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="separator my-5"></div>
+                                                <div class="fv-row mb-5">
+                                                    <div class="mb-1">
+                                                        <label class="form-label fw-bold fs-6 mb-2">Cabang</label>
+                                                        <div class="position-relative mb-3">
+                                                            <input class="form-control form-control-md form-control-solid"
+                                                                value="{{ $stockHeader->branch_code }} - {{ $stockHeader->branch_name }}" readonly />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="separator my-5"></div>
+                                                <div class="fv-row mb-5">
+                                                    <div class="mb-1">
+                                                        <label class="form-label fw-bold fs-6 mb-2">Tanggal</label>
+                                                        <div class="position-relative mb-3">
+                                                            <input class="form-control form-control-md form-control-solid"
+                                                                type="text" value="{{ $stockHeader->date }}" readonly />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="fv-row mb-5">
+                                                    <div class="mb-1">
+                                                        <label class="form-label fw-bold fs-6 mb-2">Kuantitas Awal</label>
+                                                        <div class="position-relative mb-3">
+                                                            <input class="form-control form-control-md form-control-solid"
+                                                                value="{{ $stockHeader->quantity }}" readonly />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="separator my-5"></div>
+                                                <div class="fv-row mb-5">
+                                                    <div class="mb-1">
+                                                        <label class="form-label fw-bold fs-6 mb-2">Kuantitas Realtime</label>
+                                                        <div class="position-relative mb-3">
+                                                            <input class="form-control form-control-md form-control-solid"
+                                                                value="{{ $stockHeader->total_quantity }}" readonly />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="separator my-5"></div>
+                                                <div class="fv-row mb-5">
+                                                    <div class="mb-1">
+                                                        <label class="form-label fw-bold fs-6 mb-2">Kuantitas Opname</label>
+                                                        <div class="position-relative mb-3">
+                                                            <input class="form-control form-control-md form-control-solid"
+                                                                value="{{ $stockHeader->opname_quantity }}" id="opname-quantity" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="separator my-5"></div>
+                                                <div class="text-end">
+                                                    <a href="{{ route('stocks.index') }}" class="btn btn-danger">Back</a>
+                                                    <a href="#" class="btn btn-primary" id="btn-update">Update</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                         </div>
                         <!--end::Card body-->
                         <!--begin::Card body-->
@@ -124,7 +179,7 @@
                                         <th class="min-w-125px">Referensi</th>
                                         <th class="min-w-125px">Masuk</th>
                                         <th class="min-w-125px">Keluar</th>
-                                        <th class="min-w-125px">Tanggal</th>
+                                        <th class="min-w-125px">Waktu</th>
                                         {{-- <th class="text-center min-w-70px">Actions</th> --}}
                                     </tr>
                                     <!--end::Table row-->
@@ -214,48 +269,56 @@
         ],
     });
 
-    // Event listener for update button
-    $(document).on('click', '.btn-update-opname', function () {
-        const id = $(this).data('id'); // Get the row ID
-        const inputField = $(this).siblings('input.inline-edit-opname_quantity');
-        const opnameQuantity = inputField.val(); // Get the value from the input field
+    $(document).ready(function() {
+        $('#btn-update').on('click', function(e) {
+            e.preventDefault();
 
-        // Perform an AJAX request to update the opname quantity
-        $.ajax({
-            url: `{{ route('stocks.update-opname') }}`, // Update-opname route
-            type: 'POST',
-            data: {
-                _token: "{{ csrf_token() }}", // CSRF token for protection
-                id: id,
-                opname_quantity: opnameQuantity
-            },
-            success: function (response) {
-                if (response.success) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'Opname quantity has been updated successfully.',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        $("#stock_header").DataTable().ajax.reload(); // Reload the table
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Failed to update opname quantity. Please try again.',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
+            let opname_quantity = $("#opname-quantity").val();
+            let id = $("#stock-id").val();
+
+            Swal.fire({
+                title: 'Apakah anda yakin untuk memperbaharui kuantitas opname?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Update Opname'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    const payload = {
+                        id: id,
+                        opname_quantity: opname_quantity
+                    };
+
+                    console.log(payload)
+
+                    $.ajax({
+                        url: `{{route('stocks.update-opname')}}`,
+                        type: 'POST',
+                        contentType: 'application/json',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: JSON.stringify(payload),
+                        success: function(response) {
+                            Swal.fire({
+                                title: 'Suceess !',
+                                text: 'Data berhasil di perbaharui',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire(
+                                'Error!',
+                                error,
+                                'error'
+                            )
+                        }
                     });
                 }
-            },
-            error: function (xhr) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'An error occurred while processing your request.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            }
+            });
         });
     });
 </script>

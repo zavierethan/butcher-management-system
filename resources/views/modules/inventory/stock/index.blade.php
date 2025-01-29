@@ -97,7 +97,8 @@
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">Produk</th>
                                         <th class="min-w-125px">Cabang</th>
-                                        <th class="min-w-125px">Kuantitas</th>
+                                        <th class="min-w-125px">Kuantitas Awal</th>
+                                        <th class="min-w-125px">Kuantitas Realtime</th>
                                         <th class="min-w-125px">Kuantitas Opname</th>
                                         <th class="min-w-125px">Tanggal</th>
                                         <th class="text-center min-w-70px">Actions</th>
@@ -168,6 +169,7 @@
                 }
             },
             { data: 'quantity', name: 'quantity' },
+            { data: 'realtime_quantity', name: 'realtime_quantity' },
             { data: 'opname_quantity', name: 'opname_quantity' },
             { data: 'date', name: 'date' },
             {

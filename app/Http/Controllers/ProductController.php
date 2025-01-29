@@ -20,12 +20,32 @@ class ProductController extends Controller
             ->leftJoin('product_categories', 'products.category_id', '=', 'product_categories.id')
             ->select('products.*', 'product_categories.name as category_name');
 
+        // Apply global search if provided
+        if ($request->has('searchTerm') && !empty($request->input('searchTerm'))) {
+            $searchValue = strtoupper($request->input('searchTerm'));
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('products.name', 'ilike', '%' . $searchValue . '%')
+                ->orWhere('products.code', 'ilike', '%' . $searchValue . '%');
+            });
+        }
+        
+        // Apply sorting
+        if ($request->has('order') && $request->order) {
+            $columnIndex = $request->order[0]['column']; // Column index from the DataTable
+            $sortDirection = $request->order[0]['dir']; // 'asc' or 'desc'
+            $columnName = $request->columns[$columnIndex]['data']; // Column name
+
+            $query->orderBy($columnName, $sortDirection);
+        }
+
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
 
-        $totalRecords = $query->count();
-        $filteredRecords = $query->count();
-        $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get();
+        // Count total and filtered records
+        $totalRecords = DB::table('products')->count(); // Total without filters
+        $filteredRecords = $query->count(); // Count after applying filters
+
+        $data = $query->skip($start)->take($length)->get();
 
         $response = [
             'draw' => $request->input('draw'),
