@@ -235,6 +235,81 @@
         <div class="footer">
         </div>
     </div>
+
+    <script>
+        clientPrinters = printersList;
+        var options = '';
+        for (var i = 0; i < clientPrinters.length; i++) {
+            options += '<option>' + clientPrinters[i] + '</option>';
+        }
+        $('#printerName').html(options);
+
+        function jspmWSStatus() {
+            if (JSPM.JSPrintManager.websocket_status == JSPM.WSStatus.Open)
+                return true;
+            else if (JSPM.JSPrintManager.websocket_status == JSPM.WSStatus.Closed) {
+                console.warn('JSPrintManager (JSPM) is not installed or not running! Download JSPM Client App from https://neodynamic.com/downloads/jspm');
+                return false;
+            }
+            else if (JSPM.JSPrintManager.websocket_status == JSPM.WSStatus.Blocked) {
+                alert('JSPM has blocked this website!');
+                return false;
+            }
+        }
+
+        function doPrinting() {
+            if (jspmWSStatus()) {
+                var escpos = Neodynamic.JSESCPOSBuilder;
+                var doc = new escpos.Document();
+
+                // Receipt content as ESC/POS commands
+                doc
+                    .font(escpos.FontFamily.A)
+                    .align(escpos.TextAlignment.Center)
+                    .style([escpos.FontStyle.Bold])
+                    .text("Priyadis Butchers")
+                    .style([escpos.FontStyle.Regular])
+                    .text("{{$info->address}}")
+                    .text("Telp: {{$info->phone_number}}")
+                    .feed(1)
+                    .line(2)
+                    .text("No Transaksi: {{$info->code}}")
+                    .text("Tanggal: {{$info->transaction_date}}")
+                    .text("Kasir: {{$info->created_by}}")
+                    .feed(1)
+                    .line(1);
+
+                @foreach($items as $item)
+                    doc
+                        .text("{{$no++}}. {{$item->name}}")
+                        .text("Qty: {{$item->quantity}}")
+                        .text("Harga: {{$item->base_price}}")
+                        .text("Subtotal: {{$item->sell_price}}")
+                        .feed(1);
+                    @if($item->discount > 0)
+                        doc
+                            .text("- Discount: {{$item->discount}}")
+                            .feed(1);
+                    @endif
+                @endforeach
+
+                doc
+                    .line(1)
+                    .text("Subtotal: @php echo number_format($info->total_amount, 0, '.', ',') @endphp")
+                    .text("Ongkos Kirim: @php echo number_format($info->shipping_cost, 0, '.', ',') @endphp")
+                    .text("Total: @php echo number_format($grand_total, 0, '.', ',') @endphp")
+                    .feed(2)
+                    .cut();
+
+                var cpj = new JSPM.ClientPrintJob();
+                var myPrinter = new JSPM.InstalledPrinter($('#printerName').val());
+                cpj.clientPrinter = myPrinter;
+                cpj.binaryPrinterCommands = doc.generateUInt8Array();
+                cpj.sendToClient();
+            }
+        }
+    </script>
 </body>
+
 
 </html>

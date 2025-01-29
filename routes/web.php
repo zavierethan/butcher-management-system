@@ -178,7 +178,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/export', [App\Http\Controllers\OrderController::class, 'export'])->name('export');
             Route::get('/receipt/{id}', [App\Http\Controllers\OrderController::class, 'printReceipt'])->name('print-receipt');
 
-            Route::get('/print-thermal-test', [App\Http\Controllers\OrderController::class, 'printThermal'])->name('print-thermal');
+            Route::get('/print-thermal-test/{id}', [App\Http\Controllers\OrderController::class, 'printThermal'])->name('print-thermal');
         });
     });
 

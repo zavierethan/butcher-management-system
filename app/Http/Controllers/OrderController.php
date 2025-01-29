@@ -227,7 +227,56 @@ class OrderController extends Controller
         return $pdf->stream('receipt.pdf'); // To display
     }
 
-    public function printThermal() {
-        return view('modules.transactions.order.thermal-print');
+    public function printThermal($id) {
+        $info = DB::table('transactions')
+                    ->select(
+                        'transactions.id',
+                        'transactions.code',
+                        DB::raw("TO_CHAR(transactions.transaction_date, 'dd/mm/YYYY') as transaction_date"),
+                        DB::raw("
+                            CASE
+                                WHEN transactions.payment_method = '1' THEN 'TUNAI'
+                                WHEN transactions.payment_method = '2' THEN 'PIUTANG'
+                                WHEN transactions.payment_method = '3' THEN 'COD'
+                                WHEN transactions.payment_method = '4' THEN 'TRANSFER'
+                            ELSE
+                                '-'
+                            END AS payment_method
+                        "),
+                        'transactions.discount',
+                        'transactions.shipping_cost',
+                        'transactions.total_amount',
+                        'transactions.status',
+                        'customers.name as customer_name',
+                        'users.name as created_by',
+                        'branches.name as branhces',
+                        'branches.address',
+                        'branches.phone_number'
+                    )
+                    ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
+                    ->leftJoin('users', 'users.id', '=', 'transactions.created_by')
+                    ->leftJoin('branches', 'branches.id', '=', 'users.branch_id')
+                    ->where('transactions.id', $id)->first();
+
+        $items = DB::table('transaction_items')
+                    ->select(
+                        'products.id',
+                        'products.code',
+                        'products.name',
+                        'transaction_items.quantity',
+                        'transaction_items.base_price',
+                        'transaction_items.discount',
+                        'transaction_items.unit_price as sell_price'
+                    )
+                    ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')
+                    ->where('transaction_id', $info->id)->get()->map(function ($item) {
+                        // Format the prices using number_format
+                        $item->base_price = number_format($item->base_price, 0, '.', ','); // Format for money
+                        $item->sell_price = number_format($item->sell_price, 0, '.', ','); // Format for money
+                        return $item;
+                    });
+
+
+        return view('modules.transactions.order.thermal-print', compact('info', 'items'));
     }
 }
