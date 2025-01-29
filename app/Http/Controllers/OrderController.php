@@ -9,6 +9,9 @@ use DB;
 use PDF;
 use Auth;
 
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+
 class OrderController extends Controller
 {
     public function index() {
@@ -228,55 +231,29 @@ class OrderController extends Controller
     }
 
     public function printThermal($id) {
-        $info = DB::table('transactions')
-                    ->select(
-                        'transactions.id',
-                        'transactions.code',
-                        DB::raw("TO_CHAR(transactions.transaction_date, 'dd/mm/YYYY') as transaction_date"),
-                        DB::raw("
-                            CASE
-                                WHEN transactions.payment_method = '1' THEN 'TUNAI'
-                                WHEN transactions.payment_method = '2' THEN 'PIUTANG'
-                                WHEN transactions.payment_method = '3' THEN 'COD'
-                                WHEN transactions.payment_method = '4' THEN 'TRANSFER'
-                            ELSE
-                                '-'
-                            END AS payment_method
-                        "),
-                        'transactions.discount',
-                        'transactions.shipping_cost',
-                        'transactions.total_amount',
-                        'transactions.status',
-                        'customers.name as customer_name',
-                        'users.name as created_by',
-                        'branches.name as branhces',
-                        'branches.address',
-                        'branches.phone_number'
-                    )
-                    ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
-                    ->leftJoin('users', 'users.id', '=', 'transactions.created_by')
-                    ->leftJoin('branches', 'branches.id', '=', 'users.branch_id')
-                    ->where('transactions.id', $id)->first();
+        $printerName = "USB002"; // Replace with the name of your printer
 
-        $items = DB::table('transaction_items')
-                    ->select(
-                        'products.id',
-                        'products.code',
-                        'products.name',
-                        'transaction_items.quantity',
-                        'transaction_items.base_price',
-                        'transaction_items.discount',
-                        'transaction_items.unit_price as sell_price'
-                    )
-                    ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')
-                    ->where('transaction_id', $info->id)->get()->map(function ($item) {
-                        // Format the prices using number_format
-                        $item->base_price = number_format($item->base_price, 0, '.', ','); // Format for money
-                        $item->sell_price = number_format($item->sell_price, 0, '.', ','); // Format for money
-                        return $item;
-                    });
+        // Create the printer connector
+        $connector = new WindowsPrintConnector($printerName);
 
+        try {
+            // Initialize the printer
+            $printer = new Printer($connector);
 
-        return view('modules.transactions.order.thermal-print', compact('info', 'items'));
+            // Print some text
+            $printer->text("Receipt\n");
+            $printer->text("Item 1 - $10.00\n");
+            $printer->text("Item 2 - $15.00\n");
+            $printer->text("Total - $25.00\n");
+
+            // Cut the paper and close the connection
+            $printer->cut();
+            $printer->close();
+        } catch (\Exception $e) {
+            // Handle any exceptions
+            return response()->json(['error' => $e->getMessage()]);
+        }
+
+        return response()->json(['status' => 'Printed successfully']);
     }
 }

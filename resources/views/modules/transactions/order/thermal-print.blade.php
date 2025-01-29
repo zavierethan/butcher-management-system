@@ -5,6 +5,22 @@
     <meta charset="utf-8" />
 </head>
 <body>
+
+    <div style="text-align:center">
+        <h1>Advanced ESC/POS Printing from Javascript</h1>
+        <hr />
+        <label class="checkbox">
+            <input type="checkbox" id="useDefaultPrinter" /> <strong>Print to Default printer</strong>
+        </label>
+        <p>or...</p>
+        <div id="installedPrinters">
+            <label for="printerName">Select an installed Printer:</label>
+            <select name="printerName" id="printerName"></select>
+        </div>
+        <br /><br />
+        <button type="button" onclick="doPrinting();">Print Now...</button>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.5/bluebird.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 
