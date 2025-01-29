@@ -222,7 +222,7 @@ class OrderController extends Controller
         $pdf = PDF::loadView('modules.transactions.order.receipt', [
             "info" => $detailTransaction,
             "items" => $detailItems
-        ])->setPaper([0, 0, 330, 470]);
+        ])->setPaper([0, 0, 330, 700]);
 
         return $pdf->stream('receipt.pdf'); // To display
     }
