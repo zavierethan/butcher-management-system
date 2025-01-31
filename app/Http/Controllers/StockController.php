@@ -121,21 +121,59 @@ class StockController extends Controller
     }
 
     public function updateOpname(Request $request) {
-        $baseUrl = config('app.url');
         $id = $request->id;
 
         \Log::debug("MASUK OPNAME DENGAN ID: {$id}");
 
-        $opname = DB::table('stocks')
-            ->where('id', $request->id)
-            ->update([
-                'opname_quantity' => $request->opname_quantity,
+        try {
+            DB::beginTransaction();
+
+            // Update the opname_quantity
+            $updated = DB::table('stocks')
+                ->where('id', $id)
+                ->update([
+                    'opname_quantity' => $request->opname_quantity,
+                ]);
+
+            if (!$updated) {
+                \Log::error("Failed to update opname_quantity for ID: {$id}");
+                return response()->json(['success' => false, 'message' => 'Failed to update opname_quantity'], 500);
+            }
+
+            // Retrieve the updated stock details
+            $stock = DB::table('stocks')->where('id', $id)->first();
+
+            if (!$stock) {
+                \Log::error("Stock not found for ID: {$id}");
+                DB::rollBack();
+                return response()->json(['success' => false, 'message' => 'Stock not found'], 500);
+            }
+
+            // Convert the given date and add one day
+            $newDate = date('Y-m-d', strtotime($request->date . ' +1 day'));
+
+            // Attempt to insert a new record
+            $inserted = DB::table('stocks')->insert([
+                'product_id' => $stock->product_id,
+                'branch_id' => $stock->branch_id,
+                'date' => $newDate,
+                'quantity' => $request->opname_quantity,
+                'opname_quantity' => null
             ]);
 
-        if ($opname) {
+            if (!$inserted) {
+                \Log::error("Failed to insert into stocks for product {$stock->product_id} and branch {$stock->branch_id} on date {$newDate}");
+                DB::rollBack();
+                return response()->json(['success' => false, 'message' => 'Failed to insert into stocks'], 500);
+            }
+
+            DB::commit();
             return response()->json(['success' => true]);
-        } else {
-            return response()->json(['success' => false], 500);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Failed to update opname: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Gagal memperbarui stock opname.'], 500);
         }
     }
 
