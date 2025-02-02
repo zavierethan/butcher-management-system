@@ -79,4 +79,10 @@ class ProductCategoryController extends Controller
         return redirect()->route('product-categories.index');
     }
 
+    public function getProductCategories() {
+        $categories = DB::table('product_categories')->pluck('name', 'id'); // Fetch categories with their IDs
+        return response()->json($categories); // Return as JSON
+    }
+
+
 }

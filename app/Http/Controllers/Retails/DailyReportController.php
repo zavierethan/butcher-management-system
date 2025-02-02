@@ -91,4 +91,62 @@ class DailyReportController extends Controller
             'Expires' => '0',
         ]);
     }
+
+public function getStockReport(Request $request) {
+    $start_date = $request->input('start_date');
+    $end_date = $request->input('end_date');
+    $stock_status = $request->input('stock_status');
+    $category_id = $request->input('category_id'); // Get selected category ID
+
+    $query = DB::table('stocks as s')
+        ->join('products as p', 's.product_id', '=', 'p.id')
+        ->join('product_categories as pc', 'p.category_id', '=', 'pc.id')
+        ->leftJoin('product_details as pd', function ($join) {
+            $join->on('s.product_id', '=', 'pd.product_id')
+                ->on('s.branch_id', '=', 'pd.branch_id');
+        })
+        ->leftJoin('branches as b', 's.branch_id', '=', 'b.id')
+        ->select(
+            'p.name as product_name',
+            'p.code',
+            'pc.name as category_name',
+            's.date',
+            'pd.price',
+            'b.name as branch_name',
+            's.quantity',
+            DB::raw("CASE WHEN s.quantity > 0 THEN 'In Stock' WHEN s.quantity <= 0 THEN 'Out Of Stock' ELSE 'Low Stock' END AS stock_status")
+        );
+
+    if ($start_date && $end_date) {
+        $query->whereBetween('s.date', [$start_date, $end_date]);
+    }
+
+    if ($stock_status && $stock_status != 'Show All') {
+        if ($stock_status == 'In Stock') {
+            $query->where('s.quantity', '>', 0);
+        } elseif ($stock_status == 'Out of Stock') {
+            $query->where('s.quantity', '<=', 0);
+        } elseif ($stock_status == 'Low Stock') {
+            $query->whereBetween('s.quantity', [1, 5]); // Adjust as needed for low stock range
+        }
+    }
+
+    // Apply category filter if provided
+    if ($category_id && $category_id != 'Show All') {
+        $query->where('p.category_id', '=', $category_id);
+    }
+
+    $totalRecords = DB::table('stocks')->count(); // Total records without filters
+    $filteredRecords = $query->count(); // Total records after filters
+    $data = $query->orderBy('s.id', 'desc')->skip($request->input('start', 0))->take($request->input('length', 10))->get(); // Paginated data
+
+    return response()->json([
+        'draw' => $request->input('draw'),
+        'recordsTotal' => $totalRecords,
+        'recordsFiltered' => $filteredRecords,
+        'data' => $data,
+    ]);
+}
+
+
 }
