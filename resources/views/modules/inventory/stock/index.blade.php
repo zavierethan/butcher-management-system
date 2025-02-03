@@ -202,62 +202,48 @@
     });
 
     $("#btn-form-export").on("click", function() {
-        // Show loader during export
-        $('.loader').show();
-
-        // Get the filter values
-        const start_date = $('#start-date').val();
-        const end_date = $('#end-date').val();
         const searchTerm = $('[data-kt-customer-table-filter="search"]').val();
+        const startDate = $('#start-date').val();
+        const endDate = $('#end-date').val();
 
-        // Make an AJAX request to export the data
         $.ajax({
-            url: `{{url('/stocks/export')}}`, // Adjusted to match your "stocks" route
+            url: `{{url('/stocks/export')}}`,
             type: 'GET',
             data: {
-                start_date: start_date,
-                end_date: end_date,
-                search_term: searchTerm // Include the search term from the input
+                search_term: searchTerm,
+                start_date: startDate,
+                end_date: endDate,
             },
             xhrFields: {
                 responseType: 'blob', // Treat response as binary
             },
-            beforeSend: function() {
-                $('.loader').show(); // Show loader before the request
-            },
             success: function(data, status, xhr) {
-                // Hide the loader after successful response
-                $('.loader').hide();
-
+                $("#kt_modal_export_filter").modal('hide');
                 // Create a Blob object from the response
                 const blob = new Blob([data], {
                     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                 });
 
-                // Create a link element for downloading the file
+                // Create a link element for downloading
                 const link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
-                link.download = 'filtered-stocks-report.xlsx'; // Set a meaningful filename
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                link.download = 'stock-reports.xlsx'; // Set the filename
+                document.body.appendChild(link); // Append link to the body
+                link.click(); // Trigger the download
+                document.body.removeChild(link); // Clean up the DOM
 
-                // Show success alert
                 Swal.fire({
                     title: 'Success!',
-                    text: 'Filtered stocks report exported successfully.',
+                    text: 'Stock report exported successfully.',
                     icon: 'success',
                     confirmButtonText: 'OK',
                 });
             },
             error: function(xhr, status, error) {
-                // Hide the loader on error
-                $('.loader').hide();
-
-                // Show error alert
-                Swal.fire('Error!', 'Failed to export the filtered stocks report.', 'error');
+                Swal.fire('Error!', 'Failed to export the stock report.', 'error');
             },
         });
+
     });
 
 </script>

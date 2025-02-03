@@ -9,7 +9,7 @@ use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 use Maatwebsite\Excel\Events\AfterSheet;
 
 use DB;
-use Auth;
+use Illuminate\Support\Carbon;
 
 class StockExport implements FromCollection, WithHeadings, WithCustomStartCell, WithEvents
 {
@@ -22,23 +22,41 @@ class StockExport implements FromCollection, WithHeadings, WithCustomStartCell, 
 
     public function collection()
     {
-        // Fetching data from the database
-    $query = DB::table('stocks')
-        ->join('branches', 'stocks.branch_id', '=', 'branches.id')
-        ->join('products', 'products.id', '=', 'stocks.product_id')
-        ->select(
-            'products.code as product_code',
-            'products.name as product_name',
-            'branches.code as branch_code',
-            'branches.name as branch_name',
-            'stocks.quantity as quantity',
-            'stocks.opname_quantity as opname_quantity',
-            'stocks.date as date'
-        );
 
-    if (!empty($this->filters['start_date']) && !empty($this->filters['end_date'])) {
-        $query->whereBetween('stocks.date', [$this->filters['start_date'], $this->filters['end_date']]);
-    }
+        $startDate = !empty($this->filters['start_date']) ? $this->filters['start_date'] : Carbon::now('Asia/Jakarta')->toDateString();
+        $endDate = !empty($this->filters['end_date']) ? $this->filters['end_date'] : Carbon::now('Asia/Jakarta')->toDateString();
+
+        // Fetching data from the database
+        $query = DB::table('stocks')
+            ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
+            ->leftJoin('branches', 'stocks.branch_id', '=', 'branches.id')
+            ->leftJoin('stock_logs as sl', 'stocks.id', '=', 'sl.stock_id')
+            ->select(
+                'products.code as product_code',
+                'products.name as product_name',
+                'branches.code as branch_code',
+                'branches.name as branch_name',
+                'stocks.quantity',
+                DB::raw('COALESCE(SUM(sl.in_quantity), 0) - COALESCE(SUM(sl.out_quantity), 0) as realtime_quantity'),
+                'stocks.opname_quantity',
+                'stocks.date'
+            )
+            ->groupBy(
+                'stocks.id',
+                'products.code',
+                'products.name',
+                'branches.code',
+                'branches.name'
+            );
+
+        $query->whereBetween('stocks.date', [$startDate, $endDate]);
+
+        $searchValue = $this->filters['search_term'];
+        if (!empty($searchValue)) {
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('products.name', 'ilike', '%' . $searchValue . '%');
+            });
+        }
 
         $data = $query->get();
 
@@ -53,13 +71,14 @@ class StockExport implements FromCollection, WithHeadings, WithCustomStartCell, 
     public function headings(): array
     {
         return [
-            'product_code',
-            'product_name',
-            'branch_code',
-            'branch_name',
-            'quantity',
-            'opname_quantity',
-            'date',
+            'KODE PRODUK',
+            'NAMA PRODUK',
+            'KODE CABANG',
+            'NAMA CABANG',
+            'KUANTITAS AWAL',
+            'KUANTITAS REALTIME',
+            'KUANTITAS OPNAME',
+            'TANGGAL',
         ];
     }
 
@@ -69,47 +88,53 @@ class StockExport implements FromCollection, WithHeadings, WithCustomStartCell, 
     }
 
     public function registerEvents(): array
-    {
-        return [
-            AfterSheet::class => function (AfterSheet $event) {
-                $sheet = $event->sheet;
+{
+    return [
+        AfterSheet::class => function (AfterSheet $event) {
+            $sheet = $event->sheet;
 
-                // Add additional information above the table
-                $sheet->setCellValue('A1', 'TANGGAL');
-                $sheet->setCellValue('B1', $this->filters['start_date'].' - '.$this->filters['end_date']);
-                $sheet->setCellValue('A2', 'CABANG');
-                $sheet->setCellValue('B2', $this->filters['branch_name'].' ('.$this->filters['branch_code'].')');
+            // Get today's date if start_date or end_date is null or empty
+            $startDate = !empty($this->filters['start_date']) ? $this->filters['start_date'] : Carbon::now('Asia/Jakarta')->toDateString();
+            $endDate = !empty($this->filters['end_date']) ? $this->filters['end_date'] : Carbon::now('Asia/Jakarta')->toDateString();
 
-                // Apply bold styling to the labels
-                $sheet->getStyle('A1:A2')->applyFromArray([
-                    'font' => ['bold' => true],
-                ]);
+            // Set content for A1 and B1
+            $sheet->setCellValue('A1', 'Rentang Tanggal');
+            $sheet->setCellValue('B1', $startDate . ' - ' . $endDate);
 
-                $sheet->getStyle('A5:M5')->applyFromArray([
-                    'font' => ['bold' => true],
-                ]);
+            // Apply bold styling only to A1 (Rentang Tanggal)
+            $sheet->getStyle('A1')->applyFromArray([
+                'font' => ['bold' => true],
+            ]);
 
-                // Get the range of the table
-                $rowCount = $sheet->getDelegate()->getHighestRow(); // Get last row with data
-                $columnCount = $sheet->getDelegate()->getHighestColumn(); // Get last column with data
+            // Apply bold styling to the headings
+            $sheet->getStyle('A5:H5')->applyFromArray([
+                'font' => ['bold' => true],
+            ]);
 
-                $tableRange = "A5:{$columnCount}{$rowCount}";
+            // Get the range of the table
+            $rowCount = $sheet->getDelegate()->getHighestRow(); // Get last row with data
+            $columnCount = $sheet->getDelegate()->getHighestColumn(); // Get last column with data
 
-                // Apply borders to the table
-                $sheet->getStyle($tableRange)->applyFromArray([
-                    'borders' => [
-                        'allBorders' => [
-                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                            'color' => ['argb' => '000000'],
-                        ],
+            // Set table range for borders
+            $tableRange = "A5:{$columnCount}{$rowCount}";
+
+            // Apply borders to the table
+            $sheet->getStyle($tableRange)->applyFromArray([
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        'color' => ['argb' => '000000'],
                     ],
-                ]);
+                ],
+            ]);
 
-                // Auto-fit the content in all columns
-                foreach (range('A', $columnCount) as $column) {
-                    $sheet->getColumnDimension($column)->setAutoSize(true);
-                }
-            },
-        ];
-    }
+            // Adjust the width of columns
+            foreach (range('A', $columnCount) as $column) {
+                $sheet->getColumnDimension($column)->setAutoSize(true);
+            }
+        },
+    ];
+}
+
+
 }

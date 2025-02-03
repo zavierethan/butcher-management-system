@@ -182,9 +182,9 @@ class StockController extends Controller
         $filters = [
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
+            'search_term' => $request->search_term
         ];
 
-        // Pass filters to a new StockExport class
         $export = new StockExport($filters);
         $excelData = Excel::raw($export, \Maatwebsite\Excel\Excel::XLSX);
 
