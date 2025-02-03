@@ -294,17 +294,15 @@
                                         <!--begin::Destination-->
                                         <div class="d-flex align-items-center fw-bold">
                                             <!--begin::Label-->
-                                            <div class="text-muted fs-7 me-2">Cateogry</div>
+                                            <div class="text-muted fs-7 me-2">Category</div>
                                             <!--end::Label-->
                                             <!--begin::Select-->
                                             <select
+                                                id="category-filter"
                                                 class="form-select form-select-transparent text-gray-900 fs-7 lh-1 fw-bold py-0 ps-3 w-auto"
                                                 data-control="select2" data-hide-search="true"
-                                                data-dropdown-css-class="w-150px" data-placeholder="Select an option">
-                                                <option></option>
+                                                data-dropdown-css-class="w-150px" data-placeholder="Select a category">
                                                 <option value="Show All" selected="selected">Show All</option>
-                                                <option value="a">Category A</option>
-                                                <option value="b">Category B</option>
                                             </select>
                                             <!--end::Select-->
                                         </div>
@@ -319,7 +317,7 @@
                                                 class="form-select form-select-transparent text-gray-900 fs-7 lh-1 fw-bold py-0 ps-3 w-auto"
                                                 data-control="select2" data-hide-search="true"
                                                 data-dropdown-css-class="w-150px" data-placeholder="Select an option"
-                                                data-kt-table-widget-5="filter_status">
+                                                id="kt_table_widget_5_filter_status">
                                                 <option></option>
                                                 <option value="Show All" selected="selected">Show All</option>
                                                 <option value="In Stock">In Stock</option>
@@ -336,7 +334,7 @@
                             </div>
                             <!--end::Card header-->
                             <!--begin::Card body-->
-                            <div class="card-body">
+                            <div class="card-body pt-0 overflow-x-auto">
                                 <!--begin::Table-->
                                 <table class="table align-middle table-row-dashed fs-6 gy-3"
                                     id="kt_table_widget_5_table">
@@ -345,129 +343,15 @@
                                         <!--begin::Table row-->
                                         <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
                                             <th class="min-w-150px">Item</th>
-                                            <th class="text-end pe-3 min-w-100px">Product ID</th>
-                                            <th class="text-end pe-3 min-w-150px">Date Added</th>
-                                            <th class="text-end pe-3 min-w-100px">Price</th>
-                                            <th class="text-end pe-3 min-w-100px">Status</th>
-                                            <th class="text-end pe-0 min-w-75px">Qty</th>
+                                            <th class="min-w-100px">Product ID</th>
+                                            <th class="min-w-150px">Date Added</th>
+                                            <th class="min-w-100px">Price</th>
+                                            <th class="min-w-100px">Status</th>
+                                            <th class="min-w-75px">Qty</th>
                                         </tr>
                                         <!--end::Table row-->
                                     </thead>
                                     <!--end::Table head-->
-                                    <!--begin::Table body-->
-                                    <tbody class="fw-bold text-gray-600">
-                                        <tr>
-                                            <!--begin::Item-->
-                                            <td>
-                                                <a href="apps/ecommerce/catalog/edit-product.html"
-                                                    class="text-gray-900 text-hover-primary">KARKAS</a>
-                                            </td>
-                                            <!--end::Item-->
-                                            <!--begin::Product ID-->
-                                            <td class="text-end">#XGY-356</td>
-                                            <!--end::Product ID-->
-                                            <!--begin::Date added-->
-                                            <td class="text-end">02 Apr, 2024</td>
-                                            <!--end::Date added-->
-                                            <!--begin::Price-->
-                                            <td class="text-end">$1,230</td>
-                                            <!--end::Price-->
-                                            <!--begin::Status-->
-                                            <td class="text-end">
-                                                <span class="badge py-3 px-4 fs-7 badge-light-primary">In Stock</span>
-                                            </td>
-                                            <!--end::Status-->
-                                            <!--begin::Qty-->
-                                            <td class="text-end" data-order="58">
-                                                <span class="text-gray-900 fw-bold">58 PCS</span>
-                                            </td>
-                                            <!--end::Qty-->
-                                        </tr>
-                                        <tr>
-                                            <!--begin::Item-->
-                                            <td>
-                                                <a href="apps/ecommerce/catalog/edit-product.html"
-                                                    class="text-gray-900 text-hover-primary">PAHA ATAS</a>
-                                            </td>
-                                            <!--end::Item-->
-                                            <!--begin::Product ID-->
-                                            <td class="text-end">#YHD-047</td>
-                                            <!--end::Product ID-->
-                                            <!--begin::Date added-->
-                                            <td class="text-end">01 Apr, 2024</td>
-                                            <!--end::Date added-->
-                                            <!--begin::Price-->
-                                            <td class="text-end">$1,060</td>
-                                            <!--end::Price-->
-                                            <!--begin::Status-->
-                                            <td class="text-end">
-                                                <span class="badge py-3 px-4 fs-7 badge-light-danger">Out of
-                                                    Stock</span>
-                                            </td>
-                                            <!--end::Status-->
-                                            <!--begin::Qty-->
-                                            <td class="text-end" data-order="0">
-                                                <span class="text-gray-900 fw-bold">0 PCS</span>
-                                            </td>
-                                            <!--end::Qty-->
-                                        </tr>
-                                        <tr>
-                                            <!--begin::Item-->
-                                            <td>
-                                                <a href="apps/ecommerce/catalog/edit-product.html"
-                                                    class="text-gray-900 text-hover-primary">ATI AMPELA</a>
-                                            </td>
-                                            <!--end::Item-->
-                                            <!--begin::Product ID-->
-                                            <td class="text-end">#SRR-678</td>
-                                            <!--end::Product ID-->
-                                            <!--begin::Date added-->
-                                            <td class="text-end">24 Mar, 2024</td>
-                                            <!--end::Date added-->
-                                            <!--begin::Price-->
-                                            <td class="text-end">$64</td>
-                                            <!--end::Price-->
-                                            <!--begin::Status-->
-                                            <td class="text-end">
-                                                <span class="badge py-3 px-4 fs-7 badge-light-primary">In Stock</span>
-                                            </td>
-                                            <!--end::Status-->
-                                            <!--begin::Qty-->
-                                            <td class="text-end" data-order="290">
-                                                <span class="text-gray-900 fw-bold">290 PCS</span>
-                                            </td>
-                                            <!--end::Qty-->
-                                        </tr>
-                                        <tr>
-                                            <!--begin::Item-->
-                                            <td>
-                                                <a href="apps/ecommerce/catalog/edit-product.html"
-                                                    class="text-gray-900 text-hover-primary">DADA</a>
-                                            </td>
-                                            <!--end::Item-->
-                                            <!--begin::Product ID-->
-                                            <td class="text-end">#PXF-578</td>
-                                            <!--end::Product ID-->
-                                            <!--begin::Date added-->
-                                            <td class="text-end">24 Mar, 2024</td>
-                                            <!--end::Date added-->
-                                            <!--begin::Price-->
-                                            <td class="text-end">$1,060</td>
-                                            <!--end::Price-->
-                                            <!--begin::Status-->
-                                            <td class="text-end">
-                                                <span class="badge py-3 px-4 fs-7 badge-light-danger">Out of
-                                                    Stock</span>
-                                            </td>
-                                            <!--end::Status-->
-                                            <!--begin::Qty-->
-                                            <td class="text-end" data-order="46">
-                                                <span class="text-gray-900 fw-bold">46 PCS</span>
-                                            </td>
-                                            <!--end::Qty-->
-                                        </tr>
-                                    </tbody>
-                                    <!--end::Table body-->
                                 </table>
                                 <!--end::Table-->
                             </div>
@@ -492,9 +376,20 @@
 <script>
 $(document).ready(function() {
     getTransactionSummaryByCategory();
+    getCategories();
+    getStockReport();
 
     $('#start-date, #end-date').on('change', function () {
         getTransactionSummaryByCategory(); // Trigger DataTable redraw with updated filter values
+        getStockReport();
+    });
+
+    $("#kt_table_widget_5_filter_status").on('change', function () {
+        getStockReport(); // Trigger DataTable redraw with updated filters
+    });
+
+    $('#category-filter').on('change', function () {
+        getStockReport(); // Redraw table with updated category filter
     });
 });
 
@@ -570,6 +465,73 @@ function getTransactionSummaryByCategory() {
         error: function(xhr, status, error) {
             console.error('Error fetching products:', error);
         }
+    });
+}
+
+// Fetch product categories and populate the select dropdown
+function getCategories() {
+    $.ajax({
+        url: `{{ url('api/get-product-categories') }}`,
+        type: 'GET',
+        success: function(data) {
+            const categorySelect = $('#category-filter');
+            categorySelect.empty(); // Clear existing options
+
+            // Add the "Show All" option
+            categorySelect.append('<option value="Show All" selected="selected">Show All</option>');
+
+            // Loop through categories and append them to the select
+            $.each(data, function(id, name) {
+                categorySelect.append(`<option value="${id}">${name}</option>`);
+            });
+
+            // Re-initialize select2 after populating options
+            categorySelect.select2({
+                placeholder: 'Select a category',
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching categories:', error);
+        }
+    });
+}
+
+function getStockReport() {
+    const start_date = $("#start-date").val();
+    const end_date = $("#end-date").val();
+    const stock_status = $("#kt_table_widget_5_filter_status").val();
+    const category_id = $("#category-filter").val();
+
+    // Destroy the existing DataTable if it's already initialized
+    if ($.fn.DataTable.isDataTable("#kt_table_widget_5_table")) {
+        $("#kt_table_widget_5_table").DataTable().destroy();
+    }
+
+    // Reinitialize DataTable with the filters
+    const stockTable = $("#kt_table_widget_5_table").DataTable({
+        processing: true,
+        serverSide: true,
+        paging: true,
+        pageLength: 10, // Number of rows per page
+        ajax: {
+            url: `{{ route('retails.daily-report.get-stock-report') }}`,
+            type: 'GET',
+            data: {
+                start_date: start_date,
+                end_date: end_date,
+                stock_status: stock_status,
+                category_id: category_id
+            },
+        },
+        order: [[0, 'desc']], // Sorting by the first column
+        columns: [
+            { data: 'product_name', name: 'product_name' },
+            { data: 'code', name: 'code' },
+            { data: 'date', name: 'date' },
+            { data: 'price', name: 'price' },
+            { data: 'stock_status', name: 'stock_status' },
+            { data: 'quantity', name: 'quantity' },
+        ]
     });
 }
 </script>

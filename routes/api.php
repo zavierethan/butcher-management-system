@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::get('products/', [App\Http\Controllers\ProductController::class, 'getListProducts']);
+Route::get('get-product-categories/', [App\Http\Controllers\ProductCategoryController::class, 'getProductCategories']);
 
 Route::get('customers/', [App\Http\Controllers\CustomerController::class, 'getListFiltered']);
 Route::post('customers/save', [App\Http\Controllers\CustomerController::class, 'saveNewCustomerFromPOS']);

@@ -159,7 +159,10 @@
                                                 <div class="separator my-5"></div>
                                                 <div class="text-end">
                                                     <a href="{{ route('stocks.index') }}" class="btn btn-danger">Back</a>
-                                                    <a href="#" class="btn btn-primary" id="btn-update">Update</a>
+                                                    <a href="#" class="btn btn-primary" id="btn-update"
+                                                        data-branch-id="{{ $stockHeader->branch_id }}"
+                                                        data-product-id="{{ $stockHeader->product_id }}"
+                                                        data-date="{{ $stockHeader->date }}">Update</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -272,6 +275,9 @@
     $(document).ready(function() {
         $('#btn-update').on('click', function(e) {
             e.preventDefault();
+            let branchId = this.getAttribute('data-branch-id');
+            let productId = this.getAttribute('data-product-id');
+            let date = this.getAttribute('data-date');
 
             let opname_quantity = $("#opname-quantity").val();
             let id = $("#stock-id").val();
@@ -288,7 +294,10 @@
 
                     const payload = {
                         id: id,
-                        opname_quantity: opname_quantity
+                        opname_quantity: opname_quantity,
+                        branch_id: branchId,
+                        product_id: productId,
+                        date: date
                     };
 
                     console.log(payload)
@@ -310,11 +319,17 @@
                             });
                         },
                         error: function(xhr, status, error) {
+                            let errorMessage = "An unexpected error occurred"; // Default fallback message
+
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message; // Get the Laravel error message
+                            }
+
                             Swal.fire(
                                 'Error!',
-                                error,
+                                errorMessage,
                                 'error'
-                            )
+                            );
                         }
                     });
                 }
