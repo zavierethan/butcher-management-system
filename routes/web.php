@@ -290,6 +290,11 @@ Route::group(['middleware' => ['auth']], function() {
             Route::prefix('account-receivable')->group(function () {
                 Route::name('account-receivable.')->group(function () {
                     Route::get('/', [App\Http\Controllers\Finances\AccountReceivableController::class, 'index'])->name('index');
+                    Route::get('/lists', [App\Http\Controllers\Finances\AccountReceivableController::class, 'getLists'])->name('get-lists');
+                    Route::get('/create', [App\Http\Controllers\Finances\AccountReceivableController::class, 'create'])->name('create');
+                    Route::post('/save', [App\Http\Controllers\Finances\AccountReceivableController::class, 'save'])->name('save');
+                    Route::get('/edit/{id}', [App\Http\Controllers\Finances\AccountReceivableController::class, 'edit'])->name('edit');
+                    Route::post('/update', [App\Http\Controllers\Finances\AccountReceivableController::class, 'update'])->name('update');
                 });
             });
 

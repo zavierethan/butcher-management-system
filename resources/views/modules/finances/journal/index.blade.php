@@ -36,7 +36,7 @@
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
                     <!--begin::Secondary button-->
-                    <a href="{{route('finances.chart-of-accounts.create')}}"
+                    <a href="{{route('finances.journals.create')}}"
                         class="btn btn-sm fw-bold btn-secondary">New</a>
                     <!--end::Secondary button-->
                 </div>
@@ -92,9 +92,9 @@
                                             id="status">
                                             <option></option>
                                             <option value=" " selected="selected">Show All</option>
-                                            <option value="Draft">Draft</option>
-                                            <option value="Approve">Approve</option>
-                                            <option value="Rejected">Rejected</option>
+                                            <option value="DRAFT">Draft</option>
+                                            <option value="APPROVED">Approve</option>
+                                            <option value="REJECTED">Rejected</option>
                                         </select>
                                         <!--end::Select-->
                                     </div>
@@ -113,6 +113,7 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                        <th class="min-w-125px">CODE</th>
                                         <th class="min-w-125px">TANGGAL</th>
                                         <th class="min-w-125px">DESKRIPSI</th>
                                         <th class="min-w-125px">REFERENCES</th>
@@ -191,20 +192,24 @@ $(document).ready(function() {
                 render: function(data, type, row) {
                     var status = "";
 
-                    if (row.status == 'Draft') {
+                    if (row.status == 'DRAFT') {
                         status = `<span class="badge bg-warning text-dark">Draft</span>`
                     }
 
-                    if (row.status == 'Approved') {
+                    if (row.status == 'APPROVED') {
                         status = `<span class="badge bg-success text-dark">Approved</span>`
                     }
 
-                    if (row.status == 'Rejected') {
+                    if (row.status == 'REJECTED') {
                         status = `<span class="badge bg-danger text-dark">Rejected</span>`
                     }
 
                     return status;
                 }
+            },
+            {
+                data: 'created_at',
+                name: 'created_at'
             },
             {
                 data: null, // No direct field from the server
@@ -214,8 +219,7 @@ $(document).ready(function() {
                 render: function(data, type, row) {
                     return `
                         <div class="text-center">
-                            <a href="/orders/receipt/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" target="_blank" title="Cetak Faktur"><i class="fa-solid fa-print"></i></a>
-                            <a href="/orders/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail Transaksi"><i class="fa-solid fa-magnifying-glass"></i></a>
+                            <a href="/finances/journals/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail Transaksi"><i class="fa-solid fa-magnifying-glass"></i></a>
                         <div>
                     `;
                 }

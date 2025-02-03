@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use DB;
+use Auth;
 
 class JournalController extends Controller
 {
@@ -16,17 +17,25 @@ class JournalController extends Controller
     public function getLists(Request $request){
         $params = $request->all();
 
-        $query = DB::table('journal_entries');
+        $query = DB::table('journals')->select(
+            "journals.id",
+            "journals.code",
+            DB::raw("TO_CHAR(journals.date, 'DD/MM/YYYY') as date"),
+            "journals.description",
+            "journals.reference",
+            "journals.status",
+            DB::raw("TO_CHAR(journals.created_at, 'DD/MM/YYYY HH24:MI:SS') as created_at")
+        );
 
         if (!empty($params['start_date']) && !empty($params['end_date'])) {
-            $query->whereBetween('journal_entries.date', [
+            $query->whereBetween('journals.date', [
                 $params['start_date'],
                 $params['end_date']
             ]);
         }
 
         if (!empty($params['status'])) {
-            $query->where('journal_entries.status', $params['status']);
+            $query->where('journals.status', $params['status']);
         }
 
         // Apply global search if provided
@@ -59,5 +68,70 @@ class JournalController extends Controller
             'recordsFiltered' => $filteredRecords,
             'data' => $data
         ]);
+    }
+
+    public function create() {
+        $accounts = DB::table('chart_of_accounts')->get();
+        return view('modules.finances.journal.create', compact('accounts'));
+    }
+
+    public function save(Request $request) {
+        $payloads = $request->all();
+
+        try {
+            // Start a database transaction
+            DB::beginTransaction();
+
+            $journalNumber = DB::select('SELECT generate_journal_number() AS journal_number')[0]->journal_number;
+
+            $journalId = DB::table('journals')->insertGetId([
+                "code" => $journalNumber,
+                "date" => $payloads["header"]["date"],
+                "description" => $payloads["header"]["description"],
+                "reference" => $payloads["header"]["reference"],
+                "remarks" => $payloads["header"]["remarks"],
+                "status" => "DRAFT",
+                "created_by" => Auth::user()->id,
+            ]);
+
+            // Save the transaction details
+            foreach ($payloads['details'] as $detail) {
+                DB::table('journal_details')->insertGetId([
+                    "journal_id" => $journalId,
+                    "account_id" =>  $detail["accountId"],
+                    "debit" => $detail["debit"],
+                    "credit" => $detail["credit"]
+                ]);
+            }
+
+            // Commit the transaction
+            DB::commit();
+
+            // Return success response
+            return response()->json([
+                'message' => 'Journals successfully created',
+            ], 201);
+
+        } catch (\Exception $e) {
+            // Rollback transaction in case of error
+            DB::rollBack();
+
+            // Return error response
+            return response()->json([
+                'message' => 'Failed to create transaction',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function edit($id) {
+        $accounts = DB::table('chart_of_accounts')->get();
+        $journal = DB::table('journals')->where('id', $id)->first();
+        $journaldetails = DB::table('journal_details')->where('journal_id', $journal->id)->get();
+        return view('modules.finances.journal.edit', compact('accounts', 'journal', 'journaldetails'));
+    }
+
+    public function update(Request $request) {
+
     }
 }

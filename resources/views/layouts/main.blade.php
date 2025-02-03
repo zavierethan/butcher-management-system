@@ -283,11 +283,11 @@ License: For each use you must have a valid license purchased only from above li
                     <!--begin::Logo-->
                     <div class="app-sidebar-logo px-6" id="kt_app_sidebar_logo">
                         <!--begin::Logo image-->
-                        <a href="">
-                            <img alt="Logo" src="{{asset('assets/media/logos/default-dark.svg')}}"
-                                class="h-25px app-sidebar-logo-default" />
-                            <img alt="Logo" src="{{asset('assets/media/logos/default-small.svg')}}"
-                                class="h-20px app-sidebar-logo-minimize" />
+                        <a href="#">
+                            <img alt="Logo" src="{{asset('assets/media/logos/logo-text.png')}}"
+                                class="h-50px app-sidebar-logo-default" style="margin-left: 25px;" />
+                            <img alt="Logo" src="{{asset('assets/media/logos/priyadis-logo.png')}}"
+                                class="h-30px app-sidebar-logo-minimize" />
                         </a>
                         <div id="kt_app_sidebar_toggle"
                             class="app-sidebar-toggle btn btn-icon btn-shadow btn-sm btn-color-muted btn-active-color-primary h-30px w-30px position-absolute top-50 start-100 translate-middle rotate"

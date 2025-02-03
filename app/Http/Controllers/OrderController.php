@@ -231,7 +231,7 @@ class OrderController extends Controller
     }
 
     public function printThermal($id) {
-        $printerName = "POS-58 (copy 1)"; // Replace with the name of your printer
+        $printerName = "USB001"; // Replace with the name of your printer
 
         // Create the printer connector
         $connector = new WindowsPrintConnector($printerName);
