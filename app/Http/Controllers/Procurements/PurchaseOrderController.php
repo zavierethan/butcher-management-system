@@ -299,7 +299,7 @@ class PurchaseOrderController extends Controller
         // Return the data as a proper response
         return response($excelData, 200, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => 'attachment; filename="transaction-reports.xlsx"',
+            'Content-Disposition' => 'attachment; filename="procurement-reports.xlsx"',
             'Cache-Control' => 'no-cache, no-store, must-revalidate',
             'Pragma' => 'no-cache',
             'Expires' => '0',

@@ -1355,11 +1355,20 @@ $(document).ready(function() {
                             });
                         },
                         error: function(xhr, status, error) {
-                            Swal.fire(
-                                'Error!',
-                                error,
-                                'error'
-                            )
+                            if (xhr.status === 400) {
+                                Swal.fire({
+                                    title: 'Warning !',
+                                    text: xhr.responseJSON.message,
+                                    icon: 'warning',
+                                    allowOutsideClick: false
+                                });
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    error,
+                                    'error'
+                                );
+                            }
                         }
                     });
                 }

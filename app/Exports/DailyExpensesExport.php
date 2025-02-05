@@ -15,7 +15,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use DB;
 use Auth;
 
-class TransactionExport implements FromCollection, WithHeadings, WithCustomStartCell, WithEvents, WithTitle, WithColumnFormatting
+class DailyExpensesExport implements FromCollection, WithHeadings, WithCustomStartCell, WithEvents, WithTitle, WithColumnFormatting
 {
     protected $filters;
 
@@ -26,64 +26,28 @@ class TransactionExport implements FromCollection, WithHeadings, WithCustomStart
 
     public function collection()
     {
-        $query = DB::table('transactions')
+        $query = DB::table('daily_expenses')
             ->select(
-                'transactions.code as transaction_code',
-                DB::raw("TO_CHAR(transactions.transaction_date, 'DD/MM/YYYY') as transaction_date"),
-                'products.code',
-                'products.name',
-                'transaction_items.quantity',
-                'transaction_items.base_price', // Use raw numeric value
-                'transaction_items.discount',
-                'transaction_items.unit_price', // Use raw numeric value
+                DB::raw("TO_CHAR(date, 'DD/MM/YYYY') as transaction_date"),
+                'description',
+                'reference',
                 DB::raw("
                     CASE
-                        WHEN transactions.payment_method = '1' THEN 'TUNAI'
-                        WHEN transactions.payment_method = '2' THEN 'PIUTANG'
-                        WHEN transactions.payment_method = '3' THEN 'COD'
-                        ELSE 'TRANSFER'
+                        WHEN payment_method = 1 THEN 'TUNAI' ELSE 'TRANSFER'
                     END AS payment_method
                 "),
-                DB::raw("
-                    CASE
-                        WHEN transactions.status = 1 THEN 'LUNAS'
-                        WHEN transactions.status = 2 THEN 'PENDING'
-                        ELSE 'BATAL'
-                    END AS status
-                "),
-                'customers.name as customer_name',
-                'users.name as cashier',
-            )
-            ->leftJoin('transaction_items', 'transaction_items.transaction_id', '=', 'transactions.id')
-            ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')
-            ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
-            ->leftJoin('users', 'users.id', '=', 'transactions.created_by');
+                'amount',
+            );
 
         if (Auth::user()->group_id != 1) {
-            $query->where('transactions.branch_id', Auth::user()->branch_id);
+            $query->where('branch_id', Auth::user()->branch_id);
         }
 
         if (!empty($this->filters['start_date']) && !empty($this->filters['end_date'])) {
-            $query->whereBetween('transactions.transaction_date', [
+            $query->whereBetween('date', [
                 $this->filters['start_date'],
                 $this->filters['end_date']
             ]);
-        }
-
-        if (!empty($this->filters['customer'])) {
-            $query->where('transactions.customer_id', $this->filters['customer']);
-        }
-
-        if (!empty($this->filters['payment_method'])) {
-            $query->where('transactions.payment_method', $this->filters['payment_method']);
-        }
-
-        if (!empty($this->filters['status'])) {
-            $query->where('transactions.status', $this->filters['status']);
-        }
-
-        if (!empty($this->filters['branch_id'])) {
-            $query->where('transactions.branch_id', $this->filters['branch_id']);
         }
 
         return $query->get();
@@ -92,18 +56,11 @@ class TransactionExport implements FromCollection, WithHeadings, WithCustomStart
     public function headings(): array
     {
         return [
-            'KODE TRANSAKSI',
-            'TANGGAL TRANSAKSI',
-            'CODE',
-            'ITEM',
-            'BERAT (KG)',
-            'HARGA / KG',
-            'DISKON',
-            'TOTAL',
+            'TANGGAL',
+            'DESKRIPSI',
+            'REFERENSI',
             'JENIS PEMBAYARAN',
-            'STATUS PEMBAYARAN',
-            'CUSTOMER',
-            'KASIR',
+            'TOTAL NOMINAL',
         ];
     }
 
@@ -129,7 +86,7 @@ class TransactionExport implements FromCollection, WithHeadings, WithCustomStart
                     'font' => ['bold' => true],
                 ]);
 
-                $sheet->getStyle('A5:L5')->applyFromArray([
+                $sheet->getStyle('A5:E5')->applyFromArray([
                     'font' => ['bold' => true],
                 ]);
 
@@ -159,15 +116,12 @@ class TransactionExport implements FromCollection, WithHeadings, WithCustomStart
     public function columnFormats(): array
     {
         return [
-            'E' => '#,##0.00',
-            'G' => '#,##0',
-            'F' => '#,##0',
-            'H' => '#,##0',
+            'E' => '#,##0'
         ];
     }
 
     public function title(): string
     {
-        return 'Data Penjualan';
+        return 'Data Pengeluaran';
     }
 }
