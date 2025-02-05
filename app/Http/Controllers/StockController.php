@@ -152,8 +152,8 @@ class StockController extends Controller
             // Convert the given date and add one day
             $newDate = date('Y-m-d', strtotime($request->date . ' +1 day'));
 
-            // Attempt to insert a new record
-            $inserted = DB::table('stocks')->insert([
+            // Insert new stock and get the inserted ID
+            $newStockId = DB::table('stocks')->insertGetId([
                 'product_id' => $stock->product_id,
                 'branch_id' => $stock->branch_id,
                 'date' => $newDate,
@@ -161,11 +161,19 @@ class StockController extends Controller
                 'opname_quantity' => null
             ]);
 
-            if (!$inserted) {
+            if (!$newStockId) {
                 \Log::error("Failed to insert into stocks for product {$stock->product_id} and branch {$stock->branch_id} on date {$newDate}");
                 DB::rollBack();
                 return response()->json(['success' => false, 'message' => 'Failed to insert into stocks'], 500);
             }
+
+            // Insert a new row in stock_logs
+            DB::table('stock_logs')->insert([
+                'stock_id' => $newStockId,
+                'in_quantity' => $request->opname_quantity,
+                'date' => now()->setTimezone('Asia/Jakarta'),
+                'reference' => 'Stock opname'
+            ]);
 
             DB::commit();
             return response()->json(['success' => true]);
