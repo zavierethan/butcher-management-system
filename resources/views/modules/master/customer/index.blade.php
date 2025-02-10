@@ -93,7 +93,7 @@
                                         <th class="min-w-125px">No Ktp</th>
                                         <th class="min-w-125px">No Handphone</th>
                                         <th class="min-w-125px">Jenis</th>
-                                        <th class="min-w-125px">Active</th>
+                                        <th class="min-w-125px">Alamat</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -139,7 +139,7 @@
             { data: 'ktp_number', name: 'ktp_number' },
             { data: 'phone_number', name: 'phone_number' },
             { data: 'type', name: 'type' },
-            { data: 'is_active', name: 'is_active' },
+            { data: 'address', name: 'address' },
             {
                 data: null, // No direct field from the server
                 name: 'action',

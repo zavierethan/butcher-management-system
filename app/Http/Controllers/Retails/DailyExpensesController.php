@@ -61,18 +61,31 @@ class DailyExpensesController extends Controller
     }
 
     public function create() {
-        return view('modules.retails.daily-expenses.create');
+        $debitAccounts = DB::table('chart_of_accounts')->where('account_type', 'Expense')->get();
+        $creditAccounts = DB::table('chart_of_accounts')->where('account_type', 'Asset')->get();
+        return view('modules.retails.daily-expenses.create', compact('debitAccounts', 'creditAccounts'));
     }
 
     public function save(Request $request) {
+
+        $base64File = null;
+
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $fileContents = file_get_contents($file->getRealPath());
+            $base64File = base64_encode($fileContents);
+        }
 
         DB::table('daily_expenses')->insert([
             'date' => $request->date,
             'description' => $request->description,
             'reference' => $request->reference,
             'payment_method' => $request->payment_method,
-            'amount' => $request->amount,
+            'amount' => $request->total_amount,
             'branch_id' => Auth::user()->branch_id,
+            'attachment' => $base64File,
+            'debit' => $request->debit,
+            'credit' => $request->credit,
             'created_by' => Auth::user()->id
         ]);
 
@@ -81,7 +94,9 @@ class DailyExpensesController extends Controller
 
     public function edit($id) {
         $data = DB::table('daily_expenses')->where('id', $id)->first();
-        return view('modules.retails.daily-expenses.edit', compact('data'));
+        $debitAccounts = DB::table('chart_of_accounts')->where('account_type', 'Expense')->get();
+        $creditAccounts = DB::table('chart_of_accounts')->where('account_type', 'Asset')->get();
+        return view('modules.retails.daily-expenses.edit', compact('data','debitAccounts', 'creditAccounts'));
     }
 
     public function update(Request $request) {

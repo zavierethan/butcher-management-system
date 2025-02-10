@@ -58,7 +58,7 @@
                                     <div class="col-md-6">
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Customer</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Nomor Transaksi</label>
                                                 <div class="position-relative mb-3">
                                                     <select class="form-select form-select-solid" data-control="select2"
                                                         data-placeholder="-" name="customer" id="customer">
@@ -67,16 +67,6 @@
                                                         <option value="{{$customer->id}}">{{$customer->name}}</option>
                                                         @endforeach
                                                     </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="separator my-5"></div>
-                                        <div class="fv-row mb-5">
-                                            <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Tanggal</label>
-                                                <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid"
-                                                        type="date" name="invoice_date" id="invoice-date" />
                                                 </div>
                                             </div>
                                         </div>

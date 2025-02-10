@@ -97,6 +97,15 @@
                                 <div class="separator my-5"></div>
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
+                                        <label class="form-label fw-bold fs-6 mb-2">Alamat</label>
+                                        <div class="position-relative mb-3">
+                                            <textarea class="form-control form-control-md form-control-solid" type="text" name="address" id="address">{{$customer->address}}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="separator my-5"></div>
+                                <div class="fv-row mb-5">
+                                    <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Is Active</label>
                                         <div class="position-relative mb-3">
                                             <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="is_active">

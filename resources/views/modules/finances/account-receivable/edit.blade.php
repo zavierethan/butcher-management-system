@@ -58,25 +58,29 @@
                                     <div class="col-md-6">
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Customer</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Nama Customer</label>
                                                 <div class="position-relative mb-3">
-                                                    <select class="form-select form-select-solid" data-control="select2"
-                                                        data-placeholder="-" name="customer" id="customer">
-                                                        <option value="">-</option>
-                                                        @foreach($customers as $customer)
-                                                        <option value="{{$customer->id}}">{{$customer->name}}</option>
-                                                        @endforeach
-                                                    </select>
+                                                    <input class="form-control form-control-md form-control-solid"
+                                                        type="text" name="customer" id="customer" value="{{$receivable->customer_name}}" readonly/>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="separator my-5"></div>
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Tanggal</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Nomor Transaksi</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid" type="text" name="transaction_no" id="transaction-no" value="{{$receivable->transaction_no}}" readonly/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Tanggal Transaksi</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="date" name="invoice_date" id="invoice-date" />
+                                                        type="date" name="invoice_date" id="transaction-date" value="{{$receivable->transaction_date}}" readonly/>
                                                 </div>
                                             </div>
                                         </div>
@@ -86,7 +90,7 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Tanggal Jatuh Tempo</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="date" name="due_date" id="due-date" />
+                                                        type="date" name="due_date" id="due-date" value="{{$receivable->due_date}}" readonly/>
                                                 </div>
                                             </div>
                                         </div>
@@ -98,17 +102,17 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Total Transaksi</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="text" name="total_amount" id="total-amount" />
+                                                        type="text" name="total_amount" id="total-amount" value="{{$receivable->total_amount}}" readonly/>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="separator my-5"></div>
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Keterangan</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Sisa Piutang</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="text" name="remarks" id="remarks" />
+                                                        type="text" name="total_amount" id="total-amount" value="{{$receivable->remaining_balance}}" readonly/>
                                                 </div>
                                             </div>
                                         </div>
@@ -118,10 +122,11 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Status</label>
                                                 <div class="position-relative mb-3">
                                                     <select class="form-select form-select-solid" data-control="select2"
-                                                        data-placeholder="-" name="category" id="status">
+                                                        data-placeholder="-" name="status" id="status" disabled>
                                                         <option value="">-</option>
-                                                        <option value="paid">LUNAS</option>
-                                                        <option value="unpaid">BELUM LUNAS</option>
+                                                        <option value="paid" <?php echo ($receivable->status == 'paid') ? 'selected' : '';?>>PAID</option>
+                                                        <option value="unpaid" <?php echo ($receivable->status == 'unpaid') ? 'selected' : '';?>>UNPAID</option>
+                                                        <option value="partial" <?php echo ($receivable->status == 'partial') ? 'selected' : '';?>>PARTIAL / TERM</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -131,12 +136,39 @@
                                 </div>
                                 <div class="text-end">
                                     <a href="{{route('finances.account-receivable.index')}}"
-                                        class="btn btn-sm btn-danger">Cancel</a>
+                                        class="btn btn-sm btn-danger">Kembali</a>
                                     <button type="button" class="btn btn-sm btn-primary"
                                         id="btn-submit-ar">Submit</button>
                                 </div>
                             </form>
                         </div>
+                    </div>
+
+                    <div class="card card-flush py-4 flex-row-fluid overflow-hidden">
+                        <!--begin::Card body-->
+                        <div class="card-body pt-10 overflow-x-auto">
+                            <div class="row mb-5">
+                                <div class="col-md-12 text-end"><a class="btn btn-sm btn-primary" id="add-row"><i class="fa-solid fa-plus"></i>Tambah Pembayaran</a></div>
+                            </div>
+                            <div class="table-responsive">
+                                <!--begin::Table-->
+                                <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0" id="kt_items_table">
+                                    <thead>
+                                        <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
+                                            <th class="min-w-70px">Tanggal Pembayaran</th>
+                                            <th class="min-w-70px">Nominal</th>
+                                            <th class="min-w-70px">Bukti Pembayaran</th>
+                                            <th class="min-w-70px text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="fw-semibold text-gray-600">
+
+                                    </tbody>
+                                </table>
+                                <!--end::Table-->
+                            </div>
+                        </div>
+                        <!--end::Card body-->
                     </div>
                 </div>
                 <!--end::Row-->
@@ -160,6 +192,36 @@ $(document).on("keyup", "#total-amount", function() {
     var originalVal = $(this).val();
     var formattedVal = formatNumber(originalVal);
     $(this).val(formattedVal);
+});
+
+$(document).on("keyup", "input[name='amount_paid']", function() {
+    var originalVal = $(this).val();
+    var formattedVal = formatNumber(originalVal);
+    $(this).val(formattedVal);
+});
+
+$(document).on("click", "#add-row", function(e) {
+    e.preventDefault();
+    var row = `<tr>
+                <td>
+                    <input class="form-control form-control-sm me-2 debit" type="date"
+                        name="date"/>
+                </td>
+                <td><input class="form-control form-control-sm me-2 amount-paid" type="text"
+                        name="amount_paid" value="0" /></td>
+                <td><input class="form-control form-control-sm me-2 attachment" type="file"
+                        name="attachment"/></td>
+                <td class="text-center">
+                    <a href="#"><i class="fa-solid fa-trash-can"></i></a>
+                </td>
+            </tr>`;
+
+    $("#kt_items_table tbody").append(row);
+});
+
+$(document).on("click", "#kt_items_table tbody a", function(e) {
+    e.preventDefault();
+    $(this).closest("tr").remove();
 });
 
 $(document).on('click', '#btn-submit-ar', function(e) {

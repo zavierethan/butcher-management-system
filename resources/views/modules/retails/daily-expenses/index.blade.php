@@ -183,7 +183,7 @@ $(document).ready(function() {
                 render: function(data, type, row) {
                     return `
                         <div class="text-center">
-                            <a href="/retails/daily-expenses/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Edit"><i class="fa-solid fa-edit"></i></a>
+                            <a href="/retails/daily-expenses/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Edit"><i class="fa-solid fa-edit"></i>Edit</a>
                         <div>
                     `;
                 }

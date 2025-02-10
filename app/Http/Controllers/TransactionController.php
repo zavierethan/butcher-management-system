@@ -33,14 +33,6 @@ class TransactionController extends Controller
                 $status = 2;
             }
 
-            if($payloads["header"]["payment_method"] == '3') {
-                $status = 2;
-            }
-
-            if($payloads["header"]["payment_method"] == '4') {
-                $status = 1;
-            }
-
             $transactionCode = DB::select('SELECT generate_transaction_code(?) AS transaction_code', [$branchCode])[0]->transaction_code;
 
             $transactionId = DB::table('transactions')->insertGetId([
@@ -58,6 +50,25 @@ class TransactionController extends Controller
                 "branch_id" => $payloads["header"]["branch_id"],
             ]);
 
+            if($payloads["header"]["payment_method"] == '2') {
+
+                $timestamp = strtotime('+7 days'); // Get current date
+
+                $dueDate = date('Y-m-d', $timestamp);  // Add 7 days
+
+                DB::table('receivables')->insertGetId([
+                    "transaction_id" => $transactionId,
+                    "transaction_no" => $transactionCode,
+                    "transaction_date" => date("Y-m-d"),
+                    "customer_id" => $payloads["header"]["customer_id"],
+                    "due_date" => $dueDate,
+                    "total_receivable" => $payloads["header"]["total_amount"],
+                    "remaining_balance" => $payloads["header"]["total_amount"],
+                    "status" => 'unpaid',
+                    "created_at" => date('Y-m-d'),
+                ]);
+            }
+
             // Save the transaction details
             foreach ($payloads['details'] as $detail) {
                 DB::table('transaction_items')->insertGetId([
@@ -69,20 +80,20 @@ class TransactionController extends Controller
                     "discount" => $detail["discount"],
                 ]);
 
-                $stock = DB::table('stocks')->where('stocks.product_id', $detail["product_id"])->where('branch_id', $payloads["header"]["branch_id"])->where('date', date("Y-m-d"))->first();
+                // $stock = DB::table('stocks')->where('stocks.product_id', $detail["product_id"])->where('branch_id', $payloads["header"]["branch_id"])->where('date', date("Y-m-d"))->first();
 
-                $product = DB::table('products')->where('id', $detail["product_id"])->first();
+                // $product = DB::table('products')->where('id', $detail["product_id"])->first();
 
-                if(empty($stock)) {
-                    DB::rollBack();
-                    return response()->json(['message' => 'Product '.$product->name.' tidak tersedia, harap check data stock pada menu inventory.'], 400);
-                }
+                // if(empty($stock)) {
+                //     DB::rollBack();
+                //     return response()->json(['message' => 'Product '.$product->name.' tidak tersedia, harap check data stock pada menu inventory.'], 400);
+                // }
 
-                DB::table('stock_logs')->insert([
-                    "stock_id" => $stock->id,
-                    "out_quantity" => $detail["quantity"],
-                    "date" => date("Y-m-d")
-                ]);
+                // DB::table('stock_logs')->insert([
+                //     "stock_id" => $stock->id,
+                //     "out_quantity" => $detail["quantity"],
+                //     "date" => date("Y-m-d")
+                // ]);
             }
 
             // Commit the transaction

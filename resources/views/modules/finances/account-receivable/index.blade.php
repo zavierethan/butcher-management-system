@@ -36,7 +36,8 @@
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
                     <!--begin::Secondary button-->
-                    <a href="{{route('finances.account-receivable.create')}}" class="btn btn-sm fw-bold btn-secondary">New</a>
+                    <a href="{{route('finances.invoices.create')}}" class="btn btn-sm fw-bold btn-secondary">Generate Invoice</a>
+                    <!-- <a href="{{route('finances.account-receivable.create')}}" class="btn btn-sm fw-bold btn-secondary">New</a> -->
                     <!--end::Secondary button-->
                 </div>
                 <!--end::Actions-->
@@ -121,7 +122,7 @@
                                         </i>
                                         <input type="text" data-kt-purchase-order-table-filter="search"
                                             class="form-control form-control-solid w-250px ps-15"
-                                            placeholder="Invoice No." />
+                                            placeholder="Nomor Transaksi" />
                                     </div>
                                 </div>
                                 <!--begin::Filters-->
@@ -138,6 +139,7 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">CUSTOMER</th>
+                                        <th class="min-w-125px">NOMOR TRANSAKSI</th>
                                         <th class="min-w-125px">TANGGAL</th>
                                         <th class="min-w-125px">JATUH TEMPO</th>
                                         <th class="min-w-125px">TOTAL</th>
@@ -202,6 +204,10 @@ $(document).ready(function() {
                 name: 'customer_name',
             },
             {
+                data: 'transaction_no',
+                name: 'transaction_no',
+            },
+            {
                 data: 'date',
                 name: 'date'
             },
@@ -214,8 +220,8 @@ $(document).ready(function() {
                 name: 'total_amount'
             },
             {
-                data: 'remaining_receivable',
-                name: 'remaining_receivable'
+                data: 'remaining_balance',
+                name: 'remaining_balance'
             },
             {
                 data: 'status',

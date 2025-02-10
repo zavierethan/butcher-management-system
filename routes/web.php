@@ -299,6 +299,22 @@ Route::group(['middleware' => ['auth']], function() {
                 });
             });
 
+            Route::prefix('invoices')->group(function () {
+                Route::name('invoices.')->group(function () {
+                    Route::get('/', [App\Http\Controllers\Finances\InvoiceController::class, 'index'])->name('index');
+                    Route::get('/lists', [App\Http\Controllers\Finances\InvoiceController::class, 'getLists'])->name('get-lists');
+                    Route::get('/create', [App\Http\Controllers\Finances\InvoiceController::class, 'create'])->name('create');
+                    Route::post('/save', [App\Http\Controllers\Finances\InvoiceController::class, 'save'])->name('save');
+                    Route::get('/edit/{id}', [App\Http\Controllers\Finances\InvoiceController::class, 'edit'])->name('edit');
+                    Route::post('/update', [App\Http\Controllers\Finances\InvoiceController::class, 'update'])->name('update');
+
+                    Route::get('/print-invoice/{id}', [App\Http\Controllers\Finances\InvoiceController::class, 'printInvoice'])->name('print-invoice');
+
+                    Route::get('/get-receivable', [App\Http\Controllers\Finances\InvoiceController::class, 'getReceivable'])->name('get-receivable');
+                    Route::post('/get-receivable-items', [App\Http\Controllers\Finances\InvoiceController::class, 'getReceivableItems'])->name('get-receivable-items');
+                });
+            });
+
             Route::prefix('account-payable')->group(function () {
                 Route::name('account-payable.')->group(function () {
                     Route::get('/', [App\Http\Controllers\Finances\AccountPayableController::class, 'index'])->name('index');

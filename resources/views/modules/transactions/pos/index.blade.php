@@ -1337,7 +1337,7 @@ $(document).ready(function() {
                                 title: 'Suceess !',
                                 text: `Transaksi berhasil di simpan dengan Nomor Transaksi ${response.transaction_code}`,
                                 icon: 'success',
-                                confirmButtonText: 'Cetak Faktur',
+                                confirmButtonText: 'Cetak Nota',
                                 allowOutsideClick: false
                             }).then((result) => {
                                 let receiptUrl =

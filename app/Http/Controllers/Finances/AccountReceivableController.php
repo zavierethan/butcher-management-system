@@ -20,15 +20,16 @@ class AccountReceivableController extends Controller
 
         $query = DB::table('receivables')->select(
             "receivables.id",
-            "receivables.invoice_number",
+            "transactions.code as transaction_no",
             "customers.name as customer_name",
-            DB::raw("TO_CHAR(receivables.invoice_date, 'DD/MM/YYYY') as date"),
+            DB::raw("TO_CHAR(receivables.transaction_date, 'DD/MM/YYYY') as date"),
             DB::raw("TO_CHAR(receivables.due_date, 'DD/MM/YYYY') as due_date"),
-            DB::raw("TO_CHAR(receivables.total_amount, 'FM999,999,999') as total_amount"),
-            DB::raw("0  as remaining_receivable"),
+            DB::raw("TO_CHAR(receivables.total_receivable, 'FM999,999,999') as total_amount"),
+            DB::raw("TO_CHAR(receivables.remaining_balance, 'FM999,999,999') as remaining_balance"),
             "receivables.status",
             DB::raw("TO_CHAR(receivables.created_at, 'DD/MM/YYYY HH24:MI:SS') as created_at")
         )
+        ->leftJoin('transactions', 'transactions.id', '=', 'receivables.transaction_id')
         ->leftJoin('customers', 'customers.id', '=', 'receivables.customer_id');
 
         if (!empty($params['start_date']) && !empty($params['end_date'])) {
@@ -50,7 +51,7 @@ class AccountReceivableController extends Controller
         $searchValue = $request->input('search.value'); // This is where DataTables sends the search input
         if (!empty($searchValue)) {
             $query->where(function ($q) use ($searchValue) {
-                $q->where('receivables.invoice_number', 'like', '%' . strtoupper($searchValue) . '%');
+                $q->where('transactions.code', 'like', '%' . strtoupper($searchValue) . '%');
             });
         }
 
@@ -91,7 +92,7 @@ class AccountReceivableController extends Controller
             DB::beginTransaction();
 
             $journalId = DB::table('receivables')->insertGetId([
-                // "invoice_number" => DB::select('SELECT generate_invoice_number() AS invoice_number')[0]->invoice_number,
+                "transaction_id" => $payloads["header"]["transaction_id"],
                 "customer_id" => $payloads["header"]["customer"],
                 "invoice_date" => $payloads["header"]["date"],
                 "due_date" => $payloads["header"]["due_date"],
@@ -122,8 +123,20 @@ class AccountReceivableController extends Controller
     }
 
     public function edit($id) {
-        $customers = DB::table('customers')->where('is_active', 1)->get();
-        return view('modules.finances.account-receivable.edit', compact('customers'));
+        $receivable = DB::table('receivables')->select(
+            "receivables.id",
+            "transactions.code as transaction_no",
+            "customers.name as customer_name",
+            "receivables.transaction_date",
+            "receivables.due_date",
+            DB::raw("TO_CHAR(receivables.total_receivable, 'FM999,999,999') as total_amount"),
+            DB::raw("TO_CHAR(receivables.remaining_balance, 'FM999,999,999') as remaining_balance"),
+            "receivables.status",
+        )
+        ->leftJoin('transactions', 'transactions.id', '=', 'receivables.transaction_id')
+        ->leftJoin('customers', 'customers.id', '=', 'receivables.customer_id')->where('receivables.id', $id)->first();
+
+        return view('modules.finances.account-receivable.edit', compact('receivable'));
     }
 
     public function update(Request $request) {

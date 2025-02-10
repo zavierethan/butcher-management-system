@@ -47,6 +47,7 @@ class CustomerController extends Controller
             "ktp_number" => $request->ktp_number,
             "phone_number" => $request->phone_number,
             "type" => $request->type,
+            "address" => $request->address,
             "is_active" => $request->is_active,
         ]);
 
@@ -79,6 +80,7 @@ class CustomerController extends Controller
                 'ktp_number' => $request->ktp_number,
                 'phone_number' => $request->phone_number,
                 'type' => $request->type,
+                "address" => $request->address,
                 "is_active" => $request->is_active,
             ]);
 
