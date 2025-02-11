@@ -62,6 +62,8 @@
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
                                                         type="text" name="customer" id="customer" value="{{$receivable->customer_name}}" readonly/>
+                                                    <input class="form-control form-control-md form-control-solid"
+                                                        type="hidden" name="receivable_id" id="receivable-id" value="{{$receivable->id}}"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -156,13 +158,32 @@
                                     <thead>
                                         <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
                                             <th class="min-w-70px">Tanggal Pembayaran</th>
+                                            <th class="min-w-70px">Ref.</th>
                                             <th class="min-w-70px">Nominal</th>
                                             <th class="min-w-70px">Bukti Pembayaran</th>
                                             <th class="min-w-70px text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody class="fw-semibold text-gray-600">
-
+                                        @foreach($payments as $py)
+                                        <tr>
+                                            <td>
+                                                <input class="form-control form-control-sm me-2 date" type="date"
+                                                    name="date" value="{{$py->payment_date}}"/>
+                                            </td>
+                                            <td>
+                                                <input class="form-control form-control-sm me-2 reference" type="text"
+                                                    name="reference" value="{{$py->reference}}"/>
+                                            </td>
+                                            <td><input class="form-control form-control-sm me-2 amount-paid" type="text"
+                                                    name="amount_paid" value="{{$py->amount_paid}}"/>
+                                            </td>
+                                            <td><a href="">Lihat Attachment</a></td>
+                                            <td class="text-center">
+                                                <a href="#" class="btn btn-sm btn-light btn-active-light-primary save"><i class="fas fa-edit"></i></a>
+                                            </td>
+                                        </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                                 <!--end::Table-->
@@ -183,10 +204,6 @@
 
 @section('script')
 <script>
-$(document).on("click", "#kt_items_table tbody a", function(e) {
-    e.preventDefault();
-    $(this).closest("tr").remove();
-});
 
 $(document).on("keyup", "#total-amount", function() {
     var originalVal = $(this).val();
@@ -204,73 +221,86 @@ $(document).on("click", "#add-row", function(e) {
     e.preventDefault();
     var row = `<tr>
                 <td>
-                    <input class="form-control form-control-sm me-2 debit" type="date"
+                    <input class="form-control form-control-sm me-2 date" type="date"
                         name="date"/>
+                </td>
+                <td>
+                    <input class="form-control form-control-sm me-2 reference" type="text"
+                        name="reference"/>
                 </td>
                 <td><input class="form-control form-control-sm me-2 amount-paid" type="text"
                         name="amount_paid" value="0" /></td>
                 <td><input class="form-control form-control-sm me-2 attachment" type="file"
                         name="attachment"/></td>
                 <td class="text-center">
-                    <a href="#"><i class="fa-solid fa-trash-can"></i></a>
+                    <a href="#" class="btn btn-sm btn-light btn-active-light-primary save"><i class="fas fa-save"></i></a>
+                    <a href="#" class="btn btn-sm btn-light btn-active-light-primary delete"><i class="fa-solid fa-trash-can"></i></a>
                 </td>
             </tr>`;
 
     $("#kt_items_table tbody").append(row);
 });
 
-$(document).on("click", "#kt_items_table tbody a", function(e) {
+$(document).on("click", ".delete", function(e) {
     e.preventDefault();
     $(this).closest("tr").remove();
 });
 
-$(document).on('click', '#btn-submit-ar', function(e) {
+$(document).on("click", ".save", function(e) {
     e.preventDefault();
+
+    var row = $(this).closest('tr');
+
+    var receivableId = $('#receivable-id').val();
+    var date = row.find('input[name="date"]').val();
+    var reference = row.find('input[name="reference"]').val();
+    var amountPaid = row.find('input[name="amount_paid"]').val().replace(/[^\d.]/g, '') | 0;
+    var attachment = row.find('input[name="attachment"]')[0].files[0];
+
+    if (attachment) {
+        console.log("Attachment Name:", attachment.name);
+    } else {
+        console.log("No attachment uploaded.");
+    }
 
     if (true) {
         Swal.fire({
-            title: 'Apakah anda yakin untuk memproses AR ?',
+            title: 'Simpan Data ?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             cancelButtonText: 'Batalkan',
-            confirmButtonText: 'Ya, AR'
+            confirmButtonText: 'Ya'
         }).then((result) => {
             if (result.isConfirmed) {
-                var customer = $('#customer').val();
-                var date = $('#invoice-date').val();
-                var due_date = $('#due-date').val();
-                var total_amount = $('#total-amount').val().replace(/[^\d]/g, '') | 0;
-                var remarks = $('#remarks').val();
-                var status = $('#status').val();
+                let formData = new FormData();
 
-                // Build the JSON payload
-                const payload = {
-                    header: {
-                        customer: customer,
-                        date: date,
-                        due_date: due_date,
-                        total_amount: total_amount,
-                        remarks: remarks,
-                        status: status,
-                    }
-                };
+                formData.append("receivable_id", receivableId);
+                formData.append("date", date);
+                formData.append("reference", reference);
+                formData.append("amount_paid", amountPaid);
 
-                console.log(payload)
+                if (attachment) {
+                    formData.append("attachment", attachment);
+                }
+
+
+                console.log(formData)
 
                 $.ajax({
-                    url: `{{route('finances.account-receivable.save')}}`,
+                    url: `{{route('finances.account-receivable.save-payments')}}`,
                     type: 'POST',
-                    contentType: 'application/json',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    data: JSON.stringify(payload),
+                    data: formData,
+                    contentType: false,
+                    processData: false,
                     success: function(response) {
                         Swal.fire({
                             title: 'Suceess !',
-                            text: `AR berhasil di simpan`,
+                            text: `Data berhasil di simpan`,
                             icon: 'success',
                             confirmButtonText: 'Ok',
                             allowOutsideClick: false

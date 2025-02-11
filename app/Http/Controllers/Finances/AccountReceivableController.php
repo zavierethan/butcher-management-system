@@ -33,7 +33,7 @@ class AccountReceivableController extends Controller
         ->leftJoin('customers', 'customers.id', '=', 'receivables.customer_id');
 
         if (!empty($params['start_date']) && !empty($params['end_date'])) {
-            $query->whereBetween('receivables.invoice_date', [
+            $query->whereBetween('receivables.transaction_date', [
                 $params['start_date'],
                 $params['end_date']
             ]);
@@ -136,10 +136,81 @@ class AccountReceivableController extends Controller
         ->leftJoin('transactions', 'transactions.id', '=', 'receivables.transaction_id')
         ->leftJoin('customers', 'customers.id', '=', 'receivables.customer_id')->where('receivables.id', $id)->first();
 
-        return view('modules.finances.account-receivable.edit', compact('receivable'));
+        $payments = DB::table('payments')
+            ->select(
+                'payment_date',
+                'reference',
+                DB::raw("TO_CHAR(amount_paid, 'FM999,999,999') as amount_paid"),
+                'reference',
+            )
+            ->where('receivable_id', $receivable->id)->get();
+
+        return view('modules.finances.account-receivable.edit', compact('receivable', 'payments'));
     }
 
-    public function update(Request $request) {
+    public function savePayments(Request $request) {
+        try {
+            // Start a database transaction
+            DB::beginTransaction();
 
+            $base64File = null;
+
+            if ($request->hasFile('attachment')) {
+                $file = $request->file('attachment');
+                $fileContents = file_get_contents($file->getRealPath());
+                $base64File = base64_encode($fileContents);
+            }
+
+            DB::table('payments')->insert([
+                "receivable_id" => $request->receivable_id,
+                "payment_date" => $request->date,
+                "reference" => $request->reference,
+                "amount_paid" => $request->amount_paid,
+                "attachment" => $base64File
+            ]);
+
+            $receivable = DB::table('receivables')
+                ->where('id', $request->receivable_id)
+                ->first();
+
+            if ($receivable) {
+                // Calculate the new remaining balance
+                $newRemainingBalance = $receivable->remaining_balance - $request->amount_paid;
+
+                $status = "partial";
+
+                if($newRemainingBalance <= 0) {
+                    $status = "paid";
+
+                    DB::table('transactions')->where('id', $receivable->transaction_id)->update(['status' => 1]);
+                }
+
+                // Update the remaining balance and status
+                DB::table('receivables')
+                    ->where('id', $request->receivable_id)
+                    ->update([
+                        "remaining_balance" => $newRemainingBalance,
+                        "status" => $status
+                    ]);
+            }
+
+            // Commit the transaction
+            DB::commit();
+
+            // Return success response
+            return response()->json([
+                'message' => 'Data Successfully created',
+            ], 201);
+
+        } catch (\Exception $e) {
+            // Rollback transaction in case of error
+            DB::rollBack();
+
+            // Return error response
+            return response()->json([
+                'message' => 'Failed to create transaction',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

@@ -296,6 +296,8 @@ Route::group(['middleware' => ['auth']], function() {
                     Route::post('/save', [App\Http\Controllers\Finances\AccountReceivableController::class, 'save'])->name('save');
                     Route::get('/edit/{id}', [App\Http\Controllers\Finances\AccountReceivableController::class, 'edit'])->name('edit');
                     Route::post('/update', [App\Http\Controllers\Finances\AccountReceivableController::class, 'update'])->name('update');
+
+                    Route::post('/save-payments', [App\Http\Controllers\Finances\AccountReceivableController::class, 'savePayments'])->name('save-payments');
                 });
             });
 

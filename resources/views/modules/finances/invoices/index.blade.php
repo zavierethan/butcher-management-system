@@ -12,7 +12,7 @@
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
                     <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-                        Account Receivables (A/R)</h1>
+                        Invoices</h1>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
@@ -27,7 +27,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Account Receivables (A/R)</li>
+                        <li class="breadcrumb-item text-muted">Invoices</li>
                         <!--end::Item-->
                     </ul>
                     <!--end::Breadcrumb-->
@@ -121,9 +121,9 @@
                                             <span class="path1"></span>
                                             <span class="path2"></span>
                                         </i>
-                                        <input type="text" data-kt-purchase-order-table-filter="search"
+                                        <input type="text" data-kt-invoice-table-filter="search"
                                             class="form-control form-control-solid w-250px ps-15"
-                                            placeholder="Nomor Transaksi" />
+                                            placeholder="Nomor Invoice" />
                                     </div>
                                 </div>
                                 <!--begin::Filters-->
@@ -140,12 +140,9 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">CUSTOMER</th>
-                                        <th class="min-w-125px">NOMOR TRANSAKSI</th>
+                                        <th class="min-w-125px">No.INVOICE</th>
                                         <th class="min-w-125px">TANGGAL</th>
-                                        <th class="min-w-125px">JATUH TEMPO</th>
-                                        <th class="min-w-125px">TOTAL</th>
-                                        <th class="min-w-125px">SISA PIUTANG</th>
-                                        <th class="min-w-125px">STATUS</th>
+                                        <th class="min-w-125px">TOTAL TAGIHAN</th>
                                         <th class="min-w-125px">DIBUAT TANGGAL</th>
                                         <th class="text-center min-w-70px">ACTION</th>
                                     </tr>
@@ -186,7 +183,7 @@ $(document).ready(function() {
         paging: true, // Enable pagination
         pageLength: 10, // Number of rows per page
         ajax: {
-            url: `{{route('finances.account-receivable.get-lists')}}`, // Replace with your route
+            url: `{{route('finances.invoices.get-lists')}}`, // Replace with your route
             type: 'GET',
             data: function (d) {
                 // Add filter data to the request
@@ -205,45 +202,16 @@ $(document).ready(function() {
                 name: 'customer_name',
             },
             {
-                data: 'transaction_no',
-                name: 'transaction_no',
+                data: 'invoice_no',
+                name: 'invoice_no',
             },
             {
-                data: 'date',
-                name: 'date'
+                data: 'invoice_date',
+                name: 'invoice_date'
             },
             {
-                data: 'due_date',
-                name: 'due_date'
-            },
-            {
-                data: 'total_amount',
-                name: 'total_amount'
-            },
-            {
-                data: 'remaining_balance',
-                name: 'remaining_balance'
-            },
-            {
-                data: 'status',
-                name: 'status',
-                render: function(data, type, row) {
-                    var status = "";
-
-                    if (row.status == 'unpaid') {
-                        status = `<span class="badge bg-danger text-dark">UNPAID</span>`
-                    }
-
-                    if (row.status == 'paid') {
-                        status = `<span class="badge bg-success text-dark">PAID</span>`
-                    }
-
-                    if (row.status == 'partial') {
-                        status = `<span class="badge bg-warning text-dark">PARTIAL</span>`
-                    }
-
-                    return status;
-                }
+                data: 'total_billed',
+                name: 'total_billed'
             },
             {
                 data: 'created_at',
@@ -257,7 +225,7 @@ $(document).ready(function() {
                 render: function(data, type, row) {
                     return `
                         <div class="text-center">
-                            <a href="/finances/account-receivable/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail AR"><i class="fa-solid fa-magnifying-glass"></i></a>
+                            <a href="/finances/invoices/print-invoice/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" target="_blank" rel="noopener noreferrer" title="Print Invoice"><i class="fa-solid fa-print"></i></a>
                         <div>
                     `;
                 }
@@ -268,6 +236,11 @@ $(document).ready(function() {
     $('#start-date, #end-date, #customer, #status').on('change', function () {
         table.draw(); // Trigger DataTable redraw with updated filter values
     });
+
+    $('[data-kt-invoice-table-filter="search"]').on('keyup', function() {
+    const searchTerm = $(this).val(); // Get the value from the search input
+    table.search(searchTerm).draw(); // Trigger the search and refresh the DataTable
+});
 });
 </script>
 @endsection
