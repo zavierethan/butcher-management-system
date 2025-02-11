@@ -19,7 +19,12 @@ class InvoiceController extends Controller
     }
 
     public function create() {
-        $customers = DB::table('customers')->where('is_active', 1)->get();
+        $customers = DB::table('receivables')
+            ->select(
+                'receivables.customer_id as id',
+                'customers.name'
+            )
+            ->leftJoin('customers', 'customers.id', '=', 'receivables.customer_id')->where('status', 'unpaid')->distinct()->get();
         return view('modules.finances.invoices.create', compact('customers'));
     }
 
@@ -140,7 +145,7 @@ class InvoiceController extends Controller
             ->get();
 
         // Convert image to Base64
-        $imagePath = public_path('assets/media/logos/logo-text.png'); // Update the path as needed
+        $imagePath = public_path('assets/media/logos/priyadis-butcherss.png'); // Update the path as needed
         $base64Image = $this->convertImageToBase64($imagePath);
 
         $pdf = PDF::loadView('modules.finances.invoices.print', [

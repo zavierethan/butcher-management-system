@@ -130,14 +130,14 @@
                                 <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0" id="kt_items_table">
                                     <thead>
                                         <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
-                                            <th class="min-w-70px text-center">Action</th>
-                                            <th class="min-w-70px">Tanggal Transaksi</th>
-                                            <th class="min-w-70px">Nomor Transaksi</th>
-                                            <th class="min-w-70px">Deskripsi Barang</th>
-                                            <th class="min-w-70px">Jumlah</th>
-                                            <th class="min-w-70px">Harga</th>
-                                            <th class="min-w-70px">Diskon</th>
-                                            <th class="min-w-70px">Total</th>
+                                            <th class="text-center">Action</th>
+                                            <th class="">Tanggal</th>
+                                            <th class="">Nomor Transaksi</th>
+                                            <th class="">Deskripsi Barang</th>
+                                            <th class="">Jumlah</th>
+                                            <th class="">Harga</th>
+                                            <th class="">Diskon</th>
+                                            <th class="">Total</th>
                                         </tr>
                                     </thead>
                                     <tbody class="fw-semibold text-gray-600">
@@ -311,9 +311,9 @@ function getReceivableItems(params) {
                             <td>${items.transaction_no}</td>
                             <td class="">${items.name}</td>
                             <td class="">${items.quantity}</td>
-                            <td class="text-end">${items.base_price}</td>
-                            <td class="text-end">${items.discount}</td>
-                            <td class="text-end">${items.sell_price}</td>
+                            <td class="">${items.base_price}</td>
+                            <td class="">${items.discount}</td>
+                            <td class="">${items.sell_price}</td>
                         </tr>
                     `;
 

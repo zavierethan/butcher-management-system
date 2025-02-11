@@ -151,7 +151,7 @@ License: For each use you must have a valid license purchased only from above li
                 <!--begin::Content-->
                 <div class="d-flex flex-column flex-center py-7 py-lg-15 px-5 px-md-15 w-100">
                     <!--begin::Title-->
-                    <h1 class="d-none d-lg-block text-white fs-2qx fw-bolder text-center mb-7">Pryadis Butchers</h1>
+                    <img src="{{asset('assets/media/logos/priyadis-butcherss.png')}}" alt="Company Logo" style="max-width: 300px;">
                     <!--end::Title-->
                 </div>
                 <!--end::Content-->

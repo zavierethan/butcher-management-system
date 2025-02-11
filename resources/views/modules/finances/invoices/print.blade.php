@@ -94,12 +94,12 @@
         <table width="100%" style="border-collapse: collapse; border: none;">
             <tr style="border: none;">
                 <!-- Left-aligned content -->
-                <td style="text-align: left; border: none; padding: 0; vertical-align: top;">
-                    <h1>Invoice</h1>
+                <td style="text-align: left; border: none; padding: 0;">
+                    <h1><b>INVOICE</b></h1>
                 </td>
 
                 <!-- Right-aligned logo -->
-                <td style="text-align: right; border: none; padding: 0; vertical-align: top;">
+                <td style="text-align: right; border: none; padding: 0;">
                     <img src="{{ $base64Image }}" alt="Company Logo" style="max-width: 150px;">
                 </td>
             </tr>
