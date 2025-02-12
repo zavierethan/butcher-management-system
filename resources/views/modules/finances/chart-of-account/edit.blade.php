@@ -74,37 +74,22 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Account Name</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="text" name="name" value="{{$data->account_name}}"/>
+                                                        type="text" name="name" value="{{$data->name}}"/>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="separator my-5"></div>
                                     </div>
                                     <div class="col-md-6">
-                                        <!-- <div class="fv-row mb-5">
-                                            <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Type Account</label>
-                                                <div class="position-relative mb-3">
-                                                    <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="type">
-                                                        <option value="">-</option>
-                                                        <option value="debit" <?php echo ($data->account_type == 'debit') ? 'selected' : ''; ?>>Debit</option>
-                                                        <option value="kredit" <?php echo ($data->account_type == 'kredit') ? 'selected' : ''; ?>>Kredit</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="separator my-5"></div> -->
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Account Type</label>
                                                 <div class="position-relative mb-3">
                                                     <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="category">
                                                         <option value="">-</option>
-                                                        <option value="Asset" <?php echo ($data->account_type == 'Asset') ? 'selected' : ''; ?>>Aset</option>
-                                                        <option value="Liability" <?php echo ($data->account_type == 'Liability') ? 'selected' : ''; ?>>Liabilitas</option>
-                                                        <option value="Equity" <?php echo ($data->account_type == 'Equity') ? 'selected' : ''; ?>>Ekuitas</option>
-                                                        <option value="Revenue" <?php echo ($data->account_type == 'Revenue') ? 'selected' : ''; ?>>Pendapatan</option>
-                                                        <option value="Expense" <?php echo ($data->account_type == 'Expense') ? 'selected' : ''; ?>>Beban</option>
+                                                        @foreach($types as $t)
+                                                        <option value="{{$t->id}}" <?php echo ($data->type_id == $t->id) ? 'selected' : ''; ?>>{{$t->name}}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -112,9 +97,9 @@
                                         <div class="separator my-5"></div>
                                     </div>
                                 </div>
-                                <div class="flex justify-end">
-                                    <button type="submit" class="btn btn-primary">Update</button>
+                                <div class="text-end">
                                     <a href="{{route('finances.chart-of-accounts.index')}}" class="btn btn-danger">Cancel</a>
+                                    <button type="submit" class="btn btn-primary">Update</button>
                                 </div>
                             </form>
                         </div>

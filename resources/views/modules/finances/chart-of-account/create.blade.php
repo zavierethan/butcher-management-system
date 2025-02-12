@@ -79,30 +79,29 @@
                                         <div class="separator my-5"></div>
                                     </div>
                                     <div class="col-md-6">
-                                        <!-- <div class="fv-row mb-5">
+                                        <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Type Account</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Account Categories</label>
                                                 <div class="position-relative mb-3">
                                                     <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="type">
                                                         <option value="">-</option>
-                                                        <option value="debit">Debit</option>
-                                                        <option value="kredit">Kredit</option>
+                                                        @foreach($categories as $c)
+                                                        <option value="{{$c->id}}">{{$c->name}}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="separator my-5"></div> -->
+                                        <div class="separator my-5"></div>
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Account Type</label>
                                                 <div class="position-relative mb-3">
-                                                    <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="category">
+                                                    <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="type">
                                                         <option value="">-</option>
-                                                        <option value="Asset">Aset</option>
-                                                        <option value="Liability">Liabilitas</option>
-                                                        <option value="Equity">Ekuitas</option>
-                                                        <option value="Revenue">Pendapatan</option>
-                                                        <option value="Expense">Beban</option>
+                                                        @foreach($types as $t)
+                                                        <option value="{{$t->id}}">{{$t->name}}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -110,9 +109,9 @@
                                         <div class="separator my-5"></div>
                                     </div>
                                 </div>
-                                <div class="flex justify-end">
+                                <div class="text-end">
+                                    <a href="{{route('finances.chart-of-accounts.index')}}" class="btn btn-md btn-danger">Cancel</a>
                                     <button type="submit" class="btn btn-primary">Submit</button>
-                                    <a href="{{route('finances.chart-of-accounts.index')}}" class="btn btn-danger">Cancel</a>
                                 </div>
                             </form>
                         </div>

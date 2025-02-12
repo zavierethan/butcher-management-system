@@ -39,6 +39,7 @@
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
                     <!--begin::Secondary button-->
+                    <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-sync-journals">Sync to Journals</a>
                     <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export ke Excel</a>
                     <!--end::Secondary button-->
                 </div>
@@ -309,7 +310,8 @@ $(document).ready(function() {
                 return json.data; // Map the 'data' field
             }
         },
-        columns: [{
+        columns: [
+            {
                 data: 'code',
                 name: 'code'
             },

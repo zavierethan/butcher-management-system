@@ -141,7 +141,7 @@ class AccountReceivableController extends Controller
                 'payment_date',
                 'reference',
                 DB::raw("TO_CHAR(amount_paid, 'FM999,999,999') as amount_paid"),
-                'reference',
+                'attachment',
             )
             ->where('receivable_id', $receivable->id)->get();
 

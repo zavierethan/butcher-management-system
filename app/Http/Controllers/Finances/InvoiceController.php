@@ -202,6 +202,13 @@ class InvoiceController extends Controller
             ->orderBy('transactions.code', 'ASC')
             ->get();
 
+        $totalSellPrice = DB::table('transaction_items')
+            ->join('transactions', 'transactions.id', '=', 'transaction_items.transaction_id')
+            ->whereIn('transaction_items.transaction_id', $receivableIds)
+            ->sum(DB::raw("transaction_items.unit_price"));
+
+        $totalFormatted = number_format($totalSellPrice, 0, '.', ',');
+
         // Convert image to Base64
         $imagePath = public_path('assets/media/logos/priyadis-butcherss.png'); // Update the path as needed
         $base64Image = $this->convertImageToBase64($imagePath);
@@ -209,6 +216,7 @@ class InvoiceController extends Controller
         $pdf = PDF::loadView('modules.finances.invoices.print', [
             "invoice" => $invoice,
             "invoiceItems" => $invoiceItems,
+            "totalSellPrice" => $totalFormatted,
             "base64Image" => $base64Image,
         ]);
 

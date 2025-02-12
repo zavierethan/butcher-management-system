@@ -71,7 +71,7 @@ class JournalController extends Controller
     }
 
     public function create() {
-        $accounts = DB::table('chart_of_accounts')->get();
+        $accounts = DB::table('accounts')->get();
         return view('modules.finances.journal.create', compact('accounts'));
     }
 
@@ -125,7 +125,7 @@ class JournalController extends Controller
     }
 
     public function edit($id) {
-        $accounts = DB::table('chart_of_accounts')->get();
+        $accounts = DB::table('accounts')->get();
         $journal = DB::table('journals')->where('id', $id)->first();
         $journaldetails = DB::table('journal_details')->where('journal_id', $journal->id)->get();
         return view('modules.finances.journal.edit', compact('accounts', 'journal', 'journaldetails'));

@@ -159,7 +159,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="6" style="text-align: right;"><strong>TOTAL</strong></td>
-                        <td style="text-align: right"><strong>1.750.000</strong></td>
+                        <td style="text-align: right"><strong>{{$totalSellPrice}}</strong></td>
                     </tr>
                 </tfoot>
             </table>

@@ -178,7 +178,7 @@
                                             <td><input class="form-control form-control-sm me-2 amount-paid" type="text"
                                                     name="amount_paid" value="{{$py->amount_paid}}"/>
                                             </td>
-                                            <td><a href="">Lihat Attachment</a></td>
+                                            <td><a href="#" class="view-attachment" data-base64="{{$py->attachment}}" data-filename="attachment.pdf">Lihat Attachment</a></td>
                                             <td class="text-center">
                                                 <a href="#" class="btn btn-sm btn-light btn-active-light-primary save"><i class="fas fa-edit"></i></a>
                                             </td>
@@ -245,6 +245,34 @@ $(document).on("click", ".delete", function(e) {
     e.preventDefault();
     $(this).closest("tr").remove();
 });
+
+$(document).on("click", ".view-attachment", function (e) {
+    e.preventDefault();
+
+    let base64Data = $(this).data("base64"); // Get Base64 string
+    let fileType = "image/png"; // Adjust MIME type if needed
+
+    if (!base64Data) {
+        alert("No attachment found.");
+        return;
+    }
+
+    let fileUrl = `data:${fileType};base64,${base64Data}`;
+
+    // Create a temporary <a> element using jQuery
+    let $a = $("<a>", {
+        href: fileUrl,
+        target: "_blank"
+    }).appendTo("body");
+
+    // Trigger a click event to open in a new tab
+    $a[0].click();
+
+    // Remove the element after opening
+    $a.remove();
+});
+
+
 
 $(document).on("click", ".save", function(e) {
     e.preventDefault();

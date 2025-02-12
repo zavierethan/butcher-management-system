@@ -139,8 +139,8 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">CUSTOMER</th>
                                         <th class="min-w-125px">No.INVOICE</th>
+                                        <th class="min-w-125px">CUSTOMER</th>
                                         <th class="min-w-125px">TANGGAL</th>
                                         <th class="min-w-125px">TOTAL TAGIHAN</th>
                                         <th class="min-w-125px">DIBUAT TANGGAL</th>
@@ -198,12 +198,12 @@ $(document).ready(function() {
         },
         columns: [
             {
-                data: 'customer_name',
-                name: 'customer_name',
-            },
-            {
                 data: 'invoice_no',
                 name: 'invoice_no',
+            },
+            {
+                data: 'customer_name',
+                name: 'customer_name',
             },
             {
                 data: 'invoice_date',
@@ -225,7 +225,7 @@ $(document).ready(function() {
                 render: function(data, type, row) {
                     return `
                         <div class="text-center">
-                            <a href="/finances/invoices/print-invoice/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" target="_blank" rel="noopener noreferrer" title="Print Invoice"><i class="fa-solid fa-print"></i></a>
+                            <a href="/finances/invoices/print-invoice/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" target="_blank" title="Print Invoice"><i class="fa-solid fa-print"></i></a>
                         <div>
                     `;
                 }

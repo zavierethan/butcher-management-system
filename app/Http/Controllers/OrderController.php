@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Exports\TransactionExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Services\JournalService;
 use DB;
 use PDF;
 use Auth;
@@ -255,5 +256,9 @@ class OrderController extends Controller
         }
 
         return response()->json(['status' => 'Printed successfully']);
+    }
+
+    public function syncToJournal(Request $request) {
+        return response()->json(['status' => 'Synchronization to journal was successful']);
     }
 }

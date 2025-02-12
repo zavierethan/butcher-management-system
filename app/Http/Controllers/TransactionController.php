@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\JournalService;
 use DB;
 use Auth;
 
@@ -25,15 +26,29 @@ class TransactionController extends Controller
 
             $branchCode = DB::table('branches')->where('id', Auth::user()->branch_id)->value('code');
 
+            $transactionCode = DB::select('SELECT generate_transaction_code(?) AS transaction_code', [$branchCode])[0]->transaction_code;
+
             if($payloads["header"]["payment_method"] == '1') {
                 $status = 1;
+
+                JournalService::createJournal('sales', $transactionCode, 'Penjualan di POS', [
+                    ['accountId' => 1, 'debit' => $payloads["header"]["total_amount"], 'credit' => 0],  // Kas bertambah
+                    ['accountId' => 15, 'debit' => 0, 'credit' => $payloads["header"]["total_amount"]],  // Pendapatan bertambah
+                    ['accountId' => 17, 'debit' => $payloads["header"]["total_amount"], 'credit' => 0],  // HPP bertambah
+                    ['accountId' => 5, 'debit' => 0, 'credit' => $payloads["header"]["total_amount"]],  // Persediaan berkurang
+                ]);
             }
 
             if($payloads["header"]["payment_method"] == '2') {
                 $status = 2;
-            }
 
-            $transactionCode = DB::select('SELECT generate_transaction_code(?) AS transaction_code', [$branchCode])[0]->transaction_code;
+                JournalService::createJournal('sales', $transactionCode, 'Penjualan di POS', [
+                    ['accountId' => 3, 'debit' => $payloads["header"]["total_amount"], 'credit' => 0],  // Kas bertambah
+                    ['accountId' => 15, 'debit' => 0, 'credit' => $payloads["header"]["total_amount"]],  // Pendapatan bertambah
+                    ['accountId' => 17, 'debit' => $payloads["header"]["total_amount"], 'credit' => 0],  // HPP bertambah
+                    ['accountId' => 5, 'debit' => 0, 'credit' => $payloads["header"]["total_amount"]],  // Persediaan berkurang
+                ]);
+            }
 
             $transactionId = DB::table('transactions')->insertGetId([
                 "code" => $transactionCode,

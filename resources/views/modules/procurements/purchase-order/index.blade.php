@@ -260,7 +260,6 @@ let table = $("#kt_suppliers_table").DataTable({
             render: function(data, type, row) {
                 return `
                         <div class="text-center">
-                            <a href="/procurement/purchase-order/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Goods Receive</a>
                             <a href="/procurement/purchase-order/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Edit</a>
                         <div>
                     `;
