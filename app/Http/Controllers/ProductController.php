@@ -163,6 +163,7 @@ class ProductController extends Controller
                 'products.id',
                 'products.name',
                 'products.code',
+                'products.url_path',
                 'products.is_active',
                 'product_categories.name as category_name',
                 'product_details.price',
