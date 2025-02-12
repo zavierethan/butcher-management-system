@@ -28,7 +28,7 @@ class ProductController extends Controller
                 ->orWhere('products.code', 'ilike', '%' . $searchValue . '%');
             });
         }
-        
+
         // Apply sorting
         if ($request->has('order') && $request->order) {
             $columnIndex = $request->order[0]['column']; // Column index from the DataTable
@@ -194,12 +194,12 @@ class ProductController extends Controller
             ->get();
 
         // Map `url_path` with default image if null
-        // $data = $data->map(function ($product) {
-        //     $product->url_path = $product->url_path
-        //         ? asset('storage/' . $product->url_path)
-        //         : asset('storage/default.png');
-        //     return $product;
-        // });
+        $data = $data->map(function ($product) {
+            $product->url_path = $product->url_path
+                ? asset('storage/' . $product->url_path)
+                : asset('storage/default.png');
+            return $product;
+        });
 
         // Build response
         $response = [
