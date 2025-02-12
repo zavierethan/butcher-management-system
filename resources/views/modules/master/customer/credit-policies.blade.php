@@ -34,7 +34,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Edit</li>
+                        <li class="breadcrumb-item text-muted">Credit Policies</li>
                         <!--end::Item-->
                     </ul>
                     <!--end::Breadcrumb-->
@@ -52,67 +52,32 @@
                 <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
                     <div class="card">
                         <div class="card-body pt-10">
-                            <form class="w-[60%]" method="POST" action="{{route('customers.update')}}">
+                            <form class="w-[60%]" method="POST" action="{{route('customers.credit-policies-save')}}">
                                 @csrf
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Nama</label>
+                                        <label class="form-label fw-bold fs-6 mb-2">Customer Name</label>
                                         <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="name" id="name" value="{{$customer->name}}" />
-                                            <input class="form-control form-control-md form-control-solid" type="hidden" name="id" id="id" value="{{$customer->id}}" />
+                                            <input class="form-control form-control-md form-control-solid" type="text" name="name" id="name" value="{{$customer->name}}" readonly />
+                                            <input class="form-control form-control-md form-control-solid" type="hidden" name="customer_id" id="customer-id"  value="{{$customer->id}}" readonly />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="separator my-5"></div>
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">No. KTP</label>
+                                        <label class="form-label fw-bold fs-6 mb-2">Credit Limit</label>
                                         <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="ktp_number" id="ktp_number" value="{{$customer->ktp_number}}" />
+                                            <input class="form-control form-control-md form-control-solid" type="text" name="credit_limit" value="{{$customer->credit_limit}}"/>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="separator my-5"></div>
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">No. Handphone</label>
+                                        <label class="form-label fw-bold fs-6 mb-2">Due Date Interval (Days)</label>
                                         <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="phone_number" id="phone_number" value="{{$customer->phone_number}}" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="separator my-5"></div>
-                                <div class="fv-row mb-5">
-                                    <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Jenis</label>
-                                        <div class="position-relative mb-3">
-                                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="type">
-                                                <option value=""></option>
-                                                <option value="Perorangan" <?php echo ($customer->type == "Perorangan") ? "selected" : ""; ?>>Perorangan</option>
-                                                <option value="Perusahaan/Kolektif" <?php echo ($customer->type == "Perusahaan/Kolektif") ? "selected" : ""; ?>>Perusahaan / Kolektif</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="separator my-5"></div>
-                                <div class="fv-row mb-5">
-                                    <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Alamat</label>
-                                        <div class="position-relative mb-3">
-                                            <textarea class="form-control form-control-md form-control-solid" type="text" name="address" id="address">{{$customer->address}}</textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="separator my-5"></div>
-                                <div class="fv-row mb-5">
-                                    <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Is Active</label>
-                                        <div class="position-relative mb-3">
-                                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="is_active">
-                                                <option value=""></option>
-                                                <option value="1" <?php echo ($customer->is_active == 1) ? "selected" : ""; ?>>Yes</option>
-                                                <option value="0" <?php echo ($customer->is_active == 0) ? "selected" : ""; ?>>No</option>
-                                            </select>
+                                            <input class="form-control form-control-md form-control-solid" type="text" name="due_date_interval" value="{{$customer->due_date_interval}}"/>
                                         </div>
                                     </div>
                                 </div>

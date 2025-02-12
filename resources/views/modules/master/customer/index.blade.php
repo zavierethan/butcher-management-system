@@ -122,7 +122,7 @@
 
 @section('script')
 <script>
-    $("#kt_customers_table").DataTable({
+    let table = $("#kt_customers_table").DataTable({
         processing: true,
         serverSide: true,
         paging: true, // Enable pagination
@@ -148,12 +148,18 @@
                 render: function (data, type, row) {
                     return `
                         <div class="text-center">
+                            <a href="/customers/credit-policies/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Credit policies</a>
                             <a href="/customers/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Edit</a>
                         <div>
                     `;
                 }
             }
         ]
+    });
+
+    $('[data-kt-customer-table-filter="search"]').on('keyup', function() {
+        const searchTerm = $(this).val(); // Get the value from the search input
+        table.search(searchTerm).draw(); // Trigger the search and refresh the DataTable
     });
 </script>
 @endsection

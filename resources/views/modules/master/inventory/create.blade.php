@@ -44,16 +44,6 @@
                         <div class="card-body pt-10">
                             <form class="w-[60%]" method="POST" action="{{route('inventories.save')}}" enctype="multipart/form-data">
                                 @csrf
-                                <!-- Product Code -->
-                                <div class="fv-row mb-5">
-                                    <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Kode</label>
-                                        <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="code" id="code" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="separator my-5"></div>
                                 <!-- Product Name -->
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
@@ -67,9 +57,14 @@
                                 <!-- Product Category -->
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Unit</label>
+                                        <label class="form-label fw-bold fs-6 mb-2">Satuan</label>
                                         <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="unit" id="unit" />
+                                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="unit">
+                                                <option value=""></option>
+                                                @foreach($units as $u)
+                                                <option value="{{$u->id}}">{{$u->name}}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
                                 </div>

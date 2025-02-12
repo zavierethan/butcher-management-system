@@ -17,6 +17,14 @@ class CustomerController extends Controller
 
         $query = DB::table('customers');
 
+        // Apply global search if provided
+        $searchValue = $request->input('search.value'); // This is where DataTables sends the search input
+        if (!empty($searchValue)) {
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('name', 'like', '%' . strtoupper($searchValue) . '%');
+            });
+        }
+
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
 
@@ -123,6 +131,25 @@ class CustomerController extends Controller
         return response()->json([
             'message' => 'customer successfully created'
         ], 201);
+    }
+
+    public function creditPolicies($id) {
+        $customer = DB::table('customers')
+            ->select('customers.id','customers.name', 'customer_credit_policies.credit_limit', 'customer_credit_policies.due_date_interval')
+            ->leftJoin('customer_credit_policies', 'customer_credit_policies.customer_id', '=', 'customers.id')
+            ->where('customers.id', $id)->first();
+
+        return view('modules.master.customer.credit-policies', compact('customer'));
+    }
+
+    public function creditPoliciesSave(Request $request) {
+        DB::table('customer_credit_policies')->insert([
+            "customer_id" => $request->customer_id,
+            "credit_limit" => $request->credit_limit,
+            "due_date_interval" => $request->due_date_interval,
+        ]);
+
+        return redirect()->route('customers.index');
     }
 
 }

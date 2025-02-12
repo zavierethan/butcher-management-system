@@ -56,9 +56,9 @@
                                 @csrf
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Kode</label>
+                                        <label class="form-label fw-bold fs-6 mb-2">Nama</label>
                                         <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="code" id="code" value="{{$inventory->code}}" />
+                                            <input class="form-control form-control-md form-control-solid" type="text" name="name" id="name" value="{{$inventory->name}}" />
                                             <input class="form-control form-control-md form-control-solid" type="hidden" name="id" id="id" value="{{$inventory->id}}" />
                                         </div>
                                     </div>
@@ -66,18 +66,14 @@
                                 <div class="separator my-5"></div>
                                 <div class="fv-row mb-5">
                                     <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Nama</label>
+                                        <label class="form-label fw-bold fs-6 mb-2">Satuan</label>
                                         <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="name" id="name" value="{{$inventory->name}}" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="separator my-5"></div>
-                                <div class="fv-row mb-5">
-                                    <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Unit</label>
-                                        <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text" name="unit" id="unit" value="{{$inventory->unit}}" />
+                                            <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="unit">
+                                                <option value=""></option>
+                                                @foreach($units as $u)
+                                                <option value="{{$u->id}}" <?php echo ($inventory->unit == $u->id) ? 'selected' : ''; ?>>{{$u->name}}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
                                 </div>

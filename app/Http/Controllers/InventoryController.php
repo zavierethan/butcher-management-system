@@ -15,7 +15,14 @@ class InventoryController extends Controller
 
         $params = $request->all();
 
-        $query = DB::table('inventories');
+        $query = DB::table('inventories')
+            ->select(
+                'inventories.id',
+                'inventories.name',
+                'unit_measures.name as unit',
+                'inventories.is_active'
+            )
+            ->leftJoin('unit_measures', 'unit_measures.id', '=', 'inventories.unit');
 
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
@@ -35,7 +42,8 @@ class InventoryController extends Controller
     }
 
     public function create() {
-        return view('modules.master.inventory.create');
+        $units = DB::table('unit_measures')->get();
+        return view('modules.master.inventory.create', compact('units'));
     }
 
     public function save(Request $request) {
@@ -44,7 +52,6 @@ class InventoryController extends Controller
         DB::transaction(function () use ($request) {
             // Insert new inventory and retrieve its ID
             $inventoryId = DB::table('inventories')->insertGetId([
-                "code" => $request->code,
                 "name" => $request->name,
                 "unit" => $request->unit,
                 "is_active" => $request->is_active
@@ -70,19 +77,19 @@ class InventoryController extends Controller
 
     public function edit($id) {
         $inventory = DB::table('inventories')->where('id', $id)->first();
+        $units = DB::table('unit_measures')->get();
 
         if (!$inventory) {
             return redirect()->route('inventories.index')->with('error', 'Inventory not found.');
         }
 
-        return view('modules.master.inventory.edit', compact('inventory'));
+        return view('modules.master.inventory.edit', compact('inventory', 'units'));
     }
 
     public function update(Request $request) {
 
         // Initialize update data
         $updateData = [
-            'code' => $request->code,
             'name' => $request->name,
             'unit' => $request->unit,
             'is_active' => $request->is_active

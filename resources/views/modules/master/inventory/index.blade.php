@@ -89,9 +89,8 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">Kode</th>
                                         <th class="min-w-125px">Nama</th>
-                                        <th class="min-w-125px">Unit</th>
+                                        <th class="min-w-125px">Satuan</th>
                                         <th class="min-w-125px">Active</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
@@ -134,7 +133,6 @@
             }
         },
         columns: [
-            { data: 'code', name: 'code' },
             { data: 'name', name: 'name' },
             { data: 'unit', name: 'unit' },
             { data: 'is_active', name: 'is_active' },
