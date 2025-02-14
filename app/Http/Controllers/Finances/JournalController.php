@@ -96,7 +96,7 @@ class JournalController extends Controller
 
             // Save the transaction details
             foreach ($payloads['details'] as $detail) {
-                DB::table('journal_details')->insertGetId([
+                DB::table('journal_entries')->insertGetId([
                     "journal_id" => $journalId,
                     "account_id" =>  $detail["accountId"],
                     "debit" => $detail["debit"],
@@ -127,7 +127,7 @@ class JournalController extends Controller
     public function edit($id) {
         $accounts = DB::table('accounts')->get();
         $journal = DB::table('journals')->where('id', $id)->first();
-        $journaldetails = DB::table('journal_details')->where('journal_id', $journal->id)->get();
+        $journaldetails = DB::table('journal_entries')->where('journal_id', $journal->id)->get();
         return view('modules.finances.journal.edit', compact('accounts', 'journal', 'journaldetails'));
     }
 

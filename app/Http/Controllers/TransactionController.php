@@ -31,22 +31,24 @@ class TransactionController extends Controller
             if($payloads["header"]["payment_method"] == '1') {
                 $status = 1;
 
-                JournalService::createJournal('sales', $transactionCode, 'Penjualan di POS', [
-                    ['accountId' => 1, 'debit' => $payloads["header"]["total_amount"], 'credit' => 0],  // Kas bertambah
-                    ['accountId' => 15, 'debit' => 0, 'credit' => $payloads["header"]["total_amount"]],  // Pendapatan bertambah
-                    ['accountId' => 17, 'debit' => $payloads["header"]["total_amount"], 'credit' => 0],  // HPP bertambah
-                    ['accountId' => 5, 'debit' => 0, 'credit' => $payloads["header"]["total_amount"]],  // Persediaan berkurang
+                DB::statement("CALL create_journal_proc(?, ?, ?, ?)", [
+                    'sales_cash', $transactionCode, 'Penjualan dengan pembayaran Cash', $payloads["header"]["total_amount"]
+                ]);
+            }
+
+            if($payloads["header"]["payment_method"] == '3') {
+                $status = 2;
+
+                DB::statement("CALL create_journal_proc(?, ?, ?, ?)", [
+                    'sales_transfer', $transactionCode, 'Penjualan dengan pembayaran Transfer', $payloads["header"]["total_amount"]
                 ]);
             }
 
             if($payloads["header"]["payment_method"] == '2') {
                 $status = 2;
 
-                JournalService::createJournal('sales', $transactionCode, 'Penjualan di POS', [
-                    ['accountId' => 3, 'debit' => $payloads["header"]["total_amount"], 'credit' => 0],  // Kas bertambah
-                    ['accountId' => 15, 'debit' => 0, 'credit' => $payloads["header"]["total_amount"]],  // Pendapatan bertambah
-                    ['accountId' => 17, 'debit' => $payloads["header"]["total_amount"], 'credit' => 0],  // HPP bertambah
-                    ['accountId' => 5, 'debit' => 0, 'credit' => $payloads["header"]["total_amount"]],  // Persediaan berkurang
+                DB::statement("CALL create_journal_proc(?, ?, ?, ?)", [
+                    'sales_credit', $transactionCode, 'Penjualan dengan pembayaran Credit', $payloads["header"]["total_amount"]
                 ]);
             }
 
