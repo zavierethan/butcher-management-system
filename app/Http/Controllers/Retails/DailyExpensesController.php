@@ -61,8 +61,24 @@ class DailyExpensesController extends Controller
     }
 
     public function create() {
-        $debitAccounts = DB::table('chart_of_accounts')->where('account_type', 'Expense')->get();
-        $creditAccounts = DB::table('chart_of_accounts')->where('account_type', 'Asset')->get();
+        $debitAccounts = DB::table('accounts')
+            ->select(
+                'accounts.id',
+                'accounts.account_code',
+                'accounts.name as account_name',
+            )
+            ->leftJoin('account_types', 'account_types.id', '=', 'accounts.type_id')
+            ->where('account_types.category_id', 5)->get();
+
+        $creditAccounts = DB::table('accounts')
+            ->select(
+                'accounts.id',
+                'accounts.account_code',
+                'accounts.name as account_name',
+            )
+            ->leftJoin('account_types', 'account_types.id', '=', 'accounts.type_id')
+            ->where('account_types.category_id', 1)->get();
+
         return view('modules.retails.daily-expenses.create', compact('debitAccounts', 'creditAccounts'));
     }
 
@@ -87,6 +103,10 @@ class DailyExpensesController extends Controller
             'debit' => $request->debit,
             'credit' => $request->credit,
             'created_by' => Auth::user()->id
+        ]);
+
+        DB::statement("CALL create_journal_proc(?, ?, ?, ?)", [
+            'sales_transfer', $transactionCode, 'Penjualan dengan pembayaran Transfer', $payloads["header"]["total_amount"]
         ]);
 
         return redirect()->route('retails.daily-expenses.index');
