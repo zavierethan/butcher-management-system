@@ -52,9 +52,11 @@ class TransactionController extends Controller
                 ]);
             }
 
+            date_default_timezone_set('Asia/Jakarta');
+
             $transactionId = DB::table('transactions')->insertGetId([
                 "code" => $transactionCode,
-                "transaction_date" => date("Y-m-d"),
+                "transaction_date" => date('Y-m-d H:i:s'),
                 "customer_id" => $payloads["header"]["customer_name"],
                 "total_amount" => $payloads["header"]["total_amount"],
                 "payment_method" => $payloads["header"]["payment_method"],
@@ -63,6 +65,8 @@ class TransactionController extends Controller
                 "discount" => $payloads["header"]["discount"],
                 "shipping_cost" => $payloads["header"]["shipping_cost"],
                 "status" => $status, // 1 = Lunas, 2 = Pending, 3 = Batal
+                "nominal_cash" => $payloads["header"]["nominal_cash"],
+                "nominal_return" => $payloads["header"]["nominal_return"],
                 "created_by" => Auth::user()->id,
                 "branch_id" => $payloads["header"]["branch_id"],
             ]);

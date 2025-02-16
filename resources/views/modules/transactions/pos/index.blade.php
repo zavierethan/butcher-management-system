@@ -716,7 +716,7 @@
                                                     Bayar</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="number" id="nominal-payment" />
+                                                        type="text" id="nominal-cash" />
                                                 </div>
                                             </div>
                                         </div>
@@ -1256,10 +1256,14 @@ $(document).ready(function() {
         $("#shipment-cost-value").val(0);
     });
 
-    $(document).on('keyup', '#nominal-payment', function(e) {
+    $(document).on('keyup', '#nominal-cash', function(e) {
+        var nominalCash = $(this).val();
+        var formattedNominalCash = formatNumber(nominalCash);
+        $(this).val(formattedNominalCash);
+
         const totalAmount = $('#total-amount').text().replace(/[^\d]/g, '');
-        let nominalreturn = $(this).val() - totalAmount;
-        $("#nominal-return").val(formatCurrency(nominalreturn));
+        let nominalreturn = $(this).val().replace(/[^\d]/g, '') - totalAmount;
+        $("#nominal-return").val(formatNumber(nominalreturn));
     });
 
     $(document).on('click', '#process-transaction', function(e) {
@@ -1303,6 +1307,8 @@ $(document).ready(function() {
                     const customerId = $('#customer').val();
                     const butcherName = $('#butcher-name').val();
                     const branchId = $('#branch-id').val();
+                    const nominalCash = $('#nominal-cash').val() | 0;
+                    const nominalReturn = $('#nominal-return').val() | 0;
 
                     console.log(paymentMethod);
 
@@ -1317,7 +1323,9 @@ $(document).ready(function() {
                             butcher_name: butcherName,
                             discount: discount,
                             shipping_cost: shippingCost,
-                            branch_id: branchId
+                            branch_id: branchId,
+                            nominal_cash: nominalCash,
+                            nominal_return: nominalReturn,
                         },
                         details: products
                     };
@@ -1335,23 +1343,56 @@ $(document).ready(function() {
                         success: function(response) {
                             Swal.fire({
                                 title: 'Suceess !',
-                                text: `Transaksi berhasil di simpan dengan Nomor Transaksi ${response.transaction_code}`,
+                                text: `Transaksi berhasil di simpan dengan Nomor ${response.transaction_code}`,
                                 icon: 'success',
+                                showCancelButton: true,
                                 confirmButtonText: 'Cetak Nota',
+                                cancelButtonText: 'Tidak',
                                 allowOutsideClick: false
                             }).then((result) => {
-                                let receiptUrl =
-                                    `{{ route('orders.print-receipt', ['id' => '__transaction_id__']) }}`;
-                                receiptUrl = receiptUrl.replace(
-                                    '__transaction_id__', response
-                                    .transaction_id);
 
-                                // Open the receipt in a new tab
-                                window.open(receiptUrl, '_blank');
+                                if (result.isConfirmed) {
+                                    // Send AJAX request to print the receipt
+                                    $.ajax({
+                                        url: `/orders/print-thermal/${response.transaction_id}`,
+                                        type: "GET",
+                                        dataType: "json",
+                                        success: function (response) {
 
-                                // Redirect the current page to the transaction index
-                                location.href =
-                                    `{{ route('transactions.index') }}`;
+                                            if (response.code == 200) {
+                                                Swal.fire({
+                                                    title: 'Nota Berhasil Dicetak!',
+                                                    icon: 'success',
+                                                    timer: 5000,
+                                                    showConfirmButton: false
+                                                });
+
+                                                $(".cart-item-lists").remove();
+                                                calculateTotals();
+
+                                            } else {
+                                                Swal.fire({
+                                                    title: 'Gagal Mencetak Nota',
+                                                    text: response.message || 'Terjadi kesalahan saat mencetak nota.',
+                                                    icon: 'error'
+                                                });
+
+                                                $(".cart-item-lists").remove();
+                                                calculateTotals();
+                                            }
+                                        },
+                                        error: function (xhr, status, error) {
+                                            Swal.fire({
+                                                title: 'Error!',
+                                                text: xhr.responseJSON.message,
+                                                icon: 'error'
+                                            });
+                                        }
+                                    });
+                                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                                    $(".cart-item-lists").remove();
+                                    calculateTotals();
+                                }
                             });
                         },
                         error: function(xhr, status, error) {
@@ -1548,7 +1589,7 @@ $(document).ready(function() {
         const totalAmount = (subtotal - parseFloat(discount)) + parseFloat(shippingCost);
         $('#total-amount').text(formatCurrency(totalAmount)); // Add additional charges if needed
 
-        $("#nominal-payment").val("");
+        $("#nominal-cash").val("");
         $("#nominal-return").val("");
 
     }
@@ -1564,6 +1605,13 @@ $(document).ready(function() {
 
     function mround(number, multiple) {
         return Math.round(number / multiple) * multiple;
+    }
+
+    function formatNumber(numStr) {
+        let cleaned = numStr.toString().replace(/[^\d.]/g, '');
+        const parts = cleaned.split('.');
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return parts.join('.');
     }
 
     function validate() {

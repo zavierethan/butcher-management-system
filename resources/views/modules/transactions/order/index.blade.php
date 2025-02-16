@@ -39,7 +39,6 @@
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
                     <!--begin::Secondary button-->
-                    <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-sync-journals">Sync to Journals</a>
                     <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export ke Excel</a>
                     <!--end::Secondary button-->
                 </div>
@@ -381,8 +380,7 @@ $(document).ready(function() {
                 render: function(data, type, row) {
                     return `
                         <div class="text-center">
-                            <a href="/orders/print-thermal-test/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" target="_blank" title="Cetak Faktur">Test Print</a>
-                            <a href="/orders/receipt/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" target="_blank" title="Cetak Faktur"><i class="fa-solid fa-print"></i></a>
+                            <a href="/orders/receipt/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" target="_blank" title="Cetak Faktur">Cetak PDF</a>
                             <a href="/orders/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail Transaksi"><i class="fa-solid fa-magnifying-glass"></i></a>
                         <div>
                     `;

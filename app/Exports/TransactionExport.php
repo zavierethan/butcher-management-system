@@ -64,10 +64,8 @@ class TransactionExport implements FromCollection, WithHeadings, WithCustomStart
         }
 
         if (!empty($this->filters['start_date']) && !empty($this->filters['end_date'])) {
-            $query->whereBetween('transactions.transaction_date', [
-                $this->filters['start_date'],
-                $this->filters['end_date']
-            ]);
+            $query->whereDate('transactions.transaction_date', '>=', $this->filters['start_date'])
+                ->whereDate('transactions.transaction_date', '<=', $this->filters['end_date']);
         }
 
         if (!empty($this->filters['customer'])) {

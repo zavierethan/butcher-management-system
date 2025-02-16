@@ -105,17 +105,41 @@ class DailyExpensesController extends Controller
             'created_by' => Auth::user()->id
         ]);
 
-        DB::statement("CALL create_journal_proc(?, ?, ?, ?)", [
-            'sales_transfer', $transactionCode, 'Penjualan dengan pembayaran Transfer', $payloads["header"]["total_amount"]
-        ]);
+        // DB::statement("CALL create_journal_proc(?, ?, ?, ?)", [
+        //     'sales_transfer', $transactionCode, 'Penjualan dengan pembayaran Transfer', $payloads["header"]["total_amount"]
+        // ]);
+
+        // foreach ($payloads['details'] as $detail) {
+        //     DB::table('journal_entries')->insertGetId([
+        //         "journal_id" => $journalId,
+        //         "account_id" =>  $detail["accountId"],
+        //         "debit" => $detail["debit"],
+        //         "credit" => $detail["credit"]
+        //     ]);
+        // }
 
         return redirect()->route('retails.daily-expenses.index');
     }
 
     public function edit($id) {
         $data = DB::table('daily_expenses')->where('id', $id)->first();
-        $debitAccounts = DB::table('chart_of_accounts')->where('account_type', 'Expense')->get();
-        $creditAccounts = DB::table('chart_of_accounts')->where('account_type', 'Asset')->get();
+        $debitAccounts = DB::table('accounts')
+            ->select(
+                'accounts.id',
+                'accounts.account_code',
+                'accounts.name as account_name',
+            )
+            ->leftJoin('account_types', 'account_types.id', '=', 'accounts.type_id')
+            ->where('account_types.category_id', 5)->get();
+
+        $creditAccounts = DB::table('accounts')
+            ->select(
+                'accounts.id',
+                'accounts.account_code',
+                'accounts.name as account_name',
+            )
+            ->leftJoin('account_types', 'account_types.id', '=', 'accounts.type_id')
+            ->where('account_types.category_id', 1)->get();
         return view('modules.retails.daily-expenses.edit', compact('data','debitAccounts', 'creditAccounts'));
     }
 

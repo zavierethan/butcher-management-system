@@ -21,81 +21,83 @@ class SummaryExport implements FromCollection, WithHeadings, WithCustomStartCell
         $this->filters = $filters;
     }
 
-    public function collection()
-{
-    // Define possible payment methods (categories)
-    $paymentMethods = [
-        1 => 'TUNAI',
-        2 => 'PIUTANG',
-        3 => 'TRANSFER'
-    ];
+    public function collection() {
+        // Define possible payment methods (categories)
+        $paymentMethods = [
+            1 => 'TUNAI',
+            2 => 'PIUTANG',
+            3 => 'TRANSFER'
+        ];
 
-    // Initialize an array to store the results
-    $results = [];
-    $totalRevenue = 0;  // Variable to accumulate total revenue
+        // Initialize an array to store the results
+        $results = [];
+        $totalRevenue = 0;  // Variable to accumulate total revenue
 
-    // Loop through each payment method (category 1, 2, 3)
-    foreach ($paymentMethods as $paymentMethod => $paymentMethodName) {
-        // Query for transactions with specific payment_method
-        $query = DB::table('transactions')
-            ->selectRaw("
-                '$paymentMethodName' AS payment_method_name,
-                TO_CHAR(COALESCE(SUM(total_amount), 0), 'FM999,999,999') AS total_amount
-            ")
-            ->where('branch_id', $this->filters['branch_id'])
-            ->where('payment_method', $paymentMethod);
+        // Loop through each payment method (category 1, 2, 3)
+        foreach ($paymentMethods as $paymentMethod => $paymentMethodName) {
+            // Query for transactions with specific payment_method
+            $query = DB::table('transactions')
+                ->selectRaw("
+                    '$paymentMethodName' AS payment_method_name,
+                    TO_CHAR(COALESCE(SUM(total_amount), 0), 'FM999,999,999') AS total_amount
+                ")
+                ->where('branch_id', $this->filters['branch_id'])
+                ->where('payment_method', $paymentMethod);
+
+            if (!empty($params['start_date']) && !empty($params['end_date'])) {
+                $query->whereBetween(DB::raw('DATE(transaction_date)'), [
+                    $params['start_date'],
+                    $params['end_date']
+                ]);
+            }
+
+            if (!empty($this->filters['start_date']) && !empty($this->filters['end_date'])) {
+                $query->whereDate('transactions.transaction_date', '>=', $this->filters['start_date'])
+                    ->whereDate('transactions.transaction_date', '<=', $this->filters['end_date']);
+            }
+
+            // Get the result and store it
+            $result = $query->first();
+
+            // If no result, set total_amount to '0'
+            if (!$result) {
+                $result = (object) [
+                    'payment_method_name' => $paymentMethodName,
+                    'total_amount' => '0'
+                ];
+            }
+
+            // Add to results array and accumulate total revenue
+            $results[] = $result;
+            $totalRevenue += (float)str_replace(',', '', $result->total_amount);  // Remove commas and accumulate
+        }
+
+        // Query for daily expenses
+        $query2 = DB::table('daily_expenses')
+            ->selectRaw("'PENGELUARAN TUNAI' AS payment_method_name, TO_CHAR(COALESCE(SUM(amount), 0), 'FM999,999,999') AS total_amount")
+            ->where('branch_id', $this->filters['branch_id']);
 
         if (!empty($this->filters['start_date']) && !empty($this->filters['end_date'])) {
-            $query->whereBetween('transactions.transaction_date', [
+            $query2->whereBetween('date', [
                 $this->filters['start_date'],
                 $this->filters['end_date']
             ]);
         }
 
-        // Get the result and store it
-        $result = $query->first();
-
-        // If no result, set total_amount to '0'
-        if (!$result) {
-            $result = (object) [
-                'payment_method_name' => $paymentMethodName,
-                'total_amount' => '0'
-            ];
+        // Get the result and add to the results array
+        $dailyExpense = $query2->first();
+        if ($dailyExpense) {
+            $results[] = $dailyExpense;
         }
 
-        // Add to results array and accumulate total revenue
-        $results[] = $result;
-        $totalRevenue += (float)str_replace(',', '', $result->total_amount);  // Remove commas and accumulate
+        // Add a row for Total Revenue
+        $results[] = (object) [
+            'payment_method_name' => 'TOTAL OMSET',
+            'total_amount' => number_format($totalRevenue, 0, '.', ',') // Format the total revenue
+        ];
+
+        return collect($results);
     }
-
-    // Query for daily expenses
-    $query2 = DB::table('daily_expenses')
-        ->selectRaw("'PENGELUARAN TUNAI' AS payment_method_name, TO_CHAR(COALESCE(SUM(amount), 0), 'FM999,999,999') AS total_amount")
-        ->where('branch_id', $this->filters['branch_id']);
-
-    if (!empty($this->filters['start_date']) && !empty($this->filters['end_date'])) {
-        $query2->whereBetween('date', [
-            $this->filters['start_date'],
-            $this->filters['end_date']
-        ]);
-    }
-
-    // Get the result and add to the results array
-    $dailyExpense = $query2->first();
-    if ($dailyExpense) {
-        $results[] = $dailyExpense;
-    }
-
-    // Add a row for Total Revenue
-    $results[] = (object) [
-        'payment_method_name' => 'TOTAL OMSET',
-        'total_amount' => number_format($totalRevenue, 0, '.', ',') // Format the total revenue
-    ];
-
-    return collect($results);
-}
-
-
 
     public function headings(): array
     {

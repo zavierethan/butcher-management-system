@@ -32,7 +32,7 @@ class DailyReportController extends Controller
             ->where('branch_id', $branchId);
 
         if (!empty($params['start_date']) && !empty($params['end_date'])) {
-            $totalsQuery->whereBetween('transactions.transaction_date', [
+            $totalsQuery->whereBetween(DB::raw('DATE(transactions.transaction_date)'), [
                 $params['start_date'],
                 $params['end_date']
             ]);
@@ -99,8 +99,8 @@ class DailyReportController extends Controller
         $category_id = $request->input('category_id');
 
         // Subquery to calculate stock quantity
-        $quantitySubquery = "(SELECT COALESCE(SUM(COALESCE(sl.in_quantity, 0) - COALESCE(sl.out_quantity, 0)), 0) 
-                            FROM stock_logs AS sl 
+        $quantitySubquery = "(SELECT COALESCE(SUM(COALESCE(sl.in_quantity, 0) - COALESCE(sl.out_quantity, 0)), 0)
+                            FROM stock_logs AS sl
                             WHERE sl.stock_id = s.id)";
 
         $query = DB::table('stocks as s')
@@ -119,10 +119,10 @@ class DailyReportController extends Controller
                 'pd.price',
                 'b.name as branch_name',
                 DB::raw("$quantitySubquery AS quantity"),
-                DB::raw("CASE 
-                            WHEN $quantitySubquery > 0 
-                            THEN 'In Stock' 
-                            ELSE 'Out Of Stock' 
+                DB::raw("CASE
+                            WHEN $quantitySubquery > 0
+                            THEN 'In Stock'
+                            ELSE 'Out Of Stock'
                         END AS stock_status")
             ])
             ->groupBy(
