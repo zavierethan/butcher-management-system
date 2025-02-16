@@ -169,6 +169,10 @@ class AccountReceivableController extends Controller
                 "attachment" => $base64File
             ]);
 
+            DB::statement("CALL create_journal_proc(?, ?, ?, ?)", [
+                'payment_receivable', $request->reference, 'Pembayaran piutang usaha', $request->amount_paid
+            ]);
+
             $receivable = DB::table('receivables')
                 ->where('id', $request->receivable_id)
                 ->first();

@@ -58,7 +58,7 @@
                                     <div class="col-md-6">
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Date</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Transaction Date</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
                                                         type="date" name="date" id="date" value="{{$journal->date}}"/>
@@ -105,7 +105,7 @@
                                 <div class="text-end">
                                     <a href="{{route('finances.journals.index')}}"
                                         class="btn btn-sm btn-danger">Cancel</a>
-                                    <button type="button" class="btn btn-sm btn-primary" id="btn-submit-journal">Submit</button>
+                                    <button type="button" class="btn btn-sm btn-primary" id="btn-approve-journal">Approve</button>
                                 </div>
                             </form>
                         </div>
@@ -221,18 +221,18 @@ $(document).on("keyup", "input[name='debit'], input[name='credit']", function() 
     $(this).val(formattedVal);
 });
 
-$(document).on('click', '#btn-submit-journal', function(e) {
+$(document).on('click', '#btn-approve-journal', function(e) {
     e.preventDefault();
 
     if (true) {
         Swal.fire({
-            title: 'Apakah anda yakin untuk memproses jurnal ?',
+            title: 'Apakah anda yakin untuk mengupdate jurnal ?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             cancelButtonText: 'Batalkan',
-            confirmButtonText: 'Ya, Proses Jurnal'
+            confirmButtonText: 'Ya, Update Jurnal'
         }).then((result) => {
             if (result.isConfirmed) {
                 const itemLists = [];
@@ -263,6 +263,7 @@ $(document).on('click', '#btn-submit-journal', function(e) {
                         })
                 }
 
+                var id = $('#id').val();
                 var date = $('#date').val();
                 var description = $('#description').val();
                 var reference = $('#reference').val();
@@ -271,6 +272,7 @@ $(document).on('click', '#btn-submit-journal', function(e) {
                 // Build the JSON payload
                 const payload = {
                     header: {
+                        id: id,
                         date: date,
                         description: description,
                         reference: reference,
@@ -282,7 +284,7 @@ $(document).on('click', '#btn-submit-journal', function(e) {
                 console.log(payload)
 
                 $.ajax({
-                    url: `{{route('finances.journals.save')}}`,
+                    url: `{{route('finances.journals.update')}}`,
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {
@@ -292,7 +294,7 @@ $(document).on('click', '#btn-submit-journal', function(e) {
                     success: function(response) {
                         Swal.fire({
                             title: 'Suceess !',
-                            text: `Jurnal berhasil di simpan`,
+                            text: `Jurnal berhasil di perbaharui`,
                             icon: 'success',
                             confirmButtonText: 'Ok',
                             allowOutsideClick: false

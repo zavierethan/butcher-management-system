@@ -36,8 +36,8 @@
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
                     <!--begin::Secondary button-->
-                    <a href="{{route('finances.journals.create')}}"
-                        class="btn btn-sm fw-bold btn-secondary">New</a>
+                    <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-post-to-journal">Post to General Ledger</a>
+                    <a href="{{route('finances.journals.create')}}" class="btn btn-sm fw-bold btn-secondary">New</a>
                     <!--end::Secondary button-->
                 </div>
                 <!--end::Actions-->
@@ -117,8 +117,10 @@
                                         <th class="min-w-125px">TANGGAL</th>
                                         <th class="min-w-125px">DESKRIPSI</th>
                                         <th class="min-w-125px">REFERENCES</th>
-                                        <th class="min-w-125px">STATUS</th>
                                         <th class="min-w-125px">DIBUAT TANGGAL</th>
+                                        <th class="min-w-125px">STATUS</th>
+                                        <th class="min-w-125px">POSTING</th>
+                                        <th class="min-w-125px">TANGGAL POSTING</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -187,6 +189,10 @@ $(document).ready(function() {
                 name: 'reference'
             },
             {
+                data: 'created_at',
+                name: 'created_at'
+            },
+            {
                 data: 'status',
                 name: 'status',
                 render: function(data, type, row) {
@@ -208,8 +214,12 @@ $(document).ready(function() {
                 }
             },
             {
-                data: 'created_at',
-                name: 'created_at'
+                data: 'posted',
+                name: 'posted'
+            },
+            {
+                data: 'posted_date',
+                name: 'posted_date'
             },
             {
                 data: null, // No direct field from the server
@@ -230,6 +240,60 @@ $(document).ready(function() {
     $('#start-date, #end-date, #status').on('change', function () {
         table.draw(); // Trigger DataTable redraw with updated filter values
     });
+});
+
+$(document).on('click', '#btn-post-to-journal', function(e) {
+    e.preventDefault();
+
+    if (true) {
+        Swal.fire({
+            title: 'Apakah anda yakin untuk memposting jurnal ?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Batalkan',
+            confirmButtonText: 'Ya, Posting Jurnal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Build the JSON payload
+                const payload = {
+                    header: {
+                        start_period: $('#start-date').val(),
+                        end_period: $('#end-date').val(),
+                    }
+                };
+
+                $.ajax({
+                    url: `{{route('finances.journals.post-to-general-ledger')}}`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: JSON.stringify(payload),
+                    success: function(response) {
+                        Swal.fire({
+                            title: 'Suceess !',
+                            text: `Jurnal berhasil di posting ke General Ledger`,
+                            icon: 'success',
+                            confirmButtonText: 'Ok',
+                            allowOutsideClick: false
+                        }).then((result) => {
+
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire(
+                            'Error!',
+                            error,
+                            'error'
+                        )
+                    }
+                });
+            }
+        });
+    }
 });
 </script>
 @endsection

@@ -287,6 +287,8 @@ Route::group(['middleware' => ['auth']], function() {
                     Route::post('/save', [App\Http\Controllers\Finances\JournalController::class, 'save'])->name('save');
                     Route::get('/edit/{id}', [App\Http\Controllers\Finances\JournalController::class, 'edit'])->name('edit');
                     Route::post('/update', [App\Http\Controllers\Finances\JournalController::class, 'update'])->name('update');
+
+                    Route::post('/post-to-general-ledger', [App\Http\Controllers\Finances\JournalController::class, 'postToGl'])->name('post-to-general-ledger');
                 });
             });
 
