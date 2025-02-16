@@ -36,7 +36,7 @@
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
                     <!--begin::Secondary button-->
-                    <a href="{{route('finances.chart-of-accounts.create')}}" class="btn btn-sm fw-bold btn-secondary">New</a>
+                    <a href="{{route('finances.expenses.create')}}" class="btn btn-sm fw-bold btn-secondary">New</a>
                     <!--end::Secondary button-->
                 </div>
                 <!--end::Actions-->
@@ -88,7 +88,26 @@
                         <!--begin::Card body-->
                         <div class="card-body pt-0 overflow-x-auto">
                             <!--begin::Table-->
-
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_daily_expenses_table">
+                                <!--begin::Table head-->
+                                <thead>
+                                    <!--begin::Table row-->
+                                    <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                        <th class="min-w-125px">TANGGAL</th>
+                                        <th class="min-w-125px">DESKRIPSI</th>
+                                        <th class="min-w-125px">TOTAL</th>
+                                        <th class="min-w-125px">REF.</th>
+                                        <th class="min-w-125px">JENIS PEMBAYARAN</th>
+                                        <th class="text-center min-w-70px">ACTIONS</th>
+                                    </tr>
+                                    <!--end::Table row-->
+                                </thead>
+                                <!--end::Table head-->
+                                <!--begin::Table body-->
+                                <tbody class="fw-bold text-gray-600">
+                                </tbody>
+                                <!--end::Table body-->
+                            </table>
                             <!--end::Table-->
                         </div>
                         <!--end::Card body-->
@@ -108,7 +127,75 @@
 @section('script')
 <script>
 $(document).ready(function() {
+    const table = $("#kt_expenses_table").DataTable({
+        processing: true,
+        serverSide: true,
+        paging: true, // Enable pagination
+        pageLength: 10, // Number of rows per page
+        ajax: {
+            url: `{{route('finances.expenses.get-lists')}}`, // Replace with your route
+            type: 'GET',
+            data: function (d) {
+                // Add filter data to the request
+                d.start_date = $('#start-date').val();
+                d.end_date = $('#end-date').val();
+            },
+            dataSrc: function(json) {
+                return json.data; // Map the 'data' field
+            }
+        },
+        columns: [{
+                data: 'date',
+                name: 'date'
+            },
+            {
+                data: 'description',
+                name: 'description',
+            },
+            {
+                data: 'amount',
+                name: 'amount'
+            },
+            {
+                data: 'reference',
+                name: 'reference'
+            },
+            {
+                data: 'payment_method',
+                name: 'payment_method',
+                render: function(data, type, row) {
+                    var payment_method = "";
 
+                    if (row.payment_method == 1) {
+                        payment_method = `<span class="badge bg-success text-dark">Tunai</span>`
+                    }
+
+                    if (row.payment_method == 2) {
+                        payment_method = `<span class="badge bg-success text-dark">Piutang</span>`
+                    }
+
+                    return payment_method;
+                }
+            },
+            {
+                data: null, // No direct field from the server
+                name: 'action',
+                orderable: false, // Disable ordering for this column
+                searchable: false, // Disable searching for this column
+                render: function(data, type, row) {
+                    return `
+                        <div class="text-center">
+                            <a href="/finances/expenses/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Edit"><i class="fa-solid fa-edit"></i>Edit</a>
+                        <div>
+                    `;
+                }
+            }
+        ]
+    });
+
+    $('#start-date, #end-date').on('change', function () {
+        table.draw(); // Trigger DataTable redraw with updated filter values
+    });
 });
 </script>
 @endsection
