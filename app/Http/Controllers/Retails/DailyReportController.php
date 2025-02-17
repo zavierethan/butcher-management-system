@@ -52,8 +52,20 @@ class DailyReportController extends Controller
 
         $totalExpenses = $expensesQuery->sum('amount');
 
+        $totalTransactionsQuery = DB::table('transactions')->where('branch_id', $branchId);
+
+        if (!empty($params['start_date']) && !empty($params['end_date'])) {
+            $totalTransactionsQuery->whereBetween(DB::raw('DATE(transactions.transaction_date)'), [
+                $params['start_date'],
+                $params['end_date']
+            ]);
+        }
+
+        $totalTransactions = $totalTransactionsQuery->count();
+
         // Format numbers
         $formattedTotals = [
+            'total_transaction' => $totalTransactions,
             'total_cash' => number_format($totals->total_cash, 0, ',', ','),
             'total_receivable' => number_format($totals->total_receivable, 0, ',', ','),
             'total_transfer' => number_format($totals->total_transfer, 0, ',', ','),
@@ -71,26 +83,31 @@ class DailyReportController extends Controller
             'branch_id' => $request->branch_id,
         ];
 
-        // Generate raw Excel data
+        // Fetch branch details
         $branch = DB::table('branches')->where('id', $request->branch_id)->first();
 
         $filters['branch_name'] = $branch->name ?? null;
         $filters['branch_code'] = $branch->code ?? null;
 
-        // Use MultiSheetExport for multiple sheets
-        $export = new DailyReportExport($filters);
+        // Format the dates using PHP's date() function
+        $startDate = date('d M Y', strtotime($request->start_date));
+        $endDate = date('d M Y', strtotime($request->end_date));
+        $filename = "Daily Report Tanggal {$startDate} - {$endDate}.xlsx";
 
+        // Generate Excel data
+        $export = new DailyReportExport($filters);
         $excelData = Excel::raw($export, \Maatwebsite\Excel\Excel::XLSX);
 
-        // Return the file as a response
+        // Return response with dynamic filename
         return response($excelData, 200, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => 'attachment; filename="transaction-reports.xlsx"',
+            "Content-Disposition" => "attachment; filename=\"{$filename}\"",
             'Cache-Control' => 'no-cache, no-store, must-revalidate',
             'Pragma' => 'no-cache',
             'Expires' => '0',
         ]);
     }
+
 
     public function getStockReport(Request $request) {
         $start_date = $request->input('start_date');

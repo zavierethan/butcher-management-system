@@ -109,14 +109,29 @@ class DailyExpensesController extends Controller
         //     'sales_transfer', $transactionCode, 'Penjualan dengan pembayaran Transfer', $payloads["header"]["total_amount"]
         // ]);
 
-        // foreach ($payloads['details'] as $detail) {
-        //     DB::table('journal_entries')->insertGetId([
-        //         "journal_id" => $journalId,
-        //         "account_id" =>  $detail["accountId"],
-        //         "debit" => $detail["debit"],
-        //         "credit" => $detail["credit"]
-        //     ]);
-        // }
+        $journalId = DB::table('journals')->insertGetId([
+            "code" => DB::select('SELECT generate_journal_number() AS journal_number')[0]->journal_number,
+            "date" => $request->date,
+            "description" => $request->description,
+            "reference" => $request->reference,
+            "reference" => "expenses",
+            "status" => "DRAFT",
+            "created_by" => Auth::user()->id,
+        ]);
+
+        DB::table('journal_entries')->insert([
+            "journal_id" => $journalId,
+            "account_id" =>  $request->credit,
+            "debit" => 0,
+            "credit" => $request->total_amount
+        ]);
+
+        DB::table('journal_entries')->insert([
+            "journal_id" => $journalId,
+            "account_id" =>  $request->debit,
+            "debit" => $request->total_amount,
+            "credit" => 0
+        ]);
 
         return redirect()->route('retails.daily-expenses.index');
     }

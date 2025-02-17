@@ -165,11 +165,11 @@ $(document).ready(function() {
                     var payment_method = "";
 
                     if (row.payment_method == 1) {
-                        payment_method = `<span class="badge bg-success text-dark">Tunai</span>`
+                        payment_method = `<span class="badge bg-success text-dark">TUNAI</span>`
                     }
 
                     if (row.payment_method == 2) {
-                        payment_method = `<span class="badge bg-success text-dark">Piutang</span>`
+                        payment_method = `<span class="badge bg-success text-dark">TRANSFER</span>`
                     }
 
                     return payment_method;

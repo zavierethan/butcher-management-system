@@ -65,6 +65,36 @@
                 <!--begin::Row-->
                 <div class="row gy-5 g-xl-10">
                     <!--begin::Col-->
+                    <div class="col-sm-6 col-xl-2 mb-5 mb-xl-10">
+                        <!--begin::Card widget 2-->
+                        <div class="card h-lg-100">
+                            <!--begin::Body-->
+                            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                                <!--begin::Icon-->
+                                <div class="m-0">
+                                    <i class="ki-duotone ki-chart-simple fs-2hx text-gray-600">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                        <span class="path4"></span>
+                                    </i>
+                                </div>
+                                <!--end::Icon-->
+                                <div class="d-flex flex-column my-7">
+                                    <!--begin::Number-->
+                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2" id="total-transactions">0</span>
+                                    <!--end::Number-->
+                                </div>
+                                <!--begin::Badge-->
+                                <span class="badge badge-light-success fs-base">Total Transaksi</span>
+                                <!--end::Badge-->
+                            </div>
+                            <!--end::Body-->
+                        </div>
+                        <!--end::Card widget 2-->
+                    </div>
+                    <!--end::Col-->
+                    <!--begin::Col-->
                     <div class="col-sm-6 col-xl-2 mb-xl-10">
                         <!--begin::Card widget 2-->
                         <div class="card h-lg-100">
@@ -221,36 +251,7 @@
                                 </div>
                                 <!--end::Section-->
                                 <!--begin::Badge-->
-                                <span class="badge badge-light-success fs-base">Total Pengeluaran</span>
-                                <!--end::Badge-->
-                            </div>
-                            <!--end::Body-->
-                        </div>
-                        <!--end::Card widget 2-->
-                    </div>
-                    <!--end::Col-->
-                    <!--begin::Col-->
-                    <div class="col-sm-6 col-xl-2 mb-5 mb-xl-10">
-                        <!--begin::Card widget 2-->
-                        <div class="card h-lg-100">
-                            <!--begin::Body-->
-                            <div class="card-body d-flex justify-content-between align-items-start flex-column">
-                                <!--begin::Icon-->
-                                <div class="m-0">
-                                    <i class="ki-duotone ki-chart-simple fs-2hx text-gray-600">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                        <span class="path3"></span>
-                                        <span class="path4"></span>
-                                    </i>
-                                </div>
-                                <!--end::Icon-->
-                                <!--begin::Badge-->
-                                <span class="badge badge-light-success fs-base">
-                                    <i class="ki-duotone ki-arrow-up fs-5 text-success ms-n1">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                    </i>2.1%</span>
+                                <span class="badge badge-light-success fs-base">Pengeluaran Operasional</span>
                                 <!--end::Badge-->
                             </div>
                             <!--end::Body-->
@@ -399,9 +400,16 @@ $("#btn-form-export").on("click", function() {
             responseType: 'blob', // Treat response as binary
         },
         success: function(data, status, xhr) {
-            // Create a Blob object from the response
+            // Extract filename from Content-Disposition header
+            let disposition = xhr.getResponseHeader('Content-Disposition');
+            let filename = 'daily-report.xlsx'; // Default filename
 
-            console.log(data)
+            if (disposition && disposition.indexOf('attachment') !== -1) {
+                let matches = /filename="([^"]+)"/.exec(disposition);
+                if (matches && matches[1]) filename = matches[1];
+            }
+
+            // Create a Blob object from the response
             const blob = new Blob([data], {
                 type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             });
@@ -409,14 +417,14 @@ $("#btn-form-export").on("click", function() {
             // Create a link element for downloading
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
-            link.download = 'daily-report.xlsx'; // Set the filename
-            document.body.appendChild(link); // Append link to the body
-            link.click(); // Trigger the download
+            link.download = filename; // Set the extracted filename
+            document.body.appendChild(link);
+            link.click();
             document.body.removeChild(link); // Clean up the DOM
 
             Swal.fire({
                 title: 'Success!',
-                text: 'Daly Report exported successfully.',
+                text: 'Daily Report exported successfully.',
                 icon: 'success',
                 confirmButtonText: 'OK',
             });
@@ -444,6 +452,7 @@ function getTransactionSummaryByCategory() {
         },
         dataType: 'json',
         success: function(response) {
+            $("#total-transactions").text(response.total_transaction);
             $("#total-cash").text(response.total_cash);
             $("#total-receivable").text(response.total_receivable);
             $("#total-transfer").text(response.total_transfer);
