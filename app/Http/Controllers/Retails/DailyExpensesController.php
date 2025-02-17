@@ -114,7 +114,7 @@ class DailyExpensesController extends Controller
             "date" => $request->date,
             "description" => $request->description,
             "reference" => $request->reference,
-            "reference" => "expenses",
+            "reference_type" => "expenses",
             "status" => "DRAFT",
             "created_by" => Auth::user()->id,
         ]);
