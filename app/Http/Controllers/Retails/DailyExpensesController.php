@@ -68,7 +68,7 @@ class DailyExpensesController extends Controller
                 'accounts.name as account_name',
             )
             ->leftJoin('account_types', 'account_types.id', '=', 'accounts.type_id')
-            ->where('account_types.category_id', 5)->get();
+            ->where('account_types.category_id', 5)->whereIn('account_types.id',[9, 10, 11])->get();
 
         $creditAccounts = DB::table('accounts')
             ->select(
@@ -77,7 +77,7 @@ class DailyExpensesController extends Controller
                 'accounts.name as account_name',
             )
             ->leftJoin('account_types', 'account_types.id', '=', 'accounts.type_id')
-            ->where('account_types.category_id', 1)->get();
+            ->where('account_types.category_id', 1)->where('account_types.id', 1)->get();
 
         return view('modules.retails.daily-expenses.create', compact('debitAccounts', 'creditAccounts'));
     }
@@ -145,7 +145,7 @@ class DailyExpensesController extends Controller
                 'accounts.name as account_name',
             )
             ->leftJoin('account_types', 'account_types.id', '=', 'accounts.type_id')
-            ->where('account_types.category_id', 5)->get();
+            ->where('account_types.category_id', 5)->whereIn('account_types.id',[9, 10, 11])->get();
 
         $creditAccounts = DB::table('accounts')
             ->select(
@@ -154,7 +154,7 @@ class DailyExpensesController extends Controller
                 'accounts.name as account_name',
             )
             ->leftJoin('account_types', 'account_types.id', '=', 'accounts.type_id')
-            ->where('account_types.category_id', 1)->get();
+            ->where('account_types.category_id', 1)->where('account_types.id', 1)->get();
         return view('modules.retails.daily-expenses.edit', compact('data','debitAccounts', 'creditAccounts'));
     }
 

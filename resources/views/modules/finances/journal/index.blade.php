@@ -113,11 +113,9 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">CODE</th>
                                         <th class="min-w-125px">TANGGAL</th>
                                         <th class="min-w-125px">DESKRIPSI</th>
                                         <th class="min-w-125px">REFERENCES</th>
-                                        <th class="min-w-125px">DIBUAT TANGGAL</th>
                                         <th class="min-w-125px">STATUS</th>
                                         <th class="min-w-125px">POSTING</th>
                                         <th class="min-w-125px">TANGGAL POSTING</th>
@@ -172,10 +170,7 @@ $(document).ready(function() {
                 return json.data; // Map the 'data' field
             }
         },
-        columns: [{
-                data: 'code',
-                name: 'code'
-            },
+        columns: [
             {
                 data: 'date',
                 name: 'date',
@@ -187,10 +182,6 @@ $(document).ready(function() {
             {
                 data: 'reference',
                 name: 'reference'
-            },
-            {
-                data: 'created_at',
-                name: 'created_at'
             },
             {
                 data: 'status',
