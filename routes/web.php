@@ -292,6 +292,13 @@ Route::group(['middleware' => ['auth']], function() {
                 });
             });
 
+            Route::prefix('general-ledgers')->group(function () {
+                Route::name('general-ledgers.')->group(function () {
+                    Route::get('/', [App\Http\Controllers\Finances\GeneralLedgerController::class, 'index'])->name('index');
+                    Route::get('/lists', [App\Http\Controllers\Finances\GeneralLedgerController::class, 'getLists'])->name('get-lists');
+                });
+            });
+
             Route::prefix('account-receivable')->group(function () {
                 Route::name('account-receivable.')->group(function () {
                     Route::get('/', [App\Http\Controllers\Finances\AccountReceivableController::class, 'index'])->name('index');
