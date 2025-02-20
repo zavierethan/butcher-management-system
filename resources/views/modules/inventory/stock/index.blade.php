@@ -38,7 +38,8 @@
                     <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export</a>
                     <!--end::Secondary button-->
                     <!--begin::Primary button-->
-                    <a href="{{route('stocks.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
+                    <a href="{{route('stock-logs.parting-index')}}" class="btn btn-sm fw-bold btn-primary">Parting</a>
+                    <a href="{{route('stocks.create')}}" class="btn btn-sm fw-bold btn-primary">New Stock</a>
                     <!--end::Primary button-->
                 </div>
                 <!--end::Actions-->

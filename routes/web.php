@@ -391,7 +391,8 @@ Route::group(['middleware' => ['auth']], function() {
             // Route::get('/create', [App\Http\Controllers\StockController::class, 'create'])->name('create');
             // Route::post('/save', [App\Http\Controllers\StockController::class, 'save'])->name('save');
             // Route::get('/edit/{id}', [App\Http\Controllers\StockController::class, 'edit'])->name('edit');
-            // Route::post('/update', [App\Http\Controllers\StockController::class, 'update'])->name('update');
+            Route::get('/parting/index', [App\Http\Controllers\StockLogController::class, 'partingIndex'])->name('parting-index');
+            Route::post('/parting/save', [App\Http\Controllers\StockLogController::class, 'saveParting'])->name('save-parting');
         });
     });
 

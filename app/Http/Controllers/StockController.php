@@ -105,7 +105,6 @@ class StockController extends Controller
             DB::table('stocks')->insertGetId([
                 "product_id" => $request->product_id,
                 "branch_id" => $request->branch_id,
-                "quantity" => $request->quantity,
                 "date" => $request->calendar_event_date
         ]);
         } catch (QueryException $e) {
