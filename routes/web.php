@@ -381,6 +381,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/export', [App\Http\Controllers\StockController::class, 'export'])->name('export');
             // Route::get('/edit/{id}', [App\Http\Controllers\StockController::class, 'edit'])->name('edit');
             // Route::post('/update', [App\Http\Controllers\StockController::class, 'update'])->name('update');
+            Route::get('/mutableList', [App\Http\Controllers\StockController::class, 'getMutableList'])->name('get-mutable-list');
         });
     });
 
