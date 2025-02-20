@@ -82,18 +82,6 @@
                                         </div>
                                     </div>
                                     <div class="separator my-5"></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="fv-row mb-5">
-                                        <div class="mb-1">
-                                            <label class="form-label fw-bold fs-6 mb-2">PIC</label>
-                                            <div class="position-relative mb-3">
-                                                <input class="form-control form-control-md form-control-solid"
-                                                    type="text" name="pic" id="pic" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="separator my-5"></div>
                                     <div class="fv-row mb-5">
                                         <div class="mb-1">
                                             <label class="form-label fw-bold fs-6 mb-2">Kategori</label>
@@ -108,13 +96,37 @@
                                         </div>
                                     </div>
                                     <div class="separator my-5"></div>
-                                    <div class="text-end">
-                                        <a href="{{route('procurement.purchase-order.index')}}"
-                                            class="btn btn-sm btn-danger">Cancel</a>
-                                        <a href="#" class="btn btn-sm btn-primary" id="btn-submit-request">Submit
-                                            PO</a>
-                                    </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">PIC</label>
+                                            <div class="position-relative mb-3">
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    type="text" name="pic" id="pic" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5"></div>
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Methode Pembayaran</label>
+                                            <div class="position-relative mb-3">
+                                                <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="payment_method" id="payment-method">
+                                                    <option value="">-</option>
+                                                    <option value="cash">TUNAI</option>
+                                                    <option value="credit">KREDIT</option>
+                                                    <option value="partial">TERM</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5"></div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <a href="{{route('procurement.purchase-order.index')}}" class="btn btn-sm btn-danger">Cancel</a>
+                                <a href="#" class="btn btn-sm btn-primary" id="btn-submit-request">Submit PO</a>
                             </div>
                         </div>
                     </div>

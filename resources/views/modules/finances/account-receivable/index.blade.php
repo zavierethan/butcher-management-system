@@ -108,8 +108,8 @@
                                             id="status">
                                             <option></option>
                                             <option value=" " selected="selected">Show All</option>
-                                            <option value="paid">PAID</option>
-                                            <option value="unpaid">UNPAID</option>
+                                            <option value="paid">LUNAS</option>
+                                            <option value="unpaid">BELUM LUNAS</option>
                                             <option value="partial">PARTIAL / TERM</option>
                                         </select>
                                         <!--end::Select-->
@@ -141,12 +141,11 @@
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">CUSTOMER</th>
                                         <th class="min-w-125px">NOMOR TRANSAKSI</th>
-                                        <th class="min-w-125px">TANGGAL</th>
-                                        <th class="min-w-125px">JATUH TEMPO</th>
+                                        <th class="min-w-125px">TANGGAL TRANSAKSI</th>
+                                        <th class="min-w-125px">TANGGAL JATUH TEMPO</th>
                                         <th class="min-w-125px">TOTAL</th>
                                         <th class="min-w-125px">SISA PIUTANG</th>
                                         <th class="min-w-125px">STATUS</th>
-                                        <th class="min-w-125px">DIBUAT TANGGAL</th>
                                         <th class="text-center min-w-70px">ACTION</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -231,11 +230,11 @@ $(document).ready(function() {
                     var status = "";
 
                     if (row.status == 'unpaid') {
-                        status = `<span class="badge bg-danger text-dark">UNPAID</span>`
+                        status = `<span class="badge bg-danger text-dark">BELUM LUNAS</span>`
                     }
 
                     if (row.status == 'paid') {
-                        status = `<span class="badge bg-success text-dark">PAID</span>`
+                        status = `<span class="badge bg-success text-dark">LUNAS</span>`
                     }
 
                     if (row.status == 'partial') {
@@ -244,10 +243,6 @@ $(document).ready(function() {
 
                     return status;
                 }
-            },
-            {
-                data: 'created_at',
-                name: 'created_at'
             },
             {
                 data: null, // No direct field from the server

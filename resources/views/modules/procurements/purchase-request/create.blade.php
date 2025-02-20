@@ -61,7 +61,8 @@
                                             <label class="form-label fw-bold fs-6 mb-2">Tanggal</label>
                                             <div class="position-relative mb-3">
                                                 <input class="form-control form-control-md form-control-solid"
-                                                    type="date" name="request_date" value="<?php echo date('Y-m-d'); ?>" id="request-date" />
+                                                    type="date" name="request_date" value="<?php echo date('Y-m-d'); ?>"
+                                                    id="request-date" />
                                             </div>
                                         </div>
                                     </div>
@@ -74,7 +75,8 @@
                                                     data-placeholder="-" name="alocation" id="alocation">
                                                     <option value="">-</option>
                                                     @foreach($branches as $branch)
-                                                    <option value="{{$branch->id}}">{{$branch->name}} ({{$branch->code}})</option>
+                                                    <option value="{{$branch->id}}">{{$branch->name}}
+                                                        ({{$branch->code}})</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -88,7 +90,7 @@
                                             <label class="form-label fw-bold fs-6 mb-2">PIC</label>
                                             <div class="position-relative mb-3">
                                                 <input class="form-control form-control-md form-control-solid"
-                                                    type="text" name="pic" id="pic"/>
+                                                    type="text" name="pic" id="pic" />
                                             </div>
                                         </div>
                                     </div>
@@ -137,7 +139,6 @@
                                         <th class="min-w-125px">Item</th>
                                         <th class="min-w-125px">Tipe Item</th>
                                         <th class="min-w-125px">Jumlah</th>
-                                        <th class="min-w-125px">Satuan</th>
                                         <th class="min-w-125px">Harga</th>
                                         <th class="min-w-125px">Total Harga</th>
                                         <th class="text-center min-w-70px">Actions</th>
@@ -240,12 +241,13 @@
 $(document).ready(function() {
 
     $('#kt_modal_add_item').on('shown.bs.modal', function() {
-    $('#item').select2({
-        dropdownParent: $('#kt_modal_add_item') // Ensure dropdown stays inside modal
+        $('#item').select2({
+            dropdownParent: $('#kt_modal_add_item') // Ensure dropdown stays inside modal
+        });
+
     });
 
-});
-    getItems();
+    // getItems();
 });
 
 $("#btn-form-add-item").on("click", function() {
@@ -268,7 +270,6 @@ $("#btn-form-add-item").on("click", function() {
             </td>
             <td class="item-category">${itemCategory}</td>
             <td class="item-quantity">${quantity}</td>
-            <td class="item-unit"></td>
             <td class="item-price">${price}</td>
             <td class="item-total-price">${price * quantity}</td>
             <td class="text-center">
@@ -295,7 +296,7 @@ $("#category").on("change", function() {
 
     let url = "";
 
-    if($(this).val() === 'PR') {
+    if ($(this).val() === 'PR') {
         url = `{{route('products.get-lists')}}`;
     } else {
         url = `{{route('inventories.get-lists')}}`;
@@ -326,7 +327,8 @@ $(document).on('click', '#btn-submit-request', function(e) {
                     var itemId = $(this).find("td:first-child input[type='hidden']").val();
 
                     // Get the text content of specific cells in the current row
-                    var itemName = $(this).find("td:first-child").text().trim(); // Get text in the first <td> (trim to remove extra spaces)
+                    var itemName = $(this).find("td:first-child").text()
+                .trim(); // Get text in the first <td> (trim to remove extra spaces)
                     var itemCategory = $(this).find(".item-category").text().trim();
                     var itemQuantity = $(this).find(".item-quantity").text().trim();
                     var itemPrice = $(this).find(".item-price").text().trim();
@@ -342,6 +344,18 @@ $(document).on('click', '#btn-submit-request', function(e) {
 
                     totalNominal += parseFloat(itemTotalPrice);
                 });
+
+                if (itemLists.length <= 0) {
+                    Swal.fire({
+                        title: 'Warning !',
+                        text: 'Item PO tidak boleh kosong !',
+                        icon: 'warning',
+                        confirmButtonText: 'Ok',
+                        allowOutsideClick: false
+                    });
+
+                    return;
+                }
 
                 var requestDate = $('#request-date').val();
                 var alocation = $('#alocation').val();
@@ -361,7 +375,6 @@ $(document).on('click', '#btn-submit-request', function(e) {
                 };
 
                 console.log(payload)
-
                 $.ajax({
                     url: `{{route('procurement.purchase-request.save')}}`,
                     type: 'POST',
@@ -378,8 +391,8 @@ $(document).on('click', '#btn-submit-request', function(e) {
                             confirmButtonText: 'Ok',
                             allowOutsideClick: false
                         }).then((result) => {
-                                location.href =
-                                    `{{ route('procurement.purchase-request.index') }}`;
+                            location.href =
+                                `{{ route('procurement.purchase-request.index') }}`;
                         });
                     },
                     error: function(xhr, status, error) {
@@ -423,6 +436,5 @@ function getItems(url) {
         }
     });
 }
-
 </script>
 @endsection

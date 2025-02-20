@@ -342,6 +342,11 @@ Route::group(['middleware' => ['auth']], function() {
             Route::prefix('account-payable')->group(function () {
                 Route::name('account-payable.')->group(function () {
                     Route::get('/', [App\Http\Controllers\Finances\AccountPayableController::class, 'index'])->name('index');
+                    Route::get('/lists', [App\Http\Controllers\Finances\AccountPayableController::class, 'getLists'])->name('get-lists');
+                    Route::get('/edit/{id}', [App\Http\Controllers\Finances\AccountPayableController::class, 'edit'])->name('edit');
+
+                    Route::post('/save-payments', [App\Http\Controllers\Finances\AccountPayableController::class, 'savePayments'])->name('save-payments');
+
                 });
             });
 

@@ -36,7 +36,8 @@
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
                     <!--begin::Secondary button-->
-                    <a href="{{route('finances.chart-of-accounts.create')}}" class="btn btn-sm fw-bold btn-secondary">New</a>
+                    <a href="{{route('finances.invoices.create')}}" class="btn btn-sm fw-bold btn-secondary">Generate Invoice</a>
+                    <!-- <a href="{{route('finances.account-receivable.create')}}" class="btn btn-sm fw-bold btn-secondary">New</a> -->
                     <!--end::Secondary button-->
                 </div>
                 <!--end::Actions-->
@@ -63,24 +64,69 @@
                             <!--begin::Card title-->
                             <!--begin::Card toolbar-->
                             <div class="card-toolbar">
-                                <!--begin::Toolbar-->
-                                <div class="d-flex align-items-center position-relative my-1">
-                                    <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
-                                    <span class="svg-icon svg-icon-1 position-absolute ms-6">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none">
-                                            <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2"
-                                                rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
-                                            <path
-                                                d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z"
-                                                fill="black" />
-                                        </svg>
-                                    </span>
-                                    <!--end::Svg Icon-->
-                                    <input type="text" data-kt-customer-table-filter="search"
-                                        class="form-control form-control-solid w-250px ps-15" placeholder="Search" />
+                                <!--begin::Filters-->
+                                <div class="d-flex flex-stack flex-wrap gap-4">
+                                    <div class="d-flex align-items-center fw-bold">
+                                        <!--begin::Label-->
+                                        <div class="text-gray-500 fs-7 me-2">Tanggal</div>
+                                        <!--end::Label-->
+                                        <!--begin::Select-->
+                                        <input type="date"
+                                            class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
+                                            id="start-date" /> -
+                                        <input type="date"
+                                            class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
+                                            id="end-date" />
+                                        <!--end::Select-->
+                                    </div>
+                                    <div class="d-flex align-items-center fw-bold">
+                                        <!--begin::Label-->
+                                        <div class="text-gray-500 fs-7 me-2">Supplier</div>
+                                        <!--end::Label-->
+                                        <!--begin::Select-->
+                                        <select
+                                            class="form-select form-select-transparent text-gray-900 fs-7 lh-1 fw-bold py-0 ps-3 w-auto"
+                                            data-control="select2" data-hide-search="true"
+                                            data-dropdown-css-class="w-150px" data-placeholder="Select an option" id="customer">
+                                            <option value=" " selected="selected">Show All</option>
+                                            @foreach($suppliers as $supplier)
+                                            <option value="{{$supplier->id}}"> {{$supplier->name}}</option>
+                                            @endforeach
+                                        </select>
+                                        <!--end::Select-->
+                                    </div>
+                                    <!--begin::Status-->
+                                    <div class="d-flex align-items-center fw-bold">
+                                        <!--begin::Label-->
+                                        <div class="text-gray-500 fs-7 me-2">Status</div>
+                                        <!--end::Label-->
+                                        <!--begin::Select-->
+                                        <select
+                                            class="form-select form-select-transparent text-gray-900 fs-7 lh-1 fw-bold py-0 ps-3 w-auto"
+                                            data-control="select2" data-hide-search="true"
+                                            data-dropdown-css-class="w-150px" data-placeholder="Select an option"
+                                            id="status">
+                                            <option></option>
+                                            <option value=" " selected="selected">Show All</option>
+                                            <option value="paid">LUNAS</option>
+                                            <option value="unpaid">BELUM LUNAS</option>
+                                            <option value="partial">PARTIAL / TERM</option>
+                                        </select>
+                                        <!--end::Select-->
+                                    </div>
+                                    <!--end::Status-->
+                                    <div class="position-relative my-1">
+                                        <i
+                                            class="ki-duotone ki-magnifier fs-2 position-absolute top-50 translate-middle-y ms-4">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                        <input type="text" data-kt-purchase-order-table-filter="search"
+                                            class="form-control form-control-solid w-250px ps-15"
+                                            placeholder="Nomor Purchase Order" />
+                                    </div>
                                 </div>
-                                <!--end::Toolbar-->
+                                <!--begin::Filters-->
                             </div>
                             <!--end::Card toolbar-->
                         </div>
@@ -88,7 +134,28 @@
                         <!--begin::Card body-->
                         <div class="card-body pt-0 overflow-x-auto">
                             <!--begin::Table-->
-
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_journals_table">
+                                <!--begin::Table head-->
+                                <thead>
+                                    <!--begin::Table row-->
+                                    <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                        <th class="min-w-125px">CUSTOMER</th>
+                                        <th class="min-w-125px">NOMOR PO</th>
+                                        <th class="min-w-125px">TANGGAL PO</th>
+                                        <th class="min-w-125px">TANGGAL JATUH TEMPO</th>
+                                        <th class="min-w-125px">TOTAL</th>
+                                        <th class="min-w-125px">SISA HUTANG</th>
+                                        <th class="min-w-125px">STATUS</th>
+                                        <th class="text-center min-w-70px">ACTION</th>
+                                    </tr>
+                                    <!--end::Table row-->
+                                </thead>
+                                <!--end::Table head-->
+                                <!--begin::Table body-->
+                                <tbody class="fw-bold text-gray-600">
+                                </tbody>
+                                <!--end::Table body-->
+                            </table>
                             <!--end::Table-->
                         </div>
                         <!--end::Card body-->
@@ -109,6 +176,93 @@
 <script>
 $(document).ready(function() {
 
+    const table = $("#kt_journals_table").DataTable({
+        processing: true,
+        order: [
+            [0, 'desc']
+        ],
+        serverSide: true,
+        paging: true, // Enable pagination
+        pageLength: 10, // Number of rows per page
+        ajax: {
+            url: `{{route('finances.account-payable.get-lists')}}`, // Replace with your route
+            type: 'GET',
+            data: function (d) {
+                // Add filter data to the request
+                d.start_date = $('#start-date').val();
+                d.end_date = $('#end-date').val();
+                d.customer = $('#customer').val();
+                d.status = $('#status').val();
+            },
+            dataSrc: function(json) {
+                return json.data; // Map the 'data' field
+            }
+        },
+        columns: [
+            {
+                data: 'supplier_name',
+                name: 'supplier_name',
+            },
+            {
+                data: 'purchase_order_no',
+                name: 'purchase_order_no',
+            },
+            {
+                data: 'date',
+                name: 'date'
+            },
+            {
+                data: 'due_date',
+                name: 'due_date'
+            },
+            {
+                data: 'total_amount',
+                name: 'total_amount'
+            },
+            {
+                data: 'remaining_balance',
+                name: 'remaining_balance'
+            },
+            {
+                data: 'status',
+                name: 'status',
+                render: function(data, type, row) {
+                    var status = "";
+
+                    if (row.status == 'unpaid') {
+                        status = `<span class="badge bg-danger text-dark">BELUM LUNAS</span>`
+                    }
+
+                    if (row.status == 'paid') {
+                        status = `<span class="badge bg-success text-dark">LUNAS</span>`
+                    }
+
+                    if (row.status == 'partial') {
+                        status = `<span class="badge bg-warning text-dark">PARTIAL</span>`
+                    }
+
+                    return status;
+                }
+            },
+            {
+                data: null, // No direct field from the server
+                name: 'action',
+                orderable: false, // Disable ordering for this column
+                searchable: false, // Disable searching for this column
+                render: function(data, type, row) {
+                    return `
+                        <div class="text-center">
+                            <a href="/finances/account-payable/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail AR"><i class="fa-solid fa-magnifying-glass"></i></a>
+                        <div>
+                    `;
+                }
+            }
+        ]
+    });
+
+    $('#start-date, #end-date, #customer, #status').on('change', function () {
+        table.draw(); // Trigger DataTable redraw with updated filter values
+    });
 });
 </script>
 @endsection
