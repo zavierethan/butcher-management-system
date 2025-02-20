@@ -160,6 +160,17 @@ Route::group(['middleware' => ['auth']], function() {
         });
     });
 
+    Route::prefix('butcherees')->group(function () {
+        Route::name('butcherees.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Master\ButchereesController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\Master\ButchereesController::class, 'getLists'])->name('get-lists');
+            Route::get('/create', [App\Http\Controllers\Master\ButchereesController::class, 'create'])->name('create');
+            Route::post('/save', [App\Http\Controllers\Master\ButchereesController::class, 'save'])->name('save');
+            Route::get('/edit/{id}', [App\Http\Controllers\Master\ButchereesController::class, 'edit'])->name('edit');
+            Route::post('/update', [App\Http\Controllers\Master\ButchereesController::class, 'update'])->name('update');
+        });
+    });
+
     //Transaction
 
     // Point of Sales
