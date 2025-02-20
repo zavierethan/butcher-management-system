@@ -513,8 +513,14 @@
                                             id="product-search" />
                                     </div>
                                     <div class="ms-auto">
-                                        <input type="text" class="form-control form-control-solid"
-                                            placeholder="Nama Butcherees" id="butcher-name" />
+                                        <!-- <input type="text" class="form-control form-control-solid"
+                                            placeholder="Nama Butcherees" id="butcher-name" /> -->
+
+                                        <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Butcherees" id="butcher-name">
+                                            @foreach($butcherees as $butcher)
+                                            <option value="{{$butcher->name}}">{{$butcher->name}}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                             </div>

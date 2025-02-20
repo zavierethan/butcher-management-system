@@ -12,7 +12,9 @@ class TransactionController extends Controller
     public function index() {
         $productCategories = DB::table('product_categories')->where('is_active', 1)->get();
         $branches =  DB::table('branches')->where('is_active', 1)->get();
-        return view('modules.transactions.pos.index', compact('productCategories', 'branches'));
+        $butcherees = DB::table('butcherees')->where('branch_id', Auth::user()->branch_id)->get();
+
+        return view('modules.transactions.pos.index', compact('productCategories', 'branches', 'butcherees'));
     }
 
     public function store(Request $request) {
