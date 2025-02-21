@@ -42,7 +42,7 @@
                     <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export</a>
                     <!--end::Secondary button-->
                     <!--begin::Primary button-->
-                    {{-- <a href="{{route('stocks.create')}}" class="btn btn-sm fw-bold btn-primary">New</a> --}}
+                    <a href="{{route('stock-logs.create', ['stockId' => $stockId])}}" class="btn btn-sm fw-bold btn-primary">Input New Log</a>
                     <!--end::Primary button-->
                 </div>
                 <!--end::Actions-->
