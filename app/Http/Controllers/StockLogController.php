@@ -119,8 +119,9 @@ class StockLogController extends Controller
 
     public function partingIndex() {
         $branches = DB::table('branches')->orderBy('name', 'asc')->get();
+        $products = DB::table('products')->orderBy('name', 'asc')->get();
 
-        return view('modules.inventory.stock.parting.parting-index', compact('branches'));
+        return view('modules.inventory.stock.parting.parting-index', compact('branches', 'products'));
     }
 
 

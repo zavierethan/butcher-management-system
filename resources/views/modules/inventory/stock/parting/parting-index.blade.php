@@ -188,11 +188,20 @@
                         <!--end::Card body-->
                     </div>
 
-                     <div class="card card-flush py-4 flex-row-fluid overflow-hidden">
+                    <div class="card card-flush py-4 flex-row-fluid overflow-hidden">
                         <!--begin::Card body-->
                         <div class="card-body pt-10 overflow-x-auto">
                             <div class="row mb-5">
-                                <div class="col-md-12 text-start fw-bold fs-4 text-uppercase gs-0">Hasil Parting Produk</div>
+                                <div class="col-md-6">
+                                    <div class="col-md-12 text-start fw-bold fs-4 text-uppercase gs-0">Hasil Parting Produk</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="col-md-12 text-end">
+                                        <a class="btn btn-sm btn-primary" id="add-row-parting">
+                                            <i class="fa-solid fa-plus"></i>Tambah Hasil Parting
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                             <div class="table-responsive">
                                 <!--begin::Table-->
@@ -320,35 +329,40 @@ function updatePercentageRancung() {
 // fresh cut end here
 
 // parting script
-$(document).ready(function () {
-    $.ajax({
-        url: "/api/allProductsInAllBranches",
-        type: "GET",
-        dataType: "json",
-        success: function (response) {
-            if (response.data && Array.isArray(response.data)) {
-                response.data.forEach(product => {
-                    var row = `<tr data-product-id="${product.id}">
-                        <td>${product.name}</td>
-                        <td>
-                            <input class="form-control form-control-sm me-2 quantity" type="number"
-                                name="quantity" step="0.01" min="0"/>
-                        </td>
-                        <td class="text-center">
-                            <a href="#" class="btn btn-sm btn-light btn-active-light-primary delete"><i class="fa-solid fa-trash-can"></i></a>
-                        </td>
-                    </tr>`;
+$(document).on("click", "#add-row-parting", function (e) {
+    e.preventDefault();
 
-                    $("#kt_parting_table tbody").append(row);
-                });
-            } else {
-                console.error("Invalid response format from API");
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error("Failed to fetch product data:", error);
-        }
+    var productOptions = `@foreach($products as $product)
+                            <option value="{{ $product->id }}" data-product-id="{{ $product->id }}">{{ $product->name }}</option>
+                          @endforeach`;
+
+    var row = `<tr data-product-id="">
+                    <td>
+                        <select class="form-select form-select-sm product-select">
+                            <option value="">Pilih Produk</option>
+                            ${productOptions}
+                        </select>
+                    </td>
+                    <td>
+                        <input class="form-control form-control-sm me-2 quantity" type="number"
+                            name="quantity" step="0.01" min="0"/>
+                    </td>
+                    <td class="text-center">
+                        <a href="#" class="btn btn-sm btn-light btn-active-light-primary delete">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </a>
+                    </td>
+                </tr>`;
+
+    var $row = $(row);
+    
+    // Update the tr's data-product-id when a product is selected
+    $row.find(".product-select").on("change", function () {
+        var selectedProductId = $(this).val();
+        $row.attr("data-product-id", selectedProductId);
     });
+
+    $("#kt_parting_table tbody").append($row);
 });
 
 
