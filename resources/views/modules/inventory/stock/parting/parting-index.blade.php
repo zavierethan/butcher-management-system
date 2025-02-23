@@ -348,7 +348,7 @@ $(document).on("click", "#add-row-parting", function (e) {
                             name="quantity" step="0.01" min="0"/>
                     </td>
                     <td class="text-center">
-                        <a href="#" class="btn btn-sm btn-light btn-active-light-primary delete">
+                        <a href="#" class="btn btn-sm btn-light btn-active-light-primary delete-parting-row">
                             <i class="fa-solid fa-trash-can"></i>
                         </a>
                     </td>
@@ -397,6 +397,13 @@ $(document).on("click", "#add-row-parting", function (e) {
             $("#total_weight_rancung_to_parting_percentage").val("0.00");
         }
     }
+
+    // Update total_weight_live_to_rancung when a row is deleted
+    $(document).on("click", ".delete-parting-row", function (e) {
+        e.preventDefault();
+        $(this).closest("tr").remove();
+        updateTotalWeightRancungToParting();
+    });
 
 
 
