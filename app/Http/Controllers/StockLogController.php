@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\StockLogExport;
 use Illuminate\Http\Request;
 use DB;
 use Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StockLogController extends Controller
 {
@@ -214,6 +216,29 @@ class StockLogController extends Controller
     public function create(Request $request) {
         $stockId = $request->query('stockId');
         return view('modules.inventory.stock.stock-log.create', compact('stockId'));
+    }
+
+    public function export(Request $request) {
+        $filters = [
+            'stock_id' => $request->stock_id,
+            'branch_name' => $request->branch_name,
+            'branch_code' => $request->branch_code
+        ];
+
+        $filename = "Stock Log.xlsx";
+
+        // Generate Excel data
+        $export = new StockLogExport($filters);
+        $excelData = Excel::raw($export, \Maatwebsite\Excel\Excel::XLSX);
+
+        // Return response with dynamic filename
+        return response($excelData, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            "Content-Disposition" => "attachment; filename=\"{$filename}\"",
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+        ]);
     }
 
 }

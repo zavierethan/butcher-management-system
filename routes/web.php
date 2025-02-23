@@ -394,6 +394,7 @@ Route::group(['middleware' => ['auth']], function() {
             // Route::get('/edit/{id}', [App\Http\Controllers\StockController::class, 'edit'])->name('edit');
             Route::get('/parting/index', [App\Http\Controllers\StockLogController::class, 'partingIndex'])->name('parting-index');
             Route::post('/parting/save', [App\Http\Controllers\StockLogController::class, 'saveParting'])->name('save-parting');
+            Route::get('/export/new', [App\Http\Controllers\StockLogController::class, 'export'])->name('export');
         });
     });
 
