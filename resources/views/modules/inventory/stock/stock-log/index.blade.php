@@ -42,7 +42,7 @@
                     <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export</a>
                     <!--end::Secondary button-->
                     <!--begin::Primary button-->
-                    {{-- <a href="{{route('stocks.create')}}" class="btn btn-sm fw-bold btn-primary">New</a> --}}
+                    <a href="{{route('stock-logs.create', ['stockId' => $stockId])}}" class="btn btn-sm fw-bold btn-primary">Input New Log</a>
                     <!--end::Primary button-->
                 </div>
                 <!--end::Actions-->
@@ -335,5 +335,58 @@
             });
         });
     });
+
+$("#btn-form-export").on("click", function() {
+    const stockId = "{{ $stockId }}";
+    const branchCode = "{{ $stockHeader->branch_code }}"
+    const branchName = "{{ $stockHeader->branch_name }}"
+
+    $.ajax({
+        url: `{{route('stock-logs.export')}}`,
+        type: 'GET',
+        data: {
+            stock_id: stockId,
+            branch_code: branchCode,
+            branch_name: branchName
+        },
+        xhrFields: {
+            responseType: 'blob', // Treat response as binary
+        },
+        success: function(data, status, xhr) {
+            // Extract filename from Content-Disposition header
+            let disposition = xhr.getResponseHeader('Content-Disposition');
+            let filename = 'stock-log.xlsx'; // Default filename
+
+            if (disposition && disposition.indexOf('attachment') !== -1) {
+                let matches = /filename="([^"]+)"/.exec(disposition);
+                if (matches && matches[1]) filename = matches[1];
+            }
+
+            // Create a Blob object from the response
+            const blob = new Blob([data], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            });
+
+            // Create a link element for downloading
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = filename; // Set the extracted filename
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link); // Clean up the DOM
+
+            Swal.fire({
+                title: 'Success!',
+                text: 'Stock Log Report exported successfully.',
+                icon: 'success',
+                confirmButtonText: 'OK',
+            });
+        },
+        error: function(xhr, status, error) {
+            Swal.fire('Error!', 'Failed to export the stock log report.', 'error');
+        },
+    });
+
+});
 </script>
 @endsection

@@ -381,6 +381,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/export', [App\Http\Controllers\StockController::class, 'export'])->name('export');
             // Route::get('/edit/{id}', [App\Http\Controllers\StockController::class, 'edit'])->name('edit');
             // Route::post('/update', [App\Http\Controllers\StockController::class, 'update'])->name('update');
+            Route::get('/mutableList', [App\Http\Controllers\StockController::class, 'getMutableList'])->name('get-mutable-list');
         });
     });
 
@@ -388,10 +389,12 @@ Route::group(['middleware' => ['auth']], function() {
         Route::name('stock-logs.')->group(function () {
             Route::get('/{stockId}', [App\Http\Controllers\StockLogController::class, 'index'])->name('index');
             Route::get('/lists/{stockId}', [App\Http\Controllers\StockLogController::class, 'getLists'])->name('get-lists');
-            // Route::get('/create', [App\Http\Controllers\StockController::class, 'create'])->name('create');
-            // Route::post('/save', [App\Http\Controllers\StockController::class, 'save'])->name('save');
+            Route::get('/new-stock-log/create', [App\Http\Controllers\StockLogController::class, 'create'])->name('create');
+            Route::post('/save', [App\Http\Controllers\StockLogController::class, 'save'])->name('save');
             // Route::get('/edit/{id}', [App\Http\Controllers\StockController::class, 'edit'])->name('edit');
-            // Route::post('/update', [App\Http\Controllers\StockController::class, 'update'])->name('update');
+            Route::get('/parting/index', [App\Http\Controllers\StockLogController::class, 'partingIndex'])->name('parting-index');
+            Route::post('/parting/save', [App\Http\Controllers\StockLogController::class, 'saveParting'])->name('save-parting');
+            Route::get('/export/new', [App\Http\Controllers\StockLogController::class, 'export'])->name('export');
         });
     });
 

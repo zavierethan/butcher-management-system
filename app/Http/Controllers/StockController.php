@@ -105,7 +105,6 @@ class StockController extends Controller
             DB::table('stocks')->insertGetId([
                 "product_id" => $request->product_id,
                 "branch_id" => $request->branch_id,
-                "quantity" => $request->quantity,
                 "date" => $request->calendar_event_date
         ]);
         } catch (QueryException $e) {
@@ -206,5 +205,72 @@ class StockController extends Controller
         ]);
     }
 
+    public function getMutableList(Request $request) {
+        $params = $request->all();
 
+        // Default date range: today
+        $today = date('Y-m-d');
+
+
+        $query = DB::table('stocks')
+            ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
+            ->leftJoin('branches', 'stocks.branch_id', '=', 'branches.id')
+            ->leftJoin('stock_logs as sl', 'stocks.id', '=', 'sl.stock_id')
+            ->select(
+                'stocks.*',
+                'products.code as product_code',
+                'products.name as product_name',
+                'branches.code as branch_code',
+                'branches.name as branch_name',
+                DB::raw('COALESCE(SUM(sl.in_quantity), 0) - COALESCE(SUM(sl.out_quantity), 0) as realtime_quantity')
+            )
+            ->groupBy(
+                'stocks.id',
+                'products.code',
+                'products.name',
+                'branches.code',
+                'branches.name'
+            );
+
+
+        // Apply date range filter (default or provided)
+        $query->whereDate('stocks.date', $today);
+
+        // Exclude carcass
+        $query->whereRaw('LOWER(products.name) != ?', ['karkas']);
+
+        // Apply sorting
+        if ($request->has('order') && $request->order) {
+            $columnIndex = $request->order[0]['column']; // Column index from DataTables
+            $sortDirection = $request->order[0]['dir']; // 'asc' or 'desc'
+            $columnName = $request->columns[$columnIndex]['data']; // Column name
+
+            if (!empty($columnName) && in_array($columnName, [
+                'product_code', 'product_name', 'branch_code', 'branch_name', 'quantity', 'opname_quantity', 'date'
+            ])) {
+                $query->orderBy($columnName, $sortDirection);
+            }
+        }
+
+        if (!$request->has('order')) {
+            $query->orderBy('products.name', 'asc');
+        }
+
+        // Pagination parameters
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 10);
+
+        $totalRecords = DB::table('stocks')->count(); // Total records without filters
+        $filteredRecords = $query->count(); // Total records after filters
+        $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get(); // Paginated data
+
+        $response = [
+            'draw' => $request->input('draw'),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $data
+        ];
+
+        return response()->json($response);
+    }
 }

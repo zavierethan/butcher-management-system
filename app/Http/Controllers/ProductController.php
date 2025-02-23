@@ -313,5 +313,35 @@ class ProductController extends Controller
         return response()->json(['success' => (bool) $updated]);
     }
 
+    // api untuk parting
+    public function getAllProductsInAllBranches(){
 
+        // Build the query
+        $query = DB::table('products')
+            ->leftJoin('product_categories', 'products.category_id', '=', 'product_categories.id')
+            ->select(
+                'products.id',
+                'products.name',
+                'products.code',
+                'products.url_path',
+                'products.is_active',
+                'product_categories.name as category_name',
+            )
+            ->where('products.is_active', '=', 1);
+
+        // Ensure unique results
+        $query->distinct();
+
+        // Fetch filtered results
+        $data = $query
+            ->orderBy('products.name', 'asc')
+            ->get();
+
+        // Build response
+        $response = [
+            'data' => $data
+        ];
+
+        return response()->json($response);
+    }
 }
