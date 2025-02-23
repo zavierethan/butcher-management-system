@@ -200,6 +200,7 @@
                                         <th class="min-w-125px">Harga Satuan</th>
                                         <th class="min-w-125px">Jumlah</th>
                                         <th class="min-w-125px">Total Harga (Rp)</th>
+                                        <th class="min-w-125px">Catatan</th>
                                         <th class="min-w-125px text-center">Status Approval</th>
                                         <!-- <th class="min-w-125px text-center">Realisasi</th> -->
                                     </tr>
@@ -219,6 +220,7 @@
                                         </td>
                                         <td><input class="form-control form-control-sm me-2 quantity" type="text" name="quantity" value="{{$item->quantity}}" <?php echo ($purchaseRequest->status == 'approve') ? 'readonly' : ''; ?>/></td>
                                         <td><input class="form-control form-control-sm me-2 total-price" type="text" name="total_price" value="{{$item->quantity * $item->price}}" <?php echo ($purchaseRequest->status == 'approve') ? 'readonly' : ''; ?>/></td>
+                                        <td><textarea class="form-control form-control-sm me-2 notes" type="text" name="notes"></textarea></td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center">
                                                 <label

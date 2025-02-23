@@ -145,8 +145,8 @@ $(document).ready(function() {
             }
         },
         columns: [{
-                data: 'date',
-                name: 'date'
+                data: 'title',
+                name: 'title'
             },
             {
                 data: 'description',

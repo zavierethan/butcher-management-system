@@ -244,15 +244,18 @@ $(document).ready(function() {
             },
             {
                 data: 'nominal_application',
-                name: 'nominal_application'
+                name: 'nominal_application',
+                className: 'text-end'
             },
             {
                 data: 'nominal_realization',
-                name: 'nominal_realization'
+                name: 'nominal_realization',
+                className: 'text-end'
             },
             {
                 data: 'status',
                 name: 'status',
+                className: 'text-center',
                 render: function(data, type, row) {
                     var status = "";
 
