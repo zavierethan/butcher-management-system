@@ -7,6 +7,7 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use App\Exports\TransactionExport;
 use App\Exports\DailyExpensesExport;
 use App\Exports\SummaryExport;
+use App\Exports\DailyStockExport;
 
 class DailyReportExport implements WithMultipleSheets
 {
@@ -25,6 +26,8 @@ class DailyReportExport implements WithMultipleSheets
             new DailyExpensesExport($this->filters),
 
             new SummaryExport($this->filters),
+
+            new DailyStockExport($this->filters)
         ];
     }
 }
