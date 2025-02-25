@@ -9,12 +9,32 @@
 <h2>Print Thermal Receipt</h2>
 
 <script>
-    // qz.security.setCertificatePromise((resolve, reject) => resolve());
-
-    // qz.security.setSignaturePromise((toSign) => {
-    //     return Promise.resolve(); // Bypass signature for testing
+    // ✅ Load the certificate
+    // qz.security.setCertificatePromise((resolve, reject) => {
+    //     fetch('/qz-tray.crt')
+    //         .then(response => response.text())
+    //         .then(resolve)
+    //         .catch(reject);
     // });
 
+    // // ✅ Secure signing via Laravel API
+    // qz.security.setSignaturePromise(toSign => {
+    //     return fetch('/sign-message', {
+    //         method: 'POST',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: JSON.stringify({ request: toSign })
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if (data.signature) {
+    //             return data.signature;
+    //         } else {
+    //             throw new Error("Failed to sign request");
+    //         }
+    //     });
+    // });
+
+    // ✅ List all available printers
     function listPrinters() {
         if (!qz.websocket.isActive()) {
             qz.websocket.connect()
@@ -40,10 +60,11 @@
             .catch(err => console.error("Error listing printers:", err));
     }
 
+    // ✅ Print receipt to POS-58 thermal printer
     function printReceipt() {
         if (!qz.websocket.isActive()) {
             qz.websocket.connect()
-                .then(() => sendPrintCommand("POS-58 (copy 1)")) // Use correct printer name
+                .then(() => sendPrintCommand("POS-58 (copy 1)")) // Adjust printer name
                 .catch(err => console.error("QZ Tray connection failed:", err));
         } else {
             sendPrintCommand("POS-58 (copy 1)");
@@ -74,10 +95,6 @@
                     '3.00 X 29,000 (Discount 500)    \n',
                     '\x1B\x61\x32',
                     '85,500\n',
-                    'KARKAS                          \n',
-                    '3.00 X 29,000 (Discount 500)    \n',
-                    '\x1B\x61\x32',
-                    '85,500\n',
                     '--------------------------------\n',
                     '\x1B\x61\x32',
                     'Total  57,000\n',
@@ -93,6 +110,9 @@
             .then(() => console.log("Print successful"))
             .catch(err => console.error("Print failed:", err));
     }
+
+    // Auto-connect QZ Tray
+    qz.websocket.connect().catch(err => console.error("QZ Tray not running:", err));
 </script>
 
 <button onclick="printReceipt()">Print Receipt</button>

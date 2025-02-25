@@ -1364,8 +1364,13 @@ $(document).ready(function() {
                                         type: "GET",
                                         dataType: "json",
                                         success: function (response) {
-
                                             if (response.code == 200) {
+                                                var data = response.data;
+
+                                                console.log("Header:", response.data.header); // Log header data
+                                                console.log("Details:", response.data.details); // Log details array
+                                                printReceipt("POS-58 (copy 1)", response);
+
                                                 Swal.fire({
                                                     title: 'Nota Berhasil Dicetak!',
                                                     icon: 'success',
@@ -1677,6 +1682,96 @@ $(document).ready(function() {
 
         return toReturn;
     }
+
+    // ✅ List all available printers
+    function listPrinters() {
+        if (!qz.websocket.isActive()) {
+            qz.websocket.connect()
+                .then(() => getPrinters())
+                .catch(err => console.error("QZ Tray connection failed:", err));
+        } else {
+            getPrinters();
+        }
+    }
+
+    function getPrinters() {
+        qz.printers.find()
+            .then(printers => {
+                let printerList = document.getElementById("printerList");
+                printerList.innerHTML = ""; // Clear previous list
+
+                printers.forEach(printer => {
+                    let li = document.createElement("li");
+                    li.textContent = printer;
+                    printerList.appendChild(li);
+                });
+            })
+            .catch(err => console.error("Error listing printers:", err));
+    }
+
+    // ✅ Print receipt to POS-58 thermal printer
+    function printReceipt(printerName, jsonData) {
+        if (!qz.websocket.isActive()) {
+            qz.websocket.connect()
+                .then(() => sendPrintCommand(printerName, jsonData)) // Adjust printer name
+                .catch(err => console.error("QZ Tray connection failed:", err));
+        } else {
+            sendPrintCommand("POS-58 (copy 1)", jsonData);
+        }
+    }
+
+    function sendPrintCommand(printerName, jsonData) {
+        qz.printers.find(printerName)
+            .then(printer => {
+                console.log(jsonData)
+                let config = qz.configs.create(printer);
+                let header = jsonData.data.header;
+                let details = jsonData.data.details;
+
+                let data = [
+                    '\x1B\x40', // Initialize printer
+                    '\x1B\x61\x31', // Center align
+                    '\x1B\x21\x10', // Double height
+                    'Priyadis Butchers\n',
+                    '\x1B\x21\x00', // Reset to normal text
+                    `${header.address}\n`,
+                    `Telp: ${header.phone_number}\n`,
+                    '\n',
+                    '\x1B\x61\x30', // Left align
+                    '--------------------------------\n',
+                    `No Transaksi  : ${header.code}\n`,
+                    `Tanggal       : ${header.transaction_date.split(' ')[0]}\n`, // Extract date only
+                    `Kasir         : ${header.created_by}\n`,
+                    '--------------------------------\n',
+                ];
+
+                // **Loop through items**
+                details.forEach(item => {
+                    data.push(`${item.name}\n`);
+                    data.push(`${item.quantity} X ${item.base_price} (Discount ${item.discount})\n`);
+                    data.push('\x1B\x61\x32'); // Right align
+                    data.push(`${item.sell_price}\n`);
+                    data.push('\x1B\x61\x30'); // Back to left align
+                });
+
+                data.push('--------------------------------\n');
+                data.push('\x1B\x61\x32'); // Right align
+                data.push(`Total  ${header.total_amount}\n`);
+                data.push(`Bayar (${header.payment_method})  ${header.nominal_cash}\n`);
+                data.push(`Kembali  ${header.nominal_return}\n`);
+                data.push('--------------------------------\n');
+                data.push('\n\n\n');
+                data.push('\x1D\x56\x41'); // Cut paper
+
+                return qz.print(config, data);
+            })
+            .then(() => console.log("Print successful"))
+            .catch(err => console.error("Print failed:", err));
+    }
+
+
+    // Auto-connect QZ Tray
+    qz.websocket.connect().catch(err => console.error("QZ Tray not running:", err));
 });
 </script>
 

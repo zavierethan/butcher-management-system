@@ -233,137 +233,140 @@ class OrderController extends Controller
     }
 
     public function printThermal($id) {
-        // try {
+        try {
 
-        //     $info = DB::table('transactions')
-        //             ->select(
-        //                 'transactions.id',
-        //                 'transactions.code',
-        //                 DB::raw("TO_CHAR(transactions.transaction_date, 'dd/mm/YYYY HH24:MI:SS') as transaction_date"),
-        //                 DB::raw("
-        //                     CASE
-        //                         WHEN transactions.payment_method = '1' THEN 'TUNAI'
-        //                         WHEN transactions.payment_method = '2' THEN 'PIUTANG'
-        //                         WHEN transactions.payment_method = '3' THEN 'TRANSFER'
-        //                     ELSE
-        //                         '-'
-        //                     END AS payment_method
-        //                 "),
-        //                 'transactions.discount',
-        //                 'transactions.shipping_cost',
-        //                 'transactions.total_amount',
-        //                 'transactions.status',
-        //                 DB::raw("TO_CHAR(transactions.nominal_cash, 'FM999,999,999') as nominal_cash"),
-        //                 DB::raw("TO_CHAR(transactions.nominal_return, 'FM999,999,999') as nominal_return"),
-        //                 'customers.name as customer_name',
-        //                 'users.name as created_by',
-        //                 'branches.name as branhces',
-        //                 'branches.address',
-        //                 'branches.phone_number'
-        //             )
-        //             ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
-        //             ->leftJoin('users', 'users.id', '=', 'transactions.created_by')
-        //             ->leftJoin('branches', 'branches.id', '=', 'users.branch_id')
-        //             ->where('transactions.id', $id)->first();
+            $info = DB::table('transactions')
+                    ->select(
+                        'transactions.id',
+                        'transactions.code',
+                        DB::raw("TO_CHAR(transactions.transaction_date, 'dd/mm/YYYY HH24:MI:SS') as transaction_date"),
+                        DB::raw("
+                            CASE
+                                WHEN transactions.payment_method = '1' THEN 'TUNAI'
+                                WHEN transactions.payment_method = '2' THEN 'PIUTANG'
+                                WHEN transactions.payment_method = '3' THEN 'TRANSFER'
+                            ELSE
+                                '-'
+                            END AS payment_method
+                        "),
+                        'transactions.discount',
+                        'transactions.shipping_cost',
+                        'transactions.total_amount',
+                        'transactions.status',
+                        DB::raw("TO_CHAR(transactions.nominal_cash, 'FM999,999,999') as nominal_cash"),
+                        DB::raw("TO_CHAR(transactions.nominal_return, 'FM999,999,999') as nominal_return"),
+                        'customers.name as customer_name',
+                        'users.name as created_by',
+                        'branches.name as branhces',
+                        'branches.address',
+                        'branches.phone_number'
+                    )
+                    ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
+                    ->leftJoin('users', 'users.id', '=', 'transactions.created_by')
+                    ->leftJoin('branches', 'branches.id', '=', 'users.branch_id')
+                    ->where('transactions.id', $id)->first();
 
-        // $items = DB::table('transaction_items')
-        //             ->select(
-        //                 'products.id',
-        //                 'products.code',
-        //                 'products.name',
-        //                 'transaction_items.quantity',
-        //                 'transaction_items.base_price',
-        //                 'transaction_items.discount',
-        //                 'transaction_items.unit_price as sell_price'
-        //             )
-        //             ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')
-        //             ->where('transaction_id', $info->id)->get()->map(function ($item) {
-        //                 // Format the prices using number_format
-        //                 $item->base_price = number_format($item->base_price, 0, '.', ','); // Format for money
-        //                 $item->sell_price = number_format($item->sell_price, 0, '.', ','); // Format for money
-        //                 return $item;
-        //             });
+        $items = DB::table('transaction_items')
+                    ->select(
+                        'products.id',
+                        'products.code',
+                        'products.name',
+                        'transaction_items.quantity',
+                        'transaction_items.base_price',
+                        'transaction_items.discount',
+                        'transaction_items.unit_price as sell_price'
+                    )
+                    ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')
+                    ->where('transaction_id', $info->id)->get()->map(function ($item) {
+                        // Format the prices using number_format
+                        $item->base_price = number_format($item->base_price, 0, '.', ','); // Format for money
+                        $item->sell_price = number_format($item->sell_price, 0, '.', ','); // Format for money
+                        return $item;
+                    });
 
-        //     // Windows shared printer name
-        //     $printerName = "PRIYADIS-BUTCHERS"; // Change this to your actual printer share name
+            // Windows shared printer name
+            // $printerName = "PRIYADIS-BUTCHERS"; // Change this to your actual printer share name
 
-        //     $connector = new WindowsPrintConnector($printerName);
-        //     $printer = new Printer($connector);
+            // $connector = new WindowsPrintConnector($printerName);
+            // $printer = new Printer($connector);
 
-        //     /// **Business Name (Larger Font)**
-        //     $printer->setJustification(Printer::JUSTIFY_CENTER);
-        //     $printer->setTextSize(1, 1); // (Width, Height)
-        //     $printer->text("Priyadis Butchers\n");
-        //     $printer->setTextSize(1, 1); // Reset size
-        //     $printer->text($info->address."\n");
-        //     $printer->setTextSize(1, 1); // Reset size
-        //     $printer->text("Telp:".$info->phone_number."\n");
+            // /// **Business Name (Larger Font)**
+            // $printer->setJustification(Printer::JUSTIFY_CENTER);
+            // $printer->setTextSize(1, 1); // (Width, Height)
+            // $printer->text("Priyadis Butchers\n");
+            // $printer->setTextSize(1, 1); // Reset size
+            // $printer->text($info->address."\n");
+            // $printer->setTextSize(1, 1); // Reset size
+            // $printer->text("Telp:".$info->phone_number."\n");
 
-        //     $printer->text(str_repeat("-", 32) . "\n");
+            // $printer->text(str_repeat("-", 32) . "\n");
 
-        //     // **Transaction Details**
-        //     $printer->setJustification(Printer::JUSTIFY_LEFT);
-        //     $printer->text("No Transaksi : ".$info->code."\n");
-        //     $printer->text("Tanggal : ".$info->transaction_date."\n");
-        //     $printer->text("Kasir : ".$info->created_by."\n");
+            // // **Transaction Details**
+            // $printer->setJustification(Printer::JUSTIFY_LEFT);
+            // $printer->text("No Transaksi : ".$info->code."\n");
+            // $printer->text("Tanggal : ".$info->transaction_date."\n");
+            // $printer->text("Kasir : ".$info->created_by."\n");
 
-        //     $printer->text(str_repeat("-", 32) . "\n");
+            // $printer->text(str_repeat("-", 32) . "\n");
 
-        //     foreach($items as $item) {
-        //         // **First Item (DADA) with Discount**
-        //         $printer->setJustification(Printer::JUSTIFY_LEFT);
-        //         $printer->text($item->name."\n");
+            // foreach($items as $item) {
+            //     // **First Item (DADA) with Discount**
+            //     $printer->setJustification(Printer::JUSTIFY_LEFT);
+            //     $printer->text($item->name."\n");
 
-        //         if($item->discount > 0) {
-        //             $printer->text($item->quantity." X ".$item->base_price." (Discount ".$item->discount.")\n");
-        //         } else {
-        //             $printer->text($item->quantity." X ".$item->base_price."\n");
-        //         }
+            //     if($item->discount > 0) {
+            //         $printer->text($item->quantity." X ".$item->base_price." (Discount ".$item->discount.")\n");
+            //     } else {
+            //         $printer->text($item->quantity." X ".$item->base_price."\n");
+            //     }
 
-        //         $printer->setJustification(Printer::JUSTIFY_RIGHT);
-        //         $printer->text("Rp. ".$item->sell_price."\n");
-        //     }
+            //     $printer->setJustification(Printer::JUSTIFY_RIGHT);
+            //     $printer->text("Rp. ".$item->sell_price."\n");
+            // }
 
-        //     // **Separator**
-        //     $printer->text(str_repeat("-", 32) . "\n");
+            // // **Separator**
+            // $printer->text(str_repeat("-", 32) . "\n");
 
-        //     // **Total**
-        //     $printer->setJustification(Printer::JUSTIFY_RIGHT);
-        //     $printer->setEmphasis(true);
-        //     $printer->text("Total  Rp. ".number_format($info->total_amount, 0, '.', ',')."\n");
-        //     $printer->setEmphasis(false);
+            // // **Total**
+            // $printer->setJustification(Printer::JUSTIFY_RIGHT);
+            // $printer->setEmphasis(true);
+            // $printer->text("Total  Rp. ".number_format($info->total_amount, 0, '.', ',')."\n");
+            // $printer->setEmphasis(false);
 
-        //     // **Payment (Cash)**
-        //     $printer->text("Bayar (Cash)  Rp. ".$info->nominal_cash."\n");
+            // // **Payment (Cash)**
+            // $printer->text("Bayar (Cash)  Rp. ".$info->nominal_cash."\n");
 
-        //     // **Change (Kembali)**
-        //     $printer->text("Kembali  Rp. ".$info->nominal_return."\n");
+            // // **Change (Kembali)**
+            // $printer->text("Kembali  Rp. ".$info->nominal_return."\n");
 
-        //     // **End Separator**
-        //     $printer->text(str_repeat("-", 32) . "\n");
+            // // **End Separator**
+            // $printer->text(str_repeat("-", 32) . "\n");
 
-        //     // **Thank You Message (Centered)**
-        //     $printer->setJustification(Printer::JUSTIFY_CENTER);
-        //     $printer->feed(1);
-        //     $printer->text("Terimakasih atas Kepercayaan\n");
-        //     $printer->text("anda\n");
-        //     $printer->feed(2);
+            // // **Thank You Message (Centered)**
+            // $printer->setJustification(Printer::JUSTIFY_CENTER);
+            // $printer->feed(1);
+            // $printer->text("Terimakasih atas Kepercayaan\n");
+            // $printer->text("anda\n");
+            // $printer->feed(2);
 
-        //     // **Finish Printing**
-        //     $printer->feed(2);
-        //     $printer->cut();
-        //     $printer->close();
+            // // **Finish Printing**
+            // $printer->feed(2);
+            // $printer->cut();
+            // $printer->close();
 
-        //     return response()->json([
-        //         'code' => 200,
-        //         'status' => 'success'
+            $data = [
+                'header' => $info,
+                'details' => $items
+            ];
 
-        //     ], 200);
-        // } catch (\Exception $e) {
-        //     return response()->json(['message' => $e->getMessage()]);
-        // }
-
-        return view('modules.transactions.order.thermal-print');
+            return response()->json([
+                'code' => 200,
+                'status' => 'success',
+                'data' => $data,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()]);
+        }
     }
 
     public function syncToJournal(Request $request) {

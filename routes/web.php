@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,20 @@ Route::group(['middleware' => ['auth']], function() {
         Route::name('dashboards.')->group(function () {
             Route::get('/store', [App\Http\Controllers\HomeController::class, 'index'])->name('store');
         });
+    });
+
+    Route::post('/sign-message', function(Request $request) {
+        $privateKeyPath = public_path('qz-tray.key'); // Publicly accessible
+        if (!file_exists($privateKeyPath)) {
+            return response()->json(['error' => 'Private key not found'], 500);
+        }
+
+        $privateKey = file_get_contents($privateKeyPath);
+        openssl_sign($request->input('request'), $signature, $privateKey, OPENSSL_ALGO_SHA256);
+
+        return response()->json([
+            'signature' => base64_encode($signature),
+        ]);
     });
 
     //Account
