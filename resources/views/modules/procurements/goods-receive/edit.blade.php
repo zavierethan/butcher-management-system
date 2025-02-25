@@ -127,10 +127,10 @@
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-20px">No.</th>
                                         <th class="min-w-125px">Item</th>
-                                        <th class="min-w-125px text-center">Harga</th>
-                                        <th class="min-w-100px text-center">Jumlah</th>
-                                        <th class="min-w-125px text-center">Harga Aktual</th>
-                                        <th class="min-w-100px text-center">Jumlah Aktual</th>
+                                        <th class="min-w-100px text-center">Jumlah (PO)</th>
+                                        <th class="min-w-125px text-end">Harga (PO)</th>
+                                        <th class="min-w-100px text-center">Jumlah (Actual)</th>
+                                        <th class="min-w-125px text-end">Harga (Actual)</th>
                                         <th class="min-w-100px text-center">Realisasi</th>
                                         <th class="min-w-100px">Catatan</th>
                                     </tr>
@@ -143,11 +143,11 @@
                                     @foreach($items as $item)
                                     <tr>
                                         <td class=""><?php echo $no++; ?>.</td>
-                                        <td>{{$item->name}}</td>
-                                        <td class="item-price text-center">{{$item->price}}</td>
+                                        <td>{{$item->name}} ({{$item->item_notes}})</td>
                                         <td class="item-quantity text-center">{{$item->quantity}}</td>
-                                        <td class="text-center">{{$item->received_price}}</td>
+                                        <td class="item-price text-end">{{$item->price}}</td>
                                         <td class="text-center">{{$item->received_quantity}}</td>
+                                        <td class="text-end">{{$item->received_price}}</td>
                                         <td class="text-center">{{$item->realisation}}</td>
                                         <td class="">{{$item->remarks}}</td>
                                     </tr>

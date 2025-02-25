@@ -75,7 +75,7 @@
                                                     type="date" name="request_date"
                                                     value="{{$purchaseRequest->request_date}}" id="request-date"
                                                     readonly />
-                                                <input type="hidden" value="{{$purchaseRequest->id}}" id="id"/>
+                                                <input type="hidden" value="{{$purchaseRequest->id}}" id="purchase-request-id"/>
                                             </div>
                                         </div>
                                     </div>
@@ -156,17 +156,13 @@
                                             <label class="form-label fw-bold fs-6 mb-2">Status Approval</label>
                                             <div class="position-relative mb-3">
                                                 <select class="form-select form-select-solid" data-control="select2"
-                                                    data-placeholder="-" name="status" id="status" <?php echo ($purchaseRequest->status == 'approve') ? 'disabled' : ''; ?>>
+                                                    data-placeholder="-" name="status" id="status" <?php echo ($purchaseRequest->status == 3 || $purchaseRequest->status == 2) ? 'disabled' : ''; ?>>
                                                     <option value="">-</option>
-                                                    <option value="pending"
-                                                        <?php echo($purchaseRequest->status == 'pending') ? 'selected' : ''; ?>>
-                                                        PENDING (Waiting Approval)</option>
-                                                    <option value="approve"
-                                                        <?php echo($purchaseRequest->status == 'approve') ? 'selected' : ''; ?>>
-                                                        APPROVE</option>
-                                                    <option value="decline"
-                                                        <?php echo($purchaseRequest->status == 'decline') ? 'selected' : ''; ?>>
-                                                        DECLINE</option>
+                                                    <option value="1" <?php echo($purchaseRequest->status == 1) ? 'selected' : ''; ?>>Pending Approval</option>
+                                                    <option value="2" <?php echo($purchaseRequest->status == 2) ? 'selected' : ''; ?>>Partially Approved</option>
+                                                    <option value="3" <?php echo($purchaseRequest->status == 3) ? 'selected' : ''; ?>>Full Approved</option>
+                                                    <option value="4" <?php echo($purchaseRequest->status == 4) ? 'selected' : ''; ?>>Full Rejected</option>
+                                                    <option value="5" <?php echo($purchaseRequest->status == 5) ? 'selected' : ''; ?>>Closed</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -197,12 +193,11 @@
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-20px">No.</th>
                                         <th class="min-w-125px">Item</th>
+                                        <th class="min-w-120px">Jumlah</th>
                                         <th class="min-w-125px">Harga Satuan</th>
-                                        <th class="min-w-125px">Jumlah</th>
                                         <th class="min-w-125px">Total Harga (Rp)</th>
-                                        <th class="min-w-125px">Catatan</th>
-                                        <th class="min-w-125px text-center">Status Approval</th>
-                                        <!-- <th class="min-w-125px text-center">Realisasi</th> -->
+                                        <th class="min-w-125px">Status Approval</th>
+                                        <th class="min-w-125px text-center">Catatan</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -213,24 +208,25 @@
                                     @foreach($purchaseRequestItems as $item)
                                     <tr>
                                         <td><?php echo $no++; ?>.</td>
-                                        <td>{{$item->product_name}}</td>
+                                        <td>{{$item->product_name}} ({{$item->item_notes}})</td>
+                                        <td><input class="form-control form-control-sm me-2 quantity" type="text" name="quantity" value="{{$item->quantity}}" <?php echo ($purchaseRequest->status == 'approve') ? 'readonly' : ''; ?> style="width: 100px;"/></td>
                                         <td>
-                                            <input class="form-control form-control-sm me-2 price" type="text" name="price" value="{{$item->price}}" readonly/>
-                                            <input class="form-control form-control-sm me-2 id" type="hidden" name="id" value="{{$item->id}}" />
+                                            <input class="form-control form-control-sm me-2 price" type="text" name="price" value="{{$item->price}}" style="width: 200px;"/>
+                                            <input class="form-control form-control-sm me-2 item-id" type="hidden" name="item_id" value="{{$item->id}}" />
                                         </td>
-                                        <td><input class="form-control form-control-sm me-2 quantity" type="text" name="quantity" value="{{$item->quantity}}" <?php echo ($purchaseRequest->status == 'approve') ? 'readonly' : ''; ?>/></td>
-                                        <td><input class="form-control form-control-sm me-2 total-price" type="text" name="total_price" value="{{$item->quantity * $item->price}}" <?php echo ($purchaseRequest->status == 'approve') ? 'readonly' : ''; ?>/></td>
-                                        <td><textarea class="form-control form-control-sm me-2 notes" type="text" name="notes"></textarea></td>
+                                        <td><input class="form-control form-control-sm me-2 total-price" type="text" name="total_price" value="{{$item->quantity * $item->price}}"  style="width: 200px;" readonly/></td>
                                         <td class="text-center">
-                                            <div class="d-flex justify-content-center">
-                                                <label
-                                                    class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                                    <input class="form-check-input toggle-approve-status" name="approve"
-                                                        type="checkbox" data-id="{{$item->id}}" <?php echo ($item->approval_status == 1) ? 'checked' : ''; ?> <?php echo ($purchaseRequest->status == 'approve') ? 'disabled' : ''; ?>>
-                                                    <span class="form-check-label fw-bold text-muted"></span>
-                                                </label>
+                                            <div class="position-relative mb-3" style="width: 200px;">
+                                                <select class="form-select form-select-sm mt-3 approval-status" data-control="select2"
+                                                    data-placeholder="-" name="approval_status">
+                                                    <option value="">-</option>
+                                                    <option value="1" <?php echo($item->approval_status == 1) ? 'selected' : ''; ?>>Pending Approval</option>
+                                                    <option value="2" <?php echo($item->approval_status == 2) ? 'selected' : ''; ?>>Approve</option>
+                                                    <option value="3" <?php echo($item->approval_status == 3) ? 'selected' : ''; ?>>Reject</option>
+                                                </select>
                                             </div>
                                         </td>
+                                        <td><textarea class="form-control form-control-sm me-2 approval-notes" type="text" name="approval_notes">{{$item->approval_notes}}</textarea></td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -257,7 +253,7 @@ $(document).on('click', '#btn-update-request', function(e) {
 
     if (true) {
         Swal.fire({
-            title: 'Apakah anda yakin untuk mengupdate request ?',
+            title: 'Apakah anda yakin untuk melakukan approval ?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -266,32 +262,66 @@ $(document).on('click', '#btn-update-request', function(e) {
             confirmButtonText: 'Ya, Update Request'
         }).then((result) => {
             if (result.isConfirmed) {
-                let id = $("#id").val();
-                let status = $("#status").val();
-                let sub_total = 0;
+                const itemLists = [];
 
-                $('input.toggle-approve-status:checked').each(function () {
-                    // Find the corresponding total-price input in the same row
-                    const totalPrice = $(this)
-                        .closest('tr')
-                        .find('input.total-price')
-                        .val();
+                var nominalRealization = 0;
 
-                    // Parse the value as a number and add it to the total
-                    sub_total += parseFloat(totalPrice) || 0; // Use 0 if the value is empty or invalid
+                $('#kt_items_table tbody tr').each(function() {
+                    var itemId = $(this).find(".item-id").val();
+                    var quantity = $(this).find(".quantity").val();
+                    var price = $(this).find(".price").val();
+                    var totalPrice = $(this).find(".total-price").val();
+                    var approvalStatus = $(this).find(".approval-status").val();
+                    var approvalNotes = $(this).find(".approval-notes").val();
+
+                    itemLists.push({
+                        purchase_request_item_id: itemId,
+                        quantity: quantity,
+                        price: price,
+                        total_price: totalPrice,
+                        approval_status: approvalStatus,
+                        approval_notes: approvalNotes,
+                    });
+
+                    if(approvalStatus === 2 || approvalStatus === '2') {
+                        nominalRealization += parseFloat(totalPrice);
+                    }
                 });
 
+                if (itemLists.length <= 0) {
+                    Swal.fire({
+                        title: 'Warning !',
+                        text: 'Item Purchase Request tidak boleh kosong.',
+                        icon: 'warning',
+                        confirmButtonText: 'Ok',
+                        allowOutsideClick: false
+                    });
+
+                    return;
+                }
+
+                var purchaseRequestId = $('#purchase-request-id').val();
+                var status = $('#status').val();
+
+                // Build the JSON payload
+                const payload = {
+                    header: {
+                        purchase_request_id: purchaseRequestId,
+                        status: status,
+                        nominal_realization: nominalRealization,
+                    },
+                    details: itemLists
+                };
+
+                console.log(payload)
                 $.ajax({
                     url: `{{route('procurement.purchase-request.update')}}`,
                     type: 'POST',
+                    contentType: 'application/json',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    data: {
-                        id: id,
-                        status: status,
-                        sub_total: sub_total
-                    },
+                    data: JSON.stringify(payload),
                     success: function(response) {
                         Swal.fire({
                             title: 'Suceess !',
@@ -299,6 +329,9 @@ $(document).on('click', '#btn-update-request', function(e) {
                             icon: 'success',
                             confirmButtonText: 'Ok',
                             allowOutsideClick: false
+                        }).then((result) => {
+                            location.href =
+                                `{{ route('procurement.purchase-request.index') }}`;
                         });
                     },
                     error: function(xhr, status, error) {
@@ -314,77 +347,17 @@ $(document).on('click', '#btn-update-request', function(e) {
     }
 });
 
-$(document).on('click', '.toggle-approve-status', function(e) {
-    const checkbox = $(this);
-    const row = checkbox.closest('tr');
-
-    const itemName = row.find('td:first').text();
-    const price = row.find('input[name=price]').val();
-    const quantity = row.find('input[name=quantity]').val();
-    const totalPrice = row.find('input[name=total_price]').val();
-    const isApproved = checkbox.is(':checked');
-    const itemId = checkbox.data('id'); // Assuming `data-id` holds the item ID
-
-    // // Send POST request for approval toggle
-    $.ajax({
-        url: `{{route('procurement.purchase-request.approve-item')}}`,
-        type: 'POST',
-        data: {
-            id: itemId,
-            price: price,
-            quantity: quantity,
-            totalPrice: totalPrice,
-            approval_status: isApproved ? 1 : 0,
-        },
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-        },
-        success: function(response) {
-            Swal.fire({
-                title: 'Suceess !',
-                text: `Status Item berhasil di perbaharui`,
-                icon: 'success'
-            });
-        },
-        error: function(xhr, status, error) {
-            alert(`Failed to update approval status for ${itemName}: ${error}`);
-            checkbox.prop('checked', !isApproved);
-        },
-    });
+$(document).on('input', '.quantity, .price', function () {
+    let row = $(this).closest('tr');
+    calculateTotalPrice(row);
 });
 
-$(document).on('click', '.toggle-realisasi-status', function(e) {
-    const checkbox = $(this);
-    const row = checkbox.closest('tr');
+function calculateTotalPrice(row) {
+    let quantity = parseFloat($(row).find('.quantity').val()) || 0;
+    let price = parseFloat($(row).find('.price').val()) || 0;
+    let total = quantity * price;
+    $(row).find('.total-price').val(total.toFixed(0));
+}
 
-    const productName = row.find('td:first').text();
-    const price = row.find('input[name=price]').val();
-    const quantity = row.find('input[name=quantity]').val();
-    const isApproved = checkbox.is(':checked');
-    const itemId = checkbox.data('id'); // Assuming `data-id` holds the item ID
-
-    // Send POST request for approval toggle
-    $.ajax({
-        url: '/approve-item',
-        type: 'POST',
-        data: {
-            id: itemId,
-            product_name: productName,
-            price: price,
-            quantity: quantity,
-            status: isApproved ? 'approved' : 'not_approved',
-        },
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-        },
-        success: function(response) {
-            alert(`Approval status updated successfully for ${productName}`);
-        },
-        error: function(xhr, status, error) {
-            alert(`Failed to update approval status for ${productName}: ${error}`);
-            checkbox.prop('checked', !isApproved);
-        },
-    });
-});
 </script>
 @endsection

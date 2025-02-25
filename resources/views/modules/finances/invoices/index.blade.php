@@ -142,8 +142,8 @@
                                         <th class="min-w-125px">No.INVOICE</th>
                                         <th class="min-w-125px">CUSTOMER</th>
                                         <th class="min-w-125px">TANGGAL</th>
-                                        <th class="min-w-125px">TOTAL TAGIHAN</th>
-                                        <th class="min-w-125px">DIBUAT TANGGAL</th>
+                                        <th class="min-w-125px">JATUH TEMPO</th>
+                                        <th class="min-w-125px text-end">TOTAL TAGIHAN</th>
                                         <th class="text-center min-w-70px">ACTION</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -210,12 +210,13 @@ $(document).ready(function() {
                 name: 'invoice_date'
             },
             {
-                data: 'total_billed',
-                name: 'total_billed'
+                data: 'invoice_date',
+                name: 'invoice_date'
             },
             {
-                data: 'created_at',
-                name: 'created_at'
+                data: 'total_billed',
+                name: 'total_billed',
+                className: 'text-end'
             },
             {
                 data: null, // No direct field from the server

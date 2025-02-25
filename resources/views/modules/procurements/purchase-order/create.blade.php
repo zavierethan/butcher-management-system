@@ -150,10 +150,9 @@
                                         <th class="min-w-125px">Nomor request</th>
                                         <th class="min-w-125px">Item</th>
                                         <th class="min-w-125px">Tipe Item</th>
-                                        <th class="min-w-125px">Harga</th>
-                                        <th class="min-w-125px">Jumlah</th>
-                                        <th class="min-w-125px">Total Harga</th>
-                                        <th class="text-center min-w-70px">Actions</th>
+                                        <th class="min-w-125px text-center">Jumlah</th>
+                                        <th class="min-w-125px text-end">Harga</th>
+                                        <th class="min-w-125px text-end">Total Harga</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -259,6 +258,9 @@ $("#btn-form-add-item").on("click", function() {
             // Loop through each product in the JSON response
             var data = response;
             console.log(data)
+            $("#grand-total").remove();
+
+            var nominalGrandTotal = 0;
             data.forEach(function(items) {
                 // Construct HTML for each product
                 var row = `
@@ -267,19 +269,17 @@ $("#btn-form-add-item").on("click", function() {
                                 ${items.request_number}
                             </td>
                             <td>
-                                ${items.name}
+                                ${items.name} (${items.item_notes})
                                 <input type="hidden" value="${items.item_id}" class="item-id" />
                                 <input type="hidden" value="${items.purchase_request_item_id}" class="purchase-request-item-id" />
                             </td>
                             <td class="item-category">${items.category}</td>
-                            <td class="item-price">${items.price}</td>
-                            <td class="item-quantity">${items.quantity}</td>
-                            <td class="item-total-price">${items.total_price}</td>
-                            <td class="text-center">
-                                <a href="#" class="btn btn-sm btn-danger" onclick="deleteRow(this)">Hapus</i></a>
-                            </td>
+                            <td class="text-center item-quantity">${items.quantity}</td>
+                            <td class="text-end item-price">${items.price}</td>
+                            <td class="text-end item-total-price">${items.total_price}</td>
                         </tr>
                     `;
+                    nominalGrandTotal += parseFloat(items.total_price.replace(/[^\d]/g, ''));
                 // Append the product to the product list container
                 $("#kt_items_table tbody").append(row);
             });
@@ -330,13 +330,13 @@ $(document).on('click', '#btn-submit-request', function(e) {
 
     if (!validate()) {
         Swal.fire({
-            title: 'Apakah anda yakin untuk memproses request ?',
+            title: 'Apakah anda yakin untuk memproses PO ?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             cancelButtonText: 'Batalkan',
-            confirmButtonText: 'Ya, Proses Request'
+            confirmButtonText: 'Ya, Proses PO'
         }).then((result) => {
             if (result.isConfirmed) {
                 const itemLists = [];
@@ -488,6 +488,13 @@ function validate() {
     }
 
     return toReturn;
+}
+
+function formatNumber(numStr) {
+    let cleaned = numStr.toString().replace(/[^\d.]/g, '');
+    const parts = cleaned.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join('.');
 }
 </script>
 @endsection

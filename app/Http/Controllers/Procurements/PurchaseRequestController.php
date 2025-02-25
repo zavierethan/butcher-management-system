@@ -106,7 +106,7 @@ class PurchaseRequestController extends Controller
                 "alocation" => $payloads["header"]["alocation"],
                 "pic" => $payloads["header"]["pic"],
                 "category" => $payloads["header"]["category"],
-                "status" => "pending",
+                "status" => 1,
                 "nominal_application" => $payloads["header"]["nominal_application"],
                 "nominal_realization" => 0,
             ]);
@@ -116,6 +116,7 @@ class PurchaseRequestController extends Controller
                 DB::table('purchase_request_items')->insertGetId([
                     "purchase_request_id" => $requestId,
                     "item_id" =>  $detail["item_id"],
+                    "item_notes" =>  $detail["item_notes"],
                     "quantity" => $detail["quantity"],
                     "price" => $detail["price"],
                     "category" => $detail["category"],
@@ -196,18 +197,49 @@ class PurchaseRequestController extends Controller
     }
 
     public function update(Request $request) {
+        $payloads = $request->all();
 
-        DB::table('purchase_requests')->where('id', $request->id)->update([
-            "nominal_realization" => $request->sub_total,
-            "approval_date" => date('Y-m-d H:i:s'),
-            "approved_by" => Auth::user()->name,
-            "status" => $request->status
-        ]);
+        try {
 
-        return response()->json([
-            'message' => 'Purchase Request successfully updated'
-        ], 200);
+            DB::beginTransaction();
 
+            DB::table('purchase_requests')->where('id', $payloads["header"]["purchase_request_id"])->update([
+                "nominal_realization" => $payloads["header"]["nominal_realization"],
+                "status" => $payloads["header"]["status"],
+                "approval_date" => date('Y-m-d H:i:s'),
+                "approved_by" => Auth::user()->name,
+            ]);
+
+            foreach ($payloads['details'] as $detail) {
+                DB::table('purchase_request_items')
+                ->where('purchase_request_id', $payloads["header"]["purchase_request_id"])
+                ->where('id', $detail["purchase_request_item_id"])
+                ->update([
+                    "quantity" => $detail["quantity"],
+                    "price" =>  $detail["price"],
+                    "approval_status" => $detail["approval_status"],
+                    "approval_notes" => $detail["approval_notes"]
+                ]);
+            }
+
+            // Commit the transaction
+            DB::commit();
+
+            // Return success response
+            return response()->json([
+                'message' => 'Data berhasil di perbaharui',
+            ], 201);
+
+        } catch (\Exception $e) {
+            // Rollback transaction in case of error
+            DB::rollBack();
+
+            // Return error response
+            return response()->json([
+                'message' => 'Failed to create transaction',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function getPurchaseRequest(Request $request) {
@@ -217,7 +249,7 @@ class PurchaseRequestController extends Controller
         $query = DB::table('purchase_requests')
                         ->select('purchase_requests.id', 'purchase_requests.request_number', 'branches.name as requestor')
                         ->leftJoin('branches', 'branches.id', '=', 'purchase_requests.alocation')
-                        ->where('status', 'approve')->where('has_proccessed', 0);
+                        ->whereIn('status', [2, 3])->where('has_proccessed', 0);
 
         if($params == 'OP') {
             $query->where('purchase_requests.category', 'OP');
@@ -244,6 +276,7 @@ class PurchaseRequestController extends Controller
                     'purchase_request_items.id as purchase_request_item_id',
                     'purchase_request_items.item_id',
                     'products.name',
+                    'purchase_request_items.item_notes',
                     'purchase_request_items.category',
                     'purchase_request_items.quantity',
                     DB::raw("TO_CHAR(purchase_request_items.price, 'FM999,999,999') as price"),
@@ -251,7 +284,7 @@ class PurchaseRequestController extends Controller
                 )
                 ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_request_items.purchase_request_id')
                 ->leftJoin('products', 'products.id', '=', 'purchase_request_items.item_id')
-                ->where('approval_status', 1)
+                ->where('approval_status', 2)
                 ->where('purchase_request_id', $params)
                 ->get();
         } else {
@@ -261,6 +294,7 @@ class PurchaseRequestController extends Controller
                     'purchase_request_items.id as purchase_request_item_id',
                     'purchase_request_items.item_id',
                     'inventories.name',
+                    'purchase_request_items.item_notes',
                     'purchase_request_items.category',
                     'purchase_request_items.quantity',
                     DB::raw("TO_CHAR(purchase_request_items.price, 'FM999,999,999') as price"),
@@ -268,7 +302,7 @@ class PurchaseRequestController extends Controller
                 )
                 ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_request_items.purchase_request_id')
                 ->leftJoin('inventories', 'inventories.id', '=', 'purchase_request_items.item_id')
-                ->where('approval_status', 1)
+                ->where('approval_status', 2)
                 ->where('purchase_request_id', $params)
                 ->get();
         }

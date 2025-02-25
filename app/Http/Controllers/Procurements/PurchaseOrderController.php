@@ -88,7 +88,7 @@ class PurchaseOrderController extends Controller
         $purchaseRequests = DB::table('purchase_requests')
                         ->select('purchase_requests.id', 'purchase_requests.request_number', 'branches.name as requestor')
                         ->leftJoin('branches', 'branches.id', '=', 'purchase_requests.alocation')
-                        ->where('status', 'approve')->where('has_proccessed', 0)->get();
+                        ->whereIn('status', [2, 3])->get();
         return view('modules.procurements.purchase-order.create', compact('suppliers', 'purchaseRequests'));
     }
 
@@ -121,7 +121,7 @@ class PurchaseOrderController extends Controller
                     "price" => $detail["price"],
                 ]);
 
-                DB::table('purchase_requests')->where('request_number', $detail["item_req_number"])->update(["has_proccessed" => 1]);
+                DB::table('purchase_requests')->where('request_number', $detail["item_req_number"])->update(["status" => 5]);
             }
 
             // Commit the transaction
@@ -154,11 +154,13 @@ class PurchaseOrderController extends Controller
             $items = DB::table('purchase_order_items')
                     ->select(
                         'products.name',
+                        'purchase_request_items.item_notes',
                         'purchase_order_items.quantity',
                         'purchase_order_items.price',
                         DB::raw("purchase_order_items.price * purchase_order_items.quantity as total")
                     )
                     ->leftJoin('products', 'products.id', '=', 'purchase_order_items.item_id')
+                    ->join('purchase_request_items', 'purchase_request_items.id', '=', 'purchase_order_items.purchase_request_item_id')
                     ->where('purchase_order_id', $purchaseOrder->id)->get()->map(function ($item) {
                         // Format the prices using number_format
                         $item->price = number_format($item->price, 0, '.', ',');// Format for money
@@ -168,11 +170,13 @@ class PurchaseOrderController extends Controller
             $items = DB::table('purchase_order_items')
                     ->select(
                         'inventories.name',
+                        'purchase_request_items.item_notes',
                         'purchase_order_items.quantity',
                         'purchase_order_items.price',
                         DB::raw("purchase_order_items.price * purchase_order_items.quantity as total")
                     )
                     ->leftJoin('inventories', 'inventories.id', '=', 'purchase_order_items.item_id')
+                    ->join('purchase_request_items', 'purchase_request_items.id', '=', 'purchase_order_items.purchase_request_item_id')
                     ->where('purchase_order_id', $purchaseOrder->id)->get()->map(function ($item) {
                         // Format the prices using number_format
                         $item->price = number_format($item->price, 0, '.', ',');// Format for money

@@ -156,17 +156,13 @@
                                             <label class="form-label fw-bold fs-6 mb-2">Status Approval</label>
                                             <div class="position-relative mb-3">
                                                 <select class="form-select form-select-solid" data-control="select2"
-                                                    data-placeholder="-" name="status" id="status" <?php echo ($purchaseRequest->status == 'approve') ? 'disabled' : ''; ?>>
+                                                    data-placeholder="-" name="status" id="status" <?php echo ($purchaseRequest->status == 3 || $purchaseRequest->status == 2) ? 'disabled' : ''; ?>>
                                                     <option value="">-</option>
-                                                    <option value="pending"
-                                                        <?php echo($purchaseRequest->status == 'pending') ? 'selected' : ''; ?>>
-                                                        PENDING (Waiting Approval)</option>
-                                                    <option value="approve"
-                                                        <?php echo($purchaseRequest->status == 'approve') ? 'selected' : ''; ?>>
-                                                        APPROVE</option>
-                                                    <option value="decline"
-                                                        <?php echo($purchaseRequest->status == 'decline') ? 'selected' : ''; ?>>
-                                                        DECLINE</option>
+                                                    <option value="1" <?php echo($purchaseRequest->status == 1) ? 'selected' : ''; ?>>Pending Approval</option>
+                                                    <option value="2" <?php echo($purchaseRequest->status == 2) ? 'selected' : ''; ?>>Partially Approved</option>
+                                                    <option value="3" <?php echo($purchaseRequest->status == 3) ? 'selected' : ''; ?>>Full Approved</option>
+                                                    <option value="4" <?php echo($purchaseRequest->status == 4) ? 'selected' : ''; ?>>Full Rejected</option>
+                                                    <option value="5" <?php echo($purchaseRequest->status == 5) ? 'selected' : ''; ?>>Closed</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -197,11 +193,11 @@
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-20px">No.</th>
                                         <th class="min-w-125px">Item</th>
-                                        <th class="min-w-125px">Harga Satuan</th>
-                                        <th class="min-w-125px">Jumlah</th>
-                                        <th class="min-w-125px">Total Harga (Rp)</th>
+                                        <th class="min-w-125px text-end">Jumlah</th>
+                                        <th class="min-w-125px text-end">Harga Satuan</th>
+                                        <th class="min-w-125px text-end">Total Harga (Rp)</th>
                                         <th class="min-w-125px text-center">Status Approval</th>
-                                        <!-- <th class="min-w-125px text-center">Realisasi</th> -->
+                                        <th class="min-w-125px">Catatan</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -212,17 +208,24 @@
                                     @foreach($purchaseRequestItems as $item)
                                     <tr>
                                         <td><?php echo $no++; ?>.</td>
-                                        <td>{{$item->product_name}}</td>
-                                        <td>{{$item->price}}</td>
-                                        <td>{{$item->quantity}}</td>
-                                        <td>{{$item->quantity * $item->price}}</td>
+                                        <td>{{$item->product_name}} ({{$item->item_notes}})</td>
+                                        <td class="text-end">{{$item->quantity}}</td>
+                                        <td class="text-end">{{$item->price}}</td>
+                                        <td class="text-end">{{$item->quantity * $item->price}}</td>
                                         <td class="text-center">
-                                            @if($item->approval_status)
-                                                <span class="text-success">APPROVE</span>
-                                            @else
-                                                <span class="text-danger">DECLINE</span>
+                                            @if($item->approval_status == 1)
+                                                <span class="text-warning">Pending Approval</span>
+                                            @endif
+
+                                            @if($item->approval_status == 2)
+                                                <span class="text-success">Approved</span>
+                                            @endif
+
+                                            @if($item->approval_status == 3)
+                                                <span class="text-danger">Rejected</span>
                                             @endif
                                         </td>
+                                        <td>{{$item->approval_notes}}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>

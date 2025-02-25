@@ -110,8 +110,11 @@
                                             id="status">
                                             <option></option>
                                             <option value=" " selected="selected">Show All</option>
-                                            <option value="approve">Approve</option>
-                                            <option value="decline">Decline</option>
+                                            <option value="1">Pending Approval</option>
+                                            <option value="2">Partially Approved</option>
+                                            <option value="3">Full Approved</option>
+                                            <option value="4">Full Rejected</option>
+                                            <option value="5">Closed</option>
                                         </select>
                                         <!--end::Select-->
                                     </div>
@@ -259,16 +262,24 @@ $(document).ready(function() {
                 render: function(data, type, row) {
                     var status = "";
 
-                    if (row.status == "pending") {
-                        status = `<span class="badge bg-warning text-white">PENDING</span>`
+                    if (row.status == 1) {
+                        status = `<span class="badge bg-warning text-white">Pending Approval</span>`
                     }
 
-                    if (row.status == "approve") {
-                        status = `<span class="badge bg-success text-white">APPROVE</span>`
+                    if (row.status == 2) {
+                        status = `<span class="badge bg-success text-white">Partially Approved</span>`
                     }
 
-                    if (row.status == "decline") {
-                        status = `<span class="badge bg-danger text-white">DECLINE</span>`
+                    if (row.status == 3) {
+                        status = `<span class="badge bg-success text-white">Full Approved</span>`
+                    }
+
+                    if (row.status == 4) {
+                        status = `<span class="badge bg-danger text-white">Full Rejected</span>`
+                    }
+
+                    if (row.status == 5) {
+                        status = `<span class="badge bg-success text-white">Closed</span>`
                     }
 
                     return status;

@@ -233,20 +233,22 @@ let table = $("#kt_suppliers_table").DataTable({
         },
         {
             data: 'total_amount',
-            name: 'total_amount'
+            name: 'total_amount',
+            className: 'text-end'
         },
         {
             data: 'status',
             name: 'status',
+            className: 'text-center',
             render: function(data, type, row) {
                 var status = "";
 
                 if (row.status == "pending") {
-                    status = `<span class="badge bg-warning text-white">PENDING</span>`
+                    status = `<span class="badge bg-warning text-white">Pending</span>`
                 }
 
                 if (row.status == "goods_received") {
-                    status = `<span class="badge bg-success text-white">GOODS RECEIVED</span>`
+                    status = `<span class="badge bg-success text-white">Goods Received</span>`
                 }
 
                 return status;

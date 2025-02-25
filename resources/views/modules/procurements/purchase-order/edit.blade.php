@@ -171,7 +171,7 @@
                                     @foreach($items as $item)
                                     <tr>
                                         <td><?php echo $no++; ?>.</td>
-                                        <td>{{$item->name}}</td>
+                                        <td>{{$item->name}} ({{$item->item_notes}})</td>
                                         <td class="text-center">{{$item->quantity}}</td>
                                         <td class="text-end">{{$item->price}}</td>
                                         <td class="text-end item-total-price">@php echo number_format($item->total, 0,

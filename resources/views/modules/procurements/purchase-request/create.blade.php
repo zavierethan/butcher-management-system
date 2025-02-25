@@ -83,20 +83,6 @@
                                         </div>
                                     </div>
                                     <div class="separator my-5"></div>
-                                    <div class="fv-row mb-5">
-                                        <div class="mb-1">
-                                            <label class="form-label fw-bold fs-6 mb-2">Kategori</label>
-                                            <div class="position-relative mb-3">
-                                                <select class="form-select form-select-solid" data-control="select2"
-                                                    data-placeholder="-" name="category" id="category">
-                                                    <option value="">-</option>
-                                                    <option value="OP">OPERATIONAL (OP)</option>
-                                                    <option value="PR">PRODUCT (PR)</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="separator my-5"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="fv-row mb-5">
@@ -111,10 +97,13 @@
                                     <div class="separator my-5"></div>
                                     <div class="fv-row mb-5">
                                         <div class="mb-1">
-                                            <label class="form-label fw-bold fs-6 mb-2">Status</label>
+                                            <label class="form-label fw-bold fs-6 mb-2">Kategori</label>
                                             <div class="position-relative mb-3">
-                                                <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="status" id="status">
+                                                <select class="form-select form-select-solid" data-control="select2"
+                                                    data-placeholder="-" name="category" id="category">
                                                     <option value="">-</option>
+                                                    <option value="OP">OPERATIONAL (OP)</option>
+                                                    <option value="PR">PRODUCT (PR)</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -146,6 +135,7 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">Item</th>
+                                        <th class="min-w-125px">Catatan Tambahan</th>
                                         <th class="min-w-125px">Tipe Item</th>
                                         <th class="min-w-125px">Jumlah</th>
                                         <th class="min-w-125px">Harga</th>
@@ -217,6 +207,13 @@
                         </div>
                     </div>
                     <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Spesifikasi Tambahan</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid" type="text"
+                                id="item-notes" />
+                        </div>
+                    </div>
+                    <div class="mb-1">
                         <label class="form-label fw-bold fs-6 mb-2">Jumlah</label>
                         <div class="position-relative mb-3">
                             <input class="form-control form-control-md form-control-solid" type="number"
@@ -267,6 +264,7 @@ $("#btn-form-add-item").on("click", function() {
     var itemCategory = $("#item-categories").val();
     var itemId = selectedOption.val();
     var itemName = selectedOption.text();
+    var itemNotes = $("#item-notes").val();
     var quantity = $("#quantity").val();
     var price = $("#price").val();
 
@@ -277,6 +275,7 @@ $("#btn-form-add-item").on("click", function() {
                 ${itemName}
                 <input type="hidden" value="${itemId}" class="item-id" />
             </td>
+            <td class="item-notes">${itemNotes}</td>
             <td class="item-category">${itemCategory}</td>
             <td class="item-quantity">${quantity}</td>
             <td class="item-price">${price}</td>
@@ -334,10 +333,10 @@ $(document).on('click', '#btn-submit-request', function(e) {
 
                 $('#kt_items_table tbody tr').each(function() {
                     var itemId = $(this).find("td:first-child input[type='hidden']").val();
+                    var itemNotes = $(this).find(".item-notes").text().trim();
 
                     // Get the text content of specific cells in the current row
-                    var itemName = $(this).find("td:first-child").text()
-                .trim(); // Get text in the first <td> (trim to remove extra spaces)
+                    var itemName = $(this).find("td:first-child").text().trim(); // Get text in the first <td> (trim to remove extra spaces)
                     var itemCategory = $(this).find(".item-category").text().trim();
                     var itemQuantity = $(this).find(".item-quantity").text().trim();
                     var itemPrice = $(this).find(".item-price").text().trim();
@@ -345,6 +344,7 @@ $(document).on('click', '#btn-submit-request', function(e) {
 
                     itemLists.push({
                         item_id: itemId,
+                        item_notes: itemNotes,
                         category: itemCategory,
                         quantity: itemQuantity,
                         price: itemPrice,
@@ -357,7 +357,7 @@ $(document).on('click', '#btn-submit-request', function(e) {
                 if (itemLists.length <= 0) {
                     Swal.fire({
                         title: 'Warning !',
-                        text: 'Item PO tidak boleh kosong !',
+                        text: 'Item Purchase Request tidak boleh kosong.',
                         icon: 'warning',
                         confirmButtonText: 'Ok',
                         allowOutsideClick: false

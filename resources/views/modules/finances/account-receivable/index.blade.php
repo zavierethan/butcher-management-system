@@ -143,9 +143,9 @@
                                         <th class="min-w-125px">NOMOR TRANSAKSI</th>
                                         <th class="min-w-125px">TANGGAL TRANSAKSI</th>
                                         <th class="min-w-125px">TANGGAL JATUH TEMPO</th>
-                                        <th class="min-w-125px">TOTAL</th>
-                                        <th class="min-w-125px">SISA PIUTANG</th>
-                                        <th class="min-w-125px">STATUS</th>
+                                        <th class="min-w-125px text-end">TOTAL</th>
+                                        <th class="min-w-125px text-end">SISA PIUTANG</th>
+                                        <th class="min-w-125px text-center">STATUS</th>
                                         <th class="text-center min-w-70px">ACTION</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -217,15 +217,18 @@ $(document).ready(function() {
             },
             {
                 data: 'total_amount',
-                name: 'total_amount'
+                name: 'total_amount',
+                className: 'text-end',
             },
             {
                 data: 'remaining_balance',
-                name: 'remaining_balance'
+                name: 'remaining_balance',
+                className: 'text-end',
             },
             {
                 data: 'status',
                 name: 'status',
+                className: 'text-center',
                 render: function(data, type, row) {
                     var status = "";
 

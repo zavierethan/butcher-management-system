@@ -116,8 +116,8 @@
                                         <th class="min-w-125px">TANGGAL</th>
                                         <th class="min-w-125px">DESKRIPSI</th>
                                         <th class="min-w-125px">REFERENCES</th>
-                                        <th class="min-w-125px">STATUS</th>
-                                        <th class="min-w-125px">POSTING</th>
+                                        <th class="min-w-125px text-center">STATUS</th>
+                                        <th class="min-w-125px text-center">POSTING KE GL</th>
                                         <th class="min-w-125px">TANGGAL POSTING</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
@@ -186,6 +186,7 @@ $(document).ready(function() {
             {
                 data: 'status',
                 name: 'status',
+                className: 'text-center',
                 render: function(data, type, row) {
                     var status = "";
 
@@ -206,7 +207,18 @@ $(document).ready(function() {
             },
             {
                 data: 'posted',
-                name: 'posted'
+                name: 'posted',
+                className: 'text-center',
+                render: function(data, type, row) {
+                    var posted = "";
+
+                    if (row.posted == 1) {
+                        posted = `<span class="badge bg-success text-dark">Ya</span>`
+                    } else {
+                        posted = `<span class="badge bg-warning text-dark">Belum</span>`
+                    }
+                    return posted;
+                }
             },
             {
                 data: 'posted_date',

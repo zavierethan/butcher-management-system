@@ -31,7 +31,7 @@ class GoodsReceiveController extends Controller
                 ->where('purchase_orders.status', 'goods_received');
 
         // Apply global search if provided
-        $searchValue = $request->input('search.value'); // This is where DataTables sends the search input
+        $searchValue = $request->input('search.value');
         if (!empty($searchValue)) {
             $query->where(function ($q) use ($searchValue) {
                 $q->where('purchase_orders.purchase_order_number', 'like', '%' . strtoupper($searchValue) . '%');
@@ -40,10 +40,9 @@ class GoodsReceiveController extends Controller
 
         // Apply sorting
         if ($request->has('order') && $request->order) {
-            $columnIndex = $request->order[0]['column']; // Column index from the DataTable
-            $sortDirection = $request->order[0]['dir']; // 'asc' or 'desc'
-            $columnName = $request->columns[$columnIndex]['data']; // Column name
-
+            $columnIndex = $request->order[0]['column'];
+            $sortDirection = $request->order[0]['dir'];
+            $columnName = $request->columns[$columnIndex]['data'];
             $query->orderBy($columnName, $sortDirection);
         }
 
@@ -133,6 +132,7 @@ class GoodsReceiveController extends Controller
                     ->select(
                         'purchase_order_items.id',
                         'products.name',
+                        'purchase_request_items.item_notes',
                         'purchase_order_items.quantity',
                         DB::raw("TO_CHAR(purchase_order_items.price, 'FM999,999,999') as price"),
                         'purchase_order_items.received_quantity',
@@ -146,12 +146,14 @@ class GoodsReceiveController extends Controller
                         'purchase_order_items.remarks',
                     )
                     ->leftJoin('products', 'products.id', '=', 'purchase_order_items.item_id')
+                    ->join('purchase_request_items', 'purchase_request_items.id', '=', 'purchase_order_items.purchase_request_item_id')
                     ->where('purchase_order_id', $purchaseOrder->id)->get();
         } else {
             $items = DB::table('purchase_order_items')
                     ->select(
                         'purchase_order_items.id',
                         'inventories.name',
+                        'purchase_request_items.item_notes',
                         'purchase_order_items.quantity',
                         DB::raw("TO_CHAR(purchase_order_items.price, 'FM999,999,999') as price"),
                         'purchase_order_items.received_quantity',
@@ -159,6 +161,7 @@ class GoodsReceiveController extends Controller
                         'purchase_order_items.remarks',
                     )
                     ->leftJoin('inventories', 'inventories.id', '=', 'purchase_order_items.item_id')
+                    ->join('purchase_request_items', 'purchase_request_items.id', '=', 'purchase_order_items.purchase_request_item_id')
                     ->where('purchase_order_id', $purchaseOrder->id)->get();
         }
 

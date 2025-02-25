@@ -122,10 +122,10 @@
                                             <th class="">Tanggal</th>
                                             <th class="">Nomor Transaksi</th>
                                             <th class="">Deskripsi Barang</th>
-                                            <th class="">Jumlah</th>
-                                            <th class="">Harga</th>
-                                            <th class="">Diskon</th>
-                                            <th class="">Total</th>
+                                            <th class="text-end">Jumlah</th>
+                                            <th class="text-end">Harga</th>
+                                            <th class="text-end">Diskon</th>
+                                            <th class="text-end">Total</th>
                                         </tr>
                                     </thead>
                                     <tbody class="fw-semibold text-gray-600">
@@ -298,10 +298,10 @@ function getReceivableItems(params) {
                             <td class="">${items.date}</td>
                             <td>${items.transaction_no}</td>
                             <td class="">${items.name}</td>
-                            <td class="">${items.quantity}</td>
-                            <td class="">${items.base_price}</td>
-                            <td class="">${items.discount}</td>
-                            <td class="">${items.sell_price}</td>
+                            <td class="text-end">${items.quantity}</td>
+                            <td class="text-end">${items.base_price}</td>
+                            <td class="text-end">${items.discount}</td>
+                            <td class="text-end">${items.sell_price}</td>
                         </tr>
                     `;
 

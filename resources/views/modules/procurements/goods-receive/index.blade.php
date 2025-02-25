@@ -192,6 +192,7 @@
             {
                 data: 'status',
                 name: 'status',
+                className: 'text-center',
                 render: function(data, type, row) {
                     var status = "";
 
