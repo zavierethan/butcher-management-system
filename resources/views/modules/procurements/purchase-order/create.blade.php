@@ -89,8 +89,8 @@
                                                 <select class="form-select form-select-solid" data-control="select2"
                                                     data-placeholder="-" name="category" id="category">
                                                     <option value="">-</option>
-                                                    <option value="OP">OPERATIONAL (OP)</option>
-                                                    <option value="PR">PRODUCT (PR)</option>
+                                                    <option value="OP">Operational (OP)</option>
+                                                    <option value="PR">Product (PR)</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -114,9 +114,8 @@
                                             <div class="position-relative mb-3">
                                                 <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="payment_method" id="payment-method">
                                                     <option value="">-</option>
-                                                    <option value="cash">TUNAI</option>
-                                                    <option value="credit">KREDIT</option>
-                                                    <option value="partial">TERM</option>
+                                                    <option value="1">Tunai</option>
+                                                    <option value="2">Transfer</option>
                                                 </select>
                                             </div>
                                         </div>
