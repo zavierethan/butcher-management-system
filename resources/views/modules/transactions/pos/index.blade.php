@@ -1369,7 +1369,7 @@ $(document).ready(function() {
 
                                                 console.log("Header:", response.data.header); // Log header data
                                                 console.log("Details:", response.data.details); // Log details array
-                                                printReceipt("POS-58 (copy 1)", response);
+                                                printReceipt("{{$settings->printer_name}}", response);
 
                                                 Swal.fire({
                                                     title: 'Nota Berhasil Dicetak!',

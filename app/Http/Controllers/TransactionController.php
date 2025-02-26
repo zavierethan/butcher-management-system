@@ -11,10 +11,11 @@ class TransactionController extends Controller
 {
     public function index() {
         $productCategories = DB::table('product_categories')->where('is_active', 1)->get();
-        $branches =  DB::table('branches')->where('is_active', 1)->get();
+        $branches = DB::table('branches')->where('is_active', 1)->get();
+        $settings = DB::table('branch_settings')->where('branch_id', Auth::user()->branch_id)->first();
         $butcherees = DB::table('butcherees')->where('branch_id', Auth::user()->branch_id)->get();
 
-        return view('modules.transactions.pos.index', compact('productCategories', 'branches', 'butcherees'));
+        return view('modules.transactions.pos.index', compact('productCategories', 'branches', 'butcherees', 'settings'));
     }
 
     public function store(Request $request) {

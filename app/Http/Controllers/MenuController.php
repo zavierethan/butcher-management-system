@@ -9,20 +9,46 @@ use DB;
 class MenuController extends Controller
 {
     public function index() {
-        return view('modules.accounts.menu.index');
+        $parentMenus = DB::table('menus')->whereNull('parent_id')->orderBy('order')->get();
+        return view('modules.accounts.menu.index', compact('parentMenus'));
     }
 
-    public function getLists(Request $request){
+    public function getLists(Request $request) {
         $params = $request->all();
 
-        $query = DB::table('menus');
+        $query = DB::table('menus as child')
+            ->select(
+                'child.id',
+                'child.name as menu_name',
+                'parent.name as parent_name',
+                'child.url',
+                'child.order',
+                'child.is_active'
+            )
+            ->leftJoin('menus as parent', 'child.parent_id', '=', 'parent.id');
+
+        // Fix: Reference the alias `child.parent_id`
+        if (!empty($params['parent_id'])) {
+            $query->where('child.parent_id', $params['parent_id']);
+        }
+
+        // Apply global search if provided
+        $searchValue = $request->input('search.value'); // DataTables search input
+        if (!empty($searchValue)) {
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('child.name', 'like', '%' . $searchValue . '%'); // Fix: Use alias `child.name`
+            });
+        }
 
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
 
-        $totalRecords = $query->count();
-        $filteredRecords = $query->count();
-        $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get();
+        // Clone the query to get correct record counts before pagination
+        $totalRecords = DB::table('menus')->count(); // Total records without filters
+        $filteredRecords = $query->count(); // Total records with applied filters
+
+        // Fix: Reference `child.order` instead of `menus.order`
+        $data = $query->orderBy('child.parent_id', 'asc')->skip($start)->take($length)->get();
 
         return response()->json([
             'draw' => $request->input('draw'),
