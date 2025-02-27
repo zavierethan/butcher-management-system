@@ -379,6 +379,10 @@ Route::group(['middleware' => ['auth']], function() {
             Route::prefix('reports')->group(function () {
                 Route::name('reports.')->group(function () {
                     Route::get('/', [App\Http\Controllers\Finances\ReportController::class, 'index'])->name('index');
+                    Route::get('/get-balance-sheets', [App\Http\Controllers\Finances\ReportController::class, 'getBalanceSheets'])->name('get-balance-sheets');
+                    Route::get('/get-income-statements', [App\Http\Controllers\Finances\ReportController::class, 'getIncomeStatements'])->name('get-income-statements');
+                    Route::get('/get-cashflow-statements', [App\Http\Controllers\Finances\ReportController::class, 'getCashflowStatements'])->name('get-cahsflow-statements');
+                    Route::get('/get-report-summaries', [App\Http\Controllers\Finances\ReportController::class, 'getReportSummary'])->name('get-report-summaries');
                 });
             });
         });

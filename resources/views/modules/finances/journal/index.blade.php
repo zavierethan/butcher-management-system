@@ -213,9 +213,9 @@ $(document).ready(function() {
                     var posted = "";
 
                     if (row.posted == 1) {
-                        posted = `<span class="badge bg-success text-dark">Ya</span>`
+                        posted = `<span class="badge bg-success text-dark">Posted</span>`
                     } else {
-                        posted = `<span class="badge bg-warning text-dark">Belum</span>`
+                        posted = `<span class="badge bg-warning text-dark">Draft</span>`
                     }
                     return posted;
                 }
@@ -283,7 +283,7 @@ $(document).on('click', '#btn-post-to-journal', function(e) {
                             confirmButtonText: 'Ok',
                             allowOutsideClick: false
                         }).then((result) => {
-
+                            table.draw();
                         });
                     },
                     error: function(xhr, status, error) {

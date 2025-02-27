@@ -197,6 +197,7 @@ class JournalController extends Controller
                     $payloads["header"]["end_period"],
                 ])
                 ->where('journals.status', 'APPROVED')
+                ->where('journals.posted', 0)
                 ->select(
                     'journals.id as journal_id',
                     'journals.date as journal_date',

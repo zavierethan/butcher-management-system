@@ -178,8 +178,8 @@
                                         <th class="min-w-125px">TANGGAL</th>
                                         <th class="min-w-125px">CUSTOMER</th>
                                         <th class="min-w-125px">JENIS PEMBAYARAN</th>
-                                        <th class="min-w-125px">TOTAL TRANSAKSI</th>
-                                        <th class="min-w-125px">STATUS</th>
+                                        <th class="min-w-125px text-end">TOTAL TRANSAKSI</th>
+                                        <th class="min-w-125px text-center">STATUS</th>
                                         <th class="min-w-125px">DIBUAT OLEH</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
@@ -351,6 +351,7 @@ $(document).ready(function() {
             {
                 data: 'status',
                 name: 'status',
+                className: 'text-center',
                 render: function(data, type, row) {
                     var status = "";
 

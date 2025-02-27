@@ -1316,8 +1316,6 @@ $(document).ready(function() {
                     const nominalCash = $('#nominal-cash').val() | 0;
                     const nominalReturn = $('#nominal-return').val() | 0;
 
-                    console.log(paymentMethod);
-
                     // Build the JSON payload
                     const payload = {
                         header: {
@@ -1365,11 +1363,27 @@ $(document).ready(function() {
                                         dataType: "json",
                                         success: function (response) {
                                             if (response.code == 200) {
-                                                var data = response.data;
 
-                                                console.log("Header:", response.data.header); // Log header data
-                                                console.log("Details:", response.data.details); // Log details array
-                                                printReceipt("{{$settings->printer_name}}", response);
+                                                var printerName = "{{ ($settings) ? $settings->printer_name : '' }}";
+
+                                                console.log("Printer Name : " +printerName)
+
+                                                if(printerName === '' ) {
+                                                    Swal.fire({
+                                                        title: 'Gagal mencetak nota',
+                                                        text: 'Nama Printer tidak ditemukan. harap periksa pengaturan pada sistem.',
+                                                        icon: 'warning',
+                                                        timer: 5000,
+                                                        showConfirmButton: false
+                                                    });
+
+                                                    $(".cart-item-lists").remove();
+                                                    calculateTotals();
+
+                                                    return;
+                                                }
+
+                                                printReceipt(printerName, response);
 
                                                 Swal.fire({
                                                     title: 'Nota Berhasil Dicetak!',
