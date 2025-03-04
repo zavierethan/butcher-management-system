@@ -34,10 +34,6 @@
                 <!--end::Page title-->
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
-                    <!--begin::Secondary button-->
-                    <a href="#" class="btn btn-sm fw-bold btn-secondary" data-bs-toggle="modal"
-                        data-bs-target="#kt_modal_create_app">Export</a>
-                    <!--end::Secondary button-->
                     <!--begin::Primary button-->
                     <a href="{{route('menus.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
                     <!--end::Primary button-->

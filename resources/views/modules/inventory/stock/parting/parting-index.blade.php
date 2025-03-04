@@ -82,7 +82,7 @@
                                         <div class="separator my-5"></div>
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Butcher</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Butcherees</label>
                                                 <div class="position-relative mb-3">
                                                     <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="butcher_id" id="butcher_id">
                                                         <option value="">-</option>
@@ -113,7 +113,6 @@
                                         <div class="separator my-5"></div>
                                     </div>
                                     <div class="col-md-6">
-
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Total Hasil Potong Ayam Fresh (Kg)</label>
@@ -121,6 +120,7 @@
                                                         type="number" name="total_weight_live_to_rancung" id="total_weight_live_to_rancung"
                                                         min="0" max="100" step="0.01" readonly />
                                             </div>
+                                            <div class="separator my-5"></div>
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Susut Ayam Hidup Ke Rancung (%)</label>
                                                     <input class="form-control form-control-md form-control-solid"
@@ -136,6 +136,7 @@
                                                         type="number" name="total_weight_rancung_to_parting" id="total_weight_rancung_to_parting"
                                                         min="0" max="100" step="0.01" readonly/>
                                             </div>
+                                            <div class="separator my-5"></div>
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Susut Rancung Ke Parting (%)</label>
                                                     <input class="form-control form-control-md form-control-solid"
@@ -355,7 +356,7 @@ $(document).on("click", "#add-row-parting", function (e) {
                 </tr>`;
 
     var $row = $(row);
-    
+
     // Update the tr's data-product-id when a product is selected
     $row.find(".product-select").on("change", function () {
         var selectedProductId = $(this).val();
@@ -431,7 +432,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (inputField) { // Ensure the input field exists before adding the event listener
                 inputField.addEventListener("input", function() {
                     let value = parseFloat(inputField.value);
-                    
+
                     if (value < 0) {
                         inputField.value = 0;
                     } else if (value > 100) {
@@ -492,7 +493,7 @@ $(document).ready(function () {
                 $("#kt_parting_table tbody tr").each(function() {
                     let productId = $(this).data("product-id");
                     let quantity = $(this).find(".quantity").val();
-                    
+
                     // Ensure quantity is not empty, null, undefined, or 0
                     if (quantity && quantity !== "0") {
                         partingData.push({

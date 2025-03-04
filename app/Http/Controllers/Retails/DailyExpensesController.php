@@ -68,7 +68,7 @@ class DailyExpensesController extends Controller
                 'accounts.name as account_name',
             )
             ->leftJoin('account_types', 'account_types.id', '=', 'accounts.type_id')
-            ->where('account_types.category_id', 5)->whereIn('account_types.id',[9, 10, 11])->get();
+            ->where('account_types.category_id', 5)->whereIn('account_types.id', [9, 10, 11])->get();
 
         $creditAccounts = DB::table('accounts')
             ->select(

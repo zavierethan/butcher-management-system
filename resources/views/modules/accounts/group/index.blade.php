@@ -34,9 +34,6 @@
                 <!--end::Page title-->
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
-                    <!--begin::Secondary button-->
-                    <a href="#" class="btn btn-sm fw-bold btn-secondary">Export</a>
-                    <!--end::Secondary button-->
                     <!--begin::Primary button-->
                     <a href="{{route('groups.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
                     <!--end::Primary button-->
@@ -92,7 +89,6 @@
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">Group Code</th>
                                         <th class="min-w-125px">Group Name</th>
-                                        <th class="min-w-125px">Created Date</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -136,7 +132,6 @@
         columns: [
             { data: 'code', name: 'code' },
             { data: 'name', name: 'name' },
-            { data: 'created_at', name: 'created_at' },
             {
                 data: null, // No direct field from the server
                 name: 'action',

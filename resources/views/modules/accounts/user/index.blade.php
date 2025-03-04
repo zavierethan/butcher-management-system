@@ -18,7 +18,6 @@
                     </ul>
                 </div>
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
-                    <a href="#" class="btn btn-sm fw-bold btn-secondary">Export</a>
                     <a href="{{route('users.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
                 </div>
             </div>

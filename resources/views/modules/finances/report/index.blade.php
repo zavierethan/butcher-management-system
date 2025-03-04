@@ -43,10 +43,10 @@
                         <!--begin::Select-->
                         <input type="date"
                             class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
-                            id="start-date" value="<?php echo date("Y-m-d"); ?>" /> -
+                            id="start-date" value="<?php echo date('Y-m-01'); ?>" /> -
                         <input type="date"
                             class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
-                            id="end-date" value="<?php echo date("Y-m-d"); ?>" />
+                            id="end-date" value="<?php echo date('Y-m-t'); ?>" />
                         <!--end::Select-->
                     </div>
                     <!--end::Secondary button-->

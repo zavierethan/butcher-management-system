@@ -1313,8 +1313,8 @@ $(document).ready(function() {
                     const customerId = $('#customer').val();
                     const butcherName = $('#butcher-name').val();
                     const branchId = $('#branch-id').val();
-                    const nominalCash = $('#nominal-cash').val() | 0;
-                    const nominalReturn = $('#nominal-return').val() | 0;
+                    const nominalCash = $('#nominal-cash').text().replace(/[^\d]/g, '') | 0;
+                    const nominalReturn = $('#nominal-return').text().replace(/[^\d]/g, '') | 0;
 
                     // Build the JSON payload
                     const payload = {
@@ -1494,7 +1494,7 @@ $(document).ready(function() {
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
+            confirmButtonText: 'Ya bersihakan semua item'
         }).then((result) => {
             if (result.isConfirmed) {
                 // Remove the product item from the cart
@@ -1755,6 +1755,7 @@ $(document).ready(function() {
                     '--------------------------------\n',
                     `No Transaksi  : ${header.code}\n`,
                     `Tanggal       : ${header.transaction_date.split(' ')[0]}\n`, // Extract date only
+                    `Pembayaran    : ${header.payment_method}\n`,
                     `Kasir         : ${header.created_by}\n`,
                     '--------------------------------\n',
                 ];
