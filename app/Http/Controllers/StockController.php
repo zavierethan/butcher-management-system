@@ -8,6 +8,7 @@ use Log;
 use Illuminate\Database\QueryException;
 use App\Exports\StockExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Validator;
 
 class StockController extends Controller
 {
@@ -99,25 +100,48 @@ class StockController extends Controller
     }
 
     public function save(Request $request) {
-        $baseUrl = config('app.url');
-
-        try {
-            DB::table('stocks')->insertGetId([
-                "product_id" => $request->product_id,
-                "branch_id" => $request->branch_id,
-                "date" => $request->calendar_event_date
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required|exists:products,id',
+            'branch_id' => 'required|exists:branches,id',
+            'calendar_event_date' => 'required|date',
+            'base_price' => 'required|numeric|min:0',
+            'sale_price' => 'required|numeric|min:0',
         ]);
-        } catch (QueryException $e) {
-            if ($e->getCode() == 23505) {
-                return back()->withErrors('Entry tersebut sudah ada. 
-                Cek data stocks yang sudah ada atau status active nya di data master products.');
-            }
-            // Handle other errors
-            return back()->withErrors('Something went wrong.');
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        return redirect()->route('stocks.index');
+        try {
+            // Insert data
+            DB::table('stocks')->insert([
+                "product_id" => $request->product_id,
+                "branch_id" => $request->branch_id,
+                "date" => $request->calendar_event_date,
+                "base_price" => $request->base_price,
+                "sale_price" => $request->sale_price
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'redirect' => route('stocks.index')
+            ]);
+        } catch (QueryException $e) {
+            if ($e->getCode() == 23505) { // Unique constraint violation
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Entry tersebut sudah ada. Cek data stocks yang sudah ada atau status active-nya di data master products.'
+                ], 422);
+            }
+
+            // Handle other errors
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong.'
+            ], 500);
+        }
     }
+
 
     public function updateOpname(Request $request) {
         $id = $request->id;
