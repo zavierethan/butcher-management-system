@@ -101,8 +101,12 @@
                             <!--begin::Theme mode-->
                             <div class="app-navbar-item ms-1 ms-md-4">
                                 <!--begin::Menu toggle-->
-                                <a href="#" class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-35px h-35px" id="fullscreen-control" title="Click untuk mode fullscreen"><i class="fa-solid fa-desktop"></i></a>
-                                <a href="#" class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-35px h-35px"
+                                <a href="#"
+                                    class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-35px h-35px"
+                                    id="fullscreen-control" title="Click untuk mode fullscreen"><i
+                                        class="fa-solid fa-desktop"></i></a>
+                                <a href="#"
+                                    class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-35px h-35px"
                                     data-kt-menu-trigger="{default:'click', lg: 'hover'}" data-kt-menu-attach="parent"
                                     data-kt-menu-placement="bottom-end">
                                     <i class="ki-duotone ki-night-day theme-light-show fs-1">
@@ -301,42 +305,53 @@
                                 data-kt-scroll-save-state="true">
                                 <!--begin::Menu-->
                                 <div class="menu menu-column menu-rounded menu-sub-indention fw-semibold fs-6"
-                                    id="#kt_app_sidebar_menu" data-kt-menu="true" data-kt-menu-expand="false">
+                                    id="kt_app_sidebar_menu" data-kt-menu="true" data-kt-menu-expand="false">
+
                                     @foreach($parent_menus as $parent)
-                                    <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+                                    @php
+                                        $isActive = collect($child_menus)->contains(fn($child) =>
+                                        Request::is((string)$child->url) && $child->parent_id == $parent->id);
+                                    @endphp
+
+                                    <div data-kt-menu-trigger="click"
+                                        class="menu-item menu-accordion {{ $isActive ? 'show' : '' }}">
                                         <!--begin:Menu link-->
                                         <span class="menu-link">
                                             <span class="menu-icon">
-                                            {!! $parent->icon !!}
+                                                {!! $parent->icon !!}
                                             </span>
                                             <span class="menu-title">{{$parent->name}}</span>
                                             <span class="menu-arrow"></span>
                                         </span>
                                         <!--end:Menu link-->
+
                                         @foreach($child_menus as $child)
-                                        @if($parent->id == $child->parent_id)
-                                        <!--begin:Menu sub-->
-                                        <div class="menu-sub menu-sub-accordion">
-                                            <!--begin:Menu item-->
-                                            <div class="menu-item">
-                                                <!--begin:Menu link-->
-                                                <a class="menu-link" href="{{ url((string)$child->url) }}">
-                                                    <span class="menu-bullet">
-                                                        <span class="bullet bullet-dot"></span>
-                                                    </span>
-                                                    <span class="menu-title">{{$child->name}}</span>
-                                                </a>
-                                                <!--end:Menu link-->
+                                            @if($parent->id == $child->parent_id)
+                                            <!--begin:Menu sub-->
+                                            <div
+                                                class="menu-sub menu-sub-accordion {{ Request::is((string)$child->url) ? 'show' : '' }}">
+                                                <!--begin:Menu item-->
+                                                <div class="menu-item">
+                                                    <!--begin:Menu link-->
+                                                    <a class="menu-link {{ Request::is((string)$child->url) ? 'active' : '' }}"
+                                                        href="{{ url((string)$child->url) }}">
+                                                        <span class="menu-bullet">
+                                                            <span class="bullet bullet-dot"></span>
+                                                        </span>
+                                                        <span class="menu-title">{{$child->name}}</span>
+                                                    </a>
+                                                    <!--end:Menu link-->
+                                                </div>
+                                                <!--end:Menu item-->
                                             </div>
-                                            <!--end:Menu item-->
-                                        </div>
-                                        <!--end:Menu sub-->
-                                        @endif
+                                            <!--end:Menu sub-->
+                                            @endif
                                         @endforeach
                                     </div>
                                     @endforeach
 
                                 </div>
+
                                 <!--end::Menu-->
                             </div>
                             <!--end::Scroll wrapper-->
@@ -376,12 +391,12 @@
     <!--end::Custom Javascript-->
     <!--end::Javascript-->
     <script>
-        $('#fullscreen-control').click(function() {
-            const elem = document.documentElement;
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            }
-        });
+    $('#fullscreen-control').click(function() {
+        const elem = document.documentElement;
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        }
+    });
     </script>
     @yield('script')
 </body>

@@ -96,12 +96,13 @@
                                     <div class="separator my-5"></div>
                                     <div class="fv-row mb-5">
                                         <div class="mb-1">
-                                            <label class="form-label fw-bold fs-6 mb-2">Status</label>
+                                            <label class="form-label fw-bold fs-6 mb-2">Status Pembayaran</label>
                                             <div class="position-relative mb-3">
-                                                <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="status" id="status" disabled>
+                                                <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="payment_status" id="payment-status">
                                                     <option value="">-</option>
-                                                    <option value="pending">PENDING</option>
-                                                    <option value="goods_received" selected>GOODS RECEIVED</option>
+                                                    <option value="1">Lunas</option>
+                                                    <option value="2">Term</option>
+                                                    <option value="3">Utang</option>
                                                 </select>
                                             </div>
                                         </div>

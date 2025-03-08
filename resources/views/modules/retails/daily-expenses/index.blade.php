@@ -93,9 +93,9 @@
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">TANGGAL</th>
                                         <th class="min-w-125px">DESKRIPSI</th>
-                                        <th class="min-w-125px">TOTAL</th>
                                         <th class="min-w-125px">REF.</th>
-                                        <th class="min-w-125px">JENIS PEMBAYARAN</th>
+                                        <th class="min-w-125px text-end">TOTAL</th>
+                                        <th class="min-w-125px text-center">JENIS PEMBAYARAN</th>
                                         <th class="text-center min-w-70px">ACTIONS</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -151,16 +151,18 @@ $(document).ready(function() {
                 name: 'description',
             },
             {
-                data: 'amount',
-                name: 'amount'
-            },
-            {
                 data: 'reference',
                 name: 'reference'
             },
             {
+                data: 'amount',
+                name: 'amount',
+                className: 'text-end'
+            },
+            {
                 data: 'payment_method',
                 name: 'payment_method',
+                className: 'text-center',
                 render: function(data, type, row) {
                     var payment_method = "";
 
