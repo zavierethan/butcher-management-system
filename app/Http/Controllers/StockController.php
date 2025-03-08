@@ -156,8 +156,8 @@ class StockController extends Controller
                 ->where('id', $id)
                 ->update([
                     'opname_quantity' => $request->opname_quantity,
-                    'base_price' => $request->base_price,
-                    'sale_price' => $request->sale_price
+                    // 'base_price' => $request->base_price,
+                    // 'sale_price' => $request->sale_price
                 ]);
 
             if (!$updated) {

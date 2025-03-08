@@ -101,6 +101,8 @@
                                         <th class="min-w-125px">Kuantitas Awal</th>
                                         <th class="min-w-125px">Kuantitas Realtime</th>
                                         <th class="min-w-125px">Kuantitas Opname</th>
+                                        <th class="min-w-125px">Base Price</th>
+                                        <th class="min-w-125px">Sale Price</th>
                                         <th class="min-w-125px">Tanggal</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
@@ -225,6 +227,8 @@
             { data: 'quantity', name: 'quantity' },
             { data: 'realtime_quantity', name: 'realtime_quantity' },
             { data: 'opname_quantity', name: 'opname_quantity' },
+            { data: 'base_price', name: 'base_price' },
+            { data: 'sale_price', name: 'sale_price' },
             { data: 'date', name: 'date' },
             {
                 data: null, // No direct field from the server
