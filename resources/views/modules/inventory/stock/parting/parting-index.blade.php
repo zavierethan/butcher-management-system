@@ -222,6 +222,41 @@
                         </div>
                         <!--end::Card body-->
                     </div>
+
+                    <div class="card card-flush py-4 flex-row-fluid overflow-hidden">
+                        <!--begin::Card body-->
+                        <div class="card-body pt-10 overflow-x-auto">
+                            <div class="row mb-5">
+                                <div class="col-md-6">
+                                    <div class="col-md-12 text-start fw-bold fs-4 text-uppercase gs-0">Pengaturan Harga Produk</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="col-md-12 text-end">
+                                        <a class="btn btn-sm btn-primary" id="add-row-harga">
+                                            <i class="fa-solid fa-plus"></i>Tambah Produk
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <!--begin::Table-->
+                                <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0" id="kt_harga_table">
+                                    <thead>
+                                        <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
+                                            <th class="min-w-70px">Nama Produk</th>
+                                            <th class="min-w-70px">Base Price</th>
+                                            <th class="min-w-70px">Sale Price</th>
+                                            <th class="min-w-70px text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="fw-semibold text-gray-600">
+                                    </tbody>
+                                </table>
+                                <!--end::Table-->
+                            </div>
+                        </div>
+                        <!--end::Card body-->
+                    </div>
                 </div>
                 <!--end::Row-->
             </div>
@@ -334,7 +369,7 @@ $(document).on("click", "#add-row-parting", function (e) {
     e.preventDefault();
 
     var productOptions = `@foreach($products as $product)
-                            <option value="{{ $product->id }}" data-product-id="{{ $product->id }}">{{ $product->name }}</option>
+                            <option value="{{ $product->id }}" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">{{ $product->name }}</option>
                           @endforeach`;
 
     var row = `<tr data-product-id="">
@@ -360,11 +395,36 @@ $(document).on("click", "#add-row-parting", function (e) {
     // Update the tr's data-product-id when a product is selected
     $row.find(".product-select").on("change", function () {
         var selectedProductId = $(this).val();
-        $row.attr("data-product-id", selectedProductId);
+        var selectedProductName = $(this).find("option:selected").text(); 
+
+        if (selectedProductId) {
+            $row.attr("data-product-id", selectedProductId);
+
+            // Check if product already exists in harga table
+            if ($("#kt_harga_table tbody tr[data-harga-product-id='" + selectedProductId + "']").length === 0) {
+                // Add new row in Harga Table only if it doesn't exist
+                var hargaRow = `<tr data-harga-product-id="${selectedProductId}">
+                                    <td>
+                                        <p>${selectedProductName}</p>
+                                    </td>
+                                    <td>
+                                        <input class="form-control form-control-sm me-2 base_price" type="number"
+                                            name="base_price" min="0" required/>
+                                    </td>
+                                    <td>
+                                        <input class="form-control form-control-sm me-2 sale_price" type="number"
+                                            name="sale_price" min="0" required/>
+                                    </td>
+                                </tr>`;
+
+                $("#kt_harga_table tbody").append(hargaRow);
+            }
+        }
     });
 
     $("#kt_parting_table tbody").append($row);
 });
+
 
 
     function updateTotalWeightRancungToParting() {
@@ -409,6 +469,10 @@ $(document).on("click", "#add-row-parting", function (e) {
 
 
 // parting end here
+
+// harga script start
+
+// harga script end
 
 // header script
 document.addEventListener("DOMContentLoaded", function () {
@@ -503,6 +567,21 @@ $(document).ready(function () {
                     }
                 });
 
+                // harga data
+                let priceData = [];
+                $("#kt_harga_table tbody tr").each(function() {
+                    let productId = $(this).data("harga-product-id");
+                    let basePrice = $(this).find(".base_price").val();
+                    let salePrice = $(this).find(".sale_price").val();
+
+                    if (basePrice && basePrice !== "0" && salePrice && salePrice !== "0") {
+                        priceData.push({
+                            product_id: productId,
+                            base_price: basePrice,
+                            sale_price: salePrice
+                        });
+                    }
+                });
 
                 // Add your payload data here
                 let formData = {
@@ -514,7 +593,8 @@ $(document).ready(function () {
                     total_weight_live_to_rancung: totalWeightLiveToRancung,
                     total_weight_rancung_to_parting: totalWeightRancungToParting,
                     rancung_data: rancungData,
-                    parting_data: partingData
+                    parting_data: partingData,
+                    price_data: priceData
                 };
 
                 // Console log instead of AJAX for testing

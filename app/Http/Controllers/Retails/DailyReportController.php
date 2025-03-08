@@ -133,7 +133,7 @@ class DailyReportController extends Controller
                 'p.code',
                 'pc.name as category_name',
                 's.date',
-                'pd.price',
+                's.sale_price',
                 'b.name as branch_name',
                 DB::raw("$quantitySubquery AS quantity"),
                 DB::raw("CASE
@@ -143,7 +143,7 @@ class DailyReportController extends Controller
                         END AS stock_status")
             ])
             ->groupBy(
-                'p.name', 'p.code', 'pc.name', 's.date', 'pd.price', 'b.name', 's.id'
+                'p.name', 'p.code', 'pc.name', 's.date', 's.sale_price', 'b.name', 's.id'
             ); // All selected columns must be in GROUP BY
 
         // Apply filters

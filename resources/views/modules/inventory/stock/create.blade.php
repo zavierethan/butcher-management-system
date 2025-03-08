@@ -58,7 +58,7 @@
                                     </div>
                                 </div>
                                 <div class="separator my-5"></div>
-                                <div class="row row-cols-lg-2 g-10">
+                                <div class="fv-row mb-5">
                                     <div class="col">
                                         <div class="fv-row mb-9">
                                             <label class="fs-6 fw-semibold mb-2 required">Tanggal</label>
@@ -67,7 +67,7 @@
                                     </div>
                                 </div>
                                 <div class="separator my-5"></div>
-                                <div class="row row-cols-lg-2 g-10">
+                                <div class="fv-row mb-5">
                                     <div class="col">
                                         <div class="fv-row mb-9">
                                             <label class="fs-6 fw-semibold mb-2 required">Base Price</label>
@@ -76,7 +76,7 @@
                                     </div>
                                 </div>
                                 <div class="separator my-5"></div>
-                                <div class="row row-cols-lg-2 g-10">
+                                <div class="fv-row mb-5">
                                     <div class="col">
                                         <div class="fv-row mb-9">
                                             <label class="fs-6 fw-semibold mb-2 required">Sale Price</label>

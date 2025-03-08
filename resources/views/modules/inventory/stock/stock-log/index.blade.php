@@ -123,10 +123,32 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="separator my-5"></div>
+                                                <div class="fv-row mb-5">
+                                                    <div class="mb-1">
+                                                        <label class="form-label fw-bold fs-6 mb-2">Base Price</label>
+                                                        <div class="position-relative mb-3">
+                                                            <input class="form-control form-control-md form-control-solid"
+                                                                value="{{ $stockHeader->base_price }}" id="base_price" readonly/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="separator my-5"></div>
+                                                <div class="fv-row mb-5">
+                                                    <div class="mb-1">
+                                                        <label class="form-label fw-bold fs-6 mb-2">Sale Price</label>
+                                                        <div class="position-relative mb-3">
+                                                            <input class="form-control form-control-md form-control-solid"
+                                                                value="{{ $stockHeader->sale_price }}" id="sale_price" readonly/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="separator my-5"></div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="fv-row mb-5">
                                                     <div class="mb-1">
+                                                        {{-- ambil dari hasil sum parting --}}
                                                         <label class="form-label fw-bold fs-6 mb-2">Kuantitas Awal</label>
                                                         <div class="position-relative mb-3">
                                                             <input class="form-control form-control-md form-control-solid"
@@ -277,8 +299,9 @@
             let branchId = this.getAttribute('data-branch-id');
             let productId = this.getAttribute('data-product-id');
             let date = this.getAttribute('data-date');
-
-            let opname_quantity = $("#opname-quantity").val();
+            // let basePrice = $("#base_price").val();
+            // let salePrice = $("#sale_price").val();
+            let opnameQuantity = $("#opname-quantity").val();
             let id = $("#stock-id").val();
 
             Swal.fire({
@@ -293,10 +316,12 @@
 
                     const payload = {
                         id: id,
-                        opname_quantity: opname_quantity,
+                        opname_quantity: opnameQuantity,
                         branch_id: branchId,
                         product_id: productId,
-                        date: date
+                        // date: date,
+                        // base_price: basePrice,
+                        // sale_price: salePrice
                     };
 
                     console.log(payload)

@@ -525,7 +525,7 @@ function getStockReport() {
             { data: 'product_name', name: 'product_name' },
             { data: 'code', name: 'code' },
             { data: 'date', name: 'date' },
-            { data: 'price', name: 'price' },
+            { data: 'sale_price', name: 'sale_price' },
             { data: 'stock_status', name: 'stock_status' },
             { data: 'quantity', name: 'quantity' },
         ]

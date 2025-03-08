@@ -156,6 +156,8 @@ class StockController extends Controller
                 ->where('id', $id)
                 ->update([
                     'opname_quantity' => $request->opname_quantity,
+                    'base_price' => $request->base_price,
+                    'sale_price' => $request->sale_price
                 ]);
 
             if (!$updated) {
@@ -172,31 +174,34 @@ class StockController extends Controller
                 return response()->json(['success' => false, 'message' => 'Stock not found'], 500);
             }
 
+            // note: fitur membuat row stock baru ketika update opname untuk sekarang disabled dulu
+            // mau diganti untuk membuat stock baru jadinya lewat parting
+
             // Convert the given date and add one day
-            $newDate = date('Y-m-d', strtotime($request->date . ' +1 day'));
+            // $newDate = date('Y-m-d', strtotime($request->date . ' +1 day'));
 
             // Insert new stock and get the inserted ID
-            $newStockId = DB::table('stocks')->insertGetId([
-                'product_id' => $stock->product_id,
-                'branch_id' => $stock->branch_id,
-                'date' => $newDate,
-                'quantity' => $request->opname_quantity,
-                'opname_quantity' => null
-            ]);
+            // $newStockId = DB::table('stocks')->insertGetId([
+            //     'product_id' => $stock->product_id,
+            //     'branch_id' => $stock->branch_id,
+            //     'date' => $newDate,
+            //     'quantity' => $request->opname_quantity,
+            //     'opname_quantity' => null
+            // ]);
 
-            if (!$newStockId) {
-                \Log::error("Failed to insert into stocks for product {$stock->product_id} and branch {$stock->branch_id} on date {$newDate}");
-                DB::rollBack();
-                return response()->json(['success' => false, 'message' => 'Failed to insert into stocks'], 500);
-            }
+            // if (!$newStockId) {
+            //     \Log::error("Failed to insert into stocks for product {$stock->product_id} and branch {$stock->branch_id} on date {$newDate}");
+            //     DB::rollBack();
+            //     return response()->json(['success' => false, 'message' => 'Failed to insert into stocks'], 500);
+            // }
 
             // Insert a new row in stock_logs
-            DB::table('stock_logs')->insert([
-                'stock_id' => $newStockId,
-                'in_quantity' => $request->opname_quantity,
-                'date' => now()->setTimezone('Asia/Jakarta'),
-                'reference' => 'Stock opname'
-            ]);
+            // DB::table('stock_logs')->insert([
+            //     'stock_id' => $newStockId,
+            //     'in_quantity' => $request->opname_quantity,
+            //     'date' => now()->setTimezone('Asia/Jakarta'),
+            //     'reference' => 'Stock opname'
+            // ]);
 
             DB::commit();
             return response()->json(['success' => true]);
