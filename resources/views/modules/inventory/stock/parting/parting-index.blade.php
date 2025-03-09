@@ -90,6 +90,10 @@
                                                     <select class="form-select form-select-solid" data-control="select2"
                                                         data-placeholder="-" name="butcher_id" id="butcher_id">
                                                         <option value="">-</option>
+                                                        @foreach($butcherees as $b)
+                                                        <option value="{{ $b->id }}">
+                                                            {{ $b->name }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
