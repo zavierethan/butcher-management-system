@@ -98,26 +98,19 @@ class TransactionController extends Controller
                 DB::table('transaction_items')->insertGetId([
                     "transaction_id" => $transactionId,
                     "product_id" =>  $detail["product_id"],
+                    "stock_id" =>  $detail["stock_id"],
                     "quantity" => $detail["quantity"],
                     "base_price" => $detail["base_price"],
                     "unit_price" => $detail["price"],
                     "discount" => $detail["discount"],
                 ]);
 
-                // $stock = DB::table('stocks')->where('stocks.product_id', $detail["product_id"])->where('branch_id', $payloads["header"]["branch_id"])->where('date', date("Y-m-d"))->first();
-
-                // $product = DB::table('products')->where('id', $detail["product_id"])->first();
-
-                // if(empty($stock)) {
-                //     DB::rollBack();
-                //     return response()->json(['message' => 'Product '.$product->name.' tidak tersedia, harap check data stock pada menu inventory.'], 400);
-                // }
-
-                // DB::table('stock_logs')->insert([
-                //     "stock_id" => $stock->id,
-                //     "out_quantity" => $detail["quantity"],
-                //     "date" => date("Y-m-d")
-                // ]);
+                DB::table('stock_logs')->insert([
+                    "stock_id" => $detail["stock_id"],
+                    "out_quantity" => $detail["quantity"],
+                    "date" => date("Y-m-d H:i:s"),
+                    "reference" => "Penjualan #".$transactionCode
+                ]);
             }
 
             // Commit the transaction

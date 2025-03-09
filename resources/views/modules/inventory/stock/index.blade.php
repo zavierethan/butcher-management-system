@@ -1,6 +1,8 @@
 @extends('layouts.main')
 
 @section('main-content')
+
+<?php date_default_timezone_set("Asia/Jakarta"); ?>
 <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
     <!--begin::Content wrapper-->
     <div class="d-flex flex-column flex-column-fluid">
@@ -67,8 +69,8 @@
                                         <div class="text-gray-500 fs-7 me-2">Tanggal</div>
                                         <!--end::Label-->
                                         <!--begin::Select-->
-                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="start-date"/> -
-                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="end-date"/>
+                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="start-date" value="<?php echo date("Y-m-d"); ?>"/> -
+                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="end-date" value="<?php echo date("Y-m-d"); ?>"/>
                                         <!--end::Select-->
                                     </div>
                                     <!--begin::Search-->
@@ -98,11 +100,11 @@
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">Produk</th>
                                         <th class="min-w-125px">Cabang</th>
+                                        <th class="min-w-125px">HPP</th>
+                                        <th class="min-w-125px">Harga Jual</th>
                                         <th class="min-w-125px">Kuantitas Awal</th>
                                         <th class="min-w-125px">Kuantitas Realtime</th>
-                                        <th class="min-w-125px">Kuantitas Opname</th>
-                                        <th class="min-w-125px">Base Price</th>
-                                        <th class="min-w-125px">Sale Price</th>
+                                        <th class="min-w-125px">Hasil SO</th>
                                         <th class="min-w-125px">Tanggal</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
@@ -224,11 +226,11 @@
                     return `${row.branch_code} - ${row.branch_name}`;
                 }
             },
+            { data: 'base_price', name: 'base_price' },
+            { data: 'sale_price', name: 'sale_price' },
             { data: 'quantity', name: 'quantity' },
             { data: 'realtime_quantity', name: 'realtime_quantity' },
             { data: 'opname_quantity', name: 'opname_quantity' },
-            { data: 'base_price', name: 'base_price' },
-            { data: 'sale_price', name: 'sale_price' },
             { data: 'date', name: 'date' },
             {
                 data: null, // No direct field from the server

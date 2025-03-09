@@ -60,10 +60,12 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Cabang</label>
                                                 <div class="position-relative mb-3">
-                                                    <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="branch_id" id="branch_id">
+                                                    <select class="form-select form-select-solid" data-control="select2"
+                                                        data-placeholder="-" name="branch_id" id="branch_id">
                                                         <option value="">-</option>
                                                         @foreach($branches as $branch)
-                                                        <option value="{{ $branch->id }}">{{ $branch->id }} - {{ $branch->name }}</option>
+                                                        <option value="{{ $branch->id }}">{{ $branch->id }} -
+                                                            {{ $branch->name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -75,7 +77,8 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Tanggal</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="date" name="parting_date" id="parting_date" value="" readonly/>
+                                                        type="date" name="parting_date" id="parting_date" value=""
+                                                        readonly />
                                                 </div>
                                             </div>
                                         </div>
@@ -84,7 +87,8 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Butcherees</label>
                                                 <div class="position-relative mb-3">
-                                                    <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="butcher_id" id="butcher_id">
+                                                    <select class="form-select form-select-solid" data-control="select2"
+                                                        data-placeholder="-" name="butcher_id" id="butcher_id">
                                                         <option value="">-</option>
                                                     </select>
                                                 </div>
@@ -93,20 +97,24 @@
                                         <div class="separator my-5"></div>
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Total Ayam Hidup (Ekor)</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Total Ayam Hidup
+                                                    (Ekor)</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="number" name="total_live_chickens" id="total_live_chickens" readonly/>
+                                                        type="number" name="total_live_chickens"
+                                                        id="total_live_chickens" readonly />
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="separator my-5"></div>
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Total Ayam Hidup (Kg)</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Total Ayam Hidup
+                                                    (Kg)</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="number" name="total_live_chickens_weight" id="total_live_chickens_weight"/>
+                                                        type="number" name="total_live_chickens_weight"
+                                                        id="total_live_chickens_weight" />
                                                 </div>
                                             </div>
                                         </div>
@@ -115,41 +123,48 @@
                                     <div class="col-md-6">
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Total Hasil Potong Ayam Fresh (Kg)</label>
-                                                    <input class="form-control form-control-md form-control-solid"
-                                                        type="number" name="total_weight_live_to_rancung" id="total_weight_live_to_rancung"
-                                                        min="0" max="100" step="0.01" readonly />
+                                                <label class="form-label fw-bold fs-6 mb-2">Total Hasil Potong Ayam
+                                                    Fresh (Kg)</label>
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    type="number" name="total_weight_live_to_rancung"
+                                                    id="total_weight_live_to_rancung" min="0" max="100" step="0.01"
+                                                    readonly />
                                             </div>
                                             <div class="separator my-5"></div>
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Susut Ayam Hidup Ke Rancung (%)</label>
-                                                    <input class="form-control form-control-md form-control-solid"
-                                                        type="number" name="total_weight_live_to_rancung_percentage" id="total_weight_live_to_rancung_percentage"
-                                                        min="0" max="100" step="0.01" readonly/>
+                                                <label class="form-label fw-bold fs-6 mb-2">Susut Ayam Hidup Ke Rancung
+                                                    (%)</label>
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    type="number" name="total_weight_live_to_rancung_percentage"
+                                                    id="total_weight_live_to_rancung_percentage" min="0" max="100"
+                                                    step="0.01" readonly />
                                             </div>
                                         </div>
                                         <div class="separator my-5"></div>
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Total Hasil Parting Produk (Kg)</label>
-                                                    <input class="form-control form-control-md form-control-solid"
-                                                        type="number" name="total_weight_rancung_to_parting" id="total_weight_rancung_to_parting"
-                                                        min="0" max="100" step="0.01" readonly/>
+                                                <label class="form-label fw-bold fs-6 mb-2">Total Hasil Parting Produk
+                                                    (Kg)</label>
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    type="number" name="total_weight_rancung_to_parting"
+                                                    id="total_weight_rancung_to_parting" min="0" max="100" step="0.01"
+                                                    readonly />
                                             </div>
                                             <div class="separator my-5"></div>
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Susut Rancung Ke Parting (%)</label>
-                                                    <input class="form-control form-control-md form-control-solid"
-                                                        type="number" name="total_weight_rancung_to_parting_percentage" id="total_weight_rancung_to_parting_percentage"
-                                                        min="0" max="100" step="0.01" readonly/>
+                                                <label class="form-label fw-bold fs-6 mb-2">Susut Rancung Ke Parting
+                                                    (%)</label>
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    type="number" name="total_weight_rancung_to_parting_percentage"
+                                                    id="total_weight_rancung_to_parting_percentage" min="0" max="100"
+                                                    step="0.01" readonly />
                                             </div>
                                         </div>
                                         <div class="separator my-5"></div>
                                     </div>
                                 </div>
                                 <div class="text-end">
-                                    <a href="{{route('stocks.index')}}"
-                                        class="btn btn-sm btn-danger">Kembali</a>
+                                    <a href="{{route('stocks.index')}}" class="btn btn-sm btn-danger">Kembali</a>
                                     <button type="button" class="btn btn-sm btn-primary"
                                         id="btn-submit-ar">Submit</button>
                                 </div>
@@ -162,10 +177,12 @@
                         <div class="card-body pt-10 overflow-x-auto">
                             <div class="row mb-5">
                                 <div class="col-md-6">
-                                    <div class="col-md-12 text-start fw-bold fs-4 text-uppercase gs-0">Hasil Potong Ayam Fresh</div>
+                                    <div class="col-md-12 text-start fw-bold fs-4 text-uppercase gs-0">Hasil Potong Ayam
+                                        Fresh</div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="col-md-12 text-end"><a class="btn btn-sm btn-primary" id="add-row"><i class="fa-solid fa-plus"></i>Tambah Hasil Potong</a></div>
+                                    <div class="col-md-12 text-end"><a class="btn btn-sm btn-primary" id="add-row"><i
+                                                class="fa-solid fa-plus"></i>Tambah Hasil Potong</a></div>
                                 </div>
                             </div>
                             <div class="table-responsive">
@@ -194,7 +211,8 @@
                         <div class="card-body pt-10 overflow-x-auto">
                             <div class="row mb-5">
                                 <div class="col-md-6">
-                                    <div class="col-md-12 text-start fw-bold fs-4 text-uppercase gs-0">Hasil Parting Produk</div>
+                                    <div class="col-md-12 text-start fw-bold fs-4 text-uppercase gs-0">Hasil Parting
+                                        Produk</div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="col-md-12 text-end">
@@ -228,7 +246,8 @@
                         <div class="card-body pt-10 overflow-x-auto">
                             <div class="row mb-5">
                                 <div class="col-md-6">
-                                    <div class="col-md-12 text-start fw-bold fs-4 text-uppercase gs-0">Pengaturan Harga Produk</div>
+                                    <div class="col-md-12 text-start fw-bold fs-4 text-uppercase gs-0">Pengaturan Harga
+                                        Produk</div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="col-md-12 text-end">
@@ -270,9 +289,8 @@
 
 @section('script')
 <script>
-
 // script kebutuhan table fresh cut
-$(document).on("click", "#add-row", function (e) {
+$(document).on("click", "#add-row", function(e) {
     e.preventDefault();
     var row = `<tr>
                 <td>
@@ -303,7 +321,7 @@ $(document).on("click", "#add-row", function (e) {
 });
 
 // Automatically calculate net_weight
-$(document).on("input", ".weight, .container-weight, #total_live_chickens_weight", function () {
+$(document).on("input", ".weight, .container-weight, #total_live_chickens_weight", function() {
     var row = $(this).closest("tr");
     var weight = parseFloat(row.find(".weight").val()) || 0;
     var containerWeight = parseFloat(row.find(".container-weight").val()) || 0;
@@ -316,7 +334,7 @@ $(document).on("input", ".weight, .container-weight, #total_live_chickens_weight
 // Function to update total_live_chickens field
 function updateTotalLiveChickens() {
     var total = 0;
-    $(".total-chickens").each(function () {
+    $(".total-chickens").each(function() {
         total += parseInt($(this).val()) || 0;
     });
     $("#total_live_chickens").val(total);
@@ -325,7 +343,7 @@ function updateTotalLiveChickens() {
 // Function to update total_weight_live_to_rancung (now sum of all net_weight)
 function updateTotalWeightLiveToRancung() {
     var totalNetWeight = 0;
-    $(".net_weight").each(function () {
+    $(".net_weight").each(function() {
         totalNetWeight += parseFloat($(this).val()) || 0;
     });
 
@@ -335,17 +353,17 @@ function updateTotalWeightLiveToRancung() {
 }
 
 // Update total_live_chickens when total_chickens input changes
-$(document).on("input", ".total-chickens", function () {
+$(document).on("input", ".total-chickens", function() {
     updateTotalLiveChickens();
 });
 
 // Update total_weight_live_to_rancung when weight or container_weight changes
-$(document).on("input", ".weight, .container-weight", function () {
+$(document).on("input", ".weight, .container-weight", function() {
     updateTotalWeightLiveToRancung();
 });
 
 // Update total_weight_live_to_rancung when a row is deleted
-$(document).on("click", ".delete", function (e) {
+$(document).on("click", ".delete", function(e) {
     e.preventDefault();
     $(this).closest("tr").remove();
     updateTotalLiveChickens();
@@ -365,7 +383,7 @@ function updatePercentageRancung() {
 // fresh cut end here
 
 // parting script
-$(document).on("click", "#add-row-parting", function (e) {
+$(document).on("click", "#add-row-parting", function(e) {
     e.preventDefault();
 
     var productOptions = `@foreach($products as $product)
@@ -393,15 +411,16 @@ $(document).on("click", "#add-row-parting", function (e) {
     var $row = $(row);
 
     // Update the tr's data-product-id when a product is selected
-    $row.find(".product-select").on("change", function () {
+    $row.find(".product-select").on("change", function() {
         var selectedProductId = $(this).val();
-        var selectedProductName = $(this).find("option:selected").text(); 
+        var selectedProductName = $(this).find("option:selected").text();
 
         if (selectedProductId) {
             $row.attr("data-product-id", selectedProductId);
 
             // Check if product already exists in harga table
-            if ($("#kt_harga_table tbody tr[data-harga-product-id='" + selectedProductId + "']").length === 0) {
+            if ($("#kt_harga_table tbody tr[data-harga-product-id='" + selectedProductId + "']")
+                .length === 0) {
                 // Add new row in Harga Table only if it doesn't exist
                 var hargaRow = `<tr data-harga-product-id="${selectedProductId}">
                                     <td>
@@ -427,44 +446,44 @@ $(document).on("click", "#add-row-parting", function (e) {
 
 
 
-    function updateTotalWeightRancungToParting() {
-        let total = 0;
-        $(".quantity").each(function () {
-            let value = parseFloat($(this).val()) || 0;
-            total += value;
-        });
-        $("#total_weight_rancung_to_parting").val(total.toFixed(2));
-        updateRancungToPartingPercentage();
+function updateTotalWeightRancungToParting() {
+    let total = 0;
+    $(".quantity").each(function() {
+        let value = parseFloat($(this).val()) || 0;
+        total += value;
+    });
+    $("#total_weight_rancung_to_parting").val(total.toFixed(2));
+    updateRancungToPartingPercentage();
+}
+
+// Trigger update when quantity inputs change
+$(document).on("input", ".quantity", function() {
+    updateTotalWeightRancungToParting();
+});
+
+// Ensure the total is recalculated if new rows are added dynamically
+$(document).on("DOMNodeInserted", "#kt_parting_table tbody", function() {
+    updateTotalWeightRancungToParting();
+});
+
+function updateRancungToPartingPercentage() {
+    let totalRancungToParting = parseFloat($("#total_weight_rancung_to_parting").val()) || 0;
+    let totalLiveToRancung = parseFloat($("#total_weight_live_to_rancung").val()) || 0;
+
+    if (totalLiveToRancung > 0) {
+        let percentage = (totalRancungToParting / totalLiveToRancung) * 100;
+        $("#total_weight_rancung_to_parting_percentage").val(percentage.toFixed(2));
+    } else {
+        $("#total_weight_rancung_to_parting_percentage").val("0.00");
     }
+}
 
-    // Trigger update when quantity inputs change
-    $(document).on("input", ".quantity", function () {
-        updateTotalWeightRancungToParting();
-    });
-
-    // Ensure the total is recalculated if new rows are added dynamically
-    $(document).on("DOMNodeInserted", "#kt_parting_table tbody", function () {
-        updateTotalWeightRancungToParting();
-    });
-
-    function updateRancungToPartingPercentage() {
-        let totalRancungToParting = parseFloat($("#total_weight_rancung_to_parting").val()) || 0;
-        let totalLiveToRancung = parseFloat($("#total_weight_live_to_rancung").val()) || 0;
-
-        if (totalLiveToRancung > 0) {
-            let percentage = (totalRancungToParting / totalLiveToRancung) * 100;
-            $("#total_weight_rancung_to_parting_percentage").val(percentage.toFixed(2));
-        } else {
-            $("#total_weight_rancung_to_parting_percentage").val("0.00");
-        }
-    }
-
-    // Update total_weight_live_to_rancung when a row is deleted
-    $(document).on("click", ".delete-parting-row", function (e) {
-        e.preventDefault();
-        $(this).closest("tr").remove();
-        updateTotalWeightRancungToParting();
-    });
+// Update total_weight_live_to_rancung when a row is deleted
+$(document).on("click", ".delete-parting-row", function(e) {
+    e.preventDefault();
+    $(this).closest("tr").remove();
+    updateTotalWeightRancungToParting();
+});
 
 
 
@@ -475,43 +494,49 @@ $(document).on("click", "#add-row-parting", function (e) {
 // harga script end
 
 // header script
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
     let now = new Date();
 
     // Convert to Jakarta timezone and extract the date components
-    let options = { timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit", day: "2-digit" };
-    let jakartaDate = new Intl.DateTimeFormat("en-CA", options).format(now); // 'en-CA' ensures YYYY-MM-DD format
+    let options = {
+        timeZone: "Asia/Jakarta",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    };
+    let jakartaDate = new Intl.DateTimeFormat("en-CA", options).format(
+    now); // 'en-CA' ensures YYYY-MM-DD format
 
     // Set the value in the input field
     document.getElementById("parting_date").value = jakartaDate;
 });
 
-    document.addEventListener("DOMContentLoaded", function() {
-        let inputFields = [
-            document.getElementById("total_weight_live_to_rancung"),
-            document.getElementById("total_weight_rancung_to_parting")
-        ];
+document.addEventListener("DOMContentLoaded", function() {
+    let inputFields = [
+        document.getElementById("total_weight_live_to_rancung"),
+        document.getElementById("total_weight_rancung_to_parting")
+    ];
 
-        inputFields.forEach(function(inputField) {
-            if (inputField) { // Ensure the input field exists before adding the event listener
-                inputField.addEventListener("input", function() {
-                    let value = parseFloat(inputField.value);
+    inputFields.forEach(function(inputField) {
+        if (inputField) { // Ensure the input field exists before adding the event listener
+            inputField.addEventListener("input", function() {
+                let value = parseFloat(inputField.value);
 
-                    if (value < 0) {
-                        inputField.value = 0;
-                    } else if (value > 100) {
-                        inputField.value = 100;
-                    }
-                });
-            }
-        });
+                if (value < 0) {
+                    inputField.value = 0;
+                } else if (value > 100) {
+                    inputField.value = 100;
+                }
+            });
+        }
     });
+});
 
 // header script end here
 
 // submit script start
-$(document).ready(function () {
-    $("#btn-submit-ar").click(function (e) {
+$(document).ready(function() {
+    $("#btn-submit-ar").click(function(e) {
         e.preventDefault(); // Prevent default button behavior
 
         // SweetAlert confirmation
@@ -574,7 +599,8 @@ $(document).ready(function () {
                     let basePrice = $(this).find(".base_price").val();
                     let salePrice = $(this).find(".sale_price").val();
 
-                    if (basePrice && basePrice !== "0" && salePrice && salePrice !== "0") {
+                    if (basePrice && basePrice !== "0" && salePrice && salePrice !==
+                        "0") {
                         priceData.push({
                             product_id: productId,
                             base_price: basePrice,
@@ -609,7 +635,7 @@ $(document).ready(function () {
                     headers: {
                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
                     },
-                    success: function (response) {
+                    success: function(response) {
                         Swal.fire({
                             title: "Success!",
                             text: "Data submitted successfully.",
@@ -618,7 +644,7 @@ $(document).ready(function () {
                             location.reload(); // Reload after success
                         });
                     },
-                    error: function (xhr, status, error) {
+                    error: function(xhr, status, error) {
                         Swal.fire({
                             title: "Error!",
                             text: "There was an issue submitting the data.",
@@ -633,6 +659,5 @@ $(document).ready(function () {
 });
 
 // submit script end
-
 </script>
 @endsection

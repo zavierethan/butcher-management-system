@@ -8,6 +8,10 @@ use Auth;
 
 class ProductController extends Controller
 {
+    public function __construct() {
+        date_default_timezone_set("Asia/Jakarta");
+    }
+
     public function index() {
         return view('modules.master.product.index');
     }
@@ -161,6 +165,7 @@ class ProductController extends Controller
             ->leftJoin('product_details', 'product_details.product_id', '=', 'stocks.id')
             ->select(
                 'stocks.product_id as id',
+                'stocks.id as stock_id',
                 'products.name',
                 'products.code',
                 'products.url_path',
@@ -168,6 +173,7 @@ class ProductController extends Controller
                 'product_details.discount',
             )
             ->where('stocks.branch_id', $branchId)
+            ->where('stocks.date', date("Y-m-d"))
             ->where('products.is_active', '=', 1);
 
         // Apply filtering for name or code

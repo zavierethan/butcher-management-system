@@ -92,7 +92,7 @@
                                         <th class="min-w-125px">Kode</th>
                                         <th class="min-w-125px">Nama</th>
                                         <th class="min-w-125px">Kategori</th>
-                                        <th class="min-w-125px">Active</th>
+                                        <th class="min-w-125px text-center">Active</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -140,7 +140,24 @@
             { data: 'code', name: 'code' },
             { data: 'name', name: 'name' },
             { data: 'category_name', name: 'category_name' },
-            { data: 'is_active', name: 'is_active' },
+            {
+                data: 'is_active',
+                name: 'is_active',
+                className: 'text-center',
+                render: function(data, type, row) {
+                    var isActive = "";
+
+                    if (row.is_active == 0) {
+                        isActive = `<span class="badge bg-danger text-dark">Non Aktif</span>`
+                    }
+
+                    if (row.is_active == 1) {
+                        isActive = `<span class="badge bg-success text-dark">Aktif</span>`
+                    }
+
+                    return isActive;
+                }
+            },
             {
                 data: null, // No direct field from the server
                 name: 'action',

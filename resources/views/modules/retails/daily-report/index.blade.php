@@ -1,6 +1,7 @@
 @extends('layouts.main')
 
 @section('main-content')
+<?php date_default_timezone_set("Asia/Jakarta"); ?>
 <!--begin::Main-->
 <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
     <!--begin::Content wrapper-->
@@ -272,8 +273,6 @@
                                 <!--begin::Title-->
                                 <h3 class="card-title align-items-start flex-column">
                                     <span class="card-label fw-bold text-gray-900">Stock Report</span>
-                                    <span class="text-gray-500 mt-1 fw-semibold fs-6">Total 2,356 Items in the
-                                        Stock</span>
                                 </h3>
                                 <!--end::Title-->
                                 <!--begin::Actions-->

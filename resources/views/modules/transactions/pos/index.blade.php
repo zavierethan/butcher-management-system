@@ -871,6 +871,8 @@
                                 readonly />
                             <input class="form-control form-control-md form-control-solid" type="hidden"
                                 id="product_id" />
+                            <input class="form-control form-control-md form-control-solid" type="hidden"
+                                id="stock_id" />
                         </div>
                     </div>
                 </div>
@@ -1084,11 +1086,13 @@ $(document).ready(function() {
 
     $(document).on('click', '.product', function() {
         var productId = $(this).data('product-id');
+        var stockId = $(this).data('stock-id');
         var productName = $(this).data('product-name');
         var productPrice = parseFloat($(this).data('product-price')); // Ensure price is a number
         var productDiscount = parseFloat($(this).data('product-discount')) | 0;
 
         $("#kt_modal_add_product_item #product_id").val(productId);
+        $("#kt_modal_add_product_item #stock_id").val(stockId);
         $("#kt_modal_add_product_item #product_name").val(productName);
         $("#kt_modal_add_product_item #product_price").val(productPrice);
         $("#kt_modal_add_product_item #diskon").val(productDiscount);
@@ -1144,6 +1148,7 @@ $(document).ready(function() {
         e.preventDefault();
 
         var productId = $("#kt_modal_add_product_item #product_id").val();
+        var stockId = $("#kt_modal_add_product_item #stock_id").val();
         var productName = $("#kt_modal_add_product_item #product_name").val();
         var productQuantity = parseFloat($("#kt_modal_add_product_item #quantity").val());
         var productPrice = parseFloat($("#kt_modal_add_product_item #product_price").val()); // Ensure price is a number
@@ -1178,6 +1183,7 @@ $(document).ready(function() {
                                     <div class="flex-grow-1 mt-3">
                                         <h5 class="mb-1">${productName}</h5>
                                         <div class="d-none product-id">${productId}</div>
+                                        <div class="d-none stock-id">${stockId}</div>
                                         <div class="d-none base-price">${productPrice}</div>
                                         <span class="badge bg-warning text-dark qty">${productQuantity} Kg</span>
                                     </div>
@@ -1290,6 +1296,7 @@ $(document).ready(function() {
                     $('.cart-item-lists').each(function() {
 
                         const productId = $(this).find('.product-id').text();
+                        const stockId = $(this).find('.stock-id').text();
                         const price = $(this).find('.price').text().replace(/[^\d]/g,
                             '');
                         const basePrice = $(this).find('.base-price').text().replace(
@@ -1299,6 +1306,7 @@ $(document).ready(function() {
 
                         products.push({
                             product_id: productId,
+                            stock_id: stockId,
                             base_price: basePrice,
                             price: price,
                             discount: productDiscount,
@@ -1548,7 +1556,7 @@ $(document).ready(function() {
                         `<span>Diskon</span> <span class="fs-6 text-muted">${formatCurrency(parseFloat(product.discount))}</span>` :
                         '';
 
-                    const productItem = `<div class="col-md-3 mb-3 product-l"><div class="card p-6 pb-5 mw-100 product" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}" data-product-discount="${product.discount}" data-bs-toggle="modal" data-bs-target="#kt_modal_add_product_item">
+                    const productItem = `<div class="col-md-3 mb-3 product-l"><div class="card p-6 pb-5 mw-100 product" data-stock-id="${product.stock_id}" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}" data-product-discount="${product.discount}" data-bs-toggle="modal" data-bs-target="#kt_modal_add_product_item">
                                             <div class="card-body text-center">
                                                 <img src="${productImg}" class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px" alt="" />
                                                 <div class="mb-2">

@@ -193,7 +193,7 @@ class OrderController extends Controller
                         "),
                         'transactions.discount',
                         'transactions.shipping_cost',
-                        DB::raw("TO_CHAR(transactions.total_amount, 'FM999,999,999') as total_amount"),
+                        'transactions.total_amount',
                         'transactions.status',
                         'customers.name as customer_name',
                         'users.name as created_by',
@@ -216,13 +216,8 @@ class OrderController extends Controller
                         'transaction_items.discount',
                         'transaction_items.unit_price as sell_price'
                     )
-                    ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')
-                    ->where('transaction_id', $detailTransaction->id)->get()->map(function ($item) {
-                        // Format the prices using number_format
-                        $item->base_price = number_format($item->base_price, 0, '.', ','); // Format for money
-                        $item->sell_price = number_format($item->sell_price, 0, '.', ','); // Format for money
-                        return $item;
-                    });
+                    ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')->get();
+
 
         $pdf = PDF::loadView('modules.transactions.order.receipt', [
             "info" => $detailTransaction,
