@@ -156,23 +156,18 @@ class ProductController extends Controller
         $branchId = $request->branch_id;
 
         // Build the query
-        $query = DB::table('products')
-            ->leftJoin('product_details', 'products.id', '=', 'product_details.product_id')
-            ->leftJoin('product_categories', 'products.category_id', '=', 'product_categories.id')
+        $query = DB::table('stocks')
+            ->leftJoin('products', 'products.id', '=', 'stocks.product_id')
+            ->leftJoin('product_details', 'product_details.product_id', '=', 'stocks.id')
             ->select(
-                'products.id',
+                'stocks.product_id as id',
                 'products.name',
                 'products.code',
                 'products.url_path',
-                'products.is_active',
-                'product_categories.name as category_name',
-                'product_details.price',
-                'product_details.branch_id',
+                'stocks.sale_price as price',
                 'product_details.discount',
-                'product_details.start_period',
-                'product_details.end_period'
             )
-            ->where('product_details.branch_id', $branchId)
+            ->where('stocks.branch_id', $branchId)
             ->where('products.is_active', '=', 1);
 
         // Apply filtering for name or code
@@ -193,14 +188,6 @@ class ProductController extends Controller
         $data = $query
             ->orderBy('products.name', 'asc')
             ->get();
-
-        // Map `url_path` with default image if null
-        $data = $data->map(function ($product) {
-            $product->url_path = $product->url_path
-                ? asset('storage/' . $product->url_path)
-                : asset('storage/default.png');
-            return $product;
-        });
 
         // Build response
         $response = [

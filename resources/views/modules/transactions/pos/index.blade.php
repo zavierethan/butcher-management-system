@@ -1536,15 +1536,21 @@ $(document).ready(function() {
                 var data = response.data;
                 $('.product-l').remove();
                 data.forEach(function(product) {
+
+                    console.log(product.url_path)
+
+                    let productImg = product.url_path
+                        ? "storage/" + product.url_path
+                        : "{{ asset('assets/media/products/product-default.png') }}";
+
                     // Construct HTML for each product
-                    const discountHTML = product.discount !== 0 && !isNaN(parseFloat(product
-                            .discount)) ?
+                    const discountHTML = product.discount !== 0 && !isNaN(parseFloat(product.discount)) ?
                         `<span>Diskon</span> <span class="fs-6 text-muted">${formatCurrency(parseFloat(product.discount))}</span>` :
                         '';
 
                     const productItem = `<div class="col-md-3 mb-3 product-l"><div class="card p-6 pb-5 mw-100 product" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}" data-product-discount="${product.discount}" data-bs-toggle="modal" data-bs-target="#kt_modal_add_product_item">
                                             <div class="card-body text-center">
-                                                <img src="${product.url_path}" class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px" alt="" />
+                                                <img src="${productImg}" class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px" alt="" />
                                                 <div class="mb-2">
                                                     <div class="text-center">
                                                         <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">${product.name}</span>
