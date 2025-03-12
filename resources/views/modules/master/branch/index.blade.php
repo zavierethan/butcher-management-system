@@ -139,7 +139,24 @@
             { data: 'name', name: 'name' },
             { data: 'address', name: 'address' },
             { data: 'phone_number', name: 'phone_number' },
-            { data: 'is_active', name: 'is_active' },
+            {
+                data: 'is_active',
+                name: 'is_active',
+                className: 'text-center',
+                render: function(data, type, row) {
+                    var isActive = "";
+
+                    if (row.is_active == 0) {
+                        isActive = `<span class="badge bg-danger text-dark">Non Aktif</span>`
+                    }
+
+                    if (row.is_active == 1) {
+                        isActive = `<span class="badge bg-success text-dark">Aktif</span>`
+                    }
+
+                    return isActive;
+                }
+            },
             {
                 data: null, // No direct field from the server
                 name: 'action',
@@ -148,6 +165,7 @@
                 render: function (data, type, row) {
                     return `
                         <div class="text-center">
+                            <a href="/branches/product-settings/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Product Settings</a>
                             <a href="/branches/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Edit</a>
                         <div>
                     `;

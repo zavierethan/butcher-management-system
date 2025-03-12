@@ -90,7 +90,8 @@ class ProductController extends Controller
                 "name" => $request->name,
                 "is_active" => $request->is_active,
                 "category_id" => $request->category_id,
-                "url_path" => $imagePath
+                "url_path" => $imagePath,
+                "unit" => "KG"
             ]);
 
             // Retrieve all branches
@@ -125,12 +126,6 @@ class ProductController extends Controller
     }
 
     public function update(Request $request) {
-        // $request->validate([
-        //     'code' => 'required|string',
-        //     'name' => 'required|string',
-        //     'price' => 'required|numeric',
-        // ]);
-
         //TODO add validation and updated_by based on user
 
         // Initialize update data
@@ -160,21 +155,19 @@ class ProductController extends Controller
         $branchId = $request->branch_id;
 
         // Build the query
-        $query = DB::table('stocks')
-            ->leftJoin('products', 'products.id', '=', 'stocks.product_id')
-            ->leftJoin('product_details', 'product_details.product_id', '=', 'stocks.id')
+        $query = DB::table('product_details')
+            ->leftJoin('products', 'products.id', '=', 'product_details.product_id')
             ->select(
-                'stocks.product_id as id',
-                'stocks.id as stock_id',
+                'products.id',
                 'products.name',
                 'products.code',
                 'products.url_path',
-                'stocks.sale_price as price',
+                'product_details.base_price',
+                'product_details.price',
                 'product_details.discount',
             )
-            ->where('stocks.branch_id', $branchId)
-            ->where('stocks.date', date("Y-m-d"))
-            ->where('products.is_active', '=', 1);
+            ->where('product_details.branch_id', $branchId)
+            ->where('product_details.is_active', '=', 1);
 
         // Apply filtering for name or code
         if (!empty($params)) {

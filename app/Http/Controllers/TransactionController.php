@@ -105,12 +105,12 @@ class TransactionController extends Controller
                     "discount" => $detail["discount"],
                 ]);
 
-                DB::table('stock_logs')->insert([
-                    "stock_id" => $detail["stock_id"],
-                    "out_quantity" => $detail["quantity"],
-                    "date" => date("Y-m-d H:i:s"),
-                    "reference" => "Penjualan #".$transactionCode
-                ]);
+                // DB::table('stock_logs')->insert([
+                //     "stock_id" => $detail["stock_id"],
+                //     "out_quantity" => $detail["quantity"],
+                //     "date" => date("Y-m-d H:i:s"),
+                //     "reference" => "Penjualan #".$transactionCode
+                // ]);
             }
 
             // Commit the transaction

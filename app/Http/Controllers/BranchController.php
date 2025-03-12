@@ -29,7 +29,7 @@ class BranchController extends Controller
         $totalRecords = $query->count();
         $filteredRecords = $query->count();
         $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get();
-        
+
         $response = [
             'draw' => $request->input('draw'),
             'recordsTotal' => $totalRecords,
@@ -43,20 +43,6 @@ class BranchController extends Controller
     public function create() {
         return view('modules.master.branch.create');
     }
-
-    // public function save(Request $request) {
-    //     $baseUrl = config('app.url');
-
-    //     //TODO set created_by and updated)_by
-    //     DB::table('branches')->insert([
-    //         "code" => $request->code,
-    //         "name" => $request->name,
-    //         "address" => $request->address,
-    //         "is_active" => $request->is_active,
-    //     ]);
-
-    //     return redirect()->route('branches.index');
-    // }
 
     public function save(Request $request) {
         $baseUrl = config('app.url');
@@ -97,14 +83,6 @@ class BranchController extends Controller
     }
 
     public function update(Request $request) {
-        // $request->validate([
-        //     'code' => 'required|string',
-        //     'name' => 'required|string',
-        //     'price' => 'required|numeric',
-        // ]);
-        
-        //TODO add validation and updated_by based on user
-
         DB::table('branches')
             ->where('id', $request->id)
             ->update([
@@ -116,6 +94,50 @@ class BranchController extends Controller
             ]);
 
         return redirect()->route('branches.index');
+    }
+
+    public function productSettings($id) {
+        $branch = DB::table('branches')->where('id', $id)->first();
+
+        $products = DB::table('product_details')
+            ->leftJoin('products', 'products.id', '=', 'product_details.product_id')
+            ->select(
+                'products.id',
+                'product_details.branch_id',
+                'products.name',
+                'products.code',
+                'product_details.base_price',
+                'product_details.price',
+                'product_details.discount',
+                'product_details.start_period',
+                'product_details.end_period',
+                'product_details.is_active',
+            )
+            ->where('product_details.branch_id', $id)
+            ->orderBy('id')
+            ->get();
+
+        return view('modules.master.branch.product-setting', compact('branch', 'products'));
+    }
+
+    public function productSettingBulkUpdate(Request $request) {
+        $products = $request->input('products');
+
+        foreach ($products as $productData) {
+            DB::table('product_details')
+                ->where('branch_id', $productData['branch_id'])
+                ->where('product_id', $productData['id'])
+                ->update([
+                    "base_price" => $productData['cogs'],
+                    "price" => $productData['sale_price'],
+                    "discount" => $productData['discount'],
+                    "start_period" => $productData['disc_start'],
+                    "end_period" => $productData['disc_end'],
+                    "is_active" => $productData['active_status'],
+                ]);
+        }
+
+        return response()->json(["message" => "Products updated successfully"]);
     }
 
 }

@@ -111,6 +111,9 @@ Route::group(['middleware' => ['auth']], function() {
             Route::post('/save', [App\Http\Controllers\BranchController::class, 'save'])->name('save');
             Route::get('/edit/{id}', [App\Http\Controllers\BranchController::class, 'edit'])->name('edit');
             Route::post('/update', [App\Http\Controllers\BranchController::class, 'update'])->name('update');
+
+            Route::get('/product-settings/{id}', [App\Http\Controllers\BranchController::class, 'productSettings'])->name('product-settings');
+            Route::post('/product-settings/bulk-update', [App\Http\Controllers\BranchController::class, 'productSettingBulkUpdate'])->name('product-setting-bulk-update');
         });
     });
 
