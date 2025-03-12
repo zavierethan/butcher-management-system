@@ -98,7 +98,6 @@ class TransactionController extends Controller
                 DB::table('transaction_items')->insertGetId([
                     "transaction_id" => $transactionId,
                     "product_id" =>  $detail["product_id"],
-                    "stock_id" =>  $detail["stock_id"],
                     "quantity" => $detail["quantity"],
                     "base_price" => $detail["base_price"],
                     "unit_price" => $detail["price"],
