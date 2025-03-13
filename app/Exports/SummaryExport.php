@@ -42,7 +42,8 @@ class SummaryExport implements FromCollection, WithHeadings, WithCustomStartCell
                     TO_CHAR(COALESCE(SUM(total_amount), 0), 'FM999,999,999') AS total_amount
                 ")
                 ->where('branch_id', $this->filters['branch_id'])
-                ->where('payment_method', $paymentMethod);
+                ->where('payment_method', $paymentMethod)
+                ->where('status', '!=', 3);
 
             if (!empty($params['start_date']) && !empty($params['end_date'])) {
                 $query->whereBetween(DB::raw('DATE(transaction_date)'), [

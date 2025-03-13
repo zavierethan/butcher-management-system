@@ -22,7 +22,9 @@ class ProductController extends Controller
 
         $query = DB::table('products')
             ->leftJoin('product_categories', 'products.category_id', '=', 'product_categories.id')
-            ->select('products.*', 'product_categories.name as category_name');
+            ->leftJoin('product_clasifications', 'products.clasification_id', '=', 'product_clasifications.id')
+            ->leftJoin('pricing_types', 'products.pricing_type_id', '=', 'pricing_types.id')
+            ->select('products.*', 'product_categories.name as category_name', 'product_clasifications.name as clasification', 'pricing_types.name as pricing_type');
 
         // Apply global search if provided
         if ($request->has('searchTerm') && !empty($request->input('searchTerm'))) {
@@ -33,15 +35,6 @@ class ProductController extends Controller
             });
         }
 
-        // Apply sorting
-        if ($request->has('order') && $request->order) {
-            $columnIndex = $request->order[0]['column']; // Column index from the DataTable
-            $sortDirection = $request->order[0]['dir']; // 'asc' or 'desc'
-            $columnName = $request->columns[$columnIndex]['data']; // Column name
-
-            $query->orderBy($columnName, $sortDirection);
-        }
-
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
 
@@ -49,7 +42,7 @@ class ProductController extends Controller
         $totalRecords = DB::table('products')->count(); // Total without filters
         $filteredRecords = $query->count(); // Count after applying filters
 
-        $data = $query->skip($start)->take($length)->get();
+        $data = $query->orderBy('sort_order', 'asc')->skip($start)->take($length)->get();
 
         $response = [
             'draw' => $request->input('draw'),
@@ -69,12 +62,6 @@ class ProductController extends Controller
 
     public function save(Request $request) {
         $baseUrl = config('app.url');
-
-        // Validate input fields, including image upload
-        // $request->validate([
-        //     'name' => 'required|string|max:255',
-        //     'media' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        // ]);
 
         // Handle the image upload
         $imagePath = null;
@@ -162,7 +149,7 @@ class ProductController extends Controller
                 'products.name',
                 'products.code',
                 'products.url_path',
-                'product_details.base_price',
+                'product_details.cogs',
                 'product_details.price',
                 'product_details.discount',
             )

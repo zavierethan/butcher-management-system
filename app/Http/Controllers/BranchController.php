@@ -12,12 +12,6 @@ class BranchController extends Controller
     }
 
     public function getLists(Request $request) {
-        // $branches = DB::table('branches')
-        //     ->select('branches.id', 'branches.code', 'branches.name', 'branches.address')
-        //     ->where('branches.is_active', 1)
-        //     ->paginate(10);
-
-        // return $branches;
 
         $params = $request->all();
 
@@ -28,7 +22,7 @@ class BranchController extends Controller
 
         $totalRecords = $query->count();
         $filteredRecords = $query->count();
-        $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get();
+        $data = $query->orderBy('name', 'asc')->skip($start)->take($length)->get();
 
         $response = [
             'draw' => $request->input('draw'),
@@ -106,7 +100,9 @@ class BranchController extends Controller
                 'product_details.branch_id',
                 'products.name',
                 'products.code',
-                'product_details.base_price',
+                'products.group_flag',
+                'product_details.cogs',
+                'product_details.cogs_plus_margin',
                 'product_details.price',
                 'product_details.discount',
                 'product_details.start_period',
@@ -114,7 +110,7 @@ class BranchController extends Controller
                 'product_details.is_active',
             )
             ->where('product_details.branch_id', $id)
-            ->orderBy('id')
+            ->orderBy('sort_order', 'asc')
             ->get();
 
         return view('modules.master.branch.product-setting', compact('branch', 'products'));
@@ -124,12 +120,18 @@ class BranchController extends Controller
         $products = $request->input('products');
 
         foreach ($products as $productData) {
+
+            if (!isset($productData['branch_id'])) {
+                continue;
+            }
+
             DB::table('product_details')
                 ->where('branch_id', $productData['branch_id'])
                 ->where('product_id', $productData['id'])
                 ->update([
-                    "base_price" => $productData['cogs'],
-                    "price" => $productData['sale_price'],
+                    "cogs" => $productData['cogs'],
+                    "cogs_plus_margin" => $productData['cogs_plus_margin'],
+                    "price" => $productData['final_sale_price'],
                     "discount" => $productData['discount'],
                     "start_period" => $productData['disc_start'],
                     "end_period" => $productData['disc_end'],

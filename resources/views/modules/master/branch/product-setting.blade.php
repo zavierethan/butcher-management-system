@@ -46,18 +46,38 @@
                 <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
                     <div class="card">
                         <div class="card-body pt-10">
-                            <!--begin::Table-->
-                            <div class="row mb-5">
-                                <div class="col-md-12 text-end">
-
+                            <div class="fv-row mb-5">
+                                <div class="mb-1">
+                                    <label class="form-label fw-bold fs-6 mb-2">Code</label>
+                                    <div class="position-relative mb-3">
+                                        <input class="form-control form-control-md form-control-solid" type="text" value="{{$branch->code}}" />
+                                    </div>
                                 </div>
                             </div>
+                            <div class="separator my-5"></div>
+                            <div class="fv-row mb-5">
+                                <div class="mb-1">
+                                    <label class="form-label fw-bold fs-6 mb-2">Branch (Store)</label>
+                                    <div class="position-relative mb-3">
+                                        <input class="form-control form-control-md form-control-solid" type="text" value="{{$branch->name}}" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--end::Row-->
+
+                <!--begin::Row-->
+                <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
+                    <div class="card">
+                        <div class="card-body pt-10">
+                            <!--begin::Table-->
                             <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_items_table">
                                 <!--begin::Table head-->
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">HARGA AYAM HIDUP</th>
                                         <th class="min-w-125px">PRM KKS</th>
                                         <th class="min-w-125px">PRM KKS TG</th>
                                         <th class="min-w-125px">PRM FDK</th>
@@ -73,12 +93,6 @@
                                 <!--begin::Table body-->
                                 <tbody class="fw-bold text-gray-600">
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <input type="number"
-                                                    class="form-control form-control-sm inline-edit-end-period me-2" id="raw-material-price"/>
-                                            </div>
-                                        </td>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <input type="number"
@@ -132,8 +146,40 @@
                                 <!--end::Table body-->
                             </table>
                             <!--end::Table-->
+                            <div class="fv-row mb-5">
+                                <div class="mb-1">
+                                    <label class="form-label fw-bold fs-6 mb-2">Harga Ayam Hidup</label>
+                                    <div class="position-relative mb-3">
+                                        <input class="form-control form-control-md form-control-solid" type="text" id="raw-material-price" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="fv-row mb-5">
+                                <div class="mb-1">
+                                    <label class="form-label fw-bold fs-6 mb-2">COGS (KKS)</label>
+                                    <div class="position-relative mb-3">
+                                        <input class="form-control form-control-md form-control-solid" type="text" id="cogs-price" readonly />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="fv-row mb-5">
+                                <div class="mb-1">
+                                    <label class="form-label fw-bold fs-6 mb-2">Recommended Price (KKS + MARGIN)</label>
+                                    <div class="position-relative mb-3">
+                                        <input class="form-control form-control-md form-control-solid" type="text" id="recommend-price" readonly />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="fv-row mb-5">
+                                <div class="mb-1">
+                                    <label class="form-label fw-bold fs-6 mb-2">Final Sale Price (KKS)</label>
+                                    <div class="position-relative mb-3">
+                                        <input class="form-control form-control-md form-control-solid" type="text" id="final-price-kks" />
+                                    </div>
+                                </div>
+                            </div>
                             <div class="text-end">
-                                <a href="{{route('branches.index')}}" class="btn btn-sm btn-danger">Cancel</a>
+                                <a href="{{route('branches.index')}}" class="btn btn-sm btn-danger">Kembali</a>
                                 <a href="javascript:void(0)" class="btn btn-sm btn-primary" id="btn-generate-price">Generate Price</a>
                                 <a href="#" class="btn btn-sm btn-success" id="btn-bulk-update">Bulk update</a>
                             </div>
@@ -160,7 +206,8 @@
                                         <th class="">No.</th>
                                         <th class="min-w-125px">Product Name</th>
                                         <th class="min-w-125px">COGS</th>
-                                        <th class="min-w-125px">Sale Price</th>
+                                        <th class="min-w-125px">COGS + MARGIN</th>
+                                        <th class="min-w-125px">FINAL SALE PRICE</th>
                                         <th class="min-w-125px">Discount</th>
                                         <th class="min-w-125px">Disc. Start Period</th>
                                         <th class="min-w-125px">Disc. End Period</th>
@@ -173,57 +220,273 @@
                                 <tbody class="fw-bold text-gray-600" id="product-table">
                                     @php $num = 1; @endphp
                                     @foreach($products as $product)
+                                        @if($product->group_flag == 1)
+                                        <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                            <td>@php echo $num++ @endphp.</td>
+                                            <td>{{$product->name}} ({{$product->code}})
+                                                <input type="hidden" class="form-control form-control-sm inline-edit-end-period me-2 product_id" value="{{$product->id}}" />
+                                                <input type="hidden" class="form-control form-control-sm inline-edit-end-period me-2 branch_id" value="{{$product->branch_id}}" />
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="text"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 COGS-{{$product->code}} cogs" value="{{$product->cogs}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="text"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 SALE-PRICE-{{$product->code}} cogs-plus-margin" value="{{$product->cogs_plus_margin}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="text"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 FINAL-PRICE-{{$product->code}} final-sale-price" value="{{$product->price}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="text"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 discount" value="{{$product->discount}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="date"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 disc-start-period" value="{{$product->start_period}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="date"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 disc-end-period" value="{{$product->end_period}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex justify-content-center">
+                                                    <label
+                                                        class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
+                                                        <input class="form-check-input toggle-status" type="checkbox" data-id="{{$product->code}}" <?php echo ($product->is_active == 1) ? "checked" : ""; ?> />
+                                                        <span class="form-check-label fw-bold text-muted"></span>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        @endif
+                                    @endforeach
+
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
-                                        <td>@php echo $num++ @endphp.</td>
-                                        <td>{{$product->name}} ({{$product->code}})
-                                            <input type="hidden" class="form-control form-control-sm inline-edit-end-period me-2 product_id" value="{{$product->id}}" />
-                                            <input type="hidden" class="form-control form-control-sm inline-edit-end-period me-2 branch_id" value="{{$product->branch_id}}" />
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <input type="text"
-                                                    class="form-control form-control-sm inline-edit-end-period me-2 COGS-{{$product->code}} cogs" value="{{$product->base_price}}" />
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <input type="text"
-                                                    class="form-control form-control-sm inline-edit-end-period me-2 SALE-PRICE-{{$product->code}} sale-price" value="{{$product->price}}" />
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <input type="text"
-                                                    class="form-control form-control-sm inline-edit-end-period me-2 discount" value="{{$product->discount}}" />
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <input type="date"
-                                                    class="form-control form-control-sm inline-edit-end-period me-2 disc-start-period" value="{{$product->start_period}}" />
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <input type="date"
-                                                    class="form-control form-control-sm inline-edit-end-period me-2 disc-end-period" value="{{$product->end_period}}" />
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex justify-content-center">
-                                                <label
-                                                    class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                                    <input class="form-check-input toggle-status" type="checkbox" data-id="{{$product->code}}" <?php echo ($product->is_active == 1) ? "checked" : ""; ?> />
-                                                    <span class="form-check-label fw-bold text-muted"></span>
-                                                </label>
-                                            </div>
-                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
                                     </tr>
+
+                                    @foreach($products as $product)
+                                        @if($product->group_flag == 2)
+                                        <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                            <td>@php echo $num++ @endphp.</td>
+                                            <td>{{$product->name}} ({{$product->code}})
+                                                <input type="hidden" class="form-control form-control-sm inline-edit-end-period me-2 product_id" value="{{$product->id}}" />
+                                                <input type="hidden" class="form-control form-control-sm inline-edit-end-period me-2 branch_id" value="{{$product->branch_id}}" />
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="text"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 COGS-{{$product->code}} cogs" value="{{$product->cogs}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="text"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 SALE-PRICE-{{$product->code}} cogs-plus-margin" value="{{$product->cogs_plus_margin}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="text"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 FINAL-PRICE-{{$product->code}} final-sale-price" value="{{$product->price}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="text"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 discount" value="{{$product->discount}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="date"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 disc-start-period" value="{{$product->start_period}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="date"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 disc-end-period" value="{{$product->end_period}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex justify-content-center">
+                                                    <label
+                                                        class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
+                                                        <input class="form-check-input toggle-status" type="checkbox" data-id="{{$product->code}}" <?php echo ($product->is_active == 1) ? "checked" : ""; ?> />
+                                                        <span class="form-check-label fw-bold text-muted"></span>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        @endif
+                                    @endforeach
+
+                                    <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+
+                                    @foreach($products as $product)
+                                        @if($product->group_flag == 3)
+                                        <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                            <td>@php echo $num++ @endphp.</td>
+                                            <td>{{$product->name}} ({{$product->code}})
+                                                <input type="hidden" class="form-control form-control-sm inline-edit-end-period me-2 product_id" value="{{$product->id}}" />
+                                                <input type="hidden" class="form-control form-control-sm inline-edit-end-period me-2 branch_id" value="{{$product->branch_id}}" />
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="text"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 COGS-{{$product->code}} cogs" value="{{$product->cogs}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="text"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 SALE-PRICE-{{$product->code}} cogs-plus-margin" value="{{$product->cogs_plus_margin}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="text"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 FINAL-PRICE-{{$product->code}} final-sale-price" value="{{$product->price}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="text"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 discount" value="{{$product->discount}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="date"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 disc-start-period" value="{{$product->start_period}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="date"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 disc-end-period" value="{{$product->end_period}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex justify-content-center">
+                                                    <label
+                                                        class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
+                                                        <input class="form-check-input toggle-status" type="checkbox" data-id="{{$product->code}}" <?php echo ($product->is_active == 1) ? "checked" : ""; ?> />
+                                                        <span class="form-check-label fw-bold text-muted"></span>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        @endif
+                                    @endforeach
+
+                                    <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+
+                                    @foreach($products as $product)
+                                        @if($product->group_flag == 4)
+                                        <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                            <td>@php echo $num++ @endphp.</td>
+                                            <td>{{$product->name}} ({{$product->code}})
+                                                <input type="hidden" class="form-control form-control-sm inline-edit-end-period me-2 product_id" value="{{$product->id}}" />
+                                                <input type="hidden" class="form-control form-control-sm inline-edit-end-period me-2 branch_id" value="{{$product->branch_id}}" />
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="text"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 COGS-{{$product->code}} cogs" value="{{$product->cogs}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="text"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 SALE-PRICE-{{$product->code}} cogs-plus-margin" value="{{$product->cogs_plus_margin}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="text"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 FINAL-PRICE-{{$product->code}} final-sale-price" value="{{$product->price}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="text"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 discount" value="{{$product->discount}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="date"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 disc-start-period" value="{{$product->start_period}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="date"
+                                                        class="form-control form-control-sm inline-edit-end-period me-2 disc-end-period" value="{{$product->end_period}}" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex justify-content-center">
+                                                    <label
+                                                        class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
+                                                        <input class="form-check-input toggle-status" type="checkbox" data-id="{{$product->code}}" <?php echo ($product->is_active == 1) ? "checked" : ""; ?> />
+                                                        <span class="form-check-label fw-bold text-muted"></span>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        @endif
                                     @endforeach
                                 </tbody>
                                 <!--end::Table body-->
                             </table>
                             <!--end::Table-->
+
                         </div>
                     </div>
                 </div>
@@ -246,6 +509,21 @@ $('#kt_modal_add_item').on('shown.bs.modal', function() {
     });
 });
 
+$(document).on('keyup', '#raw-material-price', function() {
+    let val = parseFloat($(this).val());
+    let prmKks = parseFloat($("#prm-kks").val());
+
+    let cogsKks = Math.round(val*prmKks) || 0;
+
+    var margin = parseFloat($("#margin").val()) / 100;
+
+    let recommendedPrice = cogsKks + (cogsKks * margin);
+
+    $("#cogs-price").val(cogsKks);
+
+    $("#recommend-price").val(recommendedPrice);
+});
+
 $(document).on('click', '#btn-generate-price', function() {
     var rawMaterialPrice = parseFloat($("#raw-material-price").val());
 
@@ -261,6 +539,7 @@ $(document).on('click', '#btn-generate-price', function() {
     var margin = parseFloat($("#margin").val()) / 100;
 
     var karkasPrice = Math.round(rawMaterialPrice*prmKks);
+    var karkasFinalPrice = Math.round(parseFloat($("#final-price-kks").val()));
 
     var cogsKksTg = karkasPrice + prmKksTg;
 
@@ -302,6 +581,26 @@ $(document).on('click', '#btn-generate-price', function() {
     $(".SALE-PRICE-FPB").val(cogsFpb + (cogsFpb * margin));
     $(".SALE-PRICE-DGL").val(cogsDgl + (cogsDgl * margin));
 
+    // Final Sale Price
+    $(".FINAL-PRICE-KKS").val(karkasFinalPrice);
+    $(".FINAL-PRICE-TG").val(karkasFinalPrice + prmKksTg);
+    $(".FINAL-PRICE-DD").val(karkasFinalPrice);
+    $(".FINAL-PRICE-PH").val(karkasFinalPrice);
+    $(".FINAL-PRICE-PHA").val(karkasFinalPrice);
+    $(".FINAL-PRICE-PHP").val(karkasFinalPrice);
+    $(".FINAL-PRICE-SY").val(karkasFinalPrice);
+
+    // var cogsFdkFinal = karkasFinalPrice*prmFdk;
+    // var cogsFdbFinal = karkasFinalPrice*prmFdb;
+    // var cogsFpkFinal = karkasFinalPrice*prmFpk;
+    // var cogsFpbFinal = karkasFinalPrice*prmFpb;
+
+    // $(".FINAL-PRICE-FDK").val(cogsFdkFinal + (cogsFdkFinal * margin));
+    // $(".FINAL-PRICE-FDB").val(cogsFdbFinal + (cogsFdbFinal * margin));
+    // $(".FINAL-PRICE-FPK").val(cogsFpkFinal + (cogsFpkFinal * margin));
+    // $(".FINAL-PRICE-FPB").val(cogsFpbFinal + (cogsFpbFinal * margin));
+    // $(".FINAL-PRICE-DGL").val(cogsDgl + (cogsDgl * margin));
+
 });
 
 $(document).on('click', '#btn-bulk-update', function(e) {
@@ -325,7 +624,8 @@ $(document).on('click', '#btn-bulk-update', function(e) {
                         id: $(this).find(".product_id").val(),
                         branch_id: $(this).find(".branch_id").val(),
                         cogs: $(this).find(".cogs").val(),
-                        sale_price: $(this).find(".sale-price").val(),
+                        cogs_plus_margin: $(this).find(".cogs-plus-margin").val(),
+                        final_sale_price: $(this).find(".final-sale-price").val(),
                         discount: $(this).find(".discount").val(),
                         disc_start: $(this).find(".disc-start-period").val(),
                         disc_end: $(this).find(".disc-end-period").val(),

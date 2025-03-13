@@ -185,8 +185,7 @@ class OrderController extends Controller
                             CASE
                                 WHEN transactions.payment_method = '1' THEN 'TUNAI'
                                 WHEN transactions.payment_method = '2' THEN 'PIUTANG'
-                                WHEN transactions.payment_method = '3' THEN 'COD'
-                                WHEN transactions.payment_method = '4' THEN 'TRANSFER'
+                                WHEN transactions.payment_method = '3' THEN 'TRANSFER'
                             ELSE
                                 '-'
                             END AS payment_method
@@ -216,8 +215,10 @@ class OrderController extends Controller
                         'transaction_items.discount',
                         'transaction_items.unit_price as sell_price'
                     )
-                    ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')->get();
-
+                    ->join('transactions', 'transactions.id', '=', 'transaction_items.transaction_id')
+                    ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')
+                    ->where('transaction_items.transaction_id', $id)
+                    ->get();
 
         $pdf = PDF::loadView('modules.transactions.order.receipt', [
             "info" => $detailTransaction,

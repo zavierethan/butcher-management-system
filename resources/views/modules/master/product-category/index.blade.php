@@ -34,10 +34,6 @@
                 <!--end::Page title-->
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
-                    <!--begin::Secondary button-->
-                    <a href="#" class="btn btn-sm fw-bold btn-secondary" data-bs-toggle="modal"
-                        data-bs-target="#kt_modal_create_app">Export</a>
-                    <!--end::Secondary button-->
                     <!--begin::Primary button-->
                     <a href="{{route('product-categories.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
                     <!--end::Primary button-->
@@ -133,7 +129,24 @@
         },
         columns: [
             { data: 'name', name: 'name' },
-            { data: 'is_active', name: 'is_active' },
+            {
+                data: 'is_active',
+                name: 'is_active',
+                className: 'text-center',
+                render: function(data, type, row) {
+                    var isActive = "";
+
+                    if (row.is_active == 0) {
+                        isActive = `<span class="badge bg-danger text-dark">Non Aktif</span>`
+                    }
+
+                    if (row.is_active == 1) {
+                        isActive = `<span class="badge bg-success text-dark">Aktif</span>`
+                    }
+
+                    return isActive;
+                }
+            },
             {
                 data: null, // No direct field from the server
                 name: 'action',

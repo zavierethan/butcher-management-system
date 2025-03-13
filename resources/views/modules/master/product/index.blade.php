@@ -92,6 +92,8 @@
                                         <th class="min-w-125px">Kode</th>
                                         <th class="min-w-125px">Nama</th>
                                         <th class="min-w-125px">Kategori</th>
+                                        <th class="min-w-125px">Klasifikasi</th>
+                                        <th class="min-w-125px">Pricing Type</th>
                                         <th class="min-w-125px text-center">Active</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
@@ -140,6 +142,8 @@
             { data: 'code', name: 'code' },
             { data: 'name', name: 'name' },
             { data: 'category_name', name: 'category_name' },
+            { data: 'clasification', name: 'clasification' },
+            { data: 'pricing_type', name: 'pricing_type' },
             {
                 data: 'is_active',
                 name: 'is_active',

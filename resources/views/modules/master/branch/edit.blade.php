@@ -59,16 +59,17 @@
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Kode</label>
                                         <div class="position-relative mb-3">
-                                            <input 
-                                                class="form-control form-control-md form-control-solid" 
-                                                type="text" 
-                                                name="code" 
-                                                id="code" 
-                                                value="{{$branch->code}}" 
-                                                maxlength="8" 
-                                                pattern="^[^\s]*$" 
-                                                title="Kode cannot contain spaces and must be at most 8 characters long" 
+                                            <input
+                                                class="form-control form-control-md form-control-solid"
+                                                type="text"
+                                                name="code"
+                                                id="code"
+                                                value="{{$branch->code}}"
+                                                maxlength="8"
+                                                pattern="^[^\s]*$"
+                                                title="Kode cannot contain spaces and must be at most 8 characters long"
                                                 required
+                                                readonly
                                             />
                                         </div>
                                     </div>
@@ -115,8 +116,8 @@
                                 </div>
                                 <div class="separator my-5"></div>
                                 <div class="flex justify-end">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                    <a href="{{route('branches.index')}}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{route('branches.index')}}" class="btn btn-danger">Kembali</a>
+                                    <button type="submit" class="btn btn-primary">Update</button>
                                 </div>
                             </form>
                         </div>
