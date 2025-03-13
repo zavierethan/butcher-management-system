@@ -29,7 +29,8 @@ class DailyReportController extends Controller
                 SUM(CASE WHEN payment_method = '2' THEN total_amount ELSE 0 END) AS total_receivable,
                 SUM(CASE WHEN payment_method = '3' THEN total_amount ELSE 0 END) AS total_transfer,
                 SUM(total_amount) AS total_revenue")
-            ->where('branch_id', $branchId);
+            ->where('branch_id', $branchId)
+            ->where('status', '!=', 3);
 
         if (!empty($params['start_date']) && !empty($params['end_date'])) {
             $totalsQuery->whereBetween(DB::raw('DATE(transactions.transaction_date)'), [
