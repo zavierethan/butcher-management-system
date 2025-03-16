@@ -136,158 +136,6 @@
                 <!--end::Row-->
             </div>
             <!--end::Content container-->
-
-             <!--begin::Toolbar-->
-            <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
-                <!--begin::Toolbar container-->
-                <div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
-                    <!--begin::Page title-->
-                    <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-                        <!--begin::Title-->
-                        <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Product Details</h1>
-                        <!--end::Title-->
-                        <!--begin::Breadcrumb-->
-                        <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
-                            <li class="breadcrumb-item text-muted">List Product in Branches</li>
-                        </ul>
-                        <!--end::Breadcrumb-->
-                    </div>
-                    <!--end::Page title-->
-                </div>
-                <!--end::Toolbar container-->
-            </div>
-            <!--end::Toolbar-->
-
-            <!--begin::Content container-->
-            <div id="kt_app_content_container" class="app-container container-fluid">
-                <!--begin::Row-->
-                <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
-                    <!--begin::Table-->
-                    <div class="card">
-                        <div class="card-header border-0 pt-6">
-                            <!--begin::Card toolbar-->
-                            <div class="card-toolbar">
-                                <!--begin::Toolbar-->
-                                <div class="d-flex align-items-center gap-2 my-1">
-                                    <!-- Input fields for setting values for all rows -->
-                                    <div class="d-flex align-items-center">
-                                        <input type="text" id="setAllPrice" class="form-control form-control-sm me-2" placeholder="Set Price for All">
-                                        <button id="applyPriceToAll" class="btn btn-primary btn-sm">Apply</button>
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <input type="text" id="setAllDiscount" class="form-control form-control-sm me-2" placeholder="Set Discount for All">
-                                        <button id="applyDiscountToAll" class="btn btn-primary btn-sm">Apply</button>
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <input class="form-control form-control-solid me-2" name="calendar_event_start_date" placeholder="Pick discount start date for all" id="kt_calendar_datepicker_start_date"/>
-                                        <button id="applyDiscountStartDateToAll" class="btn btn-primary btn-sm">Apply</button>
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <input class="form-control form-control-solid me-2" name="calendar_event_end_date" placeholder="Pick discount end date for all" id="kt_calendar_datepicker_end_date"/>
-                                        <button id="applyDiscountEndDateToAll" class="btn btn-primary btn-sm">Apply</button>
-                                    </div>
-                                </div>
-                                <!--end::Toolbar-->
-                            </div>
-                            <!--end::Card toolbar-->
-                        </div>
-                        <!--begin::Card body-->
-                        <div class="card-body pt-0 overflow-x-auto">
-                            <!--begin::Table-->
-                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_product_details_table">
-                                <!--begin::Table head-->
-                                <thead>
-                                    <!--begin::Table row-->
-                                    <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">Cabang</th>
-                                        <th class="min-w-125px">Harga</th>
-                                        <th class="min-w-125px">Diskon</th>
-                                        <th class="min-w-125px">Diskon Start</th>
-                                        <th class="min-w-125px">Diskon End</th>
-                                        <th class="text-center min-w-70px">Active Status</th>
-                                        <th class="text-center min-w-70px">Actions</th>
-                                    </tr>
-                                    <!--end::Table row-->
-                                </thead>
-                                <!--end::Table head-->
-                                <!--begin::Table body-->
-                                <tbody class="fw-bold text-gray-600">
-                                </tbody>
-                                <!--end::Table body-->
-                            </table>
-                            <!--end::Table-->
-                        </div>
-                        <!--end::Card body-->
-                    </div>
-                    <!--end::Table-->
-                </div>
-                <!--end::Row-->
-            </div>
-            <!--end::Content container-->
-            
-            @if($product->name === 'KARKAS')
-            <input type="hidden" id="product_name" value="{{ $product->name }}">
-                <!--begin::Toolbar-->
-                <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
-                    <!--begin::Toolbar container-->
-                    <div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
-                        <!--begin::Page title-->
-                        <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-                            <!--begin::Title-->
-                            <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Pengaturan Byproduct Karkas</h1>
-                            <!--end::Title-->
-                            <!--begin::Breadcrumb-->
-                            <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
-                                <li class="breadcrumb-item text-muted">List Byproduct Karkas</li>
-                            </ul>
-                            <!--end::Breadcrumb-->
-                        </div>
-                        <!--end::Page title-->
-                    </div>
-                    <!--end::Toolbar container-->
-                </div>
-                <!--end::Toolbar-->
-                <!--begin::Content container-->
-                <div id="kt_app_content_container" class="app-container container-fluid">
-                    <!--begin::Row-->
-                    <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
-                        <!--begin::Table-->
-                        <div class="card">
-                            <div class="card-header border-0 pt-6">
-                                <!--begin::Card toolbar-->
-                            </div>
-                            <!--begin::Card body-->
-                            <div class="card-body pt-0 overflow-x-auto">
-                                <!--begin::Table-->
-                                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_byproduct_details_table">
-                                    <!--begin::Table head-->
-                                    <thead>
-                                        <!--begin::Table row-->
-                                        <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                            <th class="min-w-125px">Byproduct Code</th>
-                                            <th class="min-w-125px">Byproduct Name</th>
-                                            <th class="min-w-125px">Formula Harga</th>
-                                            <th class="text-center min-w-70px">Actions</th>
-                                        </tr>
-                                        <!--end::Table row-->
-                                    </thead>
-                                    <!--end::Table head-->
-                                    <!--begin::Table body-->
-                                    <tbody class="fw-bold text-gray-600">
-                                    </tbody>
-                                    <!--end::Table body-->
-                                </table>
-                                <!--end::Table-->
-                            </div>
-                            <!--end::Card body-->
-                        </div>
-                        <!--end::Table-->
-                    </div>
-                    <!--end::Row-->
-                </div>
-                <!--end::Content container-->
-            @endif
-
         </div>
         <!--end::Content-->
     </div>
@@ -325,10 +173,10 @@
                     const displayValue = data !== null ? data : '';
                     return `
                         <div class="d-flex align-items-center">
-                            <input type="text" 
-                                class="form-control form-control-sm inline-edit-formula me-2" 
-                                value="${displayValue}" 
-                                data-id="${row.id}" 
+                            <input type="text"
+                                class="form-control form-control-sm inline-edit-formula me-2"
+                                value="${displayValue}"
+                                data-id="${row.id}"
                                 data-field="formula" />
                         </div>
                     `;
@@ -372,10 +220,10 @@
                     const displayValue = data !== null ? data : '';
                     return `
                         <div class="d-flex align-items-center">
-                            <input type="text" 
-                                class="form-control form-control-sm inline-edit-price me-2" 
-                                value="${displayValue}" 
-                                data-id="${row.id}" 
+                            <input type="text"
+                                class="form-control form-control-sm inline-edit-price me-2"
+                                value="${displayValue}"
+                                data-id="${row.id}"
                                 data-field="price" />
                         </div>
                     `;
@@ -388,10 +236,10 @@
                     const displayValue = data !== null ? data : '';
                     return `
                         <div class="d-flex align-items-center">
-                            <input type="text" 
-                                class="form-control form-control-sm inline-edit-discount me-2" 
-                                value="${displayValue}" 
-                                data-id="${row.id}" 
+                            <input type="text"
+                                class="form-control form-control-sm inline-edit-discount me-2"
+                                value="${displayValue}"
+                                data-id="${row.id}"
                                 data-field="discount" />
                         </div>
                     `;
@@ -404,10 +252,10 @@
                     const displayValue = data !== null ? data : '';
                     return `
                         <div class="d-flex align-items-center">
-                            <input type="date" 
-                                class="form-control form-control-sm inline-edit-start-period me-2" 
-                                value="${displayValue}" 
-                                data-id="${row.id}" 
+                            <input type="date"
+                                class="form-control form-control-sm inline-edit-start-period me-2"
+                                value="${displayValue}"
+                                data-id="${row.id}"
                                 data-field="start_period" />
                         </div>
                     `;
@@ -420,10 +268,10 @@
                     const displayValue = data !== null ? data : '';
                     return `
                         <div class="d-flex align-items-center">
-                            <input type="date" 
-                                class="form-control form-control-sm inline-edit-end-period me-2" 
-                                value="${displayValue}" 
-                                data-id="${row.id}" 
+                            <input type="date"
+                                class="form-control form-control-sm inline-edit-end-period me-2"
+                                value="${displayValue}"
+                                data-id="${row.id}"
                                 data-field="end_period" />
                         </div>
                     `;
@@ -438,8 +286,8 @@
                     return `
                         <div class="d-flex justify-content-center">
                             <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                <input class="form-check-input toggle-status" 
-                                    type="checkbox" 
+                                <input class="form-check-input toggle-status"
+                                    type="checkbox"
                                     data-id="${row.id}"
                                     ${data ? 'checked' : ''}>
                                 <span class="form-check-label fw-bold text-muted"></span>
@@ -657,7 +505,7 @@
                                 text: 'All rows have been updated.',
                                 showConfirmButton: true
                             });
-                            
+
                             // Optionally, reload the DataTable to reflect the changes
                             $('#kt_product_details_table').DataTable().ajax.reload();
                         } else {
@@ -718,7 +566,7 @@
                                 text: 'All rows have been updated.',
                                 showConfirmButton: true
                             });
-                            
+
                             // Optionally, reload the DataTable to reflect the changes
                             $('#kt_product_details_table').DataTable().ajax.reload();
                         } else {
@@ -779,7 +627,7 @@
                                 text: 'All rows have been updated.',
                                 showConfirmButton: true
                             });
-                            
+
                             // Optionally, reload the DataTable to reflect the changes
                             $('#kt_product_details_table').DataTable().ajax.reload();
                         } else {
@@ -840,7 +688,7 @@
                                 text: 'All rows have been updated.',
                                 showConfirmButton: true
                             });
-                            
+
                             // Optionally, reload the DataTable to reflect the changes
                             $('#kt_product_details_table').DataTable().ajax.reload();
                         } else {
