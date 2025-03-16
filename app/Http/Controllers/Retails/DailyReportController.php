@@ -116,42 +116,30 @@ class DailyReportController extends Controller
         $stock_status = $request->input('stock_status');
         $category_id = $request->input('category_id');
 
-        // Subquery to calculate stock quantity
-        $quantitySubquery = "(SELECT COALESCE(SUM(COALESCE(sl.in_quantity, 0) - COALESCE(sl.out_quantity, 0)), 0)
-                            FROM stock_logs AS sl
-                            WHERE sl.stock_id = s.id)";
-
-        $query = DB::table('stocks as s')
+        $query = DB::table('stock_logs as sl')
+            ->join('stocks as s', 'sl.stock_id', '=', 's.id')
             ->join('products as p', 's.product_id', '=', 'p.id')
             ->join('product_categories as pc', 'p.category_id', '=', 'pc.id')
-            ->leftJoin('product_details as pd', function ($join) {
-                $join->on('s.product_id', '=', 'pd.product_id')
-                    ->on('s.branch_id', '=', 'pd.branch_id');
-            })
             ->leftJoin('branches as b', 's.branch_id', '=', 'b.id')
             ->select([
-                'p.name as product_name',
                 'p.code',
+                'p.name as product_name',
                 'pc.name as category_name',
-                's.date',
-                's.sale_price',
+                DB::raw("DATE(sl.date) as stock_logs_date"),
                 'b.name as branch_name',
-                DB::raw("$quantitySubquery AS quantity"),
-                DB::raw("CASE
-                            WHEN $quantitySubquery > 0
-                            THEN 'In Stock'
-                            ELSE 'Out Of Stock'
-                        END AS stock_status")
+                DB::raw("SUM(sl.in_quantity) - SUM(sl.out_quantity) as quantity"),
+                DB::raw("CASE 
+                            WHEN SUM(sl.in_quantity) - SUM(sl.out_quantity) = 0 THEN 'Out of Stock' 
+                            WHEN SUM(sl.in_quantity) - SUM(sl.out_quantity) < 50 THEN 'Low on Stock' 
+                            ELSE 'In Stock' 
+                        END as stock_status")
             ])
-            ->groupBy(
-                'p.name', 'p.code', 'pc.name', 's.date', 's.sale_price', 'b.name', 's.id'
-            ); // All selected columns must be in GROUP BY
+            ->whereBetween(DB::raw("DATE(sl.date)"), [$start_date, $end_date])
+            ->groupBy('p.name', 'p.code', 'pc.name', DB::raw("DATE(sl.date)"), 'b.name')
+            ->orderBy(DB::raw("DATE(sl.date)"), 'asc')
+            ->orderBy('p.name', 'asc');
 
-        // Apply filters
-        if ($start_date && $end_date) {
-            $query->whereBetween('s.date', [$start_date, $end_date]);
-        }
-
+        // Apply category filter
         if ($category_id && $category_id != 'Show All') {
             $query->where('p.category_id', '=', $category_id);
         }
@@ -159,11 +147,11 @@ class DailyReportController extends Controller
         // Apply stock_status filter using HAVING clause
         if ($stock_status && $stock_status != 'Show All') {
             if ($stock_status == 'In Stock') {
-                $query->havingRaw("$quantitySubquery > 0");
+                $query->havingRaw("SUM(sl.in_quantity) - SUM(sl.out_quantity) >= 50");
             } elseif ($stock_status == 'Out of Stock') {
-                $query->havingRaw("$quantitySubquery <= 0");
+                $query->havingRaw("SUM(sl.in_quantity) - SUM(sl.out_quantity) = 0");
             } elseif ($stock_status == 'Low Stock') {
-                $query->havingRaw("$quantitySubquery BETWEEN 1 AND 5");
+                $query->havingRaw("SUM(sl.in_quantity) - SUM(sl.out_quantity) BETWEEN 1 AND 49");
             }
         }
 
@@ -179,8 +167,7 @@ class DailyReportController extends Controller
             ->count();
 
         // Apply pagination
-        $data = $paginatedQuery->orderBy('s.id', 'desc')
-            ->skip($request->input('start', 0))
+        $data = $paginatedQuery->skip($request->input('start', 0))
             ->take($request->input('length', 10))
             ->get();
 
@@ -191,5 +178,6 @@ class DailyReportController extends Controller
             'data' => $data,
         ]);
     }
+
 
 }

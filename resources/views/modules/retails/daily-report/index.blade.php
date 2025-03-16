@@ -332,10 +332,9 @@
                                         <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
                                             <th class="min-w-150px">Item</th>
                                             <th class="min-w-100px">Product ID</th>
-                                            <th class="min-w-150px">Date Added</th>
-                                            <th class="min-w-100px">Price</th>
-                                            <th class="min-w-100px">Status</th>
+                                            <th class="min-w-150px">Date</th>
                                             <th class="min-w-75px">Qty</th>
+                                            <th class="min-w-100px">Status</th>
                                         </tr>
                                         <!--end::Table row-->
                                     </thead>
@@ -521,12 +520,11 @@ function getStockReport() {
         },
         order: [[0, 'desc']], // Sorting by the first column
         columns: [
-            { data: 'product_name', name: 'product_name' },
             { data: 'code', name: 'code' },
-            { data: 'date', name: 'date' },
-            { data: 'sale_price', name: 'sale_price' },
-            { data: 'stock_status', name: 'stock_status' },
+            { data: 'product_name', name: 'product_name' },
+            { data: 'stock_logs_date', name: 'date' },
             { data: 'quantity', name: 'quantity' },
+            { data: 'stock_status', name: 'stock_status' },
         ]
     });
 }
