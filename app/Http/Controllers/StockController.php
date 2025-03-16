@@ -9,6 +9,8 @@ use Illuminate\Database\QueryException;
 use App\Exports\StockExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Validator;
+use Auth;
+use Carbon\Carbon;
 
 class StockController extends Controller
 {
@@ -23,12 +25,7 @@ class StockController extends Controller
     public function getLists(Request $request) {
         $params = $request->all();
 
-        // Default date range: today
-        $today = date('Y-m-d');
-        $startDate = $params['startDate'] ?? $today;
-        $endDate = $params['endDate'] ?? $today;
-
-
+        // Base query
         $query = DB::table('stocks')
             ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
             ->leftJoin('branches', 'stocks.branch_id', '=', 'branches.id')
@@ -49,12 +46,8 @@ class StockController extends Controller
                 'branches.name'
             );
 
-
-        // Apply date range filter (default or provided)
-        $query->whereBetween('stocks.date', [$startDate, $endDate]);
-
-        // Apply global search
-        $searchValue = $request->input('searchTerm'); // DataTables search input
+        // Apply search filter
+        $searchValue = $request->input('searchTerm');
         if (!empty($searchValue)) {
             $query->where(function ($q) use ($searchValue) {
                 $q->where('products.name', 'ilike', '%' . $searchValue . '%');
@@ -63,29 +56,36 @@ class StockController extends Controller
 
         // Apply sorting
         if ($request->has('order') && $request->order) {
-            $columnIndex = $request->order[0]['column']; // Column index from DataTables
-            $sortDirection = $request->order[0]['dir']; // 'asc' or 'desc'
-            $columnName = $request->columns[$columnIndex]['data']; // Column name
+            $columnIndex = $request->order[0]['column'];
+            $sortDirection = $request->order[0]['dir'];
+            $columnName = $request->columns[$columnIndex]['data'];
 
             if (!empty($columnName) && in_array($columnName, [
-                'product_code', 'product_name', 'branch_code', 'branch_name', 'quantity', 'opname_quantity', 'date'
+                'product_code', 'product_name', 'branch_code', 'branch_name'
             ])) {
                 $query->orderBy($columnName, $sortDirection);
             }
-        }
-
-        if (!$request->has('order')) {
-            $query->orderBy('stocks.date', 'desc');
         }
 
         // Pagination parameters
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
 
-        $totalRecords = DB::table('stocks')->count(); // Total records without filters
-        $filteredRecords = $query->count(); // Total records after filters
-        $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get(); // Paginated data
+        // Total records count
+        $totalRecords = DB::table('stocks')->count();
 
+        // Correctly count filtered records using subquery
+        $filteredRecords = DB::table(DB::raw("({$query->toSql()}) as subquery"))
+            ->mergeBindings($query)
+            ->count();
+
+        // Get paginated data
+        $data = $query->orderBy('stocks.id', 'desc')
+            ->skip($start)
+            ->take($length)
+            ->get();
+
+        // Prepare response
         $response = [
             'draw' => $request->input('draw'),
             'recordsTotal' => $totalRecords,
@@ -94,127 +94,6 @@ class StockController extends Controller
         ];
 
         return response()->json($response);
-    }
-
-    public function create() {
-        $branches = DB::table('branches')->orderBy('name', 'asc')->get();
-        $products = DB::table('products')->orderBy('name', 'asc')->get();
-
-        return view('modules.inventory.stock.create', compact('branches', 'products'));
-    }
-
-    public function save(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'product_id' => 'required|exists:products,id',
-            'branch_id' => 'required|exists:branches,id',
-            'calendar_event_date' => 'required|date',
-            'base_price' => 'required|numeric|min:0',
-            'sale_price' => 'required|numeric|min:0',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        try {
-            // Insert data
-            DB::table('stocks')->insert([
-                "product_id" => $request->product_id,
-                "branch_id" => $request->branch_id,
-                "date" => $request->calendar_event_date,
-                "base_price" => $request->base_price,
-                "sale_price" => $request->sale_price
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'redirect' => route('stocks.index')
-            ]);
-        } catch (QueryException $e) {
-            if ($e->getCode() == 23505) { // Unique constraint violation
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Entry tersebut sudah ada. Cek data stocks yang sudah ada atau status active-nya di data master products.'
-                ], 422);
-            }
-
-            // Handle other errors
-            return response()->json([
-                'success' => false,
-                'message' => 'Something went wrong.'
-            ], 500);
-        }
-    }
-
-
-    public function updateOpname(Request $request) {
-        $id = $request->id;
-
-        \Log::debug("MASUK OPNAME DENGAN ID: {$id}");
-
-        try {
-            DB::beginTransaction();
-
-            // Update the opname_quantity
-            $updated = DB::table('stocks')
-                ->where('id', $id)
-                ->update([
-                    'opname_quantity' => $request->opname_quantity,
-                    // 'base_price' => $request->base_price,
-                    // 'sale_price' => $request->sale_price
-                ]);
-
-            if (!$updated) {
-                \Log::error("Failed to update opname_quantity for ID: {$id}");
-                return response()->json(['success' => false, 'message' => 'Failed to update opname_quantity'], 500);
-            }
-
-            // Retrieve the updated stock details
-            $stock = DB::table('stocks')->where('id', $id)->first();
-
-            if (!$stock) {
-                \Log::error("Stock not found for ID: {$id}");
-                DB::rollBack();
-                return response()->json(['success' => false, 'message' => 'Stock not found'], 500);
-            }
-
-            // note: fitur membuat row stock baru ketika update opname untuk sekarang disabled dulu
-            // mau diganti untuk membuat stock baru jadinya lewat parting
-
-            // Convert the given date and add one day
-            // $newDate = date('Y-m-d', strtotime($request->date . ' +1 day'));
-
-            // Insert new stock and get the inserted ID
-            // $newStockId = DB::table('stocks')->insertGetId([
-            //     'product_id' => $stock->product_id,
-            //     'branch_id' => $stock->branch_id,
-            //     'date' => $newDate,
-            //     'quantity' => $request->opname_quantity,
-            //     'opname_quantity' => null
-            // ]);
-
-            // if (!$newStockId) {
-            //     \Log::error("Failed to insert into stocks for product {$stock->product_id} and branch {$stock->branch_id} on date {$newDate}");
-            //     DB::rollBack();
-            //     return response()->json(['success' => false, 'message' => 'Failed to insert into stocks'], 500);
-            // }
-
-            // Insert a new row in stock_logs
-            // DB::table('stock_logs')->insert([
-            //     'stock_id' => $newStockId,
-            //     'in_quantity' => $request->opname_quantity,
-            //     'date' => now()->setTimezone('Asia/Jakarta'),
-            //     'reference' => 'Stock opname'
-            // ]);
-
-            DB::commit();
-            return response()->json(['success' => true]);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            \Log::error('Failed to update opname: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Gagal memperbarui stock opname.'], 500);
-        }
     }
 
     public function export(Request $request) {
@@ -238,64 +117,44 @@ class StockController extends Controller
         ]);
     }
 
-    public function getMutableList(Request $request) {
-        $params = $request->all();
-
-        // Default date range: today
-        $today = date('Y-m-d');
-
-
-        $query = DB::table('stocks')
+    public function opnameIndex($id) {
+        $stockHeader = $stock = DB::table('stocks')
+            ->select(
+                'stocks.*',
+                'products.id as product_id',
+                'products.code as product_code',
+                'products.name as product_name',
+                'branches.id as branch_id',
+                'branches.code as branch_code',
+                'branches.name as branch_name',
+                DB::raw('COALESCE(SUM(sl.in_quantity), 0) - COALESCE(SUM(sl.out_quantity), 0) as total_quantity')
+            )
             ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
             ->leftJoin('branches', 'stocks.branch_id', '=', 'branches.id')
             ->leftJoin('stock_logs as sl', 'stocks.id', '=', 'sl.stock_id')
+            ->where('stocks.id', $id)
+            ->groupBy('stocks.id', 'products.id', 'products.code', 'products.name', 'branches.id', 'branches.code', 'branches.name')
+            ->first();
+
+        return view('modules.inventory.stock.opname.index', ['stockId' => $id], compact('stockHeader'));
+    }
+
+    public function getOpnameList(Request $request, $stockId) {
+
+        $params = $request->all();
+        $query = DB::table('stock_opnames')
             ->select(
-                'stocks.*',
-                'products.code as product_code',
-                'products.name as product_name',
-                'branches.code as branch_code',
-                'branches.name as branch_name',
-                DB::raw('COALESCE(SUM(sl.in_quantity), 0) - COALESCE(SUM(sl.out_quantity), 0) as realtime_quantity')
+                'stock_opnames.*'
             )
-            ->groupBy(
-                'stocks.id',
-                'products.code',
-                'products.name',
-                'branches.code',
-                'branches.name'
-            );
+            ->where('stock_opnames.stock_id', '=', $stockId);
 
-
-        // Apply date range filter (default or provided)
-        $query->whereDate('stocks.date', $today);
-
-        // Exclude carcass
-        $query->whereRaw('LOWER(products.name) != ?', ['karkas']);
-
-        // Apply sorting
-        if ($request->has('order') && $request->order) {
-            $columnIndex = $request->order[0]['column']; // Column index from DataTables
-            $sortDirection = $request->order[0]['dir']; // 'asc' or 'desc'
-            $columnName = $request->columns[$columnIndex]['data']; // Column name
-
-            if (!empty($columnName) && in_array($columnName, [
-                'product_code', 'product_name', 'branch_code', 'branch_name', 'quantity', 'opname_quantity', 'date'
-            ])) {
-                $query->orderBy($columnName, $sortDirection);
-            }
-        }
-
-        if (!$request->has('order')) {
-            $query->orderBy('products.name', 'asc');
-        }
-
-        // Pagination parameters
+        
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
 
-        $totalRecords = DB::table('stocks')->count(); // Total records without filters
-        $filteredRecords = $query->count(); // Total records after filters
-        $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get(); // Paginated data
+        $totalRecords = $query->count();
+        $filteredRecords = $query->count();
+        $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get();
 
         $response = [
             'draw' => $request->input('draw'),
@@ -306,4 +165,54 @@ class StockController extends Controller
 
         return response()->json($response);
     }
+
+    public function saveOpname(Request $request) {
+        $validated = $request->validate([
+            'stock_id' => 'required|integer',
+            'quantity' => 'nullable|numeric|regex:/^\d+(\.\d{1,2})?$/',
+        ]);
+
+        // Start transaction to ensure both operations (stock log insertion and stock update) succeed or fail together
+        DB::beginTransaction();
+
+        try {
+            $stockOpname = DB::table('stock_opnames')->insertGetId([
+                'stock_id' => $validated['stock_id'],
+                'quantity' => $validated['quantity'] ?? 0,
+                'date' => Carbon::now('Asia/Jakarta'),
+            ]);
+
+            // Commit the transaction
+            DB::commit();
+
+            return redirect()->route('stocks.opname-index', ['stockId' => $validated['stock_id']]);
+        } catch (\Exception $e) {
+            // Rollback the transaction if something goes wrong
+            DB::rollBack();
+
+            return response()->json(['error' => 'An error occurred while processing the request.'], 500);
+        }
+    }
+
+    public function createOpname(Request $request) {
+        $stockId = $request->query('stockId');
+        return view('modules.inventory.stock.opname.create', compact('stockId'));
+    }
+
+    public function updateOpname(Request $request) {
+        $request->validate([
+                'id' => 'required|exists:stock_opnames,id',
+                'quantity' => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/']
+            ]);
+
+            DB::table('stock_opnames')
+                ->where('id', $request->id)
+                ->update([
+                    'quantity' => number_format($request->quantity, 2, '.', ''),
+                    'updated_at' => now()
+                ]);
+
+        return response()->json(['success' => true, 'message' => 'Quantity updated successfully']);
+    }
+
 }

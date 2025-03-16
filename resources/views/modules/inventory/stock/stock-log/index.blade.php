@@ -114,49 +114,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="separator my-5"></div>
-                                                <div class="fv-row mb-5">
-                                                    <div class="mb-1">
-                                                        <label class="form-label fw-bold fs-6 mb-2">Tanggal</label>
-                                                        <div class="position-relative mb-3">
-                                                            <input class="form-control form-control-md form-control-solid"
-                                                                type="text" value="{{ $stockHeader->date }}" readonly />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="separator my-5"></div>
-                                                <div class="fv-row mb-5">
-                                                    <div class="mb-1">
-                                                        <label class="form-label fw-bold fs-6 mb-2">Base Price</label>
-                                                        <div class="position-relative mb-3">
-                                                            <input class="form-control form-control-md form-control-solid"
-                                                                value="{{ $stockHeader->base_price }}" id="base_price" readonly/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="separator my-5"></div>
-                                                <div class="fv-row mb-5">
-                                                    <div class="mb-1">
-                                                        <label class="form-label fw-bold fs-6 mb-2">Sale Price</label>
-                                                        <div class="position-relative mb-3">
-                                                            <input class="form-control form-control-md form-control-solid"
-                                                                value="{{ $stockHeader->sale_price }}" id="sale_price" readonly/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="separator my-5"></div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <div class="fv-row mb-5">
-                                                    <div class="mb-1">
-                                                        {{-- ambil dari hasil sum parting --}}
-                                                        <label class="form-label fw-bold fs-6 mb-2">Kuantitas Awal</label>
-                                                        <div class="position-relative mb-3">
-                                                            <input class="form-control form-control-md form-control-solid"
-                                                                value="{{ $stockHeader->quantity }}" readonly />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="separator my-5"></div>
                                                 <div class="fv-row mb-5">
                                                     <div class="mb-1">
                                                         <label class="form-label fw-bold fs-6 mb-2">Kuantitas Realtime</label>
@@ -166,7 +124,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="separator my-5"></div>
+                                                {{-- <div class="separator my-5"></div>
                                                 <div class="fv-row mb-5">
                                                     <div class="mb-1">
                                                         <label class="form-label fw-bold fs-6 mb-2">Kuantitas Opname</label>
@@ -175,15 +133,13 @@
                                                                 value="{{ $stockHeader->opname_quantity }}" id="opname-quantity" />
                                                         </div>
                                                     </div>
-                                                </div>
-                                                
+                                                </div> --}}
                                                 <div class="separator my-5"></div>
                                                 <div class="text-end">
                                                     <a href="{{ route('stocks.index') }}" class="btn btn-danger">Back</a>
                                                     <a href="#" class="btn btn-primary" id="btn-update"
                                                         data-branch-id="{{ $stockHeader->branch_id }}"
-                                                        data-product-id="{{ $stockHeader->product_id }}"
-                                                        data-date="{{ $stockHeader->date }}">Update</a>
+                                                        data-product-id="{{ $stockHeader->product_id }}">Update</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -293,74 +249,7 @@
         ],
     });
 
-    $(document).ready(function() {
-        $('#btn-update').on('click', function(e) {
-            e.preventDefault();
-            let branchId = this.getAttribute('data-branch-id');
-            let productId = this.getAttribute('data-product-id');
-            let date = this.getAttribute('data-date');
-            // let basePrice = $("#base_price").val();
-            // let salePrice = $("#sale_price").val();
-            let opnameQuantity = $("#opname-quantity").val();
-            let id = $("#stock-id").val();
-
-            Swal.fire({
-                title: 'Apakah anda yakin untuk memperbaharui kuantitas opname?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, Update Opname'
-            }).then((result) => {
-                if (result.isConfirmed) {
-
-                    const payload = {
-                        id: id,
-                        opname_quantity: opnameQuantity,
-                        branch_id: branchId,
-                        product_id: productId,
-                        // date: date,
-                        // base_price: basePrice,
-                        // sale_price: salePrice
-                    };
-
-                    console.log(payload)
-
-                    $.ajax({
-                        url: `{{route('stocks.update-opname')}}`,
-                        type: 'POST',
-                        contentType: 'application/json',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        data: JSON.stringify(payload),
-                        success: function(response) {
-                            Swal.fire({
-                                title: 'Suceess !',
-                                text: 'Data berhasil di perbaharui',
-                                icon: 'success',
-                                confirmButtonText: 'OK'
-                            });
-                        },
-                        error: function(xhr, status, error) {
-                            let errorMessage = "An unexpected error occurred"; // Default fallback message
-
-                            if (xhr.responseJSON && xhr.responseJSON.message) {
-                                errorMessage = xhr.responseJSON.message; // Get the Laravel error message
-                            }
-
-                            Swal.fire(
-                                'Error!',
-                                errorMessage,
-                                'error'
-                            );
-                        }
-                    });
-                }
-            });
-        });
-    });
-
+    
 $("#btn-form-export").on("click", function() {
     const stockId = "{{ $stockId }}";
     const branchCode = "{{ $stockHeader->branch_code }}"

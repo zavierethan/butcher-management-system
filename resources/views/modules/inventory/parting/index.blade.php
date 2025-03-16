@@ -215,25 +215,30 @@
                         <div class="card-body pt-10 overflow-x-auto">
                             <div class="row mb-5">
                                 <div class="col-md-6">
-                                    <div class="col-md-12 text-start fw-bold fs-4 text-uppercase gs-0">Hasil Parting
-                                        Produk</div>
+                                    <div class="col-md-12 text-start fw-bold fs-4 text-uppercase gs-0">Hasil Parting Produk</div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="col-md-12 text-end">
-                                        <a class="btn btn-sm btn-primary" id="add-row-parting">
-                                            <i class="fa-solid fa-plus"></i>Tambah Hasil Parting
+                                        <a class="btn btn-sm btn-primary" id="add-row-weight">
+                                            <i class="fa-solid fa-plus"></i>Tambah Baris
                                         </a>
                                     </div>
                                 </div>
+                                {{-- <div class="col-md-6">
+                                    <div class="col-md-12 text-end">
+                                        <a class="btn btn-sm btn-primary" id="cek-submit">
+                                            <i class="fa-solid fa-plus"></i>Cek submit
+                                        </a>
+                                    </div>
+                                </div> --}}
                             </div>
                             <div class="table-responsive">
                                 <!--begin::Table-->
-                                <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0" id="kt_parting_table">
+                                <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0" id="kt_products_table">
                                     <thead>
-                                        <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
-                                            <th class="min-w-70px">Nama Produk</th>
-                                            <th class="min-w-70px">Kuantitas (Kg)</th>
-                                            <th class="min-w-70px text-center">Action</th>
+                                        <tr id="table-head-row" class="text-start fw-bold fs-7 text-uppercase gs-0">
+                                            <th class="min-w-50px text-center">#</th>
+                                            <!-- Headers will be dynamically inserted here -->
                                         </tr>
                                     </thead>
                                     <tbody class="fw-semibold text-gray-600">
@@ -245,41 +250,6 @@
                         <!--end::Card body-->
                     </div>
 
-                    <div class="card card-flush py-4 flex-row-fluid overflow-hidden">
-                        <!--begin::Card body-->
-                        <div class="card-body pt-10 overflow-x-auto">
-                            <div class="row mb-5">
-                                <div class="col-md-6">
-                                    <div class="col-md-12 text-start fw-bold fs-4 text-uppercase gs-0">Pengaturan Harga
-                                        Produk</div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="col-md-12 text-end">
-                                        <a class="btn btn-sm btn-primary" id="add-row-harga">
-                                            <i class="fa-solid fa-plus"></i>Tambah Produk
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="table-responsive">
-                                <!--begin::Table-->
-                                <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0" id="kt_harga_table">
-                                    <thead>
-                                        <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
-                                            <th class="min-w-70px">Nama Produk</th>
-                                            <th class="min-w-70px">Base Price</th>
-                                            <th class="min-w-70px">Sale Price</th>
-                                            <th class="min-w-70px text-center">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="fw-semibold text-gray-600">
-                                    </tbody>
-                                </table>
-                                <!--end::Table-->
-                            </div>
-                        </div>
-                        <!--end::Card body-->
-                    </div>
                 </div>
                 <!--end::Row-->
             </div>
@@ -379,74 +349,54 @@ function updatePercentageRancung() {
     var totalLiveWeight = parseFloat($("#total_live_chickens_weight").val()) || 0;
     var totalNetWeight = parseFloat($("#total_weight_live_to_rancung").val()) || 0;
 
-    var percentage = totalLiveWeight > 0 ? ((totalNetWeight / totalLiveWeight) * 100).toFixed(2) : 0;
+    var percentage = totalLiveWeight > 0 ? (((totalLiveWeight - totalNetWeight) / totalLiveWeight) * 100).toFixed(2) : 0;
     $("#total_weight_live_to_rancung_percentage").val(percentage);
 }
-
 
 // fresh cut end here
 
 // parting script
-$(document).on("click", "#add-row-parting", function(e) {
-    e.preventDefault();
+// $(document).on("click", "#add-row-parting", function(e) {
+//     e.preventDefault();
 
-    var productOptions = `@foreach($products as $product)
-                            <option value="{{ $product->id }}" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">{{ $product->name }}</option>
-                          @endforeach`;
+//     var productOptions = `@foreach($products as $product)
+//                             <option value="{{ $product->id }}" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">{{ $product->name }}</option>
+//                           @endforeach`;
 
-    var row = `<tr data-product-id="">
-                    <td>
-                        <select class="form-select form-select-sm product-select">
-                            <option value="">Pilih Produk</option>
-                            ${productOptions}
-                        </select>
-                    </td>
-                    <td>
-                        <input class="form-control form-control-sm me-2 quantity" type="number"
-                            name="quantity" step="0.01" min="0"/>
-                    </td>
-                    <td class="text-center">
-                        <a href="#" class="btn btn-sm btn-light btn-active-light-primary delete-parting-row">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </a>
-                    </td>
-                </tr>`;
+//     var row = `<tr data-product-id="">
+//                     <td>
+//                         <select class="form-select form-select-sm product-select">
+//                             <option value="">Pilih Produk</option>
+//                             ${productOptions}
+//                         </select>
+//                     </td>
+//                     <td>
+//                         <input class="form-control form-control-sm me-2 quantity" type="number"
+//                             name="quantity" step="0.01" min="0"/>
+//                     </td>
+//                     <td class="text-center">
+//                         <a href="#" class="btn btn-sm btn-light btn-active-light-primary delete-parting-row">
+//                             <i class="fa-solid fa-trash-can"></i>
+//                         </a>
+//                     </td>
+//                 </tr>`;
 
-    var $row = $(row);
+//     var $row = $(row);
 
-    // Update the tr's data-product-id when a product is selected
-    $row.find(".product-select").on("change", function() {
-        var selectedProductId = $(this).val();
-        var selectedProductName = $(this).find("option:selected").text();
+//     $("#kt_parting_table tbody").append($row);
+// });
 
-        if (selectedProductId) {
-            $row.attr("data-product-id", selectedProductId);
-
-            // Check if product already exists in harga table
-            if ($("#kt_harga_table tbody tr[data-harga-product-id='" + selectedProductId + "']")
-                .length === 0) {
-                // Add new row in Harga Table only if it doesn't exist
-                var hargaRow = `<tr data-harga-product-id="${selectedProductId}">
-                                    <td>
-                                        <p>${selectedProductName}</p>
-                                    </td>
-                                    <td>
-                                        <input class="form-control form-control-sm me-2 base_price" type="number"
-                                            name="base_price" min="0" required/>
-                                    </td>
-                                    <td>
-                                        <input class="form-control form-control-sm me-2 sale_price" type="number"
-                                            name="sale_price" min="0" required/>
-                                    </td>
-                                </tr>`;
-
-                $("#kt_harga_table tbody").append(hargaRow);
-            }
-        }
-    });
-
-    $("#kt_parting_table tbody").append($row);
-});
+// Parting script - Assign product ID when selecting a product
+// $(document).on("change", ".product-select", function() {
+//     var selectedOption = $(this).find("option:selected");
+//     var productId = selectedOption.data("product-id");
+//     console.log(selectedOption);
+//     console.log(productId);
+    
+    
+//     // Assign the data-product-id to the row
+//     $(this).closest("tr").attr("data-product-id", productId);
+// });
 
 
 
@@ -461,41 +411,36 @@ function updateTotalWeightRancungToParting() {
 }
 
 // Trigger update when quantity inputs change
-$(document).on("input", ".quantity", function() {
-    updateTotalWeightRancungToParting();
-});
+// $(document).on("input", ".quantity", function() {
+//     updateTotalWeightRancungToParting();
+// });
 
 // Ensure the total is recalculated if new rows are added dynamically
-$(document).on("DOMNodeInserted", "#kt_parting_table tbody", function() {
-    updateTotalWeightRancungToParting();
-});
+// $(document).on("DOMNodeInserted", "#kt_parting_table tbody", function() {
+//     updateTotalWeightRancungToParting();
+// });
 
 function updateRancungToPartingPercentage() {
     let totalRancungToParting = parseFloat($("#total_weight_rancung_to_parting").val()) || 0;
     let totalLiveToRancung = parseFloat($("#total_weight_live_to_rancung").val()) || 0;
 
-    if (totalLiveToRancung > 0) {
-        let percentage = (totalRancungToParting / totalLiveToRancung) * 100;
-        $("#total_weight_rancung_to_parting_percentage").val(percentage.toFixed(2));
-    } else {
-        $("#total_weight_rancung_to_parting_percentage").val("0.00");
-    }
+    let percentage = totalLiveToRancung > 0
+        ? ((totalLiveToRancung - totalRancungToParting) / totalLiveToRancung) * 100 
+        : 0;
+    
+    $("#total_weight_rancung_to_parting_percentage").val(percentage.toFixed(2));
 }
 
+
 // Update total_weight_live_to_rancung when a row is deleted
-$(document).on("click", ".delete-parting-row", function(e) {
-    e.preventDefault();
-    $(this).closest("tr").remove();
-    updateTotalWeightRancungToParting();
-});
-
-
+// $(document).on("click", ".delete-parting-row", function(e) {
+//     e.preventDefault();
+//     $(this).closest("tr").remove();
+//     updateTotalWeightRancungToParting();
+// });
 
 // parting end here
 
-// harga script start
-
-// harga script end
 
 // header script
 document.addEventListener("DOMContentLoaded", function() {
@@ -513,6 +458,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Set the value in the input field
     document.getElementById("parting_date").value = jakartaDate;
+    fetchProducts();
 });
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -539,6 +485,111 @@ document.addEventListener("DOMContentLoaded", function() {
 // header script end here
 
 // submit script start
+// $(document).ready(function() {
+//     $("#btn-submit-ar").click(function(e) {
+//         e.preventDefault(); // Prevent default button behavior
+
+//         // SweetAlert confirmation
+//         Swal.fire({
+//             title: "Are you sure?",
+//             text: "You are about to submit the data.",
+//             icon: "warning",
+//             showCancelButton: true,
+//             confirmButtonColor: "#3085d6",
+//             cancelButtonColor: "#d33",
+//             confirmButtonText: "Yes, submit it!"
+//         }).then((result) => {
+//             if (result.isConfirmed) {
+//                 // Prepare payload
+//                 // header data
+//                 let branchId = $("#branch_id").val();
+//                 let partingDate = $("#parting_date").val();
+//                 let butcherId = $("#butcher_id").val();
+//                 let totalLiveChickens = $("#total_live_chickens").val();
+//                 let totalLiveChickensWeight = $("#total_live_chickens_weight").val();
+//                 let totalWeightLiveToRancung = $("#total_weight_live_to_rancung").val();
+//                 let totalWeightRancungToParting = $("#total_weight_rancung_to_parting").val();
+
+//                 // fresh cut data
+//                 let rancungData = [];
+//                 $("#kt_items_table tbody tr").each(function() {
+//                     let totalChickens = $(this).find(".total-chickens").val();
+//                     let weight = $(this).find(".weight").val();
+//                     let containerWeight = $(this).find(".container-weight").val();
+//                     let netWeight = $(this).find(".net_weight").val();
+
+//                     // Push as an object into the array
+//                     rancungData.push({
+//                         total_chickens: totalChickens,
+//                         weight: weight,
+//                         container_weight: containerWeight,
+//                         net_weight: netWeight
+//                     });
+//                 });
+
+//                 // parting data
+//                 let partingData = [];
+//                 $("#kt_parting_table tbody tr").each(function() {
+//                     let productId = $(this).find(".product-select").val();
+//                     let quantity = $(this).find(".quantity").val();
+
+//                     // Ensure the productId is not empty
+//                     if (productId && quantity && quantity !== "0") {
+//                         partingData.push({
+//                             product_id: productId,
+//                             quantity: quantity
+//                         });
+//                     }
+//                 });
+
+//                 // Add your payload data here
+//                 let formData = {
+//                     branch_id: branchId,
+//                     parting_date: partingDate,
+//                     butcher_id: butcherId,
+//                     total_live_chickens: totalLiveChickens,
+//                     total_live_chickens_weight: totalLiveChickensWeight,
+//                     total_weight_live_to_rancung: totalWeightLiveToRancung,
+//                     total_weight_rancung_to_parting: totalWeightRancungToParting,
+//                     rancung_data: rancungData,
+//                     parting_data: partingData,
+//                 };
+
+//                 // Console log instead of AJAX for testing
+//                 console.log("Submitting Data:", formData);
+
+//                 // AJAX request
+//                 $.ajax({
+//                     url: "/stock-logs/parting/save", // Update with your actual API endpoint
+//                     type: "POST",
+//                     contentType: "application/json",
+//                     data: JSON.stringify(formData),
+//                     headers: {
+//                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+//                     },
+//                     success: function(response) {
+//                         Swal.fire({
+//                             title: "Success!",
+//                             text: "Data submitted successfully.",
+//                             icon: "success"
+//                         }).then(() => {
+//                             location.reload(); // Reload after success
+//                         });
+//                     },
+//                     error: function(xhr, status, error) {
+//                         Swal.fire({
+//                             title: "Error!",
+//                             text: "There was an issue submitting the data.",
+//                             icon: "error"
+//                         });
+//                         console.error("AJAX Error:", xhr.responseText);
+//                     }
+//                 });
+//             }
+//         });
+//     });
+// });
+
 $(document).ready(function() {
     $("#btn-submit-ar").click(function(e) {
         e.preventDefault(); // Prevent default button behavior
@@ -555,10 +606,9 @@ $(document).ready(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 // Prepare payload
-                // header data
                 let branchId = $("#branch_id").val();
                 let partingDate = $("#parting_date").val();
-                let butcherId = 1;
+                let butcherId = $("#butcher_id").val();
                 let totalLiveChickens = $("#total_live_chickens").val();
                 let totalLiveChickensWeight = $("#total_live_chickens_weight").val();
                 let totalWeightLiveToRancung = $("#total_weight_live_to_rancung").val();
@@ -572,7 +622,6 @@ $(document).ready(function() {
                     let containerWeight = $(this).find(".container-weight").val();
                     let netWeight = $(this).find(".net_weight").val();
 
-                    // Push as an object into the array
                     rancungData.push({
                         total_chickens: totalChickens,
                         weight: weight,
@@ -581,39 +630,23 @@ $(document).ready(function() {
                     });
                 });
 
-                // parting data
+                // Parting Data dari product
                 let partingData = [];
-                $("#kt_parting_table tbody tr").each(function() {
-                    let productId = $(this).data("product-id");
-                    let quantity = $(this).find(".quantity").val();
+                $("#kt_products_table thead th[data-id]").each(function() {
+                    let productId = $(this).data("id");
+                    let sumWeight = 0;
 
-                    // Ensure quantity is not empty, null, undefined, or 0
-                    if (quantity && quantity !== "0") {
-                        partingData.push({
-                            product_id: productId,
-                            quantity: quantity
-                        });
+                    $("#kt_products_table tbody tr").each(function() {
+                        let weight = parseFloat($(this).find(`td[data-id='${productId}'] input`).val()) || 0;
+                        sumWeight += weight;
+                    });
+
+                    if (sumWeight > 0) {
+                        partingData.push({ product_id: productId, quantity: sumWeight });
                     }
                 });
 
-                // harga data
-                let priceData = [];
-                $("#kt_harga_table tbody tr").each(function() {
-                    let productId = $(this).data("harga-product-id");
-                    let basePrice = $(this).find(".base_price").val();
-                    let salePrice = $(this).find(".sale_price").val();
-
-                    if (basePrice && basePrice !== "0" && salePrice && salePrice !==
-                        "0") {
-                        priceData.push({
-                            product_id: productId,
-                            base_price: basePrice,
-                            sale_price: salePrice
-                        });
-                    }
-                });
-
-                // Add your payload data here
+                // Final Payload
                 let formData = {
                     branch_id: branchId,
                     parting_date: partingDate,
@@ -624,15 +657,13 @@ $(document).ready(function() {
                     total_weight_rancung_to_parting: totalWeightRancungToParting,
                     rancung_data: rancungData,
                     parting_data: partingData,
-                    price_data: priceData
                 };
 
-                // Console log instead of AJAX for testing
                 console.log("Submitting Data:", formData);
 
                 // AJAX request
                 $.ajax({
-                    url: "/stock-logs/parting/save", // Update with your actual API endpoint
+                    url: "/partings/save",
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify(formData),
@@ -645,7 +676,7 @@ $(document).ready(function() {
                             text: "Data submitted successfully.",
                             icon: "success"
                         }).then(() => {
-                            location.reload(); // Reload after success
+                            location.reload(); 
                         });
                     },
                     error: function(xhr, status, error) {
@@ -662,6 +693,128 @@ $(document).ready(function() {
     });
 });
 
+
+
 // submit script end
+
+function fetchProducts() {
+    $.ajax({
+        url: "/api/allProductsInAllBranches", // Replace with your API URL
+        method: "GET",
+        dataType: "json",
+        success: function (response) {
+            console.log("API Response:", response); // Debugging: Check the actual API response
+
+            let headerRow = $("#table-head-row");
+
+            // Preserve the first column (row numbering)
+            headerRow.html(`<th class="min-w-50px text-center">#</th>`);
+
+            // Ensure response contains 'data' array
+            if (!response.data || response.data.length === 0) {
+                console.warn("No products found in response!");
+                return;
+            }
+
+            // Append dynamic product columns
+            response.data.forEach(function (product) {
+                if (!product.id || !product.name) {
+                    console.warn("Missing product data:", product);
+                    return;
+                }
+                headerRow.append(`<th class="min-w-150px" data-id="${product.id}">${product.name}</th>`);
+            });
+
+            console.log("Headers added successfully!");
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching products:", error);
+        }
+    });
+}
+
+
+$(document).on("click", "#add-row-weight", function(e) {
+    e.preventDefault();
+
+    var rowCount = $("#kt_products_table tbody tr").length + 1; // Get the next row number
+
+    var row = `<tr>
+                    <td class="text-center">${rowCount}</td>`; // Numbering column
+
+    // Loop through all headers (excluding the first `#` column) and add empty cells
+    $("#table-head-row th:not(:first)").each(function() {
+        var productId = $(this).data("id"); // Get product ID from <th> data-id
+        row += `<td data-id="${productId}">
+                    <input type="text" class="form-control weight-input" placeholder="Enter weight">
+                </td>`;
+    });
+
+    row += `</tr>`;
+
+    $("#kt_products_table tbody").append(row);
+});
+
+// $(document).on("click", "#cek-submit", function (e) {
+//     e.preventDefault();
+
+//     let productSums = {}; // Store sum of weights for each product
+
+//     // Get product IDs from table headers
+//     $("#table-head-row th:not(:first)").each(function () {
+//         let productId = $(this).attr("data-id"); // Get product ID
+//         if (productId) {
+//             productSums[productId] = 0; // Initialize sum
+//         }
+//     });
+
+//     // Loop through each row and sum the weights for each product
+//     $("#kt_products_table tbody tr").each(function () {
+//         $(this).find("td:not(:first)").each(function () {
+//             let productId = $(this).attr("data-id"); // Get product ID
+//             let inputValue = parseFloat($(this).find("input").val()) || 0; // Get input value
+
+//             if (productId && inputValue > 0) {
+//                 productSums[productId] += inputValue; // Sum the weight
+//             }
+//         });
+//     });
+
+//     // Convert to an array of objects, removing products with sum_weight = 0
+//     let payload = Object.keys(productSums)
+//         .filter(productId => productSums[productId] > 0)
+//         .map(productId => ({
+//             product_id: parseInt(productId),
+//             sum_weight: productSums[productId]
+//         }));
+
+//     console.log("Payload to send:", payload); // Debugging: Check output in console
+// });
+
+$("#kt_products_table tbody").on("input", "td input", function() {
+    updateTotalWeightRancungToParting();
+});
+
+function updateTotalWeightRancungToParting() {
+    let totalWeight = 0;
+
+    // Loop through all product columns in the table body and sum up the values
+    $("#kt_products_table tbody tr").each(function() {
+        $(this).find("td input").each(function() {
+            let weight = parseFloat($(this).val()) || 0;
+            totalWeight += weight;
+        });
+    });
+
+    // Set the total weight
+    $("#total_weight_rancung_to_parting").val(totalWeight.toFixed(2));
+
+    // Invoke the existing function
+    updateRancungToPartingPercentage();
+}
+
+
+
+
 </script>
 @endsection

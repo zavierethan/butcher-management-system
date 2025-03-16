@@ -84,21 +84,31 @@ class ProductController extends Controller
             // Retrieve all branches
             $branches = DB::table('branches')->get();
 
-            // Prepare product_details entries
-            $productDetails = $branches->map(function ($branch) use ($productId) {
-                return [
+            // Prepare product_details and stock entries
+            $productDetails = [];
+            $stocks = [];
+
+            foreach ($branches as $branch) {
+                $productDetails[] = [
                     'product_id' => $productId,
                     'branch_id' => $branch->id,
                 ];
-            })->toArray();
+
+                $stocks[] = [
+                    'product_id' => $productId,
+                    'branch_id' => $branch->id,
+                ];
+            }
 
             // Insert into product_details
             DB::table('product_details')->insert($productDetails);
+
+            // Insert into stocks
+            DB::table('stocks')->insert($stocks);
         });
 
         return redirect()->route('products.index');
     }
-
 
     public function edit($id) {
         $product = DB::table('products')->where('id', $id)->first();

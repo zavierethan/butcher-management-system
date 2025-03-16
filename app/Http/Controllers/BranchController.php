@@ -41,26 +41,45 @@ class BranchController extends Controller
     public function save(Request $request) {
         $baseUrl = config('app.url');
 
-        // Insert branch baru ke branches table dan get ID nya
-        $branchId = DB::table('branches')->insertGetId([
-            "code" => $request->code,
-            "name" => $request->name,
-            "address" => $request->address,
-            "phone_number" => $request->phone_number,
-            "is_active" => $request->is_active,
-        ]);
+        DB::transaction(function () use ($request) {
+            // Insert new branch and retrieve its ID
+            $branchId = DB::table('branches')->insertGetId([
+                "code" => $request->code,
+                "name" => $request->name,
+                "address" => $request->address,
+                "phone_number" => $request->phone_number,
+                "is_active" => $request->is_active,
+            ]);
 
-        $products = DB::table('products')->get();
-        // buat entry product details untuk di insert
-        $productDetails = $products->map(function ($product) use ($branchId) {
-            return [
-                'product_id' => $product->id,
-                'branch_id' => $branchId,
-            ];
-        })->toArray();
+            // Retrieve all existing products
+            $products = DB::table('products')->get();
 
-        // Insert product details untuk branch baru tersebut
-        DB::table('product_details')->insert($productDetails);
+            // Prepare product_details and stock entries
+            $productDetails = [];
+            $stocks = [];
+
+            foreach ($products as $product) {
+                $productDetails[] = [
+                    'product_id' => $product->id,
+                    'branch_id' => $branchId,
+                ];
+
+                $stocks[] = [
+                    'product_id' => $product->id,
+                    'branch_id' => $branchId,
+                ];
+            }
+
+            // Insert product_details for the new branch
+            if (!empty($productDetails)) {
+                DB::table('product_details')->insert($productDetails);
+            }
+
+            // Insert stock entries for the new branch
+            if (!empty($stocks)) {
+                DB::table('stocks')->insert($stocks);
+            }
+        });
 
         return redirect()->route('branches.index');
     }

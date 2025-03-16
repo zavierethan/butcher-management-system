@@ -400,13 +400,19 @@ Route::group(['middleware' => ['auth']], function() {
         Route::name('stocks.')->group(function () {
             Route::get('/', [App\Http\Controllers\StockController::class, 'index'])->name('index');
             Route::get('/lists', [App\Http\Controllers\StockController::class, 'getLists'])->name('get-lists');
-            Route::get('/create', [App\Http\Controllers\StockController::class, 'create'])->name('create');
-            Route::post('/save', [App\Http\Controllers\StockController::class, 'save'])->name('save');
-            Route::post('/update-opname', [App\Http\Controllers\StockController::class, 'updateOpname'])->name('update-opname');
             Route::get('/export', [App\Http\Controllers\StockController::class, 'export'])->name('export');
-            // Route::get('/edit/{id}', [App\Http\Controllers\StockController::class, 'edit'])->name('edit');
-            // Route::post('/update', [App\Http\Controllers\StockController::class, 'update'])->name('update');
-            Route::get('/mutableList', [App\Http\Controllers\StockController::class, 'getMutableList'])->name('get-mutable-list');
+            Route::get('/opnames/{stockId}', [App\Http\Controllers\StockController::class, 'opnameIndex'])->name('opname-index');
+            Route::get('/opnames/{stockId}/list', [App\Http\Controllers\StockController::class, 'getOpnameList'])->name('get-opname-list');
+            Route::get('/create-opname', [App\Http\Controllers\StockController::class, 'createOpname'])->name('create-opname');
+            Route::post('/opnames/save', [App\Http\Controllers\StockController::class, 'saveOpname'])->name('save-opname');
+            Route::post('/update-opname', [App\Http\Controllers\StockController::class, 'updateOpname'])->name('update-opname');
+        });
+    });
+
+    Route::prefix('partings')->group(function () {
+        Route::name('partings.')->group(function () {
+            Route::get('/', [App\Http\Controllers\PartingController::class, 'index'])->name('index');
+            Route::post('/save', [App\Http\Controllers\PartingController::class, 'save'])->name('save');
         });
     });
 
@@ -417,8 +423,6 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/new-stock-log/create', [App\Http\Controllers\StockLogController::class, 'create'])->name('create');
             Route::post('/save', [App\Http\Controllers\StockLogController::class, 'save'])->name('save');
             // Route::get('/edit/{id}', [App\Http\Controllers\StockController::class, 'edit'])->name('edit');
-            Route::get('/parting/index', [App\Http\Controllers\StockLogController::class, 'partingIndex'])->name('parting-index');
-            Route::post('/parting/save', [App\Http\Controllers\StockLogController::class, 'saveParting'])->name('save-parting');
             Route::get('/export/new', [App\Http\Controllers\StockLogController::class, 'export'])->name('export');
         });
     });
