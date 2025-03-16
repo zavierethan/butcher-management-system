@@ -346,15 +346,16 @@ class ProductController extends Controller
 
     public function productSettingBulkUpdate(Request $request) {
         $products = $request->input('products');
+        $branches = $request->input('branches');
 
         foreach ($products as $productData) {
 
-            if (!isset($productData['branch_id'])) {
+            if (!isset($productData['id'])) {
                 continue;
             }
 
             DB::table('product_details')
-                ->where('branch_id', $productData['branch_id'])
+                ->whereIn('branch_id', $branches)
                 ->where('product_id', $productData['id'])
                 ->update([
                     "cogs" => $productData['cogs'],

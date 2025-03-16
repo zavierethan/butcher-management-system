@@ -146,18 +146,16 @@
                                     <div class="fs-6 fw-semibold mt-2 mb-3">Branch (Store)</div>
                                 </div>
                                 <!--end::Col-->
-                                <!--begin::Col-->
                                 <div class="col-xl-9">
                                     <div class="d-flex fw-semibold h-100">
                                         @foreach($branches as $b)
                                         <div class="form-check form-check-custom form-check-solid me-9">
-                                            <input class="form-check-input" type="checkbox" value="0" id="email" />
-                                            <label class="form-check-label ms-3" for="email">{{$b->name}}</label>
+                                            <input class="form-check-input branch-checkbox" type="checkbox" value="{{$b->id}}" id="branch_{{$b->id}}" />
+                                            <label class="form-check-label ms-3" for="branch_{{$b->id}}">{{$b->name}}</label>
                                         </div>
                                         @endforeach
                                     </div>
                                 </div>
-                                <!--end::Col-->
                             </div>
                             <div class="text-end">
                                 <a href="{{route('branches.index')}}" class="btn btn-sm btn-danger">Kembali</a>
@@ -675,6 +673,12 @@ $(document).on('click', '#btn-bulk-update', function(e) {
             if (result.isConfirmed) {
                 let products = [];
 
+                let selectedBranches = [];
+
+                $(".branch-checkbox:checked").each(function () {
+                    selectedBranches.push($(this).val());
+                });
+
                 $("#product-table tr").each(function() {
                     if ($(this).hasClass('skip-row')) return;
                     let product = {
@@ -694,17 +698,16 @@ $(document).on('click', '#btn-bulk-update', function(e) {
                     products.push(product);
                 });
 
-                console.log(products);
-
                 $.ajax({
-                    url: `{{route('branches.product-setting-bulk-update')}}`,
+                    url: `{{route('products.product-setting-bulk-update')}}`,
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     data: JSON.stringify({
-                        products: products
+                        products: products,
+                        branches: selectedBranches
                     }),
                     success: function(response) {
                         Swal.fire({
@@ -715,7 +718,7 @@ $(document).on('click', '#btn-bulk-update', function(e) {
                             allowOutsideClick: false
                         }).then((result) => {
                             // Redirect the current page to the transaction index
-                            location.href = `{{ route('branches.index') }}`;
+                            location.href = `{{ route('products.index') }}`;
                         });
                     },
                     error: function(xhr, status, error) {
