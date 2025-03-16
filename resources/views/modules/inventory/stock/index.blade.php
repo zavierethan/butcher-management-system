@@ -40,8 +40,6 @@
                     <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export</a>
                     <!--end::Secondary button-->
                     <!--begin::Primary button-->
-                    <a href="{{route('stock-logs.parting-index')}}" class="btn btn-sm fw-bold btn-primary">Parting</a>
-                    <a href="{{route('stocks.create')}}" class="btn btn-sm fw-bold btn-primary">New Stock</a>
                     <!--end::Primary button-->
                 </div>
                 <!--end::Actions-->
@@ -100,12 +98,7 @@
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">Produk</th>
                                         <th class="min-w-125px">Cabang</th>
-                                        <th class="min-w-125px">HPP</th>
-                                        <th class="min-w-125px">Harga Jual</th>
-                                        <th class="min-w-125px">Kuantitas Awal</th>
                                         <th class="min-w-125px">Kuantitas Realtime</th>
-                                        <th class="min-w-125px">Hasil SO</th>
-                                        <th class="min-w-125px">Tanggal</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -131,58 +124,7 @@
     <!--end::Content wrapper-->
 </div>
 
-<div class="modal fade" id="kt_mutasi_main_modal" tabindex="-1" aria-hidden="true">
-    <!--begin::Modal dialog-->
-    <div class="modal-dialog mw-800px">
-        <!--begin::Modal content-->
-        <div class="modal-content">
-            <!--begin::Modal header-->
-            <div class="modal-header pb-0 border-0 justify-content-end">
-                <!--begin::Close-->
-                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
-                    <i class="ki-duotone ki-cross fs-1">
-                        <span class="path1"></span>
-                        <span class="path2"></span>
-                    </i>
-                </div>
-                <!--end::Close-->
-            </div>
-            <!--begin::Modal header-->
-            <!--begin::Modal body-->
-            <div class="modal-body scroll-y mx-5 mx-xl-18 pt-0 pb-15">
-                <!--begin::Heading-->
-                <div class="text-center mb-13">
-                    <!--begin::Title-->
-                    <h1 class="mb-3">Mutasi Stock Karkas</h1>
-                    <!--end::Title-->
-                </div>
-                <div class="table-responsive">
-                    <!--begin::Table-->
-                    <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0" id="kt_mutasi_table">
-                        <thead>
-                            <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
-                                <th class="min-w-70px">Produk</th>
-                                <th class="min-w-70px">Kuantitas Realtime</th>
-                                <th class="min-w-70px">Kuantitas Masuk</th>
-                            </tr>
-                        </thead>
-                        <tbody class="fw-semibold text-gray-600">
 
-                        </tbody>
-                    </table>
-                    <!--end::Table-->
-                </div>
-                <div class="separator my-5"></div>
-                <div class="text-end">
-                    <button type="button" class="btn btn-primary" id="btn-form-confirm-mutasi">Submit</button>
-                </div>
-            </div>
-            <!--end::Modal body-->
-        </div>
-        <!--end::Modal content-->
-    </div>
-    <!--end::Modal dialog-->
-</div>
 @endsection
 
 @section('script')
@@ -226,12 +168,7 @@
                     return `${row.branch_code} - ${row.branch_name}`;
                 }
             },
-            { data: 'base_price', name: 'base_price' },
-            { data: 'sale_price', name: 'sale_price' },
-            { data: 'quantity', name: 'quantity' },
             { data: 'realtime_quantity', name: 'realtime_quantity' },
-            { data: 'opname_quantity', name: 'opname_quantity' },
-            { data: 'date', name: 'date' },
             {
                 data: null, // No direct field from the server
                 name: 'action',
@@ -241,16 +178,8 @@
                     let actionButtons = `
                         <div class="text-center">
                             <a href="/stock-logs/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Details</a>
+                        </div>
                     `;
-
-                    if (row.product_name.toLowerCase() === 'karkas') {
-                        actionButtons += `
-                            <a href="/mutasi/${row.id}" class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                        data-bs-target="#kt_mutasi_main_modal">Mutasi</a>
-                        `;
-                    }
-
-                    actionButtons += `</div>`;
                     return actionButtons;
                 }
             }
@@ -314,37 +243,6 @@
         });
 
     });
-
-    // script mutasi
-
-    const mutationTable = $("#kt_mutasi_table").DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url: `{{ route('stocks.get-mutable-list') }}`,
-            type: 'GET'
-        },
-        columns: [
-            {
-                data: null,
-                name: 'product_code_name',
-                render: function (data, type, row) {
-                    return `${row.product_code} - ${row.product_name}`;
-                }
-            },
-            { data: 'realtime_quantity', name: 'realtime_quantity' },
-            {
-                data: null,
-                name: 'input_quantity',
-                orderable: false,
-                searchable: false,
-                render: function (data, type, row) {
-                    return `<input type="number" class="form-control form-control-sm quantity-input" data-id="${row.id}" value="0" min="0">`;
-                }
-            }
-        ]
-    });
-
-
+    
 </script>
 @endsection
