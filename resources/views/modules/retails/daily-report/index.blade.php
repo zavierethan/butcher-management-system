@@ -330,8 +330,8 @@
                                     <thead>
                                         <!--begin::Table row-->
                                         <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-                                            <th class="min-w-150px">Item</th>
                                             <th class="min-w-100px">Product ID</th>
+                                            <th class="min-w-150px">Item</th>
                                             <th class="min-w-150px">Date</th>
                                             <th class="min-w-75px">Qty</th>
                                             <th class="min-w-100px">Status</th>
