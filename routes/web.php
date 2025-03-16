@@ -100,6 +100,9 @@ Route::group(['middleware' => ['auth']], function() {
             Route::post('/update', [App\Http\Controllers\ProductController::class, 'update'])->name('update');
             Route::get('/carcass-items', [App\Http\Controllers\ProductController::class, 'getListProductsForCarcass'])->name('get-lists-carcass');
             Route::post('/update-formula', [App\Http\Controllers\ProductController::class, 'updateFormula'])->name('update-formula');
+
+            Route::get('/product-settings', [App\Http\Controllers\ProductController::class, 'productSettings'])->name('product-settings');
+            Route::post('/product-settings/bulk-update', [App\Http\Controllers\ProductController::class, 'productSettingBulkUpdate'])->name('product-setting-bulk-update');
         });
     });
 

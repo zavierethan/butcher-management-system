@@ -548,8 +548,7 @@
                                         </select>
                                     </div>
                                     <div class="col-md-3">
-                                        <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Store"
-                                            id="branch-id">
+                                        <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Store" id="branch-id" disabled>
                                             @foreach($branches as $branch)
                                             <option value="{{$branch->id}}"
                                                 <?php echo ($branch->id == Auth::user()->branch_id) ? "selected" : ""; ?>>{{$branch->code}}

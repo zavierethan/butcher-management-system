@@ -317,4 +317,48 @@ class ProductController extends Controller
 
         return response()->json($response);
     }
+
+    public function productSettings() {
+        $branches = DB::table('branches')->orderBy('id')->get();
+
+        $products = DB::table('products')
+            ->select(
+                'products.id',
+                'products.name',
+                'products.code',
+                'products.group_flag',
+            )
+            ->orderBy('sort_order', 'asc')
+            ->get();
+
+        return view('modules.master.product.product-settings', compact('branches', 'products'));
+    }
+
+    public function productSettingBulkUpdate(Request $request) {
+        $products = $request->input('products');
+
+        foreach ($products as $productData) {
+
+            if (!isset($productData['branch_id'])) {
+                continue;
+            }
+
+            DB::table('product_details')
+                ->where('branch_id', $productData['branch_id'])
+                ->where('product_id', $productData['id'])
+                ->update([
+                    "cogs" => $productData['cogs'],
+                    "margin" => $productData['margin'],
+                    "margin_price" => $productData['margin_price'],
+                    "cogs_plus_margin" => $productData['cogs_plus_margin'],
+                    "price" => $productData['final_sale_price'],
+                    "discount" => $productData['discount'],
+                    "start_period" => $productData['disc_start'],
+                    "end_period" => $productData['disc_end'],
+                    "is_active" => $productData['active_status'],
+                ]);
+        }
+
+        return response()->json(["message" => "Products updated successfully"]);
+    }
 }

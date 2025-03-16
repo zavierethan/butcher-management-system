@@ -93,6 +93,8 @@ class BranchController extends Controller
     public function productSettings($id) {
         $branch = DB::table('branches')->where('id', $id)->first();
 
+        $branches = DB::table('branches')->orderBy('id')->get();
+
         $products = DB::table('product_details')
             ->leftJoin('products', 'products.id', '=', 'product_details.product_id')
             ->select(
@@ -101,9 +103,11 @@ class BranchController extends Controller
                 'products.name',
                 'products.code',
                 'products.group_flag',
-                'product_details.cogs',
-                'product_details.cogs_plus_margin',
-                'product_details.price',
+                DB::raw("TO_CHAR(product_details.cogs, 'FM999,999,999') as cogs"),
+                'product_details.margin',
+                DB::raw("TO_CHAR(product_details.margin_price, 'FM999,999,999') as margin_price"),
+                DB::raw("TO_CHAR(product_details.cogs_plus_margin, 'FM999,999,999') as cogs_plus_margin"),
+                DB::raw("TO_CHAR(product_details.price, 'FM999,999,999') as price"),
                 'product_details.discount',
                 'product_details.start_period',
                 'product_details.end_period',
@@ -113,7 +117,7 @@ class BranchController extends Controller
             ->orderBy('sort_order', 'asc')
             ->get();
 
-        return view('modules.master.branch.product-setting', compact('branch', 'products'));
+        return view('modules.master.branch.product-setting', compact('branch', 'branches', 'products'));
     }
 
     public function productSettingBulkUpdate(Request $request) {
@@ -130,6 +134,8 @@ class BranchController extends Controller
                 ->where('product_id', $productData['id'])
                 ->update([
                     "cogs" => $productData['cogs'],
+                    "margin" => $productData['margin'],
+                    "margin_price" => $productData['margin_price'],
                     "cogs_plus_margin" => $productData['cogs_plus_margin'],
                     "price" => $productData['final_sale_price'],
                     "discount" => $productData['discount'],
