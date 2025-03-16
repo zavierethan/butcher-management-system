@@ -398,6 +398,11 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/', [App\Http\Controllers\StockController::class, 'index'])->name('index');
             Route::get('/lists', [App\Http\Controllers\StockController::class, 'getLists'])->name('get-lists');
             Route::get('/export', [App\Http\Controllers\StockController::class, 'export'])->name('export');
+            Route::get('/opnames/{stockId}', [App\Http\Controllers\StockController::class, 'opnameIndex'])->name('opname-index');
+            Route::get('/opnames/{stockId}/list', [App\Http\Controllers\StockController::class, 'getOpnameList'])->name('get-opname-list');
+            Route::get('/create-opname', [App\Http\Controllers\StockController::class, 'createOpname'])->name('create-opname');
+            Route::post('/opnames/save', [App\Http\Controllers\StockController::class, 'saveOpname'])->name('save-opname');
+            Route::post('/update-opname', [App\Http\Controllers\StockController::class, 'updateOpname'])->name('update-opname');
         });
     });
 

@@ -116,4 +116,103 @@ class StockController extends Controller
             'Expires' => '0',
         ]);
     }
+
+    public function opnameIndex($id) {
+        $stockHeader = $stock = DB::table('stocks')
+            ->select(
+                'stocks.*',
+                'products.id as product_id',
+                'products.code as product_code',
+                'products.name as product_name',
+                'branches.id as branch_id',
+                'branches.code as branch_code',
+                'branches.name as branch_name',
+                DB::raw('COALESCE(SUM(sl.in_quantity), 0) - COALESCE(SUM(sl.out_quantity), 0) as total_quantity')
+            )
+            ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
+            ->leftJoin('branches', 'stocks.branch_id', '=', 'branches.id')
+            ->leftJoin('stock_logs as sl', 'stocks.id', '=', 'sl.stock_id')
+            ->where('stocks.id', $id)
+            ->groupBy('stocks.id', 'products.id', 'products.code', 'products.name', 'branches.id', 'branches.code', 'branches.name')
+            ->first();
+
+        return view('modules.inventory.stock.opname.index', ['stockId' => $id], compact('stockHeader'));
+    }
+
+    public function getOpnameList(Request $request, $stockId) {
+
+        $params = $request->all();
+        $query = DB::table('stock_opnames')
+            ->select(
+                'stock_opnames.*'
+            )
+            ->where('stock_opnames.stock_id', '=', $stockId);
+
+        
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 10);
+
+        $totalRecords = $query->count();
+        $filteredRecords = $query->count();
+        $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get();
+
+        $response = [
+            'draw' => $request->input('draw'),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $data
+        ];
+
+        return response()->json($response);
+    }
+
+    public function saveOpname(Request $request) {
+        $validated = $request->validate([
+            'stock_id' => 'required|integer',
+            'quantity' => 'nullable|numeric|regex:/^\d+(\.\d{1,2})?$/',
+        ]);
+
+        // Start transaction to ensure both operations (stock log insertion and stock update) succeed or fail together
+        DB::beginTransaction();
+
+        try {
+            $stockOpname = DB::table('stock_opnames')->insertGetId([
+                'stock_id' => $validated['stock_id'],
+                'quantity' => $validated['quantity'] ?? 0,
+                'date' => Carbon::now('Asia/Jakarta'),
+            ]);
+
+            // Commit the transaction
+            DB::commit();
+
+            return redirect()->route('stocks.opname-index', ['stockId' => $validated['stock_id']]);
+        } catch (\Exception $e) {
+            // Rollback the transaction if something goes wrong
+            DB::rollBack();
+
+            return response()->json(['error' => 'An error occurred while processing the request.'], 500);
+        }
+    }
+
+    public function createOpname(Request $request) {
+        $stockId = $request->query('stockId');
+        return view('modules.inventory.stock.opname.create', compact('stockId'));
+    }
+
+    public function updateOpname(Request $request) {
+        $request->validate([
+                'id' => 'required|exists:stock_opnames,id',
+                'quantity' => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/']
+            ]);
+
+            DB::table('stock_opnames')
+                ->where('id', $request->id)
+                ->update([
+                    'quantity' => number_format($request->quantity, 2, '.', ''),
+                    'updated_at' => now()
+                ]);
+
+        return response()->json(['success' => true, 'message' => 'Quantity updated successfully']);
+    }
+
 }

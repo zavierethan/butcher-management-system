@@ -179,6 +179,9 @@
                         <div class="text-center">
                             <a href="/stock-logs/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Details</a>
                         </div>
+                        <div class="text-center">
+                            <a href="/stocks/opnames/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Opname</a>
+                        </div>
                     `;
                     return actionButtons;
                 }
