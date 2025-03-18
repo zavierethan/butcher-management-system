@@ -31,6 +31,14 @@ class AuthController extends Controller
 
         // Attempt authentication using name
         if (Auth::attempt($credentials)) {
+
+
+            $user = Auth::user();
+
+            if ($user->group_id == 10) {
+                return redirect('/transactions');
+            }
+
             return redirect()->route('dashboards.store');
         }
 
