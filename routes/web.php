@@ -413,7 +413,11 @@ Route::group(['middleware' => ['auth']], function() {
     Route::prefix('partings')->group(function () {
         Route::name('partings.')->group(function () {
             Route::get('/', [App\Http\Controllers\PartingController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\PartingController::class, 'getLists'])->name('get-lists');
+            Route::get('/create', [App\Http\Controllers\PartingController::class, 'create'])->name('create');
             Route::post('/save', [App\Http\Controllers\PartingController::class, 'save'])->name('save');
+            Route::get('/edit/{id}', [App\Http\Controllers\PartingController::class, 'edit'])->name('edit');
+            Route::post('/update', [App\Http\Controllers\PartingController::class, 'update'])->name('update');
         });
     });
 
