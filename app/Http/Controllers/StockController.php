@@ -172,22 +172,45 @@ class StockController extends Controller
             'quantity' => 'nullable|numeric|regex:/^\d+(\.\d{1,2})?$/',
         ]);
 
-        // Start transaction to ensure both operations (stock log insertion and stock update) succeed or fail together
         DB::beginTransaction();
 
         try {
-            $stockOpname = DB::table('stock_opnames')->insertGetId([
-                'stock_id' => $validated['stock_id'],
-                'quantity' => $validated['quantity'] ?? 0,
+            $stockId = $validated['stock_id'];
+            $opnameQuantity = $validated['quantity'] ?? 0;
+
+            // Calculate current stock balance from stock_logs
+            $currentStock = DB::table('stock_logs')
+                ->where('stock_id', $stockId)
+                ->selectRaw('COALESCE(SUM(in_quantity), 0) - COALESCE(SUM(out_quantity), 0) AS stock_balance')
+                ->first()->stock_balance;
+
+            // Determine stock adjustment amount
+            $adjustment = $currentStock - $opnameQuantity;
+
+            // Insert opname record
+            DB::table('stock_opnames')->insert([
+                'stock_id' => $stockId,
+                'quantity' => $opnameQuantity,
                 'date' => Carbon::now('Asia/Jakarta'),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
-            // Commit the transaction
+            // Insert adjustment entry in stock_logs
+            if ($adjustment != 0) {
+                DB::table('stock_logs')->insert([
+                    'stock_id' => $stockId,
+                    'in_quantity' => $adjustment < 0 ? abs($adjustment) : 0,
+                    'out_quantity' => $adjustment > 0 ? abs($adjustment) : 0,
+                    'date' => now(),
+                    'reference' => 'Stock Opname',
+                ]);
+            }
+
             DB::commit();
 
-            return redirect()->route('stocks.opname-index', ['stockId' => $validated['stock_id']]);
+            return redirect()->route('stocks.opname-index', ['stockId' => $stockId]);
         } catch (\Exception $e) {
-            // Rollback the transaction if something goes wrong
             DB::rollBack();
 
             return response()->json(['error' => 'An error occurred while processing the request.'], 500);
@@ -201,18 +224,60 @@ class StockController extends Controller
 
     public function updateOpname(Request $request) {
         $request->validate([
-                'id' => 'required|exists:stock_opnames,id',
-                'quantity' => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/']
-            ]);
+            'id' => 'required|exists:stock_opnames,id',
+            'quantity' => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/']
+        ]);
 
+        DB::beginTransaction();
+
+        try {
+            // Fetch opname details
+            $opname = DB::table('stock_opnames')
+                ->where('id', $request->id)
+                ->first();
+
+            if (!$opname) {
+                return response()->json(['error' => 'Stock opname not found.'], 404);
+            }
+
+            $stockId = $opname->stock_id;
+            $newQuantity = number_format($request->quantity, 2, '.', '');
+
+            // Fetch current stock balance from stock_logs
+            $currentStock = DB::table('stock_logs')
+                ->where('stock_id', $stockId)
+                ->selectRaw('COALESCE(SUM(in_quantity), 0) - COALESCE(SUM(out_quantity), 0) AS stock_balance')
+                ->first()->stock_balance;
+
+            // Calculate the adjustment
+            $adjustment = $currentStock - $newQuantity;
+
+            // Update stock_opnames quantity
             DB::table('stock_opnames')
                 ->where('id', $request->id)
                 ->update([
-                    'quantity' => number_format($request->quantity, 2, '.', ''),
+                    'quantity' => $newQuantity,
                     'updated_at' => now()
                 ]);
 
-        return response()->json(['success' => true, 'message' => 'Quantity updated successfully']);
+            // Insert adjustment entry in stock_logs if necessary
+            if ($adjustment != 0) {
+                DB::table('stock_logs')->insert([
+                    'stock_id' => $stockId,
+                    'in_quantity' => $adjustment < 0 ? abs($adjustment) : 0,
+                    'out_quantity' => $adjustment > 0 ? abs($adjustment) : 0,
+                    'date' => now(),
+                    'reference' => 'Stock Opname Adjustment'
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json(['success' => true, 'message' => 'Quantity updated successfully']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'An error occurred while updating the quantity.'], 500);
+        }
     }
 
 }
