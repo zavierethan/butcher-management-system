@@ -136,10 +136,10 @@
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">Item</th>
                                         <th class="min-w-125px">Catatan Tambahan</th>
-                                        <th class="min-w-125px">Tipe Item</th>
-                                        <th class="min-w-125px">Jumlah</th>
-                                        <th class="min-w-125px">Harga</th>
-                                        <th class="min-w-125px">Total Harga</th>
+                                        <th class="min-w-125px text-center">Tipe Item</th>
+                                        <th class="min-w-125px text-end">Jumlah</th>
+                                        <th class="min-w-125px text-end">Harga</th>
+                                        <th class="min-w-125px text-end">Total Harga</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -266,7 +266,8 @@ $("#btn-form-add-item").on("click", function() {
     var itemName = selectedOption.text();
     var itemNotes = $("#item-notes").val();
     var quantity = $("#quantity").val();
-    var price = $("#price").val();
+    var price = formatNumber($("#price").val());
+    var totalPrice = formatNumber(String(parseFloat($("#price").val()) * parseFloat($("#quantity").val())));
 
     // Create a new row with the data
     var row = `
@@ -276,10 +277,10 @@ $("#btn-form-add-item").on("click", function() {
                 <input type="hidden" value="${itemId}" class="item-id" />
             </td>
             <td class="item-notes">${itemNotes}</td>
-            <td class="item-category">${itemCategory}</td>
-            <td class="item-quantity">${quantity}</td>
-            <td class="item-price">${price}</td>
-            <td class="item-total-price">${price * quantity}</td>
+            <td class="item-category text-center">${itemCategory}</td>
+            <td class="item-quantity text-end">${quantity}</td>
+            <td class="item-price text-end">${price}</td>
+            <td class="item-total-price text-end">${totalPrice}</td>
             <td class="text-center">
                 <a href="#" class="btn btn-sm btn-danger" onclick="deleteRow(this)">Hapus</i></a>
             </td>
@@ -305,7 +306,7 @@ $("#category").on("change", function() {
     let url = "";
 
     if ($(this).val() === 'PR') {
-        url = `{{route('products.get-lists')}}`;
+        url = `{{route('products.get-single-lists')}}`;
     } else {
         url = `{{route('inventories.get-lists')}}`;
     }
@@ -338,9 +339,9 @@ $(document).on('click', '#btn-submit-request', function(e) {
                     // Get the text content of specific cells in the current row
                     var itemName = $(this).find("td:first-child").text().trim(); // Get text in the first <td> (trim to remove extra spaces)
                     var itemCategory = $(this).find(".item-category").text().trim();
-                    var itemQuantity = $(this).find(".item-quantity").text().trim();
-                    var itemPrice = $(this).find(".item-price").text().trim();
-                    var itemTotalPrice = $(this).find(".item-total-price").text().trim();
+                    var itemQuantity = $(this).find(".item-quantity").text().trim().replace(/,/g, "");
+                    var itemPrice = $(this).find(".item-price").text().trim().replace(/,/g, "");
+                    var itemTotalPrice = $(this).find(".item-total-price").text().trim().replace(/,/g, "");
 
                     itemLists.push({
                         item_id: itemId,
@@ -444,6 +445,13 @@ function getItems(url) {
             console.error('Error fetching products:', error);
         }
     });
+}
+
+function formatNumber(numStr) {
+    let cleaned = numStr.replace(/[^\d.]/g, '');
+    const parts = cleaned.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join('.');
 }
 </script>
 @endsection

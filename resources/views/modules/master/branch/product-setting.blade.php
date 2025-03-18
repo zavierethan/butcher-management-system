@@ -654,7 +654,7 @@ $(document).on('click', '#btn-generate-price', function() {
             if (productCode === "DGL") cogs = Math.round(cogs * prmDgl) + 3000;
 
             let margin = parseFloat($(this).find('.margin').val()) / 100;
-            let marginPrice = cogs * margin;
+            let marginPrice = Math.round(cogs * margin);
 
             if (productCode === "PHP") marginPrice += 2000;
             if (productCode === "SY") marginPrice += 1000;
@@ -669,7 +669,7 @@ $(document).on('click', '#btn-generate-price', function() {
             let cogs = parseFloat($(this).find('.cogs').val().replace(/,/g, ""));
 
             let margin = parseFloat($(this).find('.margin').val()) / 100;
-            let marginPrice = cogs * margin;
+            let marginPrice = Math.round(cogs * margin);
 
             let recommendedPrice = cogs + marginPrice;
             let finalSalePrice = roundUp(recommendedPrice);

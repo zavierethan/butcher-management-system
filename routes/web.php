@@ -94,6 +94,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::name('products.')->group(function () {
             Route::get('/', [App\Http\Controllers\ProductController::class, 'index'])->name('index');
             Route::get('/lists', [App\Http\Controllers\ProductController::class, 'getLists'])->name('get-lists');
+            Route::get('/single-lists', [App\Http\Controllers\ProductController::class, 'getSingleProduct'])->name('get-single-lists');
             Route::get('/create', [App\Http\Controllers\ProductController::class, 'create'])->name('create');
             Route::post('/save', [App\Http\Controllers\ProductController::class, 'save'])->name('save');
             Route::get('/edit/{id}', [App\Http\Controllers\ProductController::class, 'edit'])->name('edit');

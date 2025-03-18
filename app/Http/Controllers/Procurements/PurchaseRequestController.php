@@ -86,7 +86,7 @@ class PurchaseRequestController extends Controller
     }
 
     public function create() {
-        $branches = DB::table('branches')->where('is_active', 1)->get();
+        $branches = DB::table('branches')->where('is_active', 1)->orderBy('code', 'ASC')->get();
         $items = DB::table('products')->get();
         return view('modules.procurements.purchase-request.create', compact('branches', 'items'));
     }

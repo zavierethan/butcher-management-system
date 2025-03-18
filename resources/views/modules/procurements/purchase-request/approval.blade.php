@@ -171,8 +171,7 @@
                                     <div class="text-end">
                                         <a href="{{route('procurement.purchase-request.index')}}"
                                             class="btn btn-sm btn-danger">Kembali</a>
-                                        <a href="#" class="btn btn-sm btn-primary" id="btn-update-request">Update
-                                            Request</a>
+                                        <a href="#" class="btn btn-sm btn-primary" id="btn-update-request">Proses Approval</a>
                                     </div>
                                 </div>
                             </div>

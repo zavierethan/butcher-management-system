@@ -132,9 +132,10 @@
                                         <th class="min-w-20px">No.</th>
                                         <th class="min-w-125px">Item</th>
                                         <th class="min-w-125px text-center">Harga</th>
-                                        <th class="min-w-100px text-center">Jumlah</th>
+                                        <th class="min-w-100px text-center">Jumlah (Kg)</th>
                                         <th class="min-w-125px">Harga Aktual</th>
-                                        <th class="min-w-100px">Jumlah Aktual</th>
+                                        <th class="min-w-100px">Jumlah Aktual (Kg)</th>
+                                        <th class="min-w-100px">Jumlah Aktual (Ekor)</th>
                                         <th class="min-w-100px">Realisasi</th>
                                         <th class="min-w-100px">Catatan</th>
                                     </tr>
@@ -195,6 +196,7 @@ $("#purchase-order-id").on("change", function() {
                             <td class="item-quantity text-center">${items.quantity}</td>
                             <td class="text-center"><input class="form-control form-control-sm me-2 item-received-price" type="text" name="received_price" value="" /></td>
                             <td class="text-center"><input class="form-control form-control-sm me-2 item-received-quantity" type="text" name="received_quantity" value="" /></td>
+                            <td class="text-center"><input class="form-control form-control-sm me-2 item-received-quantity" type="text" name="received_unit_quantity" value="" /></td>
                             <td class="text-center">
                                 <div class="position-relative">
                                                 <select class="form-select item-realisation" data-control="select2"
