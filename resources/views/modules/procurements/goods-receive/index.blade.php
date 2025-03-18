@@ -196,11 +196,11 @@
                 render: function(data, type, row) {
                     var status = "";
 
-                    if (row.status == "pending") {
+                    if (row.status == 1) {
                         status = `<span class="badge bg-warning text-white">PENDING</span>`
                     }
 
-                    if (row.status == "goods_received") {
+                    if (row.status == 2) {
                         status = `<span class="badge bg-success text-white">Goods Received</span>`
                     }
 

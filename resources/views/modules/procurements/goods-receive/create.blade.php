@@ -100,9 +100,8 @@
                                             <div class="position-relative mb-3">
                                                 <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="payment_status" id="payment-status">
                                                     <option value="">-</option>
-                                                    <option value="1">Lunas</option>
-                                                    <option value="2">Term</option>
-                                                    <option value="3">Utang</option>
+                                                    <option value="1">Unpaid</option>
+                                                    <option value="2">Paid</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -196,7 +195,7 @@ $("#purchase-order-id").on("change", function() {
                             <td class="item-quantity text-center">${items.quantity}</td>
                             <td class="text-center"><input class="form-control form-control-sm me-2 item-received-price" type="text" name="received_price" value="" /></td>
                             <td class="text-center"><input class="form-control form-control-sm me-2 item-received-quantity" type="text" name="received_quantity" value="" /></td>
-                            <td class="text-center"><input class="form-control form-control-sm me-2 item-received-quantity" type="text" name="received_unit_quantity" value="" /></td>
+                            <td class="text-center"><input class="form-control form-control-sm me-2 item-received-unit" type="text" name="received_unit" value="" /></td>
                             <td class="text-center">
                                 <div class="position-relative">
                                                 <select class="form-select item-realisation" data-control="select2"
@@ -243,6 +242,7 @@ $(document).on('click', '#btn-submit-goods-received', function(e) {
 
                     var purchaseOrderItemId = $(this).find(".purchase-order-item-id").val();
                     var itemReceivedQuantity = $(this).find(".item-received-quantity").val().trim();
+                    var itemReceivedUnit = $(this).find(".item-received-unit").val().trim();
                     var itemReceivedPrice = $(this).find(".item-received-price").val().trim();
                     var itemRealisation = $(this).find(".item-realisation").val().trim();
                     var itemRemarks = $(this).find(".item-remarks").val().trim();
@@ -250,6 +250,7 @@ $(document).on('click', '#btn-submit-goods-received', function(e) {
                     itemLists.push({
                         purchase_order_item_id: purchaseOrderItemId,
                         received_quantity: itemReceivedQuantity,
+                        received_unit: itemReceivedUnit,
                         received_price: itemReceivedPrice,
                         realisation: itemRealisation,
                         remarks: itemRemarks,
@@ -259,7 +260,7 @@ $(document).on('click', '#btn-submit-goods-received', function(e) {
                 var purchaseOrderId = $('#purchase-order-id').val();
                 var receivedDate = $('#received-date').val();
                 var receivedBy = $('#received-by').val();
-                var status = $('#status').val();
+                var paymentStatus = $('#payment-status').val();
 
                 // Build the JSON payload
                 const payload = {
@@ -267,7 +268,7 @@ $(document).on('click', '#btn-submit-goods-received', function(e) {
                         purchase_order_id: purchaseOrderId,
                         received_date: receivedDate,
                         received_by: receivedBy,
-                        status: status
+                        payment_status: paymentStatus
                     },
                     details: itemLists
                 };

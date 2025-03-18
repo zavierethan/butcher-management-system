@@ -108,7 +108,8 @@ class PurchaseOrderController extends Controller
                 // "pic" => $payloads["header"]["pic"],
                 "category" => $payloads["header"]["category"],
                 "total_amount" => $payloads["header"]["total_amount"],
-                "status" => "pending",
+                "payment_status" => $payloads["header"]["payment_status"], // 1 = UnPaid / Hutang, 2 = Paid
+                "status" => 1,
             ]);
 
             // Save the transaction details

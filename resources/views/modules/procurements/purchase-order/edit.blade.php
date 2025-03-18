@@ -121,11 +121,11 @@
                                                     data-placeholder="-" name="status" id="status">
                                                     <option value="">-</option>
                                                     <option value="pending"
-                                                        <?php echo ($purchaseOrder->status == 'pending') ? 'selected' : ''; ?>>
-                                                        PENDING</option>
+                                                        <?php echo ($purchaseOrder->status == 1) ? 'selected' : ''; ?>>
+                                                        Pending Supplier</option>
                                                     <option value="completed"
-                                                        <?php echo ($purchaseOrder->status == 'goods_received') ? 'selected' : ''; ?>>
-                                                        GOODS RECEIVED</option>
+                                                        <?php echo ($purchaseOrder->status == 2) ? 'selected' : ''; ?>>
+                                                        Goods Received</option>
                                                 </select>
                                             </div>
                                         </div>

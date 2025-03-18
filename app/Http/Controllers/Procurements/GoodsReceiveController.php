@@ -28,7 +28,7 @@ class GoodsReceiveController extends Controller
                     'purchase_orders.status'
                 )
                 ->leftJoin('suppliers', 'suppliers.id', '=', 'purchase_orders.supplier_id')
-                ->where('purchase_orders.status', 'goods_received');
+                ->where('purchase_orders.status', 2);
 
         // Apply global search if provided
         $searchValue = $request->input('search.value');
@@ -77,7 +77,7 @@ class GoodsReceiveController extends Controller
     }
 
     public function create() {
-        $purchaseOrders = DB::table('purchase_orders')->where('status','!=', 'goods_received')->get();
+        $purchaseOrders = DB::table('purchase_orders')->where('status','!=', 2)->get();
         return view('modules.procurements.goods-receive.create', compact('purchaseOrders'));
     }
 
@@ -91,13 +91,15 @@ class GoodsReceiveController extends Controller
             $orderId = DB::table('purchase_orders')->where('id', $payloads["header"]["purchase_order_id"])->update([
                 "received_date" => $payloads["header"]["received_date"],
                 "received_by" => $payloads["header"]["received_by"],
-                "status" => $payloads["header"]["status"],
+                "payment_status" => $payloads["header"]["payment_status"],
+                "status" => 2,
             ]);
 
             // Save the transaction details
             foreach ($payloads['details'] as $detail) {
                 DB::table('purchase_order_items')->where('id', $detail["purchase_order_item_id"])->update([
                     "received_quantity" => $detail["received_quantity"],
+                    "received_unit" => $detail["received_unit"],
                     "received_price" => $detail["received_price"],
                     "realisation" => $detail["realisation"],
                     "remarks" => $detail["remarks"]

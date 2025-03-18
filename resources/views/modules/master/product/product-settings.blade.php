@@ -222,7 +222,7 @@
                                             <div class="d-flex align-items-center">
                                                 <input type="text"
                                                     class="form-control form-control-sm inline-edit-end-period me-2 MARGIN-{{$product->code}} margin"
-                                                    value="0" />
+                                                    value="10" />
                                             </div>
                                         </td>
                                         <td>
@@ -271,7 +271,7 @@
                                             <div class="d-flex justify-content-center">
                                                 <label
                                                     class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                                    <input class="form-check-input toggle-status" type="checkbox" data-id="{{$product->code}}"/>
+                                                    <input class="form-check-input toggle-status" type="checkbox" data-id="{{$product->code}}" checked/>
                                                     <span class="form-check-label fw-bold text-muted"></span>
                                                 </label>
                                             </div>
@@ -314,7 +314,7 @@
                                             <div class="d-flex align-items-center">
                                                 <input type="text"
                                                     class="form-control form-control-sm inline-edit-end-period me-2 MARGIN-{{$product->code}} margin"
-                                                    value="0" />
+                                                    value="5" />
                                             </div>
                                         </td>
                                         <td>
@@ -363,7 +363,7 @@
                                             <div class="d-flex justify-content-center">
                                                 <label
                                                     class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                                    <input class="form-check-input toggle-status" type="checkbox" data-id="{{$product->code}}"/>
+                                                    <input class="form-check-input toggle-status" type="checkbox" data-id="{{$product->code}}" checked/>
                                                     <span class="form-check-label fw-bold text-muted"></span>
                                                 </label>
                                             </div>
@@ -406,7 +406,7 @@
                                             <div class="d-flex align-items-center">
                                                 <input type="text"
                                                     class="form-control form-control-sm inline-edit-end-period me-2 MARGIN-{{$product->code}} margin"
-                                                    value="0" />
+                                                    value="5" />
                                             </div>
                                         </td>
                                         <td>
@@ -455,7 +455,7 @@
                                             <div class="d-flex justify-content-center">
                                                 <label
                                                     class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                                    <input class="form-check-input toggle-status" type="checkbox" data-id="{{$product->code}}"/>
+                                                    <input class="form-check-input toggle-status" type="checkbox" data-id="{{$product->code}}" checked/>
                                                     <span class="form-check-label fw-bold text-muted"></span>
                                                 </label>
                                             </div>
@@ -498,7 +498,7 @@
                                             <div class="d-flex align-items-center">
                                                 <input type="text"
                                                     class="form-control form-control-sm inline-edit-end-period me-2 MARGIN-{{$product->code}} margin"
-                                                    value="0" />
+                                                    value="5" />
                                             </div>
                                         </td>
                                         <td>
@@ -547,7 +547,7 @@
                                             <div class="d-flex justify-content-center">
                                                 <label
                                                     class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-                                                    <input class="form-check-input toggle-status" type="checkbox" data-id="{{$product->code}}"/>
+                                                    <input class="form-check-input toggle-status" type="checkbox" data-id="{{$product->code}}" checked/>
                                                     <span class="form-check-label fw-bold text-muted"></span>
                                                 </label>
                                             </div>

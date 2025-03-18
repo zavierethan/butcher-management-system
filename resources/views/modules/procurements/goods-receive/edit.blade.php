@@ -95,8 +95,8 @@
                                                 <select class="form-select form-select-solid" data-control="select2"
                                                     data-placeholder="-" name="status" id="status" disabled>
                                                     <option value="">-</option>
-                                                    <option value="pending" <?php echo ($purchaseOrder->status == 'pending') ? 'selected' : ''; ?>>PENDING</option>
-                                                    <option value="goods_received" <?php echo ($purchaseOrder->status == 'goods_received') ? 'selected' : ''; ?>>GOODS RECEIVED</option>
+                                                    <option value="pending" <?php echo ($purchaseOrder->status == 1) ? 'selected' : ''; ?>>Pending Supplier</option>
+                                                    <option value="goods_received" <?php echo ($purchaseOrder->status == 2) ? 'selected' : ''; ?>>Goods Received</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -106,7 +106,7 @@
                                         <a href="{{route('procurement.goods-receive.index')}}"
                                             class="btn btn-sm btn-danger">Cancel</a>
                                         <a href="#" class="btn btn-sm btn-primary"
-                                            id="btn-submit-goods-received">Transfer ke Stok</a>
+                                            id="btn-submit-goods-received">Transfer ke Store</a>
                                     </div>
                                 </div>
                             </div>
