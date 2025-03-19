@@ -1,5 +1,53 @@
 @extends('layouts.main')
 
+@section('css')
+<style>
+.highcharts-data-table table {
+    margin: 1em auto;
+}
+
+.highcharts-data-table table {
+    font-family: Verdana, sans-serif;
+    border-collapse: collapse;
+    border: 1px solid #ebebeb;
+    margin: 10px auto;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+.highcharts-data-table caption {
+    padding: 1em 0;
+    font-size: 1.2em;
+    color: #555;
+}
+
+.highcharts-data-table th {
+    font-weight: 600;
+    padding: 0.5em;
+}
+
+.highcharts-data-table td,
+.highcharts-data-table th,
+.highcharts-data-table caption {
+    padding: 0.5em;
+}
+
+.highcharts-data-table thead tr,
+.highcharts-data-table tr:nth-child(even) {
+    background: #f8f8f8;
+}
+
+.highcharts-data-table tr:hover {
+    background: #f1f7ff;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}
+</style>
+@endsection
+
 @section('main-content')
 <!--begin::Main-->
 <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
@@ -82,7 +130,8 @@
                                 <!--end::Icon-->
                                 <div class="d-flex flex-column my-7">
                                     <!--begin::Number-->
-                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2" id="total-transactions">0</span>
+                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"
+                                        id="total-transactions">0</span>
                                     <!--end::Number-->
                                 </div>
                                 <!--begin::Badge-->
@@ -179,7 +228,8 @@
                                 <!--begin::Section-->
                                 <div class="d-flex flex-column my-7">
                                     <!--begin::Number-->
-                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2" id="total-receivable">0</span>
+                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"
+                                        id="total-receivable">0</span>
                                     <!--end::Number-->
                                 </div>
                                 <!--end::Section-->
@@ -213,7 +263,8 @@
                                 <!--begin::Section-->
                                 <div class="d-flex flex-column my-7">
                                     <!--begin::Number-->
-                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2" id="total-transfer">0</span>
+                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"
+                                        id="total-transfer">0</span>
                                     <!--end::Number-->
                                 </div>
                                 <!--end::Section-->
@@ -313,130 +364,156 @@
 <script>
 $(document).ready(function() {
     Highcharts.chart('container-1', {
-    title: {
-        text: 'Tren Penjualan Store 1, Store 2, dan Store 3',
-        align: 'left'
-    },
-
-    subtitle: {
-        text: 'Data penjualan dari 2015 hingga 2025',
-        align: 'left'
-    },
-
-    yAxis: {
         title: {
-            text: 'Jumlah Penjualan'
-        }
-    },
+            text: 'Tren Penjualan Store 1, Store 2, dan Store 3'
+        },
 
-    xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agust', 'Sept', 'Okt', 'Nov'],
-        accessibility: {
-            rangeDescription: 'Range: 2015 to 2025'
-        }
-    },
+        subtitle: {
+            text: 'Data penjualan dari 2015 hingga 2025'
+        },
 
-    legend: {
-        layout: 'vertical',
-        align: 'right',
-        verticalAlign: 'middle'
-    },
-
-    plotOptions: {
-        series: {
-            label: {
-                connectorAllowed: false
+        yAxis: {
+            title: {
+                text: 'Jumlah Penjualan'
             }
-        }
-    },
+        },
 
-    series: [{
-        name: 'Store 1',
-        data: [200, 250, 300, 200, 950, 1100, 1250, 1400, 1600, 1800, 2000]
-    }, {
-        name: 'Store 2',
-        data: [250, 550, 700, 800, 900, 1050, 1200, 1350, 1550, 1750, 1950]
-    }, {
-        name: 'Store 3',
-        data: [400, 500, 650, 750, 850, 1000, 1150, 1300, 1500, 1700, 1900]
-    }],
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agust', 'Sept', 'Okt',
+                'Nov'
+            ],
+            accessibility: {
+                rangeDescription: 'Range: 2015 to 2025'
+            }
+        },
 
-    responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 500
-            },
-            chartOptions: {
-                legend: {
-                    layout: 'horizontal',
-                    align: 'center',
-                    verticalAlign: 'bottom'
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle'
+        },
+
+        plotOptions: {
+            series: {
+                label: {
+                    connectorAllowed: false
                 }
             }
-        }]
-    }
-});
+        },
 
-Highcharts.chart('container-2', {
-    chart: {
-        type: 'column'
-    },
-    title: {
-        text: '10 Produk Terlaris'
-    },
-    subtitle: {
-        text: 'Data penjualan berdasarkan jumlah product terjual'
-    },
-    accessibility: {
-        announceNewData: {
-            enabled: true
+        series: [{
+            name: 'Store 1',
+            data: [200, 250, 300, 200, 950, 1100, 1250, 1400, 1600, 1800, 2000]
+        }, {
+            name: 'Store 2',
+            data: [250, 550, 700, 800, 900, 1050, 1200, 1350, 1550, 1750, 1950]
+        }, {
+            name: 'Store 3',
+            data: [400, 500, 650, 750, 850, 1000, 1150, 1300, 1500, 1700, 1900]
+        }],
+
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    legend: {
+                        layout: 'horizontal',
+                        align: 'center',
+                        verticalAlign: 'bottom'
+                    }
+                }
+            }]
         }
-    },
-    xAxis: {
-        type: 'category'
-    },
-    yAxis: {
+    });
+
+    Highcharts.chart('container-2', {
+        chart: {
+            type: 'column',
+        },
         title: {
-            text: 'Jumlah Product Terjual'
-        }
-    },
-    legend: {
-        enabled: false
-    },
-    plotOptions: {
-        series: {
-            borderWidth: 0,
-            dataLabels: {
-                enabled: true,
-                format: '{point.y} Kg'
+            text: '10 Produk Terlaris'
+        },
+        subtitle: {
+            text: 'Data penjualan berdasarkan jumlah product terjual'
+        },
+        accessibility: {
+            announceNewData: {
+                enabled: true
             }
-        }
-    },
-    tooltip: {
-        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-        pointFormat: '<span style="color:{point.color}">{point.name}</span>: ' +
-            '<b>{point.y}</b> unit terjual<br/>'
-    },
-    series: [
-        {
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: 'Jumlah Product Terjual'
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y} Kg'
+                }
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: ' +
+                '<b>{point.y}</b> unit terjual<br/>'
+        },
+        series: [{
             name: 'Produk',
             colorByPoint: true,
-            data: [
-                { name: 'Produk A', y: 1200 },
-                { name: 'Produk B', y: 1100 },
-                { name: 'Produk C', y: 1050 },
-                { name: 'Produk D', y: 1000 },
-                { name: 'Produk E', y: 950 },
-                { name: 'Produk F', y: 900 },
-                { name: 'Produk G', y: 850 },
-                { name: 'Produk H', y: 800 },
-                { name: 'Produk I', y: 750 },
-                { name: 'Produk J', y: 700 }
+            data: [{
+                    name: 'Produk A',
+                    y: 1200
+                },
+                {
+                    name: 'Produk B',
+                    y: 1100
+                },
+                {
+                    name: 'Produk C',
+                    y: 1050
+                },
+                {
+                    name: 'Produk D',
+                    y: 1000
+                },
+                {
+                    name: 'Produk E',
+                    y: 950
+                },
+                {
+                    name: 'Produk F',
+                    y: 900
+                },
+                {
+                    name: 'Produk G',
+                    y: 850
+                },
+                {
+                    name: 'Produk H',
+                    y: 800
+                },
+                {
+                    name: 'Produk I',
+                    y: 750
+                },
+                {
+                    name: 'Produk J',
+                    y: 700
+                }
             ]
-        }
-    ]
+        }]
+    });
 });
-});
-
 </script>
 @endsection
