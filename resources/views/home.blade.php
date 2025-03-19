@@ -313,49 +313,68 @@
 <script>
 $(document).ready(function() {
     Highcharts.chart('container-1', {
-    chart: {
-        type: 'column'
-    },
     title: {
-        text: 'Corn vs wheat estimated production for 2023'
+        text: 'Tren Penjualan Store 1, Store 2, dan Store 3',
+        align: 'left'
     },
+
     subtitle: {
-        text:
-            'Source: <a target="_blank" ' +
-            'href="https://www.indexmundi.com/agriculture/?commodity=corn">indexmundi</a>'
+        text: 'Data penjualan dari 2015 hingga 2025',
+        align: 'left'
     },
-    xAxis: {
-        categories: ['USA', 'China', 'Brazil', 'EU', 'Argentina', 'India'],
-        crosshair: true,
-        accessibility: {
-            description: 'Countries'
-        }
-    },
+
     yAxis: {
-        min: 0,
         title: {
-            text: '1000 metric tons (MT)'
+            text: 'Jumlah Penjualan'
         }
     },
-    tooltip: {
-        valueSuffix: ' (1000 MT)'
+
+    xAxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agust', 'Sept', 'Okt', 'Nov'],
+        accessibility: {
+            rangeDescription: 'Range: 2015 to 2025'
+        }
     },
+
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'middle'
+    },
+
     plotOptions: {
-        column: {
-            pointPadding: 0.2,
-            borderWidth: 0
+        series: {
+            label: {
+                connectorAllowed: false
+            }
         }
     },
-    series: [
-        {
-            name: 'Corn',
-            data: [387749, 280000, 129000, 64300, 54000, 34300]
-        },
-        {
-            name: 'Wheat',
-            data: [45321, 140000, 10000, 140500, 19500, 113500]
-        }
-    ]
+
+    series: [{
+        name: 'Store 1',
+        data: [200, 250, 300, 200, 950, 1100, 1250, 1400, 1600, 1800, 2000]
+    }, {
+        name: 'Store 2',
+        data: [250, 550, 700, 800, 900, 1050, 1200, 1350, 1550, 1750, 1950]
+    }, {
+        name: 'Store 3',
+        data: [400, 500, 650, 750, 850, 1000, 1150, 1300, 1500, 1700, 1900]
+    }],
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                legend: {
+                    layout: 'horizontal',
+                    align: 'center',
+                    verticalAlign: 'bottom'
+                }
+            }
+        }]
+    }
 });
 
 Highcharts.chart('container-2', {
@@ -363,43 +382,57 @@ Highcharts.chart('container-2', {
         type: 'column'
     },
     title: {
-        text: 'Corn vs wheat estimated production for 2023'
+        text: '10 Produk Terlaris'
     },
     subtitle: {
-        text:
-            'Source: <a target="_blank" ' +
-            'href="https://www.indexmundi.com/agriculture/?commodity=corn">indexmundi</a>'
+        text: 'Data penjualan berdasarkan jumlah product terjual'
     },
-    xAxis: {
-        categories: ['USA', 'China', 'Brazil', 'EU', 'Argentina', 'India'],
-        crosshair: true,
-        accessibility: {
-            description: 'Countries'
+    accessibility: {
+        announceNewData: {
+            enabled: true
         }
     },
+    xAxis: {
+        type: 'category'
+    },
     yAxis: {
-        min: 0,
         title: {
-            text: '1000 metric tons (MT)'
+            text: 'Jumlah Product Terjual'
+        }
+    },
+    legend: {
+        enabled: false
+    },
+    plotOptions: {
+        series: {
+            borderWidth: 0,
+            dataLabels: {
+                enabled: true,
+                format: '{point.y} Kg'
+            }
         }
     },
     tooltip: {
-        valueSuffix: ' (1000 MT)'
-    },
-    plotOptions: {
-        column: {
-            pointPadding: 0.2,
-            borderWidth: 0
-        }
+        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+        pointFormat: '<span style="color:{point.color}">{point.name}</span>: ' +
+            '<b>{point.y}</b> unit terjual<br/>'
     },
     series: [
         {
-            name: 'Corn',
-            data: [387749, 280000, 129000, 64300, 54000, 34300]
-        },
-        {
-            name: 'Wheat',
-            data: [45321, 140000, 10000, 140500, 19500, 113500]
+            name: 'Produk',
+            colorByPoint: true,
+            data: [
+                { name: 'Produk A', y: 1200 },
+                { name: 'Produk B', y: 1100 },
+                { name: 'Produk C', y: 1050 },
+                { name: 'Produk D', y: 1000 },
+                { name: 'Produk E', y: 950 },
+                { name: 'Produk F', y: 900 },
+                { name: 'Produk G', y: 850 },
+                { name: 'Produk H', y: 800 },
+                { name: 'Produk I', y: 750 },
+                { name: 'Produk J', y: 700 }
+            ]
         }
     ]
 });
