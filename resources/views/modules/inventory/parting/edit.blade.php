@@ -373,15 +373,6 @@ function updateTotalWeightRancungToParting() {
     updateRancungToPartingPercentage();
 }
 
-// Trigger update when quantity inputs change
-// $(document).on("input", ".quantity", function() {
-//     updateTotalWeightRancungToParting();
-// });
-
-// Ensure the total is recalculated if new rows are added dynamically
-// $(document).on("DOMNodeInserted", "#kt_parting_table tbody", function() {
-//     updateTotalWeightRancungToParting();
-// });
 
 function updateRancungToPartingPercentage() {
     let totalRancungToParting = parseFloat($("#total_weight_rancung_to_parting").val()) || 0;
@@ -394,13 +385,6 @@ function updateRancungToPartingPercentage() {
     $("#total_weight_rancung_to_parting_percentage").val(percentage.toFixed(2));
 }
 
-
-// Update total_weight_live_to_rancung when a row is deleted
-// $(document).on("click", ".delete-parting-row", function(e) {
-//     e.preventDefault();
-//     $(this).closest("tr").remove();
-//     updateTotalWeightRancungToParting();
-// });
 
 // parting end here
 
@@ -459,17 +443,9 @@ document.addEventListener("DOMContentLoaded", function() {
         createRow(); // If no data, add an empty row
     }
 
-
-
     updateTotalWeightLiveToRancung();
     updateTotalLiveChickens();
 });
-
-// $(document).ready(function () {
-//     fetchProducts();
-
-
-// });
 
 document.addEventListener("DOMContentLoaded", function() {
     let inputFields = [
@@ -490,6 +466,13 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
     });
+
+        // Log the partingCutResultsHeader to the console
+    if (typeof partingCutResultsHeader !== 'undefined') {
+        console.log("Parting Cut Result Header:", partingCutResultsHeader);
+    } else {
+        console.warn("partingCutResultsHeader is not defined.");
+    }
 });
 
 // header script end here
@@ -535,20 +518,21 @@ $(document).ready(function() {
                     });
                 });
 
-                // Parting Data dari product
                 let partingData = [];
-                $("#kt_products_table thead th[data-id]").each(function() {
-                    let productId = $(this).data("id");
-                    let sumWeight = 0;
+                $("#kt_products_table tbody tr").each(function() {
+                    let row = $(this);
 
-                    $("#kt_products_table tbody tr").each(function() {
-                        let weight = parseFloat($(this).find(`td[data-id='${productId}'] input`).val()) || 0;
-                        sumWeight += weight;
+                    $("#kt_products_table thead th[data-id]").each(function() {
+                        let productId = $(this).data("id");
+                        let weight = parseFloat(row.find(`td[data-id='${productId}'] input`).val()) || 0;
+
+                        if (weight > 0) {
+                            partingData.push({
+                                product_id: productId,
+                                quantity: weight
+                            });
+                        }
                     });
-
-                    if (sumWeight > 0) {
-                        partingData.push({ product_id: productId, quantity: sumWeight });
-                    }
                 });
 
                 let partingHeader = @json($partingHeader);
@@ -568,7 +552,7 @@ $(document).ready(function() {
                     parting_data: partingData,
                 };
 
-                // console.log("Submitting Data:", formData);
+                console.log("Submitting Data:", formData);
 
                 // AJAX request
                 $.ajax({
@@ -602,9 +586,65 @@ $(document).ready(function() {
     });
 });
 
-
-
 // submit script end
+
+// function fetchProducts(partingCutResultsHeader) {
+//     $.ajax({
+//         url: "/api/allProductsInAllBranches", // Replace with your API URL
+//         method: "GET",
+//         dataType: "json",
+//         success: function (response) {
+//             console.log("API Response:", response); // Debugging: Check the actual API response
+
+//             let headerRow = $("#table-head-row");
+
+//             // Preserve the first column (row numbering)
+//             headerRow.html(`<th class="min-w-50px text-center">#</th>`);
+
+//             // Ensure response contains 'data' array
+//             if (!response.data || response.data.length === 0) {
+//                 console.warn("No products found in response!");
+//                 return;
+//             }
+
+//             // Append dynamic product columns
+//             response.data.forEach(function (product) {
+//                 if (!product.id || !product.name) {
+//                     console.warn("Missing product data:", product);
+//                     return;
+//                 }
+//                 headerRow.append(`<th class="min-w-150px" data-id="${product.id}">${product.name}</th>`);
+//             });
+
+//             console.log("Headers added successfully!");
+            
+//             var row = `<tr><td class="text-center">1</td>`; // Row starts with numbering
+
+//             // Loop through product headers and generate input fields
+//             $("#table-head-row th:not(:first)").each(function () {
+//                 console.log("TH Element:", $(this));
+
+//                 var productId = $(this).data("id"); // Get product ID
+//                 console.log("Product ID:", productId); // Debug product ID
+
+//                 var productData = partingCutResultsHeader.find(p => p.product_id == productId);
+//                 var quantity = productData ? productData.quantity : '';
+
+//                 row += `<td data-id="${productId}">
+//                             <input type="text" class="form-control weight-input" placeholder="Enter weight" value="${quantity}">
+//                         </td>`;
+//             });
+
+//             row += `</tr>`;
+
+//             $("#kt_products_table tbody").html(row); // Insert the row into the table
+//             updateTotalWeightRancungToParting();
+//         },
+//         error: function (xhr, status, error) {
+//             console.error("Error fetching products:", error);
+//         }
+//     });
+// }
 
 function fetchProducts(partingCutResultsHeader) {
     $.ajax({
@@ -615,6 +655,7 @@ function fetchProducts(partingCutResultsHeader) {
             console.log("API Response:", response); // Debugging: Check the actual API response
 
             let headerRow = $("#table-head-row");
+            let tableBody = $("#kt_products_table tbody");
 
             // Preserve the first column (row numbering)
             headerRow.html(`<th class="min-w-50px text-center">#</th>`);
@@ -626,36 +667,58 @@ function fetchProducts(partingCutResultsHeader) {
             }
 
             // Append dynamic product columns
+            let productIds = [];
             response.data.forEach(function (product) {
                 if (!product.id || !product.name) {
                     console.warn("Missing product data:", product);
                     return;
                 }
-                headerRow.append(`<th class="min-w-150px" data-id="${product.id}">${product.name}</th>`);
+                productIds.push(product.id);
+                headerRow.append(`<th class="min-w-150px text-center" data-id="${product.id}">${product.name}</th>`);
             });
 
             console.log("Headers added successfully!");
-            
-            var row = `<tr><td class="text-center">1</td>`; // Row starts with numbering
 
-            // Loop through product headers and generate input fields
-            $("#table-head-row th:not(:first)").each(function () {
-                console.log("TH Element:", $(this));
+            // **Fill existing rows first before creating new ones**
+            tableBody.html(""); // Clear existing rows
+            let rows = [];
 
-                var productId = $(this).data("id"); // Get product ID
-                console.log("Product ID:", productId); // Debug product ID
+            partingCutResultsHeader.forEach((item) => {
+                let placed = false;
 
-                var productData = partingCutResultsHeader.find(p => p.product_id == productId);
-                var quantity = productData ? productData.quantity : '';
+                // Try to place the item in an existing row first
+                for (let row of rows) {
+                    if (!row[item.product_id]) {
+                        row[item.product_id] = item.quantity;
+                        placed = true;
+                        break;
+                    }
+                }
 
-                row += `<td data-id="${productId}">
-                            <input type="text" class="form-control weight-input" placeholder="Enter weight" value="${quantity}">
-                        </td>`;
+                // If no available row, create a new one
+                if (!placed) {
+                    let newRow = {};
+                    newRow[item.product_id] = item.quantity;
+                    rows.push(newRow);
+                }
             });
 
-            row += `</tr>`;
+            // Render rows into the table
+            rows.forEach((rowData, rowIndex) => {
+                let row = `<tr><td class="text-center">${rowIndex + 1}</td>`; // Row number
 
-            $("#kt_products_table tbody").html(row); // Insert the row into the table
+                productIds.forEach((productId) => {
+                    let quantity = rowData[productId] || "";
+                    row += `<td data-id="${productId}">
+                                <input type="text" class="form-control weight-input text-center" 
+                                       placeholder="Enter weight" value="${quantity}">
+                            </td>`;
+                });
+
+                row += `</tr>`;
+                tableBody.append(row);
+            });
+
             updateTotalWeightRancungToParting();
         },
         error: function (xhr, status, error) {
@@ -663,7 +726,6 @@ function fetchProducts(partingCutResultsHeader) {
         }
     });
 }
-
 
 $(document).on("click", "#add-row-weight", function(e) {
     e.preventDefault();
@@ -686,41 +748,6 @@ $(document).on("click", "#add-row-weight", function(e) {
     $("#kt_products_table tbody").append(row);
 });
 
-// $(document).on("click", "#cek-submit", function (e) {
-//     e.preventDefault();
-
-//     let productSums = {}; // Store sum of weights for each product
-
-//     // Get product IDs from table headers
-//     $("#table-head-row th:not(:first)").each(function () {
-//         let productId = $(this).attr("data-id"); // Get product ID
-//         if (productId) {
-//             productSums[productId] = 0; // Initialize sum
-//         }
-//     });
-
-//     // Loop through each row and sum the weights for each product
-//     $("#kt_products_table tbody tr").each(function () {
-//         $(this).find("td:not(:first)").each(function () {
-//             let productId = $(this).attr("data-id"); // Get product ID
-//             let inputValue = parseFloat($(this).find("input").val()) || 0; // Get input value
-
-//             if (productId && inputValue > 0) {
-//                 productSums[productId] += inputValue; // Sum the weight
-//             }
-//         });
-//     });
-
-//     // Convert to an array of objects, removing products with sum_weight = 0
-//     let payload = Object.keys(productSums)
-//         .filter(productId => productSums[productId] > 0)
-//         .map(productId => ({
-//             product_id: parseInt(productId),
-//             sum_weight: productSums[productId]
-//         }));
-
-//     console.log("Payload to send:", payload); // Debugging: Check output in console
-// });
 
 $("#kt_products_table tbody").on("input", "td input", function() {
     updateTotalWeightRancungToParting();
@@ -743,9 +770,6 @@ function updateTotalWeightRancungToParting() {
     // Invoke the existing function
     updateRancungToPartingPercentage();
 }
-
-
-
 
 </script>
 @endsection

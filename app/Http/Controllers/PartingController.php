@@ -59,6 +59,7 @@ class PartingController extends Controller
         DB::beginTransaction();
 
         try {
+            // Insert parting record
             $partingId = DB::table('partings')->insertGetId([
                 'branch_id' => $request->branch_id,
                 'date' => $request->parting_date,
@@ -88,30 +89,42 @@ class PartingController extends Controller
                     DB::table('fresh_chicken_cut_results')->insert($freshChickenCutResults);
                 }
 
-                // Process parting data and insert into stock_logs (if stock exists)
-                $rawPartingData = $request->parting_data;
-                $partingCutResults = [];
-                $stockLogs = [];
+                // Insert into `parting_cut_results` first to get its ID
+                $partingCutResultId = DB::table('parting_cut_results')->insertGetId([
+                    'parting_id' => $partingId
+                ]);
 
-                $groupedPartingData = [];
+                // Prepare parting cut result details & sum stock logs per product
+                $rawPartingData = $request->parting_data;
+                $partingCutResultDetails = [];
+                $stockLogs = [];
+                $stockSummed = [];
+
                 foreach ($rawPartingData as $data) {
                     $productId = $data['product_id'];
-                    Log::info('Product id: ', [$productId]);
                     $quantity = $data['quantity'];
 
-                    if (!isset($groupedPartingData[$productId])) {
-                        $groupedPartingData[$productId] = [
-                            'product_id' => $productId,
-                            'quantity' => 0
-                        ];
+                    // Insert into parting_cut_result_details (keeping individual rows)
+                    $partingCutResultDetails[] = [
+                        'parting_cut_result_id' => $partingCutResultId,
+                        'product_id' => $productId,
+                        'quantity' => $quantity
+                    ];
+
+                    // Sum up stock logs per product
+                    if (!isset($stockSummed[$productId])) {
+                        $stockSummed[$productId] = 0;
                     }
-                    $groupedPartingData[$productId]['quantity'] += $quantity;
+                    $stockSummed[$productId] += $quantity;
                 }
 
-                foreach ($groupedPartingData as $data) {
-                    $productId = $data['product_id'];
-                    $quantity = $data['quantity'];
+                // Insert parting_cut_result_details
+                if (!empty($partingCutResultDetails)) {
+                    DB::table('parting_cut_result_details')->insert($partingCutResultDetails);
+                }
 
+                // Insert stock logs (one per product)
+                foreach ($stockSummed as $productId => $totalQuantity) {
                     // Check if stock already exists
                     $existingStock = DB::table('stocks')
                         ->where('branch_id', $request->branch_id)
@@ -121,25 +134,15 @@ class PartingController extends Controller
                     if ($existingStock) {
                         // Use existing stock ID
                         $stockId = $existingStock->id;
+
+                        // Insert stock log entry with parting_id
+                        $stockLogs[] = [
+                            'stock_id' => $stockId,
+                            'in_quantity' => $totalQuantity,
+                            'reference' => 'Hasil Parting',
+                            'parting_id' => $partingId // 🔹 Add parting_id here
+                        ];
                     }
-
-                    // Insert into stock_logs
-                    $stockLogs[] = [
-                        'stock_id' => $stockId,
-                        'in_quantity' => $quantity,
-                        'reference' => 'Hasil Parting'
-                    ];
-
-                    // Insert into parting_cut_results
-                    $partingCutResults[] = [
-                        'parting_id' => $partingId,
-                        'product_id' => $productId,
-                        'quantity' => $quantity
-                    ];
-                }
-
-                if (!empty($partingCutResults)) {
-                    DB::table('parting_cut_results')->insert($partingCutResults);
                 }
 
                 if (!empty($stockLogs)) {
@@ -157,26 +160,54 @@ class PartingController extends Controller
         }
     }
 
+    // public function edit($id) {
+    //     $branches = DB::table('branches')->orderBy('name', 'asc')->get();
+    //     $products = DB::table('products')->orderBy('name', 'asc')->get();
+    //     $butcherees = DB::table('butcherees')->orderBy('name', 'asc')->get();
+
+    //     $partingHeader = DB::table('partings')
+    //         ->where('partings.id', '=', $id)
+    //         ->first();
+        
+    //     $rancungHeader = DB::table('fresh_chicken_cut_results')
+    //         ->where('fresh_chicken_cut_results.parting_id', '=', $id)
+    //         ->get();
+
+    //     $partingCutResultsHeader = DB::table('parting_cut_results')
+    //         ->where('parting_cut_results.parting_id', '=', $id)
+    //         ->get();
+
+    //     return view('modules.inventory.parting.edit', compact('branches', 'products', 'butcherees', 'partingHeader',
+    //         'rancungHeader', 'partingCutResultsHeader'));
+    // }
+
     public function edit($id) {
         $branches = DB::table('branches')->orderBy('name', 'asc')->get();
         $products = DB::table('products')->orderBy('name', 'asc')->get();
         $butcherees = DB::table('butcherees')->orderBy('name', 'asc')->get();
 
-        $partingHeader = DB::table('partings')
-            ->where('partings.id', '=', $id)
-            ->first();
+        // Get the parting record
+        $partingHeader = DB::table('partings')->where('id', $id)->first();
         
+        // Get the fresh chicken cut results
         $rancungHeader = DB::table('fresh_chicken_cut_results')
-            ->where('fresh_chicken_cut_results.parting_id', '=', $id)
+            ->where('parting_id', $id)
             ->get();
 
-        $partingCutResultsHeader = DB::table('parting_cut_results')
-            ->where('parting_cut_results.parting_id', '=', $id)
+        // Get parting cut results details by joining tables
+        $partingCutResultsHeader = DB::table('parting_cut_results as pcr')
+            ->leftJoin('parting_cut_result_details as pcrd', 'pcr.id', '=', 'pcrd.parting_cut_result_id')
+            ->leftJoin('products as p', 'pcrd.product_id', '=', 'p.id')
+            ->where('pcr.parting_id', $id)
+            ->select('pcr.id as parting_cut_result_id', 'pcr.parting_id', 'pcrd.product_id', 'p.name as product_name', 'pcrd.quantity')
             ->get();
 
-        return view('modules.inventory.parting.edit', compact('branches', 'products', 'butcherees', 'partingHeader',
-            'rancungHeader', 'partingCutResultsHeader'));
+        return view('modules.inventory.parting.edit', compact(
+            'branches', 'products', 'butcherees', 
+            'partingHeader', 'rancungHeader', 'partingCutResultsHeader'
+        ));
     }
+
 
     public function update(Request $request) {
         if (!$request->parting_id || !is_array($request->rancung_data) || empty($request->rancung_data) ||
@@ -190,13 +221,13 @@ class PartingController extends Controller
 
         try {
             $partingId = $request->parting_id;
-            
+
             // Check if parting record exists
             $existingParting = DB::table('partings')->where('id', $partingId)->first();
             if (!$existingParting) {
                 return response()->json(['error' => 'Parting record not found.'], 404);
             }
-            
+
             // Update parting record
             DB::table('partings')->where('id', $partingId)->update([
                 'branch_id' => $request->branch_id,
@@ -208,17 +239,25 @@ class PartingController extends Controller
                 'total_weight_rancung_to_parting' => $request->total_weight_rancung_to_parting
             ]);
 
-            // Delete old related data
+            // Delete old related data in the correct order
             DB::table('fresh_chicken_cut_results')->where('parting_id', $partingId)->delete();
-            DB::table('parting_cut_results')->where('parting_id', $partingId)->delete();
-            DB::table('stock_logs')->whereIn('stock_id', function ($query) use ($request) {
-                $query->select('id')->from('stocks')->where('branch_id', $request->branch_id);
-            })->where('reference', 'Hasil Parting')->delete();
+
+            // Find parting_cut_results ID first
+            $partingCutResult = DB::table('parting_cut_results')->where('parting_id', $partingId)->first();
+            if ($partingCutResult) {
+                // Delete related parting_cut_result_details
+                DB::table('parting_cut_result_details')->where('parting_cut_result_id', $partingCutResult->id)->delete();
+                
+                // Now delete parting_cut_results
+                DB::table('parting_cut_results')->where('id', $partingCutResult->id)->delete();
+            }
+
+            // Delete stock logs only for this parting process
+            DB::table('stock_logs')->where('parting_id', $partingId)->delete();
 
             // Insert updated fresh chicken cut results
             $rancungData = $request->rancung_data;
             $freshChickenCutResults = [];
-
             foreach ($rancungData as $data) {
                 $freshChickenCutResults[] = [
                     'parting_id' => $partingId,
@@ -233,29 +272,42 @@ class PartingController extends Controller
                 DB::table('fresh_chicken_cut_results')->insert($freshChickenCutResults);
             }
 
+            // Insert a new parting_cut_results entry
+            $partingCutResultId = DB::table('parting_cut_results')->insertGetId([
+                'parting_id' => $partingId
+            ]);
+
             // Process parting data and insert into stock_logs (if stock exists)
             $rawPartingData = $request->parting_data;
-            $partingCutResults = [];
+            $partingCutResultDetails = [];
             $stockLogs = [];
+            $stockSummed = [];
 
-            $groupedPartingData = [];
             foreach ($rawPartingData as $data) {
                 $productId = $data['product_id'];
                 $quantity = $data['quantity'];
 
-                if (!isset($groupedPartingData[$productId])) {
-                    $groupedPartingData[$productId] = [
-                        'product_id' => $productId,
-                        'quantity' => 0
-                    ];
+                // Insert into parting_cut_result_details
+                $partingCutResultDetails[] = [
+                    'parting_cut_result_id' => $partingCutResultId,
+                    'product_id' => $productId,
+                    'quantity' => $quantity
+                ];
+
+                // Sum stock logs per product
+                if (!isset($stockSummed[$productId])) {
+                    $stockSummed[$productId] = 0;
                 }
-                $groupedPartingData[$productId]['quantity'] += $quantity;
+                $stockSummed[$productId] += $quantity;
             }
 
-            foreach ($groupedPartingData as $data) {
-                $productId = $data['product_id'];
-                $quantity = $data['quantity'];
+            // Insert parting_cut_result_details
+            if (!empty($partingCutResultDetails)) {
+                DB::table('parting_cut_result_details')->insert($partingCutResultDetails);
+            }
 
+            // Insert stock logs (one per product)
+            foreach ($stockSummed as $productId => $totalQuantity) {
                 // Check if stock already exists
                 $existingStock = DB::table('stocks')
                     ->where('branch_id', $request->branch_id)
@@ -266,24 +318,14 @@ class PartingController extends Controller
                     // Use existing stock ID
                     $stockId = $existingStock->id;
 
-                    // Insert into stock_logs
+                    // Insert stock log entry
                     $stockLogs[] = [
                         'stock_id' => $stockId,
-                        'in_quantity' => $quantity,
+                        'in_quantity' => $totalQuantity,
+                        'parting_id' => $partingId,
                         'reference' => 'Hasil Parting'
                     ];
                 }
-
-                // Insert into parting_cut_results
-                $partingCutResults[] = [
-                    'parting_id' => $partingId,
-                    'product_id' => $productId,
-                    'quantity' => $quantity
-                ];
-            }
-
-            if (!empty($partingCutResults)) {
-                DB::table('parting_cut_results')->insert($partingCutResults);
             }
 
             if (!empty($stockLogs)) {

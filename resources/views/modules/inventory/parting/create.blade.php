@@ -356,49 +356,6 @@ function updatePercentageRancung() {
 // fresh cut end here
 
 // parting script
-// $(document).on("click", "#add-row-parting", function(e) {
-//     e.preventDefault();
-
-//     var productOptions = `@foreach($products as $product)
-//                             <option value="{{ $product->id }}" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">{{ $product->name }}</option>
-//                           @endforeach`;
-
-//     var row = `<tr data-product-id="">
-//                     <td>
-//                         <select class="form-select form-select-sm product-select">
-//                             <option value="">Pilih Produk</option>
-//                             ${productOptions}
-//                         </select>
-//                     </td>
-//                     <td>
-//                         <input class="form-control form-control-sm me-2 quantity" type="number"
-//                             name="quantity" step="0.01" min="0"/>
-//                     </td>
-//                     <td class="text-center">
-//                         <a href="#" class="btn btn-sm btn-light btn-active-light-primary delete-parting-row">
-//                             <i class="fa-solid fa-trash-can"></i>
-//                         </a>
-//                     </td>
-//                 </tr>`;
-
-//     var $row = $(row);
-
-//     $("#kt_parting_table tbody").append($row);
-// });
-
-// Parting script - Assign product ID when selecting a product
-// $(document).on("change", ".product-select", function() {
-//     var selectedOption = $(this).find("option:selected");
-//     var productId = selectedOption.data("product-id");
-//     console.log(selectedOption);
-//     console.log(productId);
-    
-    
-//     // Assign the data-product-id to the row
-//     $(this).closest("tr").attr("data-product-id", productId);
-// });
-
-
 
 function updateTotalWeightRancungToParting() {
     let total = 0;
@@ -485,110 +442,6 @@ document.addEventListener("DOMContentLoaded", function() {
 // header script end here
 
 // submit script start
-// $(document).ready(function() {
-//     $("#btn-submit-ar").click(function(e) {
-//         e.preventDefault(); // Prevent default button behavior
-
-//         // SweetAlert confirmation
-//         Swal.fire({
-//             title: "Are you sure?",
-//             text: "You are about to submit the data.",
-//             icon: "warning",
-//             showCancelButton: true,
-//             confirmButtonColor: "#3085d6",
-//             cancelButtonColor: "#d33",
-//             confirmButtonText: "Yes, submit it!"
-//         }).then((result) => {
-//             if (result.isConfirmed) {
-//                 // Prepare payload
-//                 // header data
-//                 let branchId = $("#branch_id").val();
-//                 let partingDate = $("#parting_date").val();
-//                 let butcherId = $("#butcher_id").val();
-//                 let totalLiveChickens = $("#total_live_chickens").val();
-//                 let totalLiveChickensWeight = $("#total_live_chickens_weight").val();
-//                 let totalWeightLiveToRancung = $("#total_weight_live_to_rancung").val();
-//                 let totalWeightRancungToParting = $("#total_weight_rancung_to_parting").val();
-
-//                 // fresh cut data
-//                 let rancungData = [];
-//                 $("#kt_items_table tbody tr").each(function() {
-//                     let totalChickens = $(this).find(".total-chickens").val();
-//                     let weight = $(this).find(".weight").val();
-//                     let containerWeight = $(this).find(".container-weight").val();
-//                     let netWeight = $(this).find(".net_weight").val();
-
-//                     // Push as an object into the array
-//                     rancungData.push({
-//                         total_chickens: totalChickens,
-//                         weight: weight,
-//                         container_weight: containerWeight,
-//                         net_weight: netWeight
-//                     });
-//                 });
-
-//                 // parting data
-//                 let partingData = [];
-//                 $("#kt_parting_table tbody tr").each(function() {
-//                     let productId = $(this).find(".product-select").val();
-//                     let quantity = $(this).find(".quantity").val();
-
-//                     // Ensure the productId is not empty
-//                     if (productId && quantity && quantity !== "0") {
-//                         partingData.push({
-//                             product_id: productId,
-//                             quantity: quantity
-//                         });
-//                     }
-//                 });
-
-//                 // Add your payload data here
-//                 let formData = {
-//                     branch_id: branchId,
-//                     parting_date: partingDate,
-//                     butcher_id: butcherId,
-//                     total_live_chickens: totalLiveChickens,
-//                     total_live_chickens_weight: totalLiveChickensWeight,
-//                     total_weight_live_to_rancung: totalWeightLiveToRancung,
-//                     total_weight_rancung_to_parting: totalWeightRancungToParting,
-//                     rancung_data: rancungData,
-//                     parting_data: partingData,
-//                 };
-
-//                 // Console log instead of AJAX for testing
-//                 console.log("Submitting Data:", formData);
-
-//                 // AJAX request
-//                 $.ajax({
-//                     url: "/stock-logs/parting/save", // Update with your actual API endpoint
-//                     type: "POST",
-//                     contentType: "application/json",
-//                     data: JSON.stringify(formData),
-//                     headers: {
-//                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
-//                     },
-//                     success: function(response) {
-//                         Swal.fire({
-//                             title: "Success!",
-//                             text: "Data submitted successfully.",
-//                             icon: "success"
-//                         }).then(() => {
-//                             location.reload(); // Reload after success
-//                         });
-//                     },
-//                     error: function(xhr, status, error) {
-//                         Swal.fire({
-//                             title: "Error!",
-//                             text: "There was an issue submitting the data.",
-//                             icon: "error"
-//                         });
-//                         console.error("AJAX Error:", xhr.responseText);
-//                     }
-//                 });
-//             }
-//         });
-//     });
-// });
 
 $(document).ready(function() {
     $("#btn-submit-ar").click(function(e) {
@@ -630,20 +483,21 @@ $(document).ready(function() {
                     });
                 });
 
-                // Parting Data dari product
                 let partingData = [];
-                $("#kt_products_table thead th[data-id]").each(function() {
-                    let productId = $(this).data("id");
-                    let sumWeight = 0;
+                $("#kt_products_table tbody tr").each(function() {
+                    let row = $(this);
 
-                    $("#kt_products_table tbody tr").each(function() {
-                        let weight = parseFloat($(this).find(`td[data-id='${productId}'] input`).val()) || 0;
-                        sumWeight += weight;
+                    $("#kt_products_table thead th[data-id]").each(function() {
+                        let productId = $(this).data("id");
+                        let weight = parseFloat(row.find(`td[data-id='${productId}'] input`).val()) || 0;
+
+                        if (weight > 0) {
+                            partingData.push({
+                                product_id: productId,
+                                quantity: weight
+                            });
+                        }
                     });
-
-                    if (sumWeight > 0) {
-                        partingData.push({ product_id: productId, quantity: sumWeight });
-                    }
                 });
 
                 // Final Payload
@@ -755,41 +609,6 @@ $(document).on("click", "#add-row-weight", function(e) {
     $("#kt_products_table tbody").append(row);
 });
 
-// $(document).on("click", "#cek-submit", function (e) {
-//     e.preventDefault();
-
-//     let productSums = {}; // Store sum of weights for each product
-
-//     // Get product IDs from table headers
-//     $("#table-head-row th:not(:first)").each(function () {
-//         let productId = $(this).attr("data-id"); // Get product ID
-//         if (productId) {
-//             productSums[productId] = 0; // Initialize sum
-//         }
-//     });
-
-//     // Loop through each row and sum the weights for each product
-//     $("#kt_products_table tbody tr").each(function () {
-//         $(this).find("td:not(:first)").each(function () {
-//             let productId = $(this).attr("data-id"); // Get product ID
-//             let inputValue = parseFloat($(this).find("input").val()) || 0; // Get input value
-
-//             if (productId && inputValue > 0) {
-//                 productSums[productId] += inputValue; // Sum the weight
-//             }
-//         });
-//     });
-
-//     // Convert to an array of objects, removing products with sum_weight = 0
-//     let payload = Object.keys(productSums)
-//         .filter(productId => productSums[productId] > 0)
-//         .map(productId => ({
-//             product_id: parseInt(productId),
-//             sum_weight: productSums[productId]
-//         }));
-
-//     console.log("Payload to send:", payload); // Debugging: Check output in console
-// });
 
 $("#kt_products_table tbody").on("input", "td input", function() {
     updateTotalWeightRancungToParting();
@@ -812,9 +631,6 @@ function updateTotalWeightRancungToParting() {
     // Invoke the existing function
     updateRancungToPartingPercentage();
 }
-
-
-
 
 </script>
 @endsection
