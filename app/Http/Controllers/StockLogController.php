@@ -66,6 +66,7 @@ class StockLogController extends Controller
             'in_quantity' => 'nullable|numeric|regex:/^\d+(\.\d{1,2})?$/',
             'out_quantity' => 'nullable|numeric|regex:/^\d+(\.\d{1,2})?$/',
             'reference' => 'nullable|string',
+            'description' => 'nullable|string',
         ]);
 
         // Start transaction to ensure both operations (stock log insertion and stock update) succeed or fail together
@@ -79,6 +80,7 @@ class StockLogController extends Controller
                 'out_quantity' => $validated['out_quantity'] ?? 0,
                 'date' => now(),
                 'reference' => $validated['reference'] ?? null,
+                'description' => $validated['description'] ?? null,
             ]);
 
             // Commit the transaction
