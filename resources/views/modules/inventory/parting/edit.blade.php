@@ -588,67 +588,9 @@ $(document).ready(function() {
 
 // submit script end
 
-// function fetchProducts(partingCutResultsHeader) {
-//     $.ajax({
-//         url: "/api/allProductsInAllBranches", // Replace with your API URL
-//         method: "GET",
-//         dataType: "json",
-//         success: function (response) {
-//             console.log("API Response:", response); // Debugging: Check the actual API response
-
-//             let headerRow = $("#table-head-row");
-
-//             // Preserve the first column (row numbering)
-//             headerRow.html(`<th class="min-w-50px text-center">#</th>`);
-
-//             // Ensure response contains 'data' array
-//             if (!response.data || response.data.length === 0) {
-//                 console.warn("No products found in response!");
-//                 return;
-//             }
-
-//             // Append dynamic product columns
-//             response.data.forEach(function (product) {
-//                 if (!product.id || !product.name) {
-//                     console.warn("Missing product data:", product);
-//                     return;
-//                 }
-//                 headerRow.append(`<th class="min-w-150px" data-id="${product.id}">${product.name}</th>`);
-//             });
-
-//             console.log("Headers added successfully!");
-            
-//             var row = `<tr><td class="text-center">1</td>`; // Row starts with numbering
-
-//             // Loop through product headers and generate input fields
-//             $("#table-head-row th:not(:first)").each(function () {
-//                 console.log("TH Element:", $(this));
-
-//                 var productId = $(this).data("id"); // Get product ID
-//                 console.log("Product ID:", productId); // Debug product ID
-
-//                 var productData = partingCutResultsHeader.find(p => p.product_id == productId);
-//                 var quantity = productData ? productData.quantity : '';
-
-//                 row += `<td data-id="${productId}">
-//                             <input type="text" class="form-control weight-input" placeholder="Enter weight" value="${quantity}">
-//                         </td>`;
-//             });
-
-//             row += `</tr>`;
-
-//             $("#kt_products_table tbody").html(row); // Insert the row into the table
-//             updateTotalWeightRancungToParting();
-//         },
-//         error: function (xhr, status, error) {
-//             console.error("Error fetching products:", error);
-//         }
-//     });
-// }
-
 function fetchProducts(partingCutResultsHeader) {
     $.ajax({
-        url: "/api/allProductsInAllBranches", // Replace with your API URL
+        url: "/api/allProductsInParting", // Replace with your API URL
         method: "GET",
         dataType: "json",
         success: function (response) {

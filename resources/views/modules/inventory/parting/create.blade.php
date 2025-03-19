@@ -553,7 +553,7 @@ $(document).ready(function() {
 
 function fetchProducts() {
     $.ajax({
-        url: "/api/allProductsInAllBranches", // Replace with your API URL
+        url: "/api/allProductsInParting", // Replace with your API URL
         method: "GET",
         dataType: "json",
         success: function (response) {
