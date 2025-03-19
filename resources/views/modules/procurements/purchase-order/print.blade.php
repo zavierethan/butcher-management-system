@@ -90,21 +90,22 @@
 </head>
 <body>
     <div class="a4">
-        <!-- Header -->
-        <div class="header">
-            <div class="logo">
-                <img src="logo.png" alt="Company Logo">
-            </div>
-            <div class="company-details">
-                <h2>Pryadis Butchers</h2>
-                <p>Jl. Ciledug no 273 Kec. Kota kulon Kel. Garut Kota Kab. Garut 44112</p>
-                <p>Phone: 082114139759</p>
-            </div>
-        </div>
+        <table width="100%" style="border-collapse: collapse; border: none;">
+            <tr style="border: none;">
+                <td style="text-align: left; border: none; padding: 0;">
+                    <img src="{{ $logo }}" alt="Company Logo" style="max-width: 120px;">
+                </td>
+                <td style="text-align: right; border: none; padding: 0;">
+                    <h2>Pryadis Butchers</h2>
+                    <p>Jl. Ciledug no 273 Kec. Kota kulon Kel. Garut Kota Kab. Garut 44112</p>
+                    <p>Phone: 082114139759</p>
+                </td>
+            </tr>
+        </table>
 
         <!-- Purchase Order Details -->
         <div class="content">
-            <h1>Purchase Order</h1>
+            <h2>Purchase Order</h2>
             <div class="details">
                 <div class="row">
                     <div>Order Number: <strong>{{$purchaseOrder->purchase_order_number}}</strong></div>
@@ -112,7 +113,6 @@
                 </div>
                 <div class="row">
                     <div>Supplier: <strong>{{$purchaseOrder->supplier_name}}</strong></div>
-                    <div>Due Date: <strong>14-Jan-2025</strong></div>
                 </div>
             </div>
 

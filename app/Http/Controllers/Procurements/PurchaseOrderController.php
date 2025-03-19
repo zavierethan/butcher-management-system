@@ -245,9 +245,13 @@ class PurchaseOrderController extends Controller
                     });
         }
 
+        $imagePath = public_path('assets/media/logos/priyadis-butcherss.png'); // Update the path as needed
+        $base64Image = $this->convertImageToBase64($imagePath);
+
         $pdf = PDF::loadView('modules.procurements.purchase-order.print', [
             "purchaseOrder" => $purchaseOrder,
-            "detailItems" => $detailItems
+            "detailItems" => $detailItems,
+            "logo" => $base64Image
         ]);
 
         return $pdf->stream('purchase_order.pdf'); // To display
@@ -309,5 +313,15 @@ class PurchaseOrderController extends Controller
             'Pragma' => 'no-cache',
             'Expires' => '0',
         ]);
+    }
+
+    private function convertImageToBase64($path){
+        if (!file_exists($path)) {
+            return null;
+        }
+
+        $type = pathinfo($path, PATHINFO_EXTENSION);
+        $data = file_get_contents($path);
+        return 'data:image/' . $type . ';base64,' . base64_encode($data);
     }
 }
