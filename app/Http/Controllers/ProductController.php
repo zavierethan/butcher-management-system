@@ -297,11 +297,12 @@ class ProductController extends Controller
     }
 
     // api untuk parting
-    public function getAllProductsInAllBranches(){
+    public function getAllProductsInParting(){
 
         // Build the query
         $query = DB::table('products')
             ->leftJoin('product_categories', 'products.category_id', '=', 'product_categories.id')
+            ->leftJoin('product_clasifications', 'products.clasification_id', '=', 'product_clasifications.id')
             ->select(
                 'products.id',
                 'products.name',
@@ -309,8 +310,11 @@ class ProductController extends Controller
                 'products.url_path',
                 'products.is_active',
                 'product_categories.name as category_name',
+                'product_clasifications.name as clasification_name'
             )
-            ->where('products.is_active', '=', 1);
+            ->where('products.is_active', '=', 1)
+            ->where('product_clasifications.name', '!=', 'JEROAN')
+            ->where('product_categories.name', '!=', 'KOMPLEMENT');
 
         // Ensure unique results
         $query->distinct();
