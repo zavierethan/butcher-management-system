@@ -38,6 +38,7 @@ class StockController extends Controller
                 'branches.name as branch_name',
                 DB::raw('COALESCE(SUM(sl.in_quantity), 0) - COALESCE(SUM(sl.out_quantity), 0) as realtime_quantity')
             )
+            ->where('stocks.branch_id', Auth::user()->branch_id)
             ->groupBy(
                 'stocks.id',
                 'products.code',
@@ -148,7 +149,7 @@ class StockController extends Controller
             )
             ->where('stock_opnames.stock_id', '=', $stockId);
 
-        
+
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
 

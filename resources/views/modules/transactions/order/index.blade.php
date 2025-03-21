@@ -63,7 +63,6 @@
 
                                 <!--end::Search-->
                             </div>
-                            <!--begin::Card title-->
                             <!--begin::Card toolbar-->
                             <div class="card-toolbar">
                                 <!--begin::Filters-->

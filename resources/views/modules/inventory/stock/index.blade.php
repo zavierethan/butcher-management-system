@@ -36,11 +36,8 @@
                 <!--end::Page title-->
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
-                    <!--begin::Secondary button-->
+                    <a href="#" class="btn btn-sm fw-bold btn-primary" id="btn-form-stock-opname">Stock Opname</a>
                     <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export</a>
-                    <!--end::Secondary button-->
-                    <!--begin::Primary button-->
-                    <!--end::Primary button-->
                 </div>
                 <!--end::Actions-->
             </div>
@@ -57,10 +54,14 @@
                     <div class="card">
                         <div class="card-header border-0 pt-6">
                             <!--begin::Card title-->
+                            <div class="card-title">
+                                <!--begin::Search-->
+
+                                <!--end::Search-->
+                            </div>
                             <!--begin::Card toolbar-->
                             <div class="card-toolbar">
                                 <!--begin::Toolbar-->
-                                <!--begin::Filters-->
                                 <div class="d-flex flex-stack flex-wrap gap-4">
                                     <div class="d-flex align-items-center fw-bold">
                                         <!--begin::Label-->
@@ -96,9 +97,10 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">Produk</th>
+                                        <th class="min-w-125px">Kode Produk</th>
+                                        <th class="min-w-125px">Nama Produk</th>
                                         <th class="min-w-125px">Cabang</th>
-                                        <th class="min-w-125px">Kuantitas Realtime</th>
+                                        <th class="min-w-125px">Kuantitas (Kg)</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -155,35 +157,27 @@
         },
         columns: [
             {
-                data: null,
-                name: 'product_code_name',
-                render: function (data, type, row) {
-                    return `${row.product_code} - ${row.product_name}`;
-                }
+                data: 'product_code', name: 'product_code',
             },
             {
-                data: null,
-                name: 'branch_code_name',
-                render: function (data, type, row) {
-                    return `${row.branch_code} - ${row.branch_name}`;
-                }
+                data: 'product_name', name: 'product_name',
             },
-            { data: 'realtime_quantity', name: 'realtime_quantity' },
+            {
+                data: 'branch_name', name: 'branch_name',
+            },
+            { data: 'realtime_quantity', name: 'realtime_quantity', className: 'text-center' },
             {
                 data: null, // No direct field from the server
                 name: 'action',
                 orderable: false, // Disable ordering for this column
                 searchable: false, // Disable searching for this column
                 render: function (data, type, row) {
-                    let actionButtons = `
+                    return `
                         <div class="text-center">
                             <a href="/stock-logs/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Details</a>
-                        </div>
-                        <div class="text-center">
-                            <a href="/stocks/opnames/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Opname</a>
-                        </div>
+                            <a href="/stocks/opnames/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Stock Opname</a>
+                        <div>
                     `;
-                    return actionButtons;
                 }
             }
         ]
@@ -246,6 +240,6 @@
         });
 
     });
-    
+
 </script>
 @endsection
