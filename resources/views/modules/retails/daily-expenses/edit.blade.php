@@ -81,13 +81,13 @@
                                         <div class="separator my-5"></div>
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Debit</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Diambil Dari</label>
                                                 <div class="position-relative mb-3">
                                                     <select class="form-select form-select-solid" data-control="select2"
-                                                        data-placeholder="-" name="debit" id="debit">
+                                                        data-placeholder="-" name="credit" id="credit">
                                                         <option value="">-</option>
-                                                        @foreach($debitAccounts as $dAcc)
-                                                        <option value="{{$dAcc->id}}" <?php echo ($data->debit == $dAcc->id) ? 'selected' : ''; ?>>{{$dAcc->account_code}} - {{$dAcc->account_name}}</option>
+                                                        @foreach($creditAccounts as $cAcc)
+                                                        <option value="{{$cAcc->id}}" <?php echo ($data->credit == $cAcc->id) ? 'selected' : ''; ?>>{{$cAcc->account_code}} - {{$cAcc->account_name}}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -96,13 +96,13 @@
                                         <div class="separator my-5"></div>
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Credit</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Pengeluaran Untuk</label>
                                                 <div class="position-relative mb-3">
                                                     <select class="form-select form-select-solid" data-control="select2"
-                                                        data-placeholder="-" name="credit" id="credit">
+                                                        data-placeholder="-" name="debit" id="debit">
                                                         <option value="">-</option>
-                                                        @foreach($creditAccounts as $cAcc)
-                                                        <option value="{{$cAcc->id}}" <?php echo ($data->credit == $cAcc->id) ? 'selected' : ''; ?>>{{$cAcc->account_code}} - {{$cAcc->account_name}}</option>
+                                                        @foreach($debitAccounts as $dAcc)
+                                                        <option value="{{$dAcc->id}}" <?php echo ($data->debit == $dAcc->id) ? 'selected' : ''; ?>>{{$dAcc->account_code}} - {{$dAcc->account_name}}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>

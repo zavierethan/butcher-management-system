@@ -162,17 +162,9 @@
                                         <tr>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    <!--begin::Thumbnail-->
-                                                    <a href="apps/ecommerce/catalog/edit-product.html"
-                                                        class="symbol symbol-50px">
-                                                        <span class="symbol-label"
-                                                            style="background-image:url(assets/media//stock/ecommerce/1.png);"></span>
-                                                    </a>
-                                                    <!--end::Thumbnail-->
                                                     <!--begin::Title-->
                                                     <div class="ms-5">
-                                                        <a href="#"
-                                                            class="fw-bold text-gray-600 text-hover-primary">{{$detail->code}}</a>
+                                                        <a href="#" class="fw-bold text-gray-600 text-hover-primary">{{$detail->code}}</a>
                                                         <div class="fs-7 text-muted">{{$detail->name}}</div>
                                                     </div>
                                                     <!--end::Title-->

@@ -363,13 +363,14 @@
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script>
 $(document).ready(function() {
+
     Highcharts.chart('container-1', {
         title: {
-            text: 'Tren Penjualan Store 1, Store 2, dan Store 3'
+            text: 'Tren Penjualan Store (Bulan Ini)'
         },
 
         subtitle: {
-            text: 'Data penjualan dari 2015 hingga 2025'
+            text: 'Data penjualan per minggu untuk bulan ini'
         },
 
         yAxis: {
@@ -379,11 +380,9 @@ $(document).ready(function() {
         },
 
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agust', 'Sept', 'Okt',
-                'Nov'
-            ],
-            accessibility: {
-                rangeDescription: 'Range: 2015 to 2025'
+            categories: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'],
+            title: {
+                text: 'Minggu'
             }
         },
 
@@ -403,13 +402,13 @@ $(document).ready(function() {
 
         series: [{
             name: 'Store 1',
-            data: [200, 250, 300, 200, 950, 1100, 1250, 1400, 1600, 1800, 2000]
+            data: [500, 700, 900, 1200] // Adjust sales data accordingly
         }, {
             name: 'Store 2',
-            data: [250, 550, 700, 800, 900, 1050, 1200, 1350, 1550, 1750, 1950]
+            data: [450, 680, 850, 1100]
         }, {
             name: 'Store 3',
-            data: [400, 500, 650, 750, 850, 1000, 1150, 1300, 1500, 1700, 1900]
+            data: [480, 720, 880, 1150]
         }],
 
         responsive: {
@@ -427,6 +426,7 @@ $(document).ready(function() {
             }]
         }
     });
+
 
     Highcharts.chart('container-2', {
         chart: {

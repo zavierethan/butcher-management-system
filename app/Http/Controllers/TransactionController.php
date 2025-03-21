@@ -103,6 +103,16 @@ class TransactionController extends Controller
                     "unit_price" => $detail["price"],
                     "discount" => $detail["discount"],
                 ]);
+
+                $stockId = DB::table('stocks')->where('product_id', $detail["product_id"])->where('branch_id', $payloads["header"]["branch_id"])->value('id');
+
+                DB::table('stock_logs')->insert([
+                    "stock_id" => $stockId,
+                    "out_quantity" => $detail["quantity"],
+                    "date" => $detail["quantity"],
+                    "reference" => 'Penjualan #'.$transactionCode,
+                    "date" => date('Y-m-d H:i:s'),
+                ]);
             }
 
             // Commit the transaction
