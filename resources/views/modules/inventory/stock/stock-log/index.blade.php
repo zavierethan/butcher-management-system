@@ -39,13 +39,7 @@
                 <!--end::Page title-->
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
-                    <!--begin::Secondary button-->
-                    <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export</a>
-                    <!--end::Secondary button-->
-                    <!--begin::Primary button-->
-                    <a href="{{route('stock-logs.create', ['stockId' => $stockId])}}"
-                        class="btn btn-sm fw-bold btn-primary">Input New Log</a>
-                    <!--end::Primary button-->
+
                 </div>
                 <!--end::Actions-->
             </div>
@@ -112,6 +106,9 @@
                 <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
                     <div class="card">
                         <div class="card-body pt-10">
+                            <div class="row mb-5">
+                                <div class="col-md-12 text-end"><a href="{{route('stock-logs.create', ['stockId' => $stockId])}}" class="btn btn-sm btn-primary">Stock Adjustment</a></div>
+                            </div>
                             <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_products_table">
                                 <!--begin::Table head-->
                                 <thead>

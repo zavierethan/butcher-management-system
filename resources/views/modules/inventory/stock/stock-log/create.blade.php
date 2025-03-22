@@ -49,8 +49,7 @@
                                     <div class="mb-1">
                                         <label class="form-label fw-bold fs-6 mb-2">Referensi</label>
                                         <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid"
-                                                        type="text" name="reference" id="reference" value=""/>
+                                            <input class="form-control form-control-md form-control-solid" type="text" name="reference" id="reference" value=""/>
                                         </div>
                                     </div>
                                 </div>

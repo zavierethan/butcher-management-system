@@ -36,7 +36,7 @@
                 <!--end::Page title-->
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
-                    <a href="#" class="btn btn-sm fw-bold btn-primary" id="btn-form-stock-opname">Stock Opname</a>
+                    <a href="{{route('stocks.stock-opnames')}}" class="btn btn-sm fw-bold btn-primary" id="btn-form-stock-opname">Stock Opname</a>
                     <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export</a>
                 </div>
                 <!--end::Actions-->
@@ -63,15 +63,6 @@
                             <div class="card-toolbar">
                                 <!--begin::Toolbar-->
                                 <div class="d-flex flex-stack flex-wrap gap-4">
-                                    <div class="d-flex align-items-center fw-bold">
-                                        <!--begin::Label-->
-                                        <div class="text-gray-500 fs-7 me-2">Tanggal</div>
-                                        <!--end::Label-->
-                                        <!--begin::Select-->
-                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="start-date" value="<?php echo date("Y-m-d"); ?>"/> -
-                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="end-date" value="<?php echo date("Y-m-d"); ?>"/>
-                                        <!--end::Select-->
-                                    </div>
                                     <!--begin::Search-->
                                     <div class="position-relative my-1">
                                         <i
