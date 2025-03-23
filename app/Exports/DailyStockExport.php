@@ -89,17 +89,26 @@ class DailyStockExport implements FromCollection, WithHeadings,
                 DB::raw("COALESCE(prev_stock.prev_stock_awal, 0) AS stock_awal"),
                 DB::raw("COALESCE(SUM(CASE WHEN sl.reference IN ('Hasil Parting') THEN sl.in_quantity ELSE 0 END), 0) AS parting_quantity"),
                 DB::raw("COALESCE(SUM(CASE WHEN sl.reference NOT IN ('Stock Opname', 'Hasil Parting') THEN sl.in_quantity ELSE 0 END), 0) AS masuk"),
-                DB::raw("COALESCE(SUM(CASE WHEN sl.reference != 'Stock Opname' THEN sl.out_quantity ELSE 0 END), 0) AS keluar"),
+                DB::raw("COALESCE(SUM(CASE WHEN sl.reference NOT LIKE 'Penjualan%' AND sl.reference != 'Stock Opname' THEN sl.out_quantity ELSE 0 END), 0) AS keluar"),
+                DB::raw("COALESCE(SUM(CASE WHEN sl.reference LIKE 'Penjualan%' THEN sl.out_quantity ELSE 0 END), 0) AS terjual"),
                 DB::raw("(COALESCE(prev_stock.prev_stock_awal, 0) + 
                     COALESCE(SUM(CASE WHEN sl.reference IN ('Hasil Parting') THEN sl.in_quantity ELSE 0 END), 0) + 
                     COALESCE(SUM(CASE WHEN sl.reference NOT IN ('Stock Opname', 'Hasil Parting') THEN sl.in_quantity ELSE 0 END), 0) - 
                     COALESCE(SUM(CASE WHEN sl.reference != 'Stock Opname' THEN sl.out_quantity ELSE 0 END), 0)) AS sisa"),
                 DB::raw("COALESCE(so.opname_quantity, 0) AS opname_quantity"),
-                DB::raw("((COALESCE(prev_stock.prev_stock_awal, 0) + 
-                    COALESCE(SUM(CASE WHEN sl.reference IN ('Hasil Parting') THEN sl.in_quantity ELSE 0 END), 0) + 
-                    COALESCE(SUM(CASE WHEN sl.reference NOT IN ('Stock Opname', 'Hasil Parting') THEN sl.in_quantity ELSE 0 END), 0) - 
-                    COALESCE(SUM(CASE WHEN sl.reference != 'Stock Opname' THEN sl.out_quantity ELSE 0 END), 0)) 
-                    - COALESCE(so.opname_quantity, 0)) AS selisih"),
+                DB::raw(        "(CASE 
+                        WHEN COALESCE(so.opname_quantity, 0) != 0 
+                        THEN (COALESCE(so.opname_quantity, 0) - 
+                            (COALESCE(prev_stock.prev_stock_awal, 0) + 
+                            COALESCE(SUM(CASE WHEN sl.reference IN ('Hasil Parting') THEN sl.in_quantity ELSE 0 END), 0) + 
+                            COALESCE(SUM(CASE WHEN sl.reference NOT IN ('Stock Opname', 'Hasil Parting') THEN sl.in_quantity ELSE 0 END), 0) - 
+                            COALESCE(SUM(CASE WHEN sl.reference != 'Stock Opname' THEN sl.out_quantity ELSE 0 END), 0))) 
+                        ELSE ((COALESCE(prev_stock.prev_stock_awal, 0) + 
+                            COALESCE(SUM(CASE WHEN sl.reference IN ('Hasil Parting') THEN sl.in_quantity ELSE 0 END), 0) + 
+                            COALESCE(SUM(CASE WHEN sl.reference NOT IN ('Stock Opname', 'Hasil Parting') THEN sl.in_quantity ELSE 0 END), 0) - 
+                            COALESCE(SUM(CASE WHEN sl.reference != 'Stock Opname' THEN sl.out_quantity ELSE 0 END), 0)) 
+                            - COALESCE(so.opname_quantity, 0)) 
+                    END) AS selisih"),
                 DB::raw("COALESCE(SUM(CASE WHEN sl.reference NOT IN ('rusak', 'mutasi', 'Stock Opname') THEN sl.out_quantity * pd.price ELSE 0 END), 0) AS rp_terjual")
             ])
             ->whereBetween(DB::raw('DATE(sl.date)'), [
@@ -125,6 +134,7 @@ class DailyStockExport implements FromCollection, WithHeadings,
             'Parting',
             'Masuk',
             'Keluar',
+            'Terjual',
             'Sisa',
             'Hasil SO',
             'Selisih',
@@ -147,10 +157,10 @@ class DailyStockExport implements FromCollection, WithHeadings,
                 $sheet->setCellValue('A3', 'LAPORAN DI-GENERATE PER TANGGAL');
                 $sheet->setCellValue('B3', Carbon::now('Asia/Jakarta')->format('d M Y H:i:s'));
                 $sheet->getStyle('A1:A3')->applyFromArray(['font' => ['bold' => true]]);
-                $sheet->getStyle('A5:K5')->applyFromArray(['font' => ['bold' => true]]);
+                $sheet->getStyle('A5:L5')->applyFromArray(['font' => ['bold' => true]]);
                 
                 $rowCount = $sheet->getDelegate()->getHighestRow();
-                $tableRange = "A5:K{$rowCount}";
+                $tableRange = "A5:L{$rowCount}";
                 $sheet->getStyle($tableRange)->applyFromArray([
                     'borders' => [
                         'allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
