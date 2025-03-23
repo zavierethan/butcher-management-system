@@ -166,7 +166,7 @@
                 render: function (data, type, row) {
                     return `
                         <div class="text-center">
-                            <a href="/stock-logs/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Details</a>
+                            <a href="/stock-logs/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Log Transaksi</a>
                             <a href="/stocks/opnames/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Stock Opname</a>
                         <div>
                     `;
