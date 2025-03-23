@@ -26,7 +26,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Inventory Details</li>
+                        <li class="breadcrumb-item text-muted">Inventories</li>
                         <!--end::Item-->
                     </ul>
                     <!--end::Breadcrumb-->
@@ -39,7 +39,7 @@
                         data-bs-target="#kt_modal_create_app">Export</a>
                     <!--end::Secondary button-->
                     <!--begin::Primary button-->
-                    {{-- <a href="{{route('inventory-details.create')}}" class="btn btn-sm fw-bold btn-primary">New</a> --}}
+                    <a href="{{route('inventory-details.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
                     <!--end::Primary button-->
                 </div>
                 <!--end::Actions-->

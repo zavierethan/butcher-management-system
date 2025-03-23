@@ -36,6 +36,7 @@ class StockController extends Controller
                 'products.name as product_name',
                 'branches.code as branch_code',
                 'branches.name as branch_name',
+                'products.sort_order',
                 DB::raw('COALESCE(SUM(sl.in_quantity), 0) - COALESCE(SUM(sl.out_quantity), 0) as realtime_quantity')
             )
             ->where('stocks.branch_id', Auth::user()->branch_id)
@@ -44,8 +45,10 @@ class StockController extends Controller
                 'products.code',
                 'products.name',
                 'branches.code',
-                'branches.name'
-            );
+                'branches.name',
+                'products.sort_order'
+            )
+            ->orderBy('products.sort_order', 'asc'); // Ensure sorting by sort_order
 
         // Apply search filter
         $searchValue = $request->input('searchTerm');
@@ -81,7 +84,7 @@ class StockController extends Controller
             ->count();
 
         // Get paginated data
-        $data = $query->orderBy('stocks.id', 'desc')
+        $data = $query
             ->skip($start)
             ->take($length)
             ->get();
@@ -96,6 +99,7 @@ class StockController extends Controller
 
         return response()->json($response);
     }
+
 
     public function export(Request $request) {
 
@@ -301,8 +305,9 @@ class StockController extends Controller
                 'products.code',
                 'products.name',
                 'branches.code',
-                'branches.name'
-            )->get();
+                'branches.name',
+                'products.sort_order'
+            )->orderBy('products.sort_order', 'asc')->get();
 
         return view('modules.inventory.stock.stock-opname', compact('branch', 'stocks'));
     }
@@ -317,9 +322,72 @@ class StockController extends Controller
                     "quantity" => $productData['quantity'],
                     "date" => $productData['date'],
                 ]);
+
+            DB::table('stock_logs')
+                ->insert([
+                    "stock_id" => $productData['stock_id'],
+                    "in_quantity" => $productData['quantity'],
+                    "date" => $productData['date'],
+                    "reference" => "Stock Opname #" . $productData['date'],
+                ]);
         }
 
         return response()->json(["message" => "Products updated successfully"]);
     }
 
+    public function mutasi() {
+        $branch = DB::table('branches')->where('id', Auth::user()->branch_id)->first();
+        $stocks = DB::table('stocks')
+            ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
+            ->leftJoin('branches', 'stocks.branch_id', '=', 'branches.id')
+            ->leftJoin('stock_logs as sl', 'stocks.id', '=', 'sl.stock_id')
+            ->select(
+                'stocks.id as stock_id',
+                'products.id as product_id',
+                'products.code as product_code',
+                'products.name as product_name',
+            )
+            ->where('stocks.branch_id', Auth::user()->branch_id)
+            ->groupBy(
+                'stocks.id',
+                'products.id',
+                'products.code',
+                'products.name'
+            )->orderBy('products.sort_order', 'asc')->get();
+        return view('modules.inventory.stock.mutasi.index', compact('stocks', 'branch'));
+    }
+
+    public function mutasiSave(Request $request) {
+        $products = $request->input('products');
+
+        foreach ($products as $productData) {
+            DB::table('stock_mutations')
+                ->insert([
+                    "stock_id" => $productData['stock_id'],
+                    "mutation_type" => $productData['type'],
+                    "quantity" => $productData['quantity'],
+                    "mutation_date" => $productData['date'],
+                ]);
+
+            if($productData['type'] == 'IN') {
+                DB::table('stock_logs')
+                    ->insert([
+                        "stock_id" => $productData['stock_id'],
+                        "in_quantity" => $productData['quantity'],
+                        "date" => $productData['date'],
+                        "reference" => "Mutasi #" . $productData['type'],
+                    ]);
+            } else {
+                DB::table('stock_logs')
+                    ->insert([
+                        "stock_id" => $productData['stock_id'],
+                        "out_quantity" => $productData['quantity'],
+                        "date" => $productData['date'],
+                        "reference" => "Mutasi #" . $productData['type'],
+                    ]);
+            }
+        }
+
+        return response()->json(["message" => "Products updated successfully"]);
+    }
 }

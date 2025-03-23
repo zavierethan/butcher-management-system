@@ -402,9 +402,13 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/', [App\Http\Controllers\StockController::class, 'index'])->name('index');
             Route::get('/lists', [App\Http\Controllers\StockController::class, 'getLists'])->name('get-lists');
             Route::get('/export', [App\Http\Controllers\StockController::class, 'export'])->name('export');
-            Route::get('/export', [App\Http\Controllers\StockController::class, 'export'])->name('export');
+
             Route::get('/stock-opnames', [App\Http\Controllers\StockController::class, 'stockOpname'])->name('stock-opnames');
             Route::post('/stock-opnames/save', [App\Http\Controllers\StockController::class, 'stockOpnameSave'])->name('stock-opname-save');
+
+            Route::get('/mutasi', [App\Http\Controllers\StockController::class, 'mutasi'])->name('mutasi');
+            Route::post('/mutasi/save', [App\Http\Controllers\StockController::class, 'mutasiSave'])->name('mutasi-save');
+
             Route::get('/opnames/{stockId}', [App\Http\Controllers\StockController::class, 'opnameIndex'])->name('opname-index');
             Route::get('/opnames/{stockId}/list', [App\Http\Controllers\StockController::class, 'getOpnameList'])->name('get-opname-list');
             Route::get('/create-opname', [App\Http\Controllers\StockController::class, 'createOpname'])->name('create-opname');

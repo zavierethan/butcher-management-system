@@ -1,8 +1,6 @@
 @extends('layouts.main')
 
 @section('main-content')
-
-<?php date_default_timezone_set("Asia/Jakarta"); ?>
 <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
     <!--begin::Content wrapper-->
     <div class="d-flex flex-column flex-column-fluid">
@@ -14,13 +12,13 @@
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
                     <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-                        Stock Opnames</h1>
+                        Mutasi</h1>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
                         <!--begin::Item-->
                         <li class="breadcrumb-item text-muted">
-                            <a href="index.html" class="text-muted text-hover-primary">Inventory Management</a>
+                            <a href="index.html" class="text-muted text-hover-primary">Inventories</a>
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
@@ -37,7 +35,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Stock Opnames</li>
+                        <li class="breadcrumb-item text-muted">Mutasi</li>
                         <!--end::Item-->
                     </ul>
                     <!--end::Breadcrumb-->
@@ -53,7 +51,6 @@
             <div id="kt_app_content_container" class="app-container container-fluid">
                 <!--begin::Row-->
                 <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
-                    <!--begin::Table-->
                     <div class="card">
                         <div class="card-body pt-10">
                             <form class="w-[60%]">
@@ -77,8 +74,8 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Tanggal Mutasi</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md" type="date"
-                                                        value="<?php echo date("Y-m-d"); ?>" id="date" />
+                                                    <input class="form-control form-control-md form-control-solid"
+                                                        type="date" name="date" id="date" value="<?php echo date("Y-m-d"); ?>"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -89,58 +86,75 @@
                                     <a href="{{route('stocks.index')}}"
                                         class="btn btn-sm btn-danger">Cancel</a>
                                     <button type="button" class="btn btn-sm btn-primary"
-                                        id="btn-submit-so">Submit</button>
+                                        id="btn-submit-mutasi">Submit</button>
                                 </div>
                             </form>
                         </div>
                     </div>
-                    <!--end::Card body-->
                 </div>
-                <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
-                    <!--begin::Table-->
-                    <div class="card">
-                        <div class="card-header border-0 pt-6">
+                <!--end::Row-->
 
-                        </div>
-                        <!--begin::Card body-->
-                        <div class="card-body pt-0 overflow-x-auto">
+                <!--begin::Row-->
+                <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
+                    <div class="card">
+                        <div class="card-body pt-10 overflow-x-auto">
                             <!--begin::Table-->
-                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_products_table">
+                            <div class="row mb-5">
+                                <div class="col-md-12 text-end"><a class="btn btn-sm btn-primary" id="add-row"><i
+                                            class="fa-solid fa-plus"></i></a></div>
+                            </div>
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_items_table">
                                 <!--begin::Table head-->
                                 <thead>
                                     <!--begin::Table row-->
-                                    <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">Kode Produk</th>
-                                        <th class="min-w-125px">Nama Produk</th>
-                                        <th class="min-w-125px text-center">Kuantitas (Kg)</th>
-                                        <th class="min-w-125px">Hasil SO</th>
+                                    <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                        <th class="min-w-250px">NAMA PRODUK</th>
+                                        <th class="min-w-125px">JENIS MUTASI</th>
+                                        <th class="min-w-125px">KUANTITAS</th>
+                                        <th class="min-w-125px text-center">ACTION</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
                                 <!--end::Table head-->
                                 <!--begin::Table body-->
                                 <tbody class="fw-bold text-gray-600" id="product-table">
-                                    @foreach($stocks as $stock)
                                     <tr>
                                         <td>
-                                            {{$stock->product_code}}
-                                            <input type="hidden" value="{{$stock->id}}" class="stock-id" />
+                                            <div class="position-relative">
+                                                <select class="form-select me-2 stock-id" data-control="select2"
+                                                    name="stock_id">
+                                                    <option value="">-</option>
+                                                    @foreach($stocks as $stock)
+                                                    <option value="{{$stock->stock_id}}">
+                                                        {{$stock->product_name}}
+                                                    </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </td>
-                                        <td>{{$stock->product_name}}</td>
-                                        <td class="text-center">{{$stock->realtime_quantity}}</td>
                                         <td>
-                                            <input type="number"
-                                                class="form-control form-control-sm closing-stock-quantity" value="0" />
+                                            <div class="position-relative">
+                                                <select class="form-select me-2 type" data-control="select2"
+                                                    name="type">
+                                                    <option value="">-</option>
+                                                    <option value="IN">IN</option>
+                                                    <option value="OUT">OUT</option>
+                                                    <option value="PRIVE">PRIVE</option>
+                                                </select>
+                                            </div>
                                         </td>
-                                        @endforeach
+                                        <td><input class="form-control form-control-md me-2 quantity" type="text"
+                                            name="quantity" value="0" /></td>
+                                        <td class="text-center">
+                                            <a href="#"><i class="fa-solid fa-trash-can"></i></a>
+                                        </td>
+                                    </tr>
                                 </tbody>
                                 <!--end::Table body-->
                             </table>
                             <!--end::Table-->
                         </div>
-                        <!--end::Card body-->
                     </div>
-                    <!--end::Table-->
                 </div>
                 <!--end::Row-->
             </div>
@@ -150,23 +164,66 @@
     </div>
     <!--end::Content wrapper-->
 </div>
-
-
 @endsection
 
 @section('script')
 <script>
-// Utility function to sanitize input values
-const sanitizeValue = (value) => {
-    return value === '-' || value === '' ? null : value;
-};
+$(document).ready(function() {
 
-$(document).on('click', '#btn-submit-so', function(e) {
+    $("#add-row").on("click", function() {
+        var row = `<tr>
+                    <td>
+                        <div class="position-relative">
+                            <select class="form-select me-2 stock-id" data-control="select2"
+                                name="stock">
+                                <option value="">-</option>
+                                @foreach($stocks as $stock)
+                                <option value="{{$stock->stock_id}}">
+                                    {{$stock->product_name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="position-relative">
+                            <select class="form-select me-2 type" data-control="select2" name="type">
+                                <option value="">-</option>
+                                <option value="IN">IN</option>
+                                <option value="OUT">OUT</option>
+                                <option value="PRIVE">PRIVE</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td><input class="form-control form-control-md me-2 quantity" type="text"
+                            name="quantity" value="0" /></td>
+                    <td class="text-center">
+                        <a href="#"><i class="fa-solid fa-trash-can"></i></a>
+                    </td>
+                </tr>`;
+
+        $("#kt_items_table tbody").append(row);
+
+        $("#kt_items_table tbody tr:last").find('select[data-control="select2"]').select2();
+    });
+});
+
+$(document).on("click", "#kt_items_table tbody a", function(e) {
+    e.preventDefault();
+    $(this).closest("tr").remove();
+});
+
+$(document).on("keyup", "input[name='quantity']", function() {
+    var originalVal = $(this).val();
+    var formattedVal = formatNumber(originalVal);
+    $(this).val(formattedVal);
+});
+
+$(document).on('click', '#btn-submit-mutasi', function(e) {
     e.preventDefault();
 
     if (true) {
         Swal.fire({
-            title: 'Apakah anda yakin melakukan submit hasi SO ?',
+            title: 'Apakah anda yakin melakukan submit hasi Mutasi ?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -177,19 +234,20 @@ $(document).on('click', '#btn-submit-so', function(e) {
             if (result.isConfirmed) {
                 let products = [];
 
-                let soDate = $("#date").val();
+                let date = $("#date").val();
 
                 $("#product-table tr").each(function() {
                     let product = {
                         stock_id: $(this).find(".stock-id").val(),
-                        quantity: $(this).find(".closing-stock-quantity").val(),
-                        date: soDate,
+                        type: $(this).find(".type").val(),
+                        quantity: $(this).find(".quantity").val(),
+                        date: date,
                     };
                     products.push(product);
                 });
 
                 $.ajax({
-                    url: `{{route('stocks.stock-opname-save')}}`,
+                    url: `{{route('stocks.mutasi-save')}}`,
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {
@@ -201,7 +259,7 @@ $(document).on('click', '#btn-submit-so', function(e) {
                     success: function(response) {
                         Swal.fire({
                             title: 'Suceess !',
-                            text: `Data SO berhasil di submit.`,
+                            text: `Data Mutasi berhasil di submit.`,
                             icon: 'success',
                             confirmButtonText: 'Ok',
                             allowOutsideClick: false
@@ -223,49 +281,11 @@ $(document).on('click', '#btn-submit-so', function(e) {
     }
 });
 
-$("#btn-form-export").on("click", function() {
-    const searchTerm = $('[data-kt-customer-table-filter="search"]').val();
-    const startDate = $('#start-date').val();
-    const endDate = $('#end-date').val();
-
-    $.ajax({
-        url: `{{url('/stocks/export')}}`,
-        type: 'GET',
-        data: {
-            search_term: searchTerm,
-            start_date: startDate,
-            end_date: endDate,
-        },
-        xhrFields: {
-            responseType: 'blob', // Treat response as binary
-        },
-        success: function(data, status, xhr) {
-            $("#kt_modal_export_filter").modal('hide');
-            // Create a Blob object from the response
-            const blob = new Blob([data], {
-                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            });
-
-            // Create a link element for downloading
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = 'stock-reports.xlsx'; // Set the filename
-            document.body.appendChild(link); // Append link to the body
-            link.click(); // Trigger the download
-            document.body.removeChild(link); // Clean up the DOM
-
-            Swal.fire({
-                title: 'Success!',
-                text: 'Stock report exported successfully.',
-                icon: 'success',
-                confirmButtonText: 'OK',
-            });
-        },
-        error: function(xhr, status, error) {
-            Swal.fire('Error!', 'Failed to export the stock report.', 'error');
-        },
-    });
-
-});
+function formatNumber(numStr) {
+    let cleaned = numStr.replace(/[^\d.]/g, '');
+    const parts = cleaned.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join('.');
+}
 </script>
 @endsection

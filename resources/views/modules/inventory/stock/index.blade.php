@@ -37,6 +37,7 @@
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
                     <a href="{{route('stocks.stock-opnames')}}" class="btn btn-sm fw-bold btn-primary" id="btn-form-stock-opname">Stock Opname</a>
+                    <a href="{{route('stocks.mutasi')}}" class="btn btn-sm fw-bold btn-primary" id="btn-form-stock-opname">Mutasi</a>
                     <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export</a>
                 </div>
                 <!--end::Actions-->
@@ -91,7 +92,7 @@
                                         <th class="min-w-125px">Kode Produk</th>
                                         <th class="min-w-125px">Nama Produk</th>
                                         <th class="min-w-125px">Cabang</th>
-                                        <th class="min-w-125px">Kuantitas (Kg)</th>
+                                        <th class="min-w-125px">Kuantitas Stock (Kg)</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
