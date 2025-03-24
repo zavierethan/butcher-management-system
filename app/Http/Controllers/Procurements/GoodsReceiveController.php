@@ -136,6 +136,7 @@ class GoodsReceiveController extends Controller
                         'products.name',
                         'purchase_request_items.item_notes',
                         'purchase_order_items.quantity',
+                        'purchase_order_items.received_unit',
                         DB::raw("TO_CHAR(purchase_order_items.price, 'FM999,999,999') as price"),
                         'purchase_order_items.received_quantity',
                         DB::raw("TO_CHAR(purchase_order_items.received_price, 'FM999,999,999') as received_price"),

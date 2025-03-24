@@ -364,155 +364,85 @@
 <script>
 $(document).ready(function() {
 
-    Highcharts.chart('container-1', {
-        title: {
-            text: 'Tren Penjualan Store (Bulan Ini)'
-        },
-
-        subtitle: {
-            text: 'Data penjualan per minggu untuk bulan ini'
-        },
-
-        yAxis: {
-            title: {
-                text: 'Jumlah Penjualan'
-            }
-        },
-
-        xAxis: {
-            categories: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'],
-            title: {
-                text: 'Minggu'
-            }
-        },
-
-        legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle'
-        },
-
-        plotOptions: {
-            series: {
-                label: {
-                    connectorAllowed: false
-                }
-            }
-        },
-
-        series: [{
-            name: 'Store 1',
-            data: [500, 700, 900, 1200] // Adjust sales data accordingly
-        }, {
-            name: 'Store 2',
-            data: [450, 680, 850, 1100]
-        }, {
-            name: 'Store 3',
-            data: [480, 720, 880, 1150]
-        }],
-
-        responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 500
+    $.ajax({
+        url: '/dashboards/sales-trend', // API Laravel
+        method: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            Highcharts.chart('container-1', {
+                title: { text: 'Tren Penjualan Store (Bulan Ini)' },
+                subtitle: { text: 'Data penjualan per minggu untuk bulan ini' },
+                yAxis: { title: { text: 'Jumlah Penjualan' } },
+                xAxis: {
+                    categories: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'],
+                    title: { text: 'Minggu' }
                 },
-                chartOptions: {
-                    legend: {
-                        layout: 'horizontal',
-                        align: 'center',
-                        verticalAlign: 'bottom'
-                    }
+                legend: { layout: 'vertical', align: 'right', verticalAlign: 'middle' },
+                plotOptions: { series: { label: { connectorAllowed: false } } },
+                series: response, // Langsung pakai response dari API!
+                responsive: {
+                    rules: [{
+                        condition: { maxWidth: 500 },
+                        chartOptions: {
+                            legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom' }
+                        }
+                    }]
                 }
-            }]
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error("Error fetching data:", error);
         }
     });
 
 
-    Highcharts.chart('container-2', {
-        chart: {
-            type: 'column',
-        },
-        title: {
-            text: '10 Produk Terlaris'
-        },
-        subtitle: {
-            text: 'Data penjualan berdasarkan jumlah product terjual'
-        },
-        accessibility: {
-            announceNewData: {
-                enabled: true
-            }
-        },
-        xAxis: {
-            type: 'category'
-        },
-        yAxis: {
-            title: {
-                text: 'Jumlah Product Terjual'
-            }
-        },
-        legend: {
-            enabled: false
-        },
-        plotOptions: {
-            series: {
-                borderWidth: 0,
-                dataLabels: {
-                    enabled: true,
-                    format: '{point.y} Kg'
-                }
-            }
-        },
-        tooltip: {
-            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-            pointFormat: '<span style="color:{point.color}">{point.name}</span>: ' +
-                '<b>{point.y}</b> unit terjual<br/>'
-        },
-        series: [{
-            name: 'Produk',
-            colorByPoint: true,
-            data: [{
-                    name: 'Produk A',
-                    y: 1200
+    $.ajax({
+        url: '/dashboards/top-selling-products', // API Laravel
+        method: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            Highcharts.chart('container-2', {
+                chart: {
+                    type: 'column'
                 },
-                {
-                    name: 'Produk B',
-                    y: 1100
+                title: {
+                    text: '10 Produk Terlaris'
                 },
-                {
-                    name: 'Produk C',
-                    y: 1050
+                subtitle: {
+                    text: 'Data penjualan berdasarkan jumlah produk terjual'
                 },
-                {
-                    name: 'Produk D',
-                    y: 1000
+                accessibility: {
+                    announceNewData: { enabled: true }
                 },
-                {
-                    name: 'Produk E',
-                    y: 950
+                xAxis: {
+                    type: 'category'
                 },
-                {
-                    name: 'Produk F',
-                    y: 900
+                yAxis: {
+                    title: {
+                        text: 'Jumlah Produk Terjual'
+                    }
                 },
-                {
-                    name: 'Produk G',
-                    y: 850
+                legend: { enabled: false },
+                plotOptions: {
+                    series: {
+                        borderWidth: 0,
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.y} Kg'
+                        }
+                    }
                 },
-                {
-                    name: 'Produk H',
-                    y: 800
+                tooltip: {
+                    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                    pointFormat: '<span style="color:{point.color}">{point.name}</span>: ' +
+                        '<b>{point.y}</b> unit terjual<br/>'
                 },
-                {
-                    name: 'Produk I',
-                    y: 750
-                },
-                {
-                    name: 'Produk J',
-                    y: 700
-                }
-            ]
-        }]
+                series: response // Data dari API langsung dipakai di Highcharts!
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error("Error fetching data:", error);
+        }
     });
 });
 </script>

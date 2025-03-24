@@ -125,12 +125,12 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-20px">No.</th>
                                         <th class="min-w-125px">Item</th>
-                                        <th class="min-w-100px text-center">Jumlah (PO)</th>
-                                        <th class="min-w-125px text-end">Harga (PO)</th>
-                                        <th class="min-w-100px text-center">Jumlah (Actual)</th>
-                                        <th class="min-w-125px text-end">Harga (Actual)</th>
+                                        <th class="min-w-100px text-end">Jumlah PO (KG)</th>
+                                        <th class="min-w-125px text-end">Harga PO (RP)</th>
+                                        <th class="min-w-100px text-end">Jumlah TERIMA (KG)</th>
+                                        <th class="min-w-100px text-end">Jumlah TERIMA (EKOR)</th>
+                                        <th class="min-w-125px text-end">Harga Terima (RP)</th>
                                         <th class="min-w-100px text-center">Realisasi</th>
                                         <th class="min-w-100px">Catatan</th>
                                     </tr>
@@ -139,14 +139,13 @@
                                 <!--end::Table head-->
                                 <!--begin::Table body-->
                                 <tbody class="fw-bold text-gray-600">
-                                    <?php $no = 1; ?>
                                     @foreach($items as $item)
                                     <tr>
-                                        <td class=""><?php echo $no++; ?>.</td>
                                         <td>{{$item->name}} ({{$item->item_notes}})</td>
-                                        <td class="item-quantity text-center">{{$item->quantity}}</td>
+                                        <td class="item-quantity text-end">{{$item->quantity}}</td>
                                         <td class="item-price text-end">{{$item->price}}</td>
-                                        <td class="text-center">{{$item->received_quantity}}</td>
+                                        <td class="text-end">{{$item->received_quantity}}</td>
+                                        <td class="text-end">{{$item->received_unit}}</td>
                                         <td class="text-end">{{$item->received_price}}</td>
                                         <td class="text-center">{{$item->realisation}}</td>
                                         <td class="">{{$item->remarks}}</td>

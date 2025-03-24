@@ -25,7 +25,6 @@ Route::get('/', function () {
 // Auth::routes();
 
 Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'login'])->name('login');
-// Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'create'])->name('register');
 
 Route::group(['middleware' => ['auth']], function() {
     Route::post('/logout', [App\Http\Controllers\Auth\AuthController::class, 'logout'])->name('logout');
@@ -33,6 +32,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::prefix('dashboards')->group(function () {
         Route::name('dashboards.')->group(function () {
             Route::get('/store', [App\Http\Controllers\HomeController::class, 'index'])->name('store');
+            Route::get('/sales-trend', [App\Http\Controllers\Dashboards\GeneralDashboardController::class, 'getWeeklySales'])->name('sales-trend');
+            Route::get('/top-selling-products', [App\Http\Controllers\Dashboards\GeneralDashboardController::class, 'topSellingProducts'])->name('top-selling-products');
         });
     });
 

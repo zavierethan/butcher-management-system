@@ -130,11 +130,11 @@
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-20px">No.</th>
                                         <th class="min-w-125px">Item</th>
-                                        <th class="min-w-125px text-center">Harga</th>
-                                        <th class="min-w-100px text-center">Jumlah (Kg)</th>
-                                        <th class="min-w-125px">Harga Aktual</th>
-                                        <th class="min-w-100px">Jumlah Aktual (Kg)</th>
-                                        <th class="min-w-100px">Jumlah Aktual (Ekor)</th>
+                                        <th class="min-w-100px text-center">Jumlah PO (Kg)</th>
+                                        <th class="min-w-125px text-center">Harga PO (RP)</th>
+                                        <th class="min-w-100px">Jumlah Terima (Kg)</th>
+                                        <th class="min-w-100px">Jumlah Terima (Ekor)</th>
+                                        <th class="min-w-125px">Harga Terima (RP)</th>
                                         <th class="min-w-100px">Realisasi</th>
                                         <th class="min-w-100px">Catatan</th>
                                     </tr>
@@ -191,11 +191,11 @@ $("#purchase-order-id").on("change", function() {
                                 ${items.name}
                                 <input type="hidden" value="${items.purchase_order_item_id}" class="purchase-order-item-id" />
                             </td>
-                            <td class="item-price text-center">${items.price}</td>
-                            <td class="item-quantity text-center">${items.quantity}</td>
-                            <td class="text-center"><input class="form-control form-control-sm me-2 item-received-price" type="text" name="received_price" value="" /></td>
+                            <td class="item-quantity text-end">${items.quantity}</td>
+                            <td class="item-price text-end">${items.price}</td>
                             <td class="text-center"><input class="form-control form-control-sm me-2 item-received-quantity" type="text" name="received_quantity" value="" /></td>
                             <td class="text-center"><input class="form-control form-control-sm me-2 item-received-unit" type="text" name="received_unit" value="" /></td>
+                            <td class="text-center"><input class="form-control form-control-sm me-2 item-received-price" type="text" name="received_price" value="" /></td>
                             <td class="text-center">
                                 <div class="position-relative">
                                                 <select class="form-select item-realisation" data-control="select2"
