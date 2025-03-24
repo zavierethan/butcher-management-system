@@ -1743,7 +1743,7 @@ $(document).ready(function() {
                 .then(() => sendPrintCommand(printerName, jsonData)) // Adjust printer name
                 .catch(err => console.error("QZ Tray connection failed:", err));
         } else {
-            sendPrintCommand("POS-58 (copy 1)", jsonData);
+            sendPrintCommand(printerName , jsonData);
         }
     }
 
