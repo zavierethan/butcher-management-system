@@ -13,6 +13,24 @@ class GeneralDashboardController extends Controller
         return view('home');
     }
 
+    public function getTransactionSummary(Request $request){
+        $summary = DB::select("
+            SELECT
+                COUNT(DISTINCT transactions.id) AS total_transactions,
+                COALESCE(SUM(transactions.total_amount), 0) AS total_omzet
+            FROM transactions
+            WHERE DATE_TRUNC('month', transactions.transaction_date) = DATE_TRUNC('month', CURRENT_DATE)
+        ");
+
+        // Format angka ke ribuan
+        $formattedSummary = [
+            'total_transactions' => number_format($summary[0]->total_transactions, 0, '.', ','),
+            'total_omzet' => number_format($summary[0]->total_omzet, 0, '.', ',')
+        ];
+
+        return response()->json($formattedSummary);
+    }
+
     public function getWeeklySales(Request $request)
     {
         $sales = DB::select("
@@ -35,7 +53,6 @@ class GeneralDashboardController extends Controller
             ORDER BY branches.name, week_numbers.week_number
         ");
 
-        // Format ulang data untuk Highcharts
         $formattedData = [];
         foreach ($sales as $row) {
             if (!isset($formattedData[$row->branch_name])) {
@@ -44,7 +61,6 @@ class GeneralDashboardController extends Controller
             $formattedData[$row->branch_name][$row->week_number - 1] = (int) $row->total_sales;
         }
 
-        // Konversi ke format yang diinginkan Highcharts
         $seriesData = [];
         foreach ($formattedData as $branch => $data) {
             $seriesData[] = [
@@ -56,9 +72,7 @@ class GeneralDashboardController extends Controller
         return response()->json($seriesData);
     }
 
-    public function topSellingProducts()
-    {
-        // Query untuk mendapatkan 10 produk terlaris berdasarkan jumlah terjual
+    public function topSellingProducts(Request $request){
         $topProducts = DB::select("
             SELECT
                 products.id,
@@ -66,12 +80,13 @@ class GeneralDashboardController extends Controller
                 SUM(transaction_items.quantity) AS sold_qty
             FROM transaction_items
             JOIN products ON products.id = transaction_items.product_id
+            JOIN transactions ON transactions.id = transaction_items.transaction_id
+            WHERE DATE_TRUNC('month', transactions.transaction_date) = DATE_TRUNC('month', CURRENT_DATE)
             GROUP BY products.id, products.name
             ORDER BY sold_qty DESC
-            LIMIT 10
+            LIMIT 10;
         ");
 
-        // Format data untuk Highcharts
         $chartData = [
             "name" => "Produk",
             "colorByPoint" => true,

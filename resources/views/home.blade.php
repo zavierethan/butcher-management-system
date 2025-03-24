@@ -162,7 +162,7 @@
                                 <!--begin::Section-->
                                 <div class="d-flex flex-column my-7">
                                     <!--begin::Number-->
-                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2" id="total-revenue">0</span>
+                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2" id="total-omzet">0</span>
                                     <!--end::Number-->
                                 </div>
                                 <!--end::Section-->
@@ -365,26 +365,66 @@
 $(document).ready(function() {
 
     $.ajax({
+        url: '/dashboards/transaction-summary', // API Laravel
+        method: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            console.log(response);
+            $('#total-transactions').text(response.total_transactions);
+            $('#total-omzet').text(response.total_omzet);
+        },
+        error: function(xhr, status, error) {
+            console.error("Error fetching data:", error);
+        }
+    });
+
+    $.ajax({
         url: '/dashboards/sales-trend', // API Laravel
         method: 'GET',
         dataType: 'json',
         success: function(response) {
             Highcharts.chart('container-1', {
-                title: { text: 'Tren Penjualan Store (Bulan Ini)' },
-                subtitle: { text: 'Data penjualan per minggu untuk bulan ini' },
-                yAxis: { title: { text: 'Jumlah Penjualan' } },
+                title: {
+                    text: 'Tren Penjualan Store (Bulan Ini)'
+                },
+                subtitle: {
+                    text: 'Data penjualan per minggu untuk bulan ini'
+                },
+                yAxis: {
+                    title: {
+                        text: 'Jumlah Penjualan'
+                    }
+                },
                 xAxis: {
                     categories: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'],
-                    title: { text: 'Minggu' }
+                    title: {
+                        text: 'Minggu'
+                    }
                 },
-                legend: { layout: 'vertical', align: 'right', verticalAlign: 'middle' },
-                plotOptions: { series: { label: { connectorAllowed: false } } },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle'
+                },
+                plotOptions: {
+                    series: {
+                        label: {
+                            connectorAllowed: false
+                        }
+                    }
+                },
                 series: response, // Langsung pakai response dari API!
                 responsive: {
                     rules: [{
-                        condition: { maxWidth: 500 },
+                        condition: {
+                            maxWidth: 500
+                        },
                         chartOptions: {
-                            legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom' }
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
                         }
                     }]
                 }
@@ -412,7 +452,9 @@ $(document).ready(function() {
                     text: 'Data penjualan berdasarkan jumlah produk terjual'
                 },
                 accessibility: {
-                    announceNewData: { enabled: true }
+                    announceNewData: {
+                        enabled: true
+                    }
                 },
                 xAxis: {
                     type: 'category'
@@ -422,7 +464,9 @@ $(document).ready(function() {
                         text: 'Jumlah Produk Terjual'
                     }
                 },
-                legend: { enabled: false },
+                legend: {
+                    enabled: false
+                },
                 plotOptions: {
                     series: {
                         borderWidth: 0,
