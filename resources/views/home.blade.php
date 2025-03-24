@@ -130,7 +130,7 @@
                                 <!--end::Icon-->
                                 <div class="d-flex flex-column my-7">
                                     <!--begin::Number-->
-                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"
+                                    <span class="fw-semibold fs-2x text-gray-800 lh-1 ls-n2"
                                         id="total-transactions">0</span>
                                     <!--end::Number-->
                                 </div>
@@ -162,7 +162,7 @@
                                 <!--begin::Section-->
                                 <div class="d-flex flex-column my-7">
                                     <!--begin::Number-->
-                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2" id="total-omzet">0</span>
+                                    <span class="fw-semibold fs-2x text-gray-800 lh-1 ls-n2" id="total-omzet">0</span>
                                     <!--end::Number-->
                                 </div>
                                 <!--end::Section-->
@@ -194,7 +194,7 @@
                                 <!--begin::Section-->
                                 <div class="d-flex flex-column my-7">
                                     <!--begin::Number-->
-                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2" id="total-cash">0</span>
+                                    <span class="fw-semibold fs-2x text-gray-800 lh-1 ls-n2" id="total-cash">0</span>
                                     <!--end::Number-->
                                 </div>
                                 <!--end::Section-->
@@ -228,7 +228,7 @@
                                 <!--begin::Section-->
                                 <div class="d-flex flex-column my-7">
                                     <!--begin::Number-->
-                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"
+                                    <span class="fw-semibold fs-2x text-gray-800 lh-1 ls-n2"
                                         id="total-receivable">0</span>
                                     <!--end::Number-->
                                 </div>
@@ -263,7 +263,7 @@
                                 <!--begin::Section-->
                                 <div class="d-flex flex-column my-7">
                                     <!--begin::Number-->
-                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"
+                                    <span class="fw-semibold fs-2x text-gray-800 lh-1 ls-n2"
                                         id="total-transfer">0</span>
                                     <!--end::Number-->
                                 </div>
@@ -296,7 +296,7 @@
                                 <!--begin::Section-->
                                 <div class="d-flex flex-column my-7">
                                     <!--begin::Number-->
-                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"
+                                    <span class="fw-semibold fs-2x text-gray-800 lh-1 ls-n2"
                                         id="total-expenses">0</span>
                                     <!--end::Number-->
                                 </div>
