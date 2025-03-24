@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use Auth;
 use Log;
 
 class PartingController extends Controller
@@ -18,7 +19,8 @@ class PartingController extends Controller
 
         $query = DB::table('partings')
             ->leftJoin('branches', 'branches.id', '=', 'partings.branch_id')
-            ->select('partings.*', 'branches.name as branch_name');
+            ->select('partings.*', 'branches.name as branch_name')
+            ->where('partings.branch_id', Auth::user()->branch_id);
 
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
@@ -168,7 +170,7 @@ class PartingController extends Controller
     //     $partingHeader = DB::table('partings')
     //         ->where('partings.id', '=', $id)
     //         ->first();
-        
+
     //     $rancungHeader = DB::table('fresh_chicken_cut_results')
     //         ->where('fresh_chicken_cut_results.parting_id', '=', $id)
     //         ->get();
@@ -188,7 +190,7 @@ class PartingController extends Controller
 
         // Get the parting record
         $partingHeader = DB::table('partings')->where('id', $id)->first();
-        
+
         // Get the fresh chicken cut results
         $rancungHeader = DB::table('fresh_chicken_cut_results')
             ->where('parting_id', $id)
@@ -203,7 +205,7 @@ class PartingController extends Controller
             ->get();
 
         return view('modules.inventory.parting.edit', compact(
-            'branches', 'products', 'butcherees', 
+            'branches', 'products', 'butcherees',
             'partingHeader', 'rancungHeader', 'partingCutResultsHeader'
         ));
     }
@@ -247,7 +249,7 @@ class PartingController extends Controller
             if ($partingCutResult) {
                 // Delete related parting_cut_result_details
                 DB::table('parting_cut_result_details')->where('parting_cut_result_id', $partingCutResult->id)->delete();
-                
+
                 // Now delete parting_cut_results
                 DB::table('parting_cut_results')->where('id', $partingCutResult->id)->delete();
             }
