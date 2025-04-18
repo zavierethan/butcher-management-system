@@ -103,10 +103,18 @@ class StockController extends Controller
 
     public function export(Request $request) {
 
+        $branch = DB::table('branches')
+            ->where('id', $request->branchId)
+            ->select('code as branch_code', 'name as branch_name')
+            ->first();
+
+        $printDateTime = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
+
         $filters = [
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-            'search_term' => $request->search_term
+            'branch_id' => $request->branchId,
+            'branch_code' => $branch ? $branch->branch_code : null,
+            'branch_name' => $branch ? $branch->branch_name : null,
+            'print_date_time' => $printDateTime
         ];
 
         $export = new StockExport($filters);

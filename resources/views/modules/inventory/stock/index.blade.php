@@ -189,17 +189,13 @@
     });
 
     $("#btn-form-export").on("click", function() {
-        const searchTerm = $('[data-kt-customer-table-filter="search"]').val();
-        const startDate = $('#start-date').val();
-        const endDate = $('#end-date').val();
+        const branch_id = `{{Auth::user()->branch_id}}`;
 
         $.ajax({
             url: `{{url('/stocks/export')}}`,
             type: 'GET',
             data: {
-                search_term: searchTerm,
-                start_date: startDate,
-                end_date: endDate,
+                branchId: branch_id,
             },
             xhrFields: {
                 responseType: 'blob', // Treat response as binary

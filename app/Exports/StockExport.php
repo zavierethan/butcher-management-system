@@ -22,9 +22,7 @@ class StockExport implements FromCollection, WithHeadings, WithCustomStartCell, 
 
     public function collection()
     {
-
-        $startDate = !empty($this->filters['start_date']) ? $this->filters['start_date'] : Carbon::now('Asia/Jakarta')->toDateString();
-        $endDate = !empty($this->filters['end_date']) ? $this->filters['end_date'] : Carbon::now('Asia/Jakarta')->toDateString();
+        $branchId = $this->filters['branch_id'];
 
         // Fetching data from the database
         $query = DB::table('stocks')
@@ -34,29 +32,15 @@ class StockExport implements FromCollection, WithHeadings, WithCustomStartCell, 
             ->select(
                 'products.code as product_code',
                 'products.name as product_name',
-                'branches.code as branch_code',
-                'branches.name as branch_name',
-                'stocks.quantity',
-                DB::raw('COALESCE(SUM(sl.in_quantity), 0) - COALESCE(SUM(sl.out_quantity), 0) as realtime_quantity'),
-                'stocks.opname_quantity',
-                'stocks.date'
+                DB::raw('COALESCE(SUM(sl.in_quantity), 0) - COALESCE(SUM(sl.out_quantity), 0) AS quantity'),
             )
             ->groupBy(
-                'stocks.id',
                 'products.code',
                 'products.name',
-                'branches.code',
-                'branches.name'
-            );
+            )
+            ->orderBy('products.name');
 
-        $query->whereBetween('stocks.date', [$startDate, $endDate]);
-
-        $searchValue = $this->filters['search_term'];
-        if (!empty($searchValue)) {
-            $query->where(function ($q) use ($searchValue) {
-                $q->where('products.name', 'ilike', '%' . $searchValue . '%');
-            });
-        }
+        $query->where('stocks.branch_id', $branchId);
 
         $data = $query->get();
 
@@ -73,12 +57,7 @@ class StockExport implements FromCollection, WithHeadings, WithCustomStartCell, 
         return [
             'KODE PRODUK',
             'NAMA PRODUK',
-            'KODE CABANG',
-            'NAMA CABANG',
-            'KUANTITAS AWAL',
-            'KUANTITAS REALTIME',
-            'KUANTITAS OPNAME',
-            'TANGGAL',
+            'KUANTITAS',
         ];
     }
 
@@ -93,21 +72,22 @@ class StockExport implements FromCollection, WithHeadings, WithCustomStartCell, 
         AfterSheet::class => function (AfterSheet $event) {
             $sheet = $event->sheet;
 
-            // Get today's date if start_date or end_date is null or empty
-            $startDate = !empty($this->filters['start_date']) ? $this->filters['start_date'] : Carbon::now('Asia/Jakarta')->toDateString();
-            $endDate = !empty($this->filters['end_date']) ? $this->filters['end_date'] : Carbon::now('Asia/Jakarta')->toDateString();
+            $printDateTime = $this->filters['print_date_time'];
 
             // Set content for A1 and B1
-            $sheet->setCellValue('A1', 'Rentang Tanggal');
-            $sheet->setCellValue('B1', $startDate . ' - ' . $endDate);
+            $sheet->setCellValue('A1', 'Cabang');
+            $sheet->setCellValue('B1', $this->filters['branch_code'] . ' - ' . $this->filters['branch_name']);
+
+            $sheet->setCellValue('A2', 'Tanggal Cetak Laporan');
+            $sheet->setCellValue('B2', $printDateTime);
 
             // Apply bold styling only to A1 (Rentang Tanggal)
-            $sheet->getStyle('A1')->applyFromArray([
+            $sheet->getStyle('A1:A2')->applyFromArray([
                 'font' => ['bold' => true],
             ]);
 
             // Apply bold styling to the headings
-            $sheet->getStyle('A5:H5')->applyFromArray([
+            $sheet->getStyle('A5:C5')->applyFromArray([
                 'font' => ['bold' => true],
             ]);
 
