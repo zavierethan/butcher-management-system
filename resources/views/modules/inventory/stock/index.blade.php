@@ -157,7 +157,18 @@
             {
                 data: 'branch_name', name: 'branch_name',
             },
-            { data: 'realtime_quantity', name: 'realtime_quantity', className: 'text-center' },
+            {
+                data: 'realtime_quantity', name: 'realtime_quantity', className: 'text-center',
+                render: function (data, type, row) {
+                    // Check if max_quantity exists and realtime_quantity is within 50 of max_quantity
+                    let quantityStyle = '';
+                    if (row.max_quantity && (row.max_quantity - row.realtime_quantity) <= 50) {
+                        quantityStyle = 'color: orange;';
+                    }
+
+                    return `<span style="${quantityStyle}">${data}</span>`;
+                }
+            },
             {
                 data: null, // No direct field from the server
                 name: 'action',
@@ -168,6 +179,7 @@
                         <div class="text-center">
                             <a href="/stock-logs/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Log Transaksi</a>
                             <a href="/stocks/opnames/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Stock Opname</a>
+                            <a href="/stocks/limit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Set Limit</a>
                         <div>
                     `;
                 }

@@ -398,4 +398,45 @@ class StockController extends Controller
 
         return response()->json(["message" => "Products updated successfully"]);
     }
+
+    public function limitIndex($id) {
+        $stockHeader = $stock = DB::table('stocks')
+            ->select(
+                'stocks.*',
+                'products.id as product_id',
+                'products.code as product_code',
+                'products.name as product_name',
+                'branches.id as branch_id',
+                'branches.code as branch_code',
+                'branches.name as branch_name',
+                DB::raw('COALESCE(SUM(sl.in_quantity), 0) - COALESCE(SUM(sl.out_quantity), 0) as total_quantity'),
+            )
+            ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
+            ->leftJoin('branches', 'stocks.branch_id', '=', 'branches.id')
+            ->leftJoin('stock_logs as sl', 'stocks.id', '=', 'sl.stock_id')
+            ->where('stocks.id', $id)
+            ->groupBy('stocks.id', 'products.id', 'products.code', 'products.name', 'branches.id', 'branches.code', 'branches.name')
+            ->first();
+
+        return view('modules.inventory.stock.limit.index', ['stockId' => $id], compact('stockHeader'));
+    }
+
+public function saveLimit(Request $request)
+{
+    // Validate the incoming data
+    $request->validate([
+        'stock_id' => 'required|exists:stocks,id',  // Ensure the stock exists in the database
+        'limit' => 'required|numeric|min:0',        // Ensure the limit is a valid number and non-negative
+    ]);
+
+    // Update the stock limit using a raw SQL query
+    DB::table('stocks')
+        ->where('id', $request->stock_id)
+        ->update(['max_quantity' => $request->limit]);
+
+    // Return a success response
+    return response()->json(['success' => true, 'message' => 'Stock limit updated successfully']);
+}
+
+
 }
