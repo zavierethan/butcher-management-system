@@ -78,7 +78,7 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Tanggal Mutasi</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md" type="date"
-                                                        value="<?php echo date("Y-m-d"); ?>" id="date" />
+                                                        value="<?php echo date("Y-m-d"); ?>" id="date" @readonly(true)/>
                                                 </div>
                                             </div>
                                         </div>

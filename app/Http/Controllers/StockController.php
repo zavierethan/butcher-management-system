@@ -320,28 +320,79 @@ class StockController extends Controller
         return view('modules.inventory.stock.stock-opname', compact('branch', 'stocks'));
     }
 
-    public function stockOpnameSave(Request $request) {
+    // public function stockOpnameSave(Request $request) {
+    //     $products = $request->input('products');
+
+    //     foreach ($products as $productData) {
+    //         DB::table('stock_opnames')
+    //             ->insert([
+    //                 "stock_id" => $productData['stock_id'],
+    //                 "quantity" => $productData['quantity'],
+    //                 "date" => $productData['date'],
+    //             ]);
+
+    //         DB::table('stock_logs')
+    //             ->insert([
+    //                 "stock_id" => $productData['stock_id'],
+    //                 "in_quantity" => $productData['quantity'],
+    //                 "date" => $productData['date'],
+    //                 "reference" => "Stock Opname #" . $productData['date'],
+    //             ]);
+    //     }
+
+    //     return response()->json(["message" => "Products updated successfully"]);
+    // }
+
+    public function stockOpnameSave(Request $request)
+    {
         $products = $request->input('products');
 
-        foreach ($products as $productData) {
-            DB::table('stock_opnames')
-                ->insert([
-                    "stock_id" => $productData['stock_id'],
-                    "quantity" => $productData['quantity'],
-                    "date" => $productData['date'],
+        DB::beginTransaction();
+
+        try {
+            foreach ($products as $productData) {
+                $stockId = $productData['stock_id'];
+                $opnameQuantity = $productData['quantity'] ?? 0;
+                $date = $productData['date'] ?? now();
+
+                // Get current stock balance
+                $currentStock = DB::table('stock_logs')
+                    ->where('stock_id', $stockId)
+                    ->selectRaw('COALESCE(SUM(in_quantity), 0) - COALESCE(SUM(out_quantity), 0) AS stock_balance')
+                    ->first()->stock_balance;
+
+                $adjustment = $currentStock - $opnameQuantity;
+
+                // Insert into stock_opnames
+                DB::table('stock_opnames')->insert([
+                    "stock_id" => $stockId,
+                    "quantity" => $opnameQuantity,
+                    "date" => $date,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
 
-            DB::table('stock_logs')
-                ->insert([
-                    "stock_id" => $productData['stock_id'],
-                    "in_quantity" => $productData['quantity'],
-                    "date" => $productData['date'],
-                    "reference" => "Stock Opname #" . $productData['date'],
-                ]);
+                // Insert into stock_logs if adjustment is needed
+                if ($adjustment != 0) {
+                    DB::table('stock_logs')->insert([
+                        "stock_id" => $stockId,
+                        "in_quantity" => $adjustment < 0 ? abs($adjustment) : 0,
+                        "out_quantity" => $adjustment > 0 ? abs($adjustment) : 0,
+                        "date" => $date,
+                        "reference" => "Stock Opname",
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return response()->json(["message" => "Products updated successfully"]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(["error" => "An error occurred while processing stock opnames."], 500);
         }
-
-        return response()->json(["message" => "Products updated successfully"]);
     }
+
 
     public function mutasi() {
         $branch = DB::table('branches')->where('id', Auth::user()->branch_id)->first();
