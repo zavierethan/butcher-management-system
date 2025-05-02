@@ -379,7 +379,7 @@ class StockController extends Controller
                         "in_quantity" => $adjustment < 0 ? abs($adjustment) : 0,
                         "out_quantity" => $adjustment > 0 ? abs($adjustment) : 0,
                         "date" => $date,
-                        "reference" => "Stock Opname",
+                        "reference" => "Stock Opname #" . $productData['date'],
                     ]);
                 }
             }
