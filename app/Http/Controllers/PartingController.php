@@ -172,7 +172,7 @@ class PartingController extends Controller
                 }
 
                 // Update goods status
-                DB::table('purchase_order_items')->where('id', $request->purchase_order_item_id)->update(['status', 2]);
+                DB::table('purchase_order_items')->where('id', $request->purchase_order_item_id)->update(['status' => 2]);
             }
 
             DB::commit();
