@@ -285,7 +285,7 @@ class PurchaseRequestController extends Controller
                 ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_request_items.purchase_request_id')
                 ->leftJoin('products', 'products.id', '=', 'purchase_request_items.item_id')
                 ->where('approval_status', 2)
-                ->where('purchase_request_id', $params)
+                ->whereIn('purchase_request_id', $params)
                 ->get();
         } else {
             $response = DB::table('purchase_request_items')

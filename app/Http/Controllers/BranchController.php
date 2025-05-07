@@ -136,7 +136,20 @@ class BranchController extends Controller
             ->orderBy('sort_order', 'asc')
             ->get();
 
-        return view('modules.master.branch.product-setting', compact('branch', 'branches', 'products'));
+        $latestPrice = DB::table('purchase_order_items')
+            ->join('purchase_orders', 'purchase_orders.id', '=', 'purchase_order_items.purchase_order_id')
+            ->select(
+                DB::raw("TO_CHAR(purchase_orders.received_date, 'DD/MM/YYYY') as received_date"),
+                DB::raw('ROUND(AVG(purchase_order_items.price)) as avg_price')
+            )
+            ->where('purchase_orders.received_date', function ($query) {
+                $query->select(DB::raw('MAX(received_date)'))
+                      ->from('purchase_orders');
+            })
+            ->groupBy('purchase_orders.received_date')
+            ->first();
+
+        return view('modules.master.branch.product-setting', compact('branch', 'branches', 'products', 'latestPrice'));
     }
 
     public function productSettingBulkUpdate(Request $request) {

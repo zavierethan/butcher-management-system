@@ -205,7 +205,7 @@
                     <!--end::Title-->
                 </div>
                 <div class="fv-row mb-5">
-                    <div class="mb-1">
+                    <!-- <div class="mb-1">
                         <label class="form-label fw-bold fs-6 mb-2">kategori Item</label>
                         <div class="position-relative mb-3">
                             <input class="form-control form-control-md form-control-solid" type="text"
@@ -219,13 +219,29 @@
                                 <option value="">-</option>
                             </select>
                         </div>
-                    </div>
+                    </div> -->
+
+                    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_items_table_pr">
+                        <!--begin::Table head-->
+                        <thead>
+                            <!--begin::Table row-->
+                            <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                <th class="min-w-125px">Nomor request</th>
+                                <th class="min-w-125px text-center">Pilih</th>
+                            </tr>
+                            <!--end::Table row-->
+                        </thead>
+                        <!--end::Table head-->
+                        <!--begin::Table body-->
+                        <tbody class="fw-bold text-gray-600">
+                        </tbody>
+                        <!--end::Table body-->
+                    </table>
                 </div>
                 <div class="separator my-5"></div>
                 <div class="flex justify-content-center">
                     <button type="button" class="btn btn-primary" id="btn-form-add-item">Tambahkan</button>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
-                        id="btn-form-close">Batal</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="btn-form-close">Batal</button>
                 </div>
             </div>
             <!--end::Modal body-->
@@ -244,17 +260,21 @@ $('#kt_modal_add_item').on('shown.bs.modal', function() {
     });
 });
 
-$("#btn-form-add-item").on("click", function() {
+$("#btn-form-add-item").on("click", function(e) {
+    e.preventDefault();
 
-    // Retrieve values from input fields
-    var selectedOption = $("#purchase-request option:selected");
-    var purchaseRequestId = selectedOption.val();
+    let checkedValues = [];
+    $('.pr-checkbox:checked').each(function () {
+        checkedValues.push($(this).val());
+    });
+
+    console.log(checkedValues);
 
     $.ajax({
         url: `/api/get-purchase-request-items`, // Laravel route to fetch products
         type: 'GET',
         data: {
-            purchase_request_id: purchaseRequestId,
+            purchase_request_id: checkedValues,
         },
         dataType: 'json',
         success: function(response) {
@@ -315,11 +335,20 @@ function getPurchaseRequest(param) {
             $('#purchase-request').html('<option value="">-</option>');
         },
         success: function(response) {
-            const selectBox = $('#purchase-request');
-
             // Loop through the array and add each item as an option
             response.forEach(item => {
-                selectBox.append(new Option(item.request_number, item.id));
+                var row = `
+                        <tr>
+                            <td>${item.request_number}</td>
+                            <td class="text-center align-middle">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <input class="form-check-input pr-checkbox" value="${item.id}" type="checkbox" />
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+
+                $("#kt_items_table_pr tbody").append(row);
             });
         },
         error: function(xhr, status, error) {
