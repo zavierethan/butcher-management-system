@@ -61,7 +61,9 @@
                                             <label class="form-label fw-bold fs-6 mb-2">Nomor Purchase Order</label>
                                             <div class="position-relative mb-3">
                                                 <input class="form-control form-control-md form-control-solid"
-                                                    type="text" name="total_amount" id="received-by" value="{{$purchaseOrder->purchase_order_number}}" readonly/>
+                                                    type="text" name="total_amount" id="purchase-order-number" value="{{$purchaseOrder->purchase_order_number}}" readonly/>
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    type="hidden" id="purchase-order-id" value="{{$purchaseOrder->id}}"/>
                                             </div>
                                         </div>
                                     </div>
@@ -83,7 +85,7 @@
                                             <label class="form-label fw-bold fs-6 mb-2">Diterima Oleh</label>
                                             <div class="position-relative mb-3">
                                                 <input class="form-control form-control-md form-control-solid"
-                                                    type="text" name="total_amount" id="received-by" value="{{$purchaseOrder->received_by}}" readonly/>
+                                                    type="text" name="total_amount" id="received-by" value="{{$purchaseOrder->received_by}}"/>
                                             </div>
                                         </div>
                                     </div>
@@ -93,7 +95,7 @@
                                             <label class="form-label fw-bold fs-6 mb-2">Status</label>
                                             <div class="position-relative mb-3">
                                                 <select class="form-select form-select-solid" data-control="select2"
-                                                    data-placeholder="-" name="status" id="status" disabled>
+                                                    data-placeholder="-" name="status" id="status">
                                                     <option value="">-</option>
                                                     <option value="pending" <?php echo ($purchaseOrder->status == 1) ? 'selected' : ''; ?>>Pending Supplier</option>
                                                     <option value="goods_received" <?php echo ($purchaseOrder->status == 2) ? 'selected' : ''; ?>>Goods Received</option>
@@ -125,6 +127,8 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                        <th class="min-w-125px">Nomor Request</th>
+                                        <th class="min-w-125px">Store</th>
                                         <th class="min-w-125px">Item</th>
                                         <th class="min-w-100px text-end">Jumlah PO (KG)</th>
                                         <th class="min-w-125px text-end">Harga PO (RP)</th>
@@ -133,6 +137,7 @@
                                         <th class="min-w-125px text-end">Harga Terima (RP)</th>
                                         <th class="min-w-100px text-center">Realisasi</th>
                                         <th class="min-w-100px">Catatan</th>
+                                        <th class="min-w-100px">Status</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -141,7 +146,11 @@
                                 <tbody class="fw-bold text-gray-600">
                                     @foreach($items as $item)
                                     <tr>
-                                        <td>{{$item->name}} ({{$item->item_notes}})</td>
+                                        <td>{{$item->request_number}}
+                                            <input type="hidden" value="{{$item->id}}" class="purchase-order-item-id" />
+                                        </td>
+                                        <td>{{$item->store}}</td>
+                                        <td>{{$item->name}}</td>
                                         <td class="item-quantity text-end">{{$item->quantity}}</td>
                                         <td class="item-price text-end">{{$item->price}}</td>
                                         <td class="text-end">{{$item->received_quantity}}</td>
@@ -149,6 +158,7 @@
                                         <td class="text-end">{{$item->received_price}}</td>
                                         <td class="text-center">{{$item->realisation}}</td>
                                         <td class="">{{$item->remarks}}</td>
+                                        <td class="">{{$item->status}}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -223,13 +233,13 @@ $(document).on('click', '#btn-submit-goods-received', function(e) {
 
     if (true) {
         Swal.fire({
-            title: 'Apakah anda yakin untuk memproses penerimaan ?',
+            title: 'Apakah anda yakin untuk transfer ke Store ?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             cancelButtonText: 'Batalkan',
-            confirmButtonText: 'Ya, Proses Penerimaan'
+            confirmButtonText: 'Ya, transfer ke Store'
         }).then((result) => {
             if (result.isConfirmed) {
                 const itemLists = [];
@@ -237,16 +247,9 @@ $(document).on('click', '#btn-submit-goods-received', function(e) {
                 $('#kt_items_table tbody tr').each(function() {
 
                     var purchaseOrderItemId = $(this).find(".purchase-order-item-id").val();
-                    var itemReceivedQuantity = $(this).find(".item-received-quantity").val()
-                        .trim();
-                    var itemReceivedPrice = $(this).find(".item-received-price").val().trim();
-                    var itemRemarks = $(this).find(".item-remarks").val().trim();
 
                     itemLists.push({
                         purchase_order_item_id: purchaseOrderItemId,
-                        received_quantity: itemReceivedQuantity,
-                        received_price: itemReceivedPrice,
-                        remarks: itemRemarks,
                     });
                 });
 
@@ -269,7 +272,7 @@ $(document).on('click', '#btn-submit-goods-received', function(e) {
                 console.log(payload)
 
                 $.ajax({
-                    url: `{{route('procurement.goods-receive.save')}}`,
+                    url: `{{route('procurement.goods-receive.update')}}`,
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {
@@ -279,7 +282,7 @@ $(document).on('click', '#btn-submit-goods-received', function(e) {
                     success: function(response) {
                         Swal.fire({
                             title: 'Suceess !',
-                            text: `Goods Received berhasil di simpan`,
+                            text: `transfer ke store berhasil`,
                             icon: 'success',
                             confirmButtonText: 'Ok',
                             allowOutsideClick: false

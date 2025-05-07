@@ -293,6 +293,7 @@ Route::group(['middleware' => ['auth']], function() {
                     Route::get('/create', [App\Http\Controllers\Procurements\GoodsReceiveController::class, 'create'])->name('create');
                     Route::post('/save', [App\Http\Controllers\Procurements\GoodsReceiveController::class, 'save'])->name('save');
                     Route::get('/edit/{id}', [App\Http\Controllers\Procurements\GoodsReceiveController::class, 'edit'])->name('edit');
+                    Route::post('/update', [App\Http\Controllers\Procurements\GoodsReceiveController::class, 'update'])->name('update');
                 });
             });
 

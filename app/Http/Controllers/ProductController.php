@@ -151,26 +151,40 @@ class ProductController extends Controller
         $params = $request->q;
         $branchId = $request->branch_id;
 
-        // Build the query
-        $query = DB::table('product_details')
-            ->leftJoin('products', 'products.id', '=', 'product_details.product_id')
+        $query = DB::table('product_details as pd')
+            ->leftJoin('products as p', 'p.id', '=', 'pd.product_id')
+            ->leftJoin('transaction_items as ti', 'ti.product_id', '=', 'p.id')
+            ->leftJoin('transactions as t', function ($join) {
+                $join->on('t.id', '=', 'ti.transaction_id')
+                    ->whereRaw('DATE_TRUNC(\'month\', t.transaction_date) = DATE_TRUNC(\'month\', CURRENT_DATE)');
+            })
+            ->where('pd.branch_id', $branchId)
+            ->where('pd.is_active', 1)
             ->select(
-                'products.id',
-                'products.name',
-                'products.code',
-                'products.url_path',
-                'product_details.cogs',
-                'product_details.price',
-                'product_details.discount',
+                'p.id',
+                'p.name',
+                'p.code',
+                'p.url_path',
+                'pd.cogs',
+                'pd.price',
+                'pd.discount',
+                DB::raw('COALESCE(SUM(ti.quantity), 0) AS sold_qty')
             )
-            ->where('product_details.branch_id', $branchId)
-            ->where('product_details.is_active', '=', 1);
+            ->groupBy(
+                'p.id',
+                'p.name',
+                'p.code',
+                'p.url_path',
+                'pd.cogs',
+                'pd.price',
+                'pd.discount'
+            )->orderByRaw('COALESCE(SUM(ti.quantity), 0) DESC');
 
         // Apply filtering for name or code
         if (!empty($params)) {
             $query->where(function ($q) use ($params) {
-                $q->where('products.name', 'like', '%' . strtoupper($params) . '%')
-                ->orWhere('products.code', 'like', '%' . strtoupper($params) . '%');
+                $q->where('p.name', 'like', '%' . strtoupper($params) . '%')
+                ->orWhere('p.code', 'like', '%' . strtoupper($params) . '%');
             });
         }
 
@@ -181,9 +195,7 @@ class ProductController extends Controller
         $totalRecords = $query->count();
 
         // Fetch filtered results
-        $data = $query
-            ->orderBy('products.name', 'asc')
-            ->get();
+        $data = $query->get();
 
         // Build response
         $response = [
@@ -309,19 +321,19 @@ class ProductController extends Controller
                 'products.code',
                 'products.url_path',
                 'products.is_active',
+                'products.sort_order',
                 'product_categories.name as category_name',
                 'product_clasifications.name as clasification_name'
             )
             ->where('products.is_active', '=', 1)
-            ->where('product_clasifications.name', '!=', 'JEROAN')
-            ->where('product_categories.name', '!=', 'KOMPLEMENT');
+            ->whereIn('products.id', [33, 52, 53, 38, 37, 34, 35, 45, 47, 39, 40, 43])
+            ->orderBy('products.sort_order', 'asc');
 
         // Ensure unique results
         $query->distinct();
 
         // Fetch filtered results
         $data = $query
-            ->orderBy('products.name', 'asc')
             ->get();
 
         // Build response

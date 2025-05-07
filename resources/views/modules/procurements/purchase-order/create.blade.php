@@ -110,12 +110,16 @@
                                     <div class="separator my-5"></div>
                                     <div class="fv-row mb-5">
                                         <div class="mb-1">
-                                            <label class="form-label fw-bold fs-6 mb-2">Status Pembayaran</label>
+                                            <label class="form-label fw-bold fs-6 mb-2">Metode Pembayaran</label>
                                             <div class="position-relative mb-3">
-                                                <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="payment_status" id="payment-status">
+                                                <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="payment_method" id="payment-method">
                                                     <option value="">-</option>
-                                                    <option value="1">Unpaid</option>
-                                                    <option value="2">Paid</option>
+                                                    <option value="1">Cash Before Delivery</option>
+                                                    <option value="2">Cash on delivery</option>
+                                                    <option value="3">Cash after Delivery</option>
+                                                    <option value="4">Term of Payment 7 Hari</option>
+                                                    <option value="5">Term of Payment 15 Hari</option>
+                                                    <option value="6">Term of Payment 30 Hari</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -368,14 +372,14 @@ $(document).on('click', '#btn-submit-request', function(e) {
                 var supplier = $('#supplier').val();
                 var pic = $('#pic').val();
                 var category = $('#category').val();
-                var paymentStatus = $('#payment-status').val();
+                var paymentMethod = $('#payment-method').val();
 
                 // Build the JSON payload
                 const payload = {
                     header: {
                         date: requestDate,
                         supplier: supplier,
-                        payment_status: paymentStatus,
+                        payment_method: paymentMethod,
                         pic: pic,
                         category: category,
                         total_amount: sub_total || 0,

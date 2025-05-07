@@ -65,7 +65,7 @@
                                                     data-placeholder="-" name="branch_id" id="branch_id" disabled>
                                                     <option value="">-</option>
                                                     @foreach($branches as $branch)
-                                                        <option value="{{ $branch->id }}" 
+                                                        <option value="{{ $branch->id }}"
                                                             {{ isset($partingHeader->branch_id) && $partingHeader->branch_id == $branch->id ? 'selected' : '' }}>
                                                             {{ $branch->id }} - {{ $branch->name }}
                                                         </option>
@@ -94,7 +94,7 @@
                                                         data-placeholder="-" name="butcher_id" id="butcher_id">
                                                         <option value="">-</option>
                                                         @foreach($butcherees as $b)
-                                                            <option value="{{ $b->id }}" 
+                                                            <option value="{{ $b->id }}"
                                                                 {{ isset($partingHeader->butcher_id) && $partingHeader->butcher_id == $b->id ? 'selected' : '' }}>
                                                                 {{ $b->name }}
                                                             </option>
@@ -176,7 +176,7 @@
                                     </div>
                                 </div>
                                 <div class="text-end">
-                                    <a href="{{route('stocks.index')}}" class="btn btn-sm btn-danger">Kembali</a>
+                                    <a href="{{route('partings.index')}}" class="btn btn-sm btn-danger">Kembali</a>
                                     <button type="button" class="btn btn-sm btn-primary"
                                         id="btn-submit-ar">Submit</button>
                                 </div>
@@ -232,13 +232,6 @@
                                         </a>
                                     </div>
                                 </div>
-                                {{-- <div class="col-md-6">
-                                    <div class="col-md-12 text-end">
-                                        <a class="btn btn-sm btn-primary" id="cek-submit">
-                                            <i class="fa-solid fa-plus"></i>Cek submit
-                                        </a>
-                                    </div>
-                                </div> --}}
                             </div>
                             <div class="table-responsive">
                                 <!--begin::Table-->
@@ -379,9 +372,9 @@ function updateRancungToPartingPercentage() {
     let totalLiveToRancung = parseFloat($("#total_weight_live_to_rancung").val()) || 0;
 
     let percentage = totalLiveToRancung > 0
-        ? ((totalLiveToRancung - totalRancungToParting) / totalLiveToRancung) * 100 
+        ? ((totalLiveToRancung - totalRancungToParting) / totalLiveToRancung) * 100
         : 0;
-    
+
     $("#total_weight_rancung_to_parting_percentage").val(percentage.toFixed(2));
 }
 
@@ -399,7 +392,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     var partingCutResultsHeader = @json($partingCutResultsHeader);
     console.log("partingCutResultsHeader:", partingCutResultsHeader);
-    
+
     fetchProducts(partingCutResultsHeader);
 
     let tableBody = document.querySelector("#kt_items_table tbody");
@@ -569,7 +562,7 @@ $(document).ready(function() {
                             text: "Data submitted successfully.",
                             icon: "success"
                         }).then(() => {
-                            location.reload(); 
+                            location.reload();
                         });
                     },
                     error: function(xhr, status, error) {
@@ -652,7 +645,7 @@ function fetchProducts(partingCutResultsHeader) {
                 productIds.forEach((productId) => {
                     let quantity = rowData[productId] || "";
                     row += `<td data-id="${productId}">
-                                <input type="text" class="form-control weight-input text-center" 
+                                <input type="text" class="form-control weight-input text-center"
                                        placeholder="Enter weight" value="${quantity}">
                             </td>`;
                 });

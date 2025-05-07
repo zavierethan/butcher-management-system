@@ -310,6 +310,32 @@ class PurchaseRequestController extends Controller
         return response()->json($response);
     }
 
+    public function getPurchaseRequestByRequestId(Request $request) {
+        $response = DB::table('purchase_order_items')
+            ->select(
+                'purchase_requests.id as request_id',
+                'purchase_requests.request_number',
+                'purchase_order_items.id as purchase_order_items_id',
+                'purchase_order_items.received_quantity',
+                'purchase_order_items.received_unit',
+                'purchase_order_items.status',
+                'suppliers.name as supplier_name'
+            )
+            ->leftJoin('products', 'products.id', '=', 'purchase_order_items.item_id')
+            ->join('purchase_request_items', 'purchase_request_items.id', '=', 'purchase_order_items.purchase_request_item_id')
+            ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_request_items.purchase_request_id')
+
+            ->join('purchase_orders', 'purchase_orders.id', '=', 'purchase_order_items.purchase_order_id')
+            ->join('suppliers', 'suppliers.id', '=', 'purchase_orders.supplier_id')
+
+            ->join('branches', 'branches.id', '=', 'purchase_requests.alocation')
+            ->where('purchase_requests.id', $request->purchaseRequestId)
+            ->where('purchase_order_items.status', 1)
+            ->first();
+
+        return response()->json($response);
+    }
+
     public function approveItem(Request $request) {
         DB::table('purchase_request_items')->where('id', $request->id)->update([
             "quantity" => $request->quantity,

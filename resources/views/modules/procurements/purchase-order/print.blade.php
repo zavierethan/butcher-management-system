@@ -86,6 +86,36 @@
             border: none;
             border-top: 1px solid #000;
         }
+
+        .details {
+            font-family: Arial, sans-serif;
+            padding: 16px;
+            max-width: 600px;
+        }
+
+        .row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .item {
+            display: flex;
+            align-items: baseline;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .label {
+            display: inline-block;
+            width: 150px; /* Tetapkan lebar tetap agar rata kanan */
+            font-weight: bold;
+        }
+
+        .value {
+            flex: 1;
+        }
+
     </style>
 </head>
 <body>
@@ -108,11 +138,10 @@
             <h2>Purchase Order</h2>
             <div class="details">
                 <div class="row">
-                    <div>Order Number: <strong>{{$purchaseOrder->purchase_order_number}}</strong></div>
-                    <div>Date: <strong>{{$purchaseOrder->order_date}}</strong></div>
-                </div>
-                <div class="row">
-                    <div>Supplier: <strong>{{$purchaseOrder->supplier_name}}</strong></div>
+                    <div class="item"><span class="label">Nomor P.O</span>: <span class="value">{{$purchaseOrder->purchase_order_number}}</span></div>
+                    <div class="item"><span class="label">Metode Pembayaran</span>: <span class="value">{{$purchaseOrder->payment_method}}</span></div>
+                    <div class="item"><span class="label">Tanggal</span>: <span class="value">{{$purchaseOrder->order_date}}</span></div>
+                    <div class="item"><span class="label">Supplier</span>: <span class="value">{{$purchaseOrder->supplier_name}}</span></div>
                 </div>
             </div>
 
@@ -133,7 +162,7 @@
                     <tr>
                         <td><?php echo $no++; ?>.</td>
                         <td>{{$item->name}}</td>
-                        <td>{{$item->quantity}}</td>
+                        <td>{{$item->total_quantity}}</td>
                         <td style="text-align: right">{{$item->price}}</td>
                         <td style="text-align: right">@php echo number_format($item->total, 0, '.', ',') @endphp</td>
                     </tr>

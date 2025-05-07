@@ -85,7 +85,7 @@
                                         </div>
                                     </div>
                                     <div class="separator my-5"></div>
-                                    <!-- <div class="fv-row mb-5">
+                                    <div class="fv-row mb-5">
                                         <div class="mb-1">
                                             <label class="form-label fw-bold fs-6 mb-2">Kategori</label>
                                             <div class="position-relative mb-3">
@@ -98,7 +98,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="separator my-5"></div> -->
+                                    <div class="separator my-5"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="fv-row mb-5">
@@ -109,6 +109,23 @@
                                                     type="text" name="total_amount" id="total-amount"
                                                     value="@php echo number_format($purchaseOrder->total_amount, 0, '.', ',') @endphp"
                                                     readonly />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5"></div>
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Metode Pembayaran</label>
+                                            <div class="position-relative mb-3">
+                                                <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="payment_method" id="payment-method">
+                                                    <option value="">-</option>
+                                                    <option value="1" <?php echo ($purchaseOrder->payment_method == 1) ? 'selected' : ''; ?>>Cash Before Delivery</option>
+                                                    <option value="2" <?php echo ($purchaseOrder->payment_method == 2) ? 'selected' : ''; ?>>Cash on delivery</option>
+                                                    <option value="3" <?php echo ($purchaseOrder->payment_method == 3) ? 'selected' : ''; ?>>Cash after Delivery</option>
+                                                    <option value="4" <?php echo ($purchaseOrder->payment_method == 4) ? 'selected' : ''; ?>>Term of Payment 7 Hari</option>
+                                                    <option value="5" <?php echo ($purchaseOrder->payment_method == 5) ? 'selected' : ''; ?>>Term of Payment 15 Hari</option>
+                                                    <option value="6" <?php echo ($purchaseOrder->payment_method == 6) ? 'selected' : ''; ?>>Term of Payment 30 Hari</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -171,7 +188,7 @@
                                     @foreach($items as $item)
                                     <tr>
                                         <td><?php echo $no++; ?>.</td>
-                                        <td>{{$item->name}} ({{$item->item_notes}})</td>
+                                        <td>{{$item->name}}</td>
                                         <td class="text-center">{{$item->quantity}}</td>
                                         <td class="text-end">{{$item->price}}</td>
                                         <td class="text-end item-total-price">@php echo number_format($item->total, 0,

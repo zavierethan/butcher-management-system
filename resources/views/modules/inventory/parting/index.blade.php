@@ -99,8 +99,11 @@
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">Tanggal</th>
                                         <th class="min-w-125px">Cabang</th>
-                                        <th class="min-w-125px">Susut Live To Rancung</th>
-                                        <th class="min-w-125px">Susut Rancung To Parting</th>
+                                        <th class="min-w-125px">Ayam Hidup (Ekor)</th>
+                                        <th class="min-w-125px">Ayam Hidup (Kg)</th>
+                                        <th class="min-w-125px">Susut Ayam Hidup Ke Rancung</th>
+                                        <th class="min-w-125px">Susut Rancung Ke Parting</th>
+                                        <th class="min-w-125px">Hasil Parting (Kg)</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -172,20 +175,25 @@
         columns: [
             { data: 'date', name: 'date' },
             { data: 'branch_name', name: 'branch_name' },
-            {
-                data: 'susut_live_to_rancung', 
-                name: 'susut_live_to_rancung',
-                render: function (data, type, row) {
-                    return data !== null ? data.toFixed(2) + "%" : "N/A"; // Format to 2 decimal places
-                }
-            },
-            {
-                data: 'susut_rancung_to_parting', 
-                name: 'susut_rancung_to_parting',
-                render: function (data, type, row) {
-                    return data !== null ? data.toFixed(2) + "%" : "N/A"; // Format to 2 decimal places
-                }
-            },
+            { data: 'total_live_chickens_number', name: 'total_live_chickens_number' },
+            { data: 'total_live_chickens_weight', name: 'total_live_chickens_weight' },
+            { data: 'total_weight_live_to_rancung', name: 'total_weight_live_to_rancung' },
+            { data: 'total_weight_rancung_to_parting', name: 'total_weight_rancung_to_parting' },
+            // {
+            //     data: 'susut_live_to_rancung',
+            //     name: 'susut_live_to_rancung',
+            //     render: function (data, type, row) {
+            //         return data !== null ? data.toFixed(2) + "%" : "N/A"; // Format to 2 decimal places
+            //     }
+            // },
+            // {
+            //     data: 'susut_rancung_to_parting',
+            //     name: 'susut_rancung_to_parting',
+            //     render: function (data, type, row) {
+            //         return data !== null ? data.toFixed(2) + "%" : "N/A"; // Format to 2 decimal places
+            //     }
+            // },
+            { data: null, name: 'branch_name' },
             {
                 data: null, // No direct field from the server
                 name: 'action',
@@ -215,6 +223,6 @@
         const endDate = sanitizeDate($('#end-date').val());
         table.draw();
     });
-    
+
 </script>
 @endsection

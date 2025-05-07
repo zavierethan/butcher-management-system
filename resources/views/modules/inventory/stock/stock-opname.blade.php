@@ -75,7 +75,7 @@
                                     <div class="col-md-6">
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Tanggal Mutasi</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Tanggal Stock Opname</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md" type="date"
                                                         value="<?php echo date("Y-m-d"); ?>" id="date" />
@@ -110,9 +110,10 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                        <th class="">No.</th>
                                         <th class="min-w-125px">Kode Produk</th>
                                         <th class="min-w-125px">Nama Produk</th>
-                                        <th class="min-w-125px text-center">Kuantitas (Kg)</th>
+                                        <th class="min-w-125px text-center">Stock Akhir (Kg)</th>
                                         <th class="min-w-125px">Hasil SO</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -120,14 +121,18 @@
                                 <!--end::Table head-->
                                 <!--begin::Table body-->
                                 <tbody class="fw-bold text-gray-600" id="product-table">
+                                    @php $counter = 1 @endphp
                                     @foreach($stocks as $stock)
                                     <tr>
+                                        <td>
+                                            @php echo $counter++ @endphp
+                                        </td>
                                         <td>
                                             {{$stock->product_code}}
                                             <input type="hidden" value="{{$stock->id}}" class="stock-id" />
                                         </td>
                                         <td>{{$stock->product_name}}</td>
-                                        <td class="text-center">{{$stock->realtime_quantity}}</td>
+                                        <td class="text-center">{{$stock->stock_akhir}}</td>
                                         <td>
                                             <input type="number"
                                                 class="form-control form-control-sm closing-stock-quantity" value="0" />

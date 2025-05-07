@@ -68,6 +68,16 @@
                                         </div>
                                     </div>
                                     <div class="separator my-5"></div>
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Kasir</label>
+                                            <div class="position-relative mb-3">
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    type="text" value="{{$detailTransaction->created_by}}" readonly />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="fv-row mb-5">
@@ -75,7 +85,7 @@
                                             <label class="form-label fw-bold fs-6 mb-2">Metode Pembayaran</label>
                                             <div class="position-relative mb-3">
                                                 <select class="form-select form-select-solid" data-control="select2"
-                                                    data-placeholder="-" name="payment-method" disabled>
+                                                    data-placeholder="-" name="payment-method" id="payment-method" disabled>
                                                     <option value="1"
                                                         <?php echo ($detailTransaction->payment_method == 1) ? "selected" : ""; ?>>
                                                         Tunai</option>
@@ -92,6 +102,26 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="separator my-5 payment-method-form"></div>
+                                    <div class="fv-row mb-5 payment-method-form">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Ref. Bukti Transfer</label>
+                                            <div class="position-relative mb-3">
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    value="{{$detailTransaction->transfer_ref}}" readonly />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5 payment-method-form"></div>
+                                    <div class="fv-row mb-5 payment-method-form">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Lampiran</label>
+                                            <a href="javascript(0);" data-bs-toggle="modal" data-bs-target="#kt_img_viewer" class="previewImageBtn" data-file="data:image/png;base64,{{$detailTransaction->transfer_attch}}"><i class="fa-solid fa-eye"></i></a>
+                                            <div class="position-relative mb-3">
+                                                <input class="form-control form-control-md form-control-solid" type="file" value=""/>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="separator my-5"></div>
                                     <div class="fv-row mb-5">
                                         <div class="mb-1">
@@ -99,16 +129,6 @@
                                             <div class="position-relative mb-3">
                                                 <input class="form-control form-control-md form-control-solid"
                                                     type="text" value="@php echo number_format($detailTransaction->total_amount, 0, '.', ',') @endphp" readonly />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="separator my-5"></div>
-                                    <div class="fv-row mb-5">
-                                        <div class="mb-1">
-                                            <label class="form-label fw-bold fs-6 mb-2">Kasir</label>
-                                            <div class="position-relative mb-3">
-                                                <input class="form-control form-control-md form-control-solid"
-                                                    type="text" value="{{$detailTransaction->created_by}}" readonly />
                                             </div>
                                         </div>
                                     </div>
@@ -124,19 +144,22 @@
                                                         Lunas</option>
                                                     <option value="2"
                                                         <?php echo ($detailTransaction->status == 2) ? "selected" : ""; ?>>
-                                                        Pending</option>
+                                                        Pending (Piutang)</option>
                                                     <option value="3"
                                                         <?php echo ($detailTransaction->status == 3) ? "selected" : ""; ?>>
-                                                        Retur</option>
+                                                        Pending (Transfer)</option>
+                                                    <option value="4"
+                                                        <?php echo ($detailTransaction->status == 4) ? "selected" : ""; ?>>
+                                                        Batal (Return)</option>
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="separator my-5"></div>
-                                    <div class="text-end">
-                                        <a href="{{route('orders.index')}}" class="btn btn-danger">Cancel</a>
-                                        <a href="#" class="btn btn-primary" id="btn-update">Update</a>
-                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <a href="{{route('orders.index')}}" class="btn btn-danger">Cancel</a>
+                                    <a href="#" class="btn btn-primary" id="btn-update">Update</a>
                                 </div>
                             </div>
                         </div>
@@ -206,11 +229,60 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="kt_img_viewer" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog mw-650px">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div class="modal-header pb-0 border-0 justify-content-end">
+                <!--begin::Close-->
+                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                    <i class="ki-duotone ki-cross fs-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </div>
+                <!--end::Close-->
+            </div>
+            <!--begin::Modal header-->
+            <!--begin::Modal body-->
+            <div class="modal-body scroll-y mx-5 mx-xl-18 pt-0 pb-15">
+                <img id="previewImage" src="" alt="Preview" class="max-h-96 mx-auto" />
+            </div>
+            <!--end::Modal body-->
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div>
 @endsection
 
 @section('script')
 <script>
 $(document).ready(function() {
+
+    var paymentMethod = $("#payment-method").val();
+
+    if(paymentMethod != 3) {
+        $(".payment-method-form").hide();
+    }
+
+    $('.previewImageBtn').on('click', function(e) {
+        e.preventDefault();
+
+        var base64Image = $(this).data('file');
+
+        console.log(base64Image)
+
+        if (!base64Image) {
+            alert('No image available.');
+            return;
+        }
+
+        $('#previewImage').attr('src', base64Image);
+    });
 
     $('#btn-update').on('click', function(e) {
         e.preventDefault();

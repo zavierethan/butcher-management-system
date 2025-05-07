@@ -28,6 +28,7 @@ Route::get('customers/', [App\Http\Controllers\CustomerController::class, 'getLi
 Route::post('customers/save', [App\Http\Controllers\CustomerController::class, 'saveNewCustomerFromPOS']);
 
 Route::get('get-purchase-request/', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'getPurchaseRequest']);
+Route::get('get-purchase-request-by-request-id/', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'getPurchaseRequestByRequestId']);
 Route::get('get-purchase-request-items/', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'getPurchaseRequestItem'])->name('get-purchase-request-item');
 
 Route::get('get-purchase-order-items/', [App\Http\Controllers\Procurements\PurchaseOrderController::class, 'getPurchaseOrderItem'])->name('get-purchase-order-item');

@@ -100,9 +100,10 @@ class GoodsReceiveController extends Controller
                 DB::table('purchase_order_items')->where('id', $detail["purchase_order_item_id"])->update([
                     "received_quantity" => $detail["received_quantity"],
                     "received_unit" => $detail["received_unit"],
-                    "received_price" => $detail["received_price"],
+                    "received_price" => str_replace(',', '', $detail["received_price"]),
                     "realisation" => $detail["realisation"],
-                    "remarks" => $detail["remarks"]
+                    "remarks" => $detail["remarks"],
+                    "status" => 0 // 0 => Received from Supplier, 1 = Waiting to receive , 2 = Goods Received
                 ]);
             }
 
@@ -133,10 +134,19 @@ class GoodsReceiveController extends Controller
             $items = DB::table('purchase_order_items')
                     ->select(
                         'purchase_order_items.id',
+                        'purchase_requests.request_number',
+                        'branches.name as store',
                         'products.name',
                         'purchase_request_items.item_notes',
                         'purchase_order_items.quantity',
                         'purchase_order_items.received_unit',
+                        'purchase_order_items.status',
+                        DB::raw("CASE purchase_order_items.status
+                            WHEN '0' THEN 'Goods Received from Supplier'
+                            WHEN '1' THEN 'Waiting to Receive by Store'
+                            WHEN '2' THEN 'Goods Received'
+                            ELSE 'Unknown'
+                        END as status"),
                         DB::raw("TO_CHAR(purchase_order_items.price, 'FM999,999,999') as price"),
                         'purchase_order_items.received_quantity',
                         DB::raw("TO_CHAR(purchase_order_items.received_price, 'FM999,999,999') as received_price"),
@@ -150,6 +160,8 @@ class GoodsReceiveController extends Controller
                     )
                     ->leftJoin('products', 'products.id', '=', 'purchase_order_items.item_id')
                     ->join('purchase_request_items', 'purchase_request_items.id', '=', 'purchase_order_items.purchase_request_item_id')
+                    ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_request_items.purchase_request_id')
+                    ->join('branches', 'branches.id', '=', 'purchase_requests.alocation')
                     ->where('purchase_order_id', $purchaseOrder->id)->get();
         } else {
             $items = DB::table('purchase_order_items')
@@ -169,5 +181,44 @@ class GoodsReceiveController extends Controller
         }
 
         return view('modules.procurements.goods-receive.edit', compact('purchaseOrder', 'items'));
+    }
+
+    public function update(Request $request) {
+        $payloads = $request->all();
+
+        try {
+            // Start a database transaction
+            DB::beginTransaction();
+
+            $orderId = DB::table('purchase_orders')->where('id', $payloads["header"]["purchase_order_id"])->update([
+                "received_date" => $payloads["header"]["received_date"],
+                "received_by" => $payloads["header"]["received_by"]
+            ]);
+
+            // Save the transaction details
+            foreach ($payloads['details'] as $detail) {
+                DB::table('purchase_order_items')->where('id', $detail["purchase_order_item_id"])->update([
+                    "status" => 1 // Waiting store to receive
+                ]);
+            }
+
+            // Commit the transaction
+            DB::commit();
+
+            // Return success response
+            return response()->json([
+                'message' => 'Goods Received successfully created',
+            ], 201);
+
+        } catch (\Exception $e) {
+            // Rollback transaction in case of error
+            DB::rollBack();
+
+            // Return error response
+            return response()->json([
+                'message' => 'Failed to create transaction',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

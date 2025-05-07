@@ -19,7 +19,14 @@ class PartingController extends Controller
 
         $query = DB::table('partings')
             ->leftJoin('branches', 'branches.id', '=', 'partings.branch_id')
-            ->select('partings.*', 'branches.name as branch_name')
+            ->select(
+                'partings.id',
+                DB::raw("TO_CHAR(partings.date, 'dd/mm/YYYY') as date"),
+                'partings.total_live_chickens_number',
+                'partings.total_live_chickens_weight',
+                'partings.total_weight_live_to_rancung',
+                'partings.total_weight_rancung_to_parting',
+                'branches.name as branch_name')
             ->where('partings.branch_id', Auth::user()->branch_id);
 
         $start = $request->input('start', 0);
@@ -46,7 +53,20 @@ class PartingController extends Controller
         $products = DB::table('products')->orderBy('name', 'asc')->get();
         $butcherees = DB::table('butcherees')->orderBy('name', 'asc')->get();
 
-        return view('modules.inventory.parting.create', compact('branches', 'products', 'butcherees'));
+        $requestNumber = DB::table('purchase_order_items')
+                    ->select(
+                        'purchase_requests.request_number',
+                        'purchase_requests.id as request_id'
+                    )
+                    ->leftJoin('products', 'products.id', '=', 'purchase_order_items.item_id')
+                    ->join('purchase_request_items', 'purchase_request_items.id', '=', 'purchase_order_items.purchase_request_item_id')
+                    ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_request_items.purchase_request_id')
+                    ->join('branches', 'branches.id', '=', 'purchase_requests.alocation')
+                    ->where('purchase_requests.alocation', Auth::user()->branch_id)
+                    ->where('purchase_order_items.status', 1)
+                    ->get();
+
+        return view('modules.inventory.parting.create', compact('branches', 'products', 'butcherees', 'requestNumber'));
     }
 
     public function save(Request $request) {
@@ -150,6 +170,9 @@ class PartingController extends Controller
                 if (!empty($stockLogs)) {
                     DB::table('stock_logs')->insert($stockLogs);
                 }
+
+                // Update goods status
+                DB::table('purchase_order_items')->where('id', $request->purchase_order_item_id)->update(['status', 2]);
             }
 
             DB::commit();

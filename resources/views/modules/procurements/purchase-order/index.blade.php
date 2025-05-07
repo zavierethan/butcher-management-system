@@ -162,6 +162,8 @@
                                         <th class="min-w-125px">Tanggal</th>
                                         <th class="min-w-125px">Kategori</th>
                                         <th class="min-w-125px">Supplier</th>
+                                        <th class="min-w-125px">Metode Pembayaran</th>
+                                        <th class="min-w-125px">Status Pembayaran</th>
                                         <th class="min-w-125px">Total Pembelian</th>
                                         <th class="min-w-125px">Status</th>
                                         <th class="text-center min-w-70px">Actions</th>
@@ -226,6 +228,14 @@ let table = $("#kt_suppliers_table").DataTable({
         {
             data: 'category',
             name: 'category'
+        },
+        {
+            data: 'supplier_name',
+            name: 'supplier_name'
+        },
+        {
+            data: 'supplier_name',
+            name: 'supplier_name'
         },
         {
             data: 'supplier_name',

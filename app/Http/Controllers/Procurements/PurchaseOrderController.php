@@ -108,7 +108,7 @@ class PurchaseOrderController extends Controller
                 // "pic" => $payloads["header"]["pic"],
                 "category" => $payloads["header"]["category"],
                 "total_amount" => $payloads["header"]["total_amount"],
-                "payment_status" => $payloads["header"]["payment_status"], // 1 = UnPaid / Hutang, 2 = Paid
+                "payment_method" => $payloads["header"]["payment_method"],
                 "status" => 1,
             ]);
 
@@ -208,6 +208,15 @@ class PurchaseOrderController extends Controller
                         'purchase_orders.id',
                         'purchase_orders.category',
                         'purchase_orders.purchase_order_number',
+                        DB::raw("CASE purchase_orders.payment_method
+                            WHEN '1' THEN 'Cash Before Delivery'
+                            WHEN '2' THEN 'Cash on Delivery'
+                            WHEN '3' THEN 'Cash After Delivery'
+                            WHEN '4' THEN 'Term of Payment 7 Hari'
+                            WHEN '5' THEN 'Term of Payment 15 Hari'
+                            WHEN '6' THEN 'Term of Payment 30 Hari'
+                            ELSE 'Unknown'
+                        END as payment_method"),
                         DB::raw("TO_CHAR(purchase_orders.order_date, 'dd/mm/YYYY') as order_date"),
                         'suppliers.name as supplier_name',
                         DB::raw("TO_CHAR(purchase_orders.total_amount, 'FM999,999,999') as total_amount")
@@ -217,18 +226,16 @@ class PurchaseOrderController extends Controller
 
         if($purchaseOrder->category == 'PR') {
             $detailItems = DB::table('purchase_order_items')
-                    ->select(
-                        'products.name',
-                        'purchase_order_items.quantity',
-                        'purchase_order_items.price',
-                        DB::raw("purchase_order_items.price * purchase_order_items.quantity as total")
-                    )
-                    ->leftJoin('products', 'products.id', '=', 'purchase_order_items.item_id')
-                    ->where('purchase_order_id', $purchaseOrder->id)->get()->map(function ($item) {
-                        // Format the prices using number_format
-                        $item->price = number_format($item->price, 0, '.', ',');// Format for money
-                        return $item;
-                    });
+                ->select(
+                    'products.name',
+                    'purchase_order_items.price',
+                    DB::raw("SUM(purchase_order_items.quantity) as total_quantity"),
+                    DB::raw("SUM(purchase_order_items.quantity) * purchase_order_items.price as total")
+                )
+                ->leftJoin('products', 'products.id', '=', 'purchase_order_items.item_id')
+                ->where('purchase_order_id', $purchaseOrder->id)
+                ->groupBy('products.name', 'purchase_order_items.price')
+                ->get();
         } else {
             $detailItems = DB::table('purchase_order_items')
                     ->select(
@@ -266,24 +273,33 @@ class PurchaseOrderController extends Controller
             $response = DB::table('purchase_order_items')
                 ->select(
                     'purchase_order_items.id as purchase_order_item_id',
+                    'purchase_requests.request_number',
+                    'branches.name as store',
                     'products.name',
                     'purchase_order_items.quantity',
                     DB::raw("TO_CHAR(purchase_order_items.price, 'FM999,999,999') as price")
                 )
                 ->join('purchase_orders', 'purchase_orders.id', '=', 'purchase_order_items.purchase_order_id')
+                ->join('purchase_request_items', 'purchase_request_items.id', '=', 'purchase_order_items.purchase_request_item_id')
                 ->leftJoin('products', 'products.id', '=', 'purchase_order_items.item_id')
+                ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_request_items.purchase_request_id')
+                ->join('branches', 'branches.id', '=', 'purchase_requests.alocation')
                 ->where('purchase_order_items.purchase_order_id', $params)
                 ->get();
         } else {
             $response = DB::table('purchase_order_items')
                 ->select(
                     'purchase_order_items.id as purchase_order_item_id',
+                    'purchase_requests.request_number',
                     'inventories.name',
                     'purchase_order_items.quantity',
                     DB::raw("TO_CHAR(purchase_order_items.price, 'FM999,999,999') as price")
                 )
                 ->join('purchase_orders', 'purchase_orders.id', '=', 'purchase_order_items.purchase_order_id')
+                ->join('purchase_request_items', 'purchase_request_items.id', '=', 'purchase_order_items.purchase_request_item_id')
                 ->leftJoin('inventories', 'inventories.id', '=', 'purchase_order_items.item_id')
+                ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_request_items.purchase_request_id')
+                ->join('branches', 'branches.id', '=', 'purchase_requests.alocation')
                 ->where('purchase_order_items.purchase_order_id', $params)
                 ->get();
         }

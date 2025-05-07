@@ -123,8 +123,9 @@
                                             <option></option>
                                             <option value=" " selected="selected">Show All</option>
                                             <option value="1">Lunas</option>
-                                            <option value="2">Pending</option>
-                                            <option value="3">Return</option>
+                                            <option value="2">Piutang</option>
+                                            <option value="3">Pending (Transfer)</option>
+                                            <option value="4">Batal (Return)</option>
                                         </select>
                                         <!--end::Select-->
                                     </div>
@@ -359,10 +360,14 @@ $(document).ready(function() {
                     }
 
                     if (row.status == 2) {
-                        status = `<span class="badge bg-warning text-dark">Pending</span>`
+                        status = `<span class="badge bg-warning text-dark">Piutang</span>`
                     }
 
                     if (row.status == 3) {
+                        status = `<span class="badge bg-warning text-dark">Pending (Transfer)</span>`
+                    }
+
+                    if (row.status == 4) {
                         status = `<span class="badge bg-danger text-dark">Batal</span>`
                     }
 

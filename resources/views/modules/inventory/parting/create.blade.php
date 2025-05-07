@@ -61,11 +61,10 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Cabang</label>
                                                 <div class="position-relative mb-3">
                                                     <select class="form-select form-select-solid" data-control="select2"
-                                                        data-placeholder="-" name="branch_id" id="branch_id">
+                                                        data-placeholder="-" name="branch_id" id="branch_id" disabled>
                                                         <option value="">-</option>
                                                         @foreach($branches as $branch)
-                                                        <option value="{{ $branch->id }}">{{ $branch->id }} -
-                                                            {{ $branch->name }}</option>
+                                                        <option value="{{ $branch->id }}" <?php echo (Auth::user()->branch_id == $branch->id) ? "selected" : ""; ?>>{{ $branch->name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -83,11 +82,13 @@
                                             </div>
                                         </div>
                                         <div class="separator my-5"></div>
+                                    </div>
+                                    <div class="col-md-6">
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Butcherees</label>
                                                 <div class="position-relative mb-3">
-                                                    <select class="form-select form-select-solid" data-control="select2"
+                                                    <select class="form-select" data-control="select2"
                                                         data-placeholder="-" name="butcher_id" id="butcher_id">
                                                         <option value="">-</option>
                                                         @foreach($butcherees as $b)
@@ -101,76 +102,182 @@
                                         <div class="separator my-5"></div>
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Total Ayam Hidup
-                                                    (Ekor)</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Nomor Request</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid"
-                                                        type="number" name="total_live_chickens"
-                                                        id="total_live_chickens" readonly />
+                                                    <select class="form-select" data-control="select2"
+                                                        data-placeholder="-" name="request_id" id="request-id">
+                                                        <option value="">-</option>
+                                                        @foreach($requestNumber as $rn)
+                                                        <option value="{{ $rn->request_id }}">
+                                                            {{ $rn->request_number }}
+                                                        </option>
+                                                        @endforeach
+
+                                                        <input type="hidden" value="" id="purchase-order-item-id"/>
+                                                    </select>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="separator my-5"></div>
-                                        <div class="fv-row mb-5">
-                                            <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Total Ayam Hidup
-                                                    (Kg)</label>
-                                                <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid"
-                                                        type="number" name="total_live_chickens_weight"
-                                                        id="total_live_chickens_weight" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="separator my-5"></div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="fv-row mb-5">
-                                            <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Total Hasil Potong Ayam
-                                                    Fresh (Kg)</label>
-                                                <input class="form-control form-control-md form-control-solid"
-                                                    type="number" name="total_weight_live_to_rancung"
-                                                    id="total_weight_live_to_rancung" min="0" max="100" step="0.01"
-                                                    readonly />
-                                            </div>
-                                            <div class="separator my-5"></div>
-                                            <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Susut Ayam Hidup Ke Rancung
-                                                    (%)</label>
-                                                <input class="form-control form-control-md form-control-solid"
-                                                    type="number" name="total_weight_live_to_rancung_percentage"
-                                                    id="total_weight_live_to_rancung_percentage" min="0" max="100"
-                                                    step="0.01" readonly />
-                                            </div>
-                                        </div>
-                                        <div class="separator my-5"></div>
-                                        <div class="fv-row mb-5">
-                                            <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Total Hasil Parting Produk
-                                                    (Kg)</label>
-                                                <input class="form-control form-control-md form-control-solid"
-                                                    type="number" name="total_weight_rancung_to_parting"
-                                                    id="total_weight_rancung_to_parting" min="0" max="100" step="0.01"
-                                                    readonly />
-                                            </div>
-                                            <div class="separator my-5"></div>
-                                            <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Susut Rancung Ke Parting
-                                                    (%)</label>
-                                                <input class="form-control form-control-md form-control-solid"
-                                                    type="number" name="total_weight_rancung_to_parting_percentage"
-                                                    id="total_weight_rancung_to_parting_percentage" min="0" max="100"
-                                                    step="0.01" readonly />
                                             </div>
                                         </div>
                                         <div class="separator my-5"></div>
                                     </div>
                                 </div>
                                 <div class="text-end">
-                                    <a href="{{route('stocks.index')}}" class="btn btn-sm btn-danger">Kembali</a>
+                                    <a href="{{route('partings.index')}}" class="btn btn-sm btn-danger">Kembali</a>
                                     <button type="button" class="btn btn-sm btn-primary"
                                         id="btn-submit-ar">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body pt-10">
+                            <form class="w-[60%]">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <table class="table table-bordered">
+                                            <thead style="background-color:rgb(221, 214, 214);">
+                                                <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
+                                                    <th class="text-center" colspan="4">FORM PEMBELIAN AYAM HIDUP</th>
+                                                </tr>
+                                                <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
+                                                    <th class="min-w-200px text-center">ITEM</th>
+                                                    <th class="min-w-70px text-center">SUPPLIER</th>
+                                                    <th class="min-w-70px text-center">EKOR</th>
+                                                    <th class="min-w-70px text-center">BOBOT (KG)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="fw-semibold text-gray-600">
+                                                <tr>
+                                                    <td>
+                                                        AYAM HIDUP
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control form-control-sm me-2" type="text"
+                                                            name="" id="supplier-name"/>
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control form-control-sm me-2" type="text"
+                                                            name="total_live_chickens" id="total_live_chickens" />
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control form-control-sm me-2" type="text"
+                                                            name="total_live_chickens_weight"
+                                                            id="total_live_chickens_weight" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <table class="table table-bordered">
+                                            <thead style="background-color:rgb(221, 214, 214);">
+                                                <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
+                                                    <th class="text-center" colspan="4">FORM HASIL POTONG AYAM FRESH
+                                                    </th>
+                                                </tr>
+                                                <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
+                                                    <th class="min-w-200px text-center">ITEM</th>
+                                                    <th class="min-w-70px text-center">JUMLAH EKOR</th>
+                                                    <th class="min-w-70px text-center">BOBOT (KG)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="fw-semibold text-gray-600">
+                                                <tr>
+                                                    <td>
+                                                        RANCUNG
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control form-control-sm me-2" type="text"
+                                                            name="" />
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control form-control-sm me-2" type="text"
+                                                            name="total_weight_live_to_rancung"
+                                                            id="total_weight_live_to_rancung" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <table class="table table-bordered">
+                                            <thead style="background-color:rgb(221, 214, 214);">
+                                                <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
+                                                    <th class="text-center" colspan="4">FORM HASIL PARTING</th>
+                                                </tr>
+                                                <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
+                                                    <th class="min-w-200px text-center">ITEM</th>
+                                                    <th class="min-w-70px text-center">ATI AMPELA</th>
+                                                    <th class="min-w-70px text-center">USUS</th>
+                                                    <th class="min-w-70px text-center">BOBOT (KG)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="fw-semibold text-gray-600">
+                                                <tr>
+                                                    <td>
+                                                        PARTING
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control form-control-sm me-2" type="text"
+                                                            name="" />
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control form-control-sm me-2" type="text"
+                                                            name="" />
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control form-control-sm me-2" type="text"
+                                                            name="total_weight_rancung_to_parting"
+                                                            id="total_weight_rancung_to_parting" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <table class="table table-bordered">
+                                            <thead style="background-color:rgb(221, 214, 214);">
+                                                <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
+                                                    <th class="text-center" colspan="3">CEK SUSUT</th>
+                                                </tr>
+                                                <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
+                                                    <th class="min-w-70px text-center">ITEM</th>
+                                                    <th class="min-w-70px text-center">PERSENTASE</th>
+                                                    <th class="min-w-70px text-center">HASIL</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="fw-semibold text-gray-600">
+                                                <tr>
+                                                    <td>
+                                                        AYAM HIDUP KE RANCUNG
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control form-control-sm me-2" type="text"
+                                                            name="total_weight_live_to_rancung_percentage"
+                                                            id="total_weight_live_to_rancung_percentage" />
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control form-control-sm me-2" type="text"
+                                                            name="hasil_cek_susut_ke_rancung"
+                                                            id="hasil_cek_susut_ke_rancung" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        RANCUNG KE PARTING
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control form-control-sm me-2" type="text"
+                                                            name="total_weight_rancung_to_parting_percentage"
+                                                            id="total_weight_rancung_to_parting_percentage" />
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control form-control-sm me-2" type="text"
+                                                            name="hasil_cek_susut_ke_parting"
+                                                            id="hasil_cek_susut_ke_parting" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -181,8 +288,7 @@
                         <div class="card-body pt-10 overflow-x-auto">
                             <div class="row mb-5">
                                 <div class="col-md-6">
-                                    <div class="col-md-12 text-start fw-bold fs-4 text-uppercase gs-0">Hasil Potong Ayam
-                                        Fresh</div>
+
                                 </div>
                                 <div class="col-md-6">
                                     <div class="col-md-12 text-end"><a class="btn btn-sm btn-primary" id="add-row"><i
@@ -191,9 +297,13 @@
                             </div>
                             <div class="table-responsive">
                                 <!--begin::Table-->
-                                <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0" id="kt_items_table">
-                                    <thead>
+                                <table class="table table-bordered" id="kt_items_table">
+                                    <thead style="background-color:rgb(221, 214, 214);">
                                         <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
+                                            <th class="text-center" colspan="6">HASIL POTONG AYAM FRESH</th>
+                                        </tr>
+                                        <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
+                                            <th class="text-center">No.</th>
                                             <th class="min-w-70px">Jumlah Ekor</th>
                                             <th class="min-w-70px">Berat</th>
                                             <th class="min-w-70px">Berat Wadah</th>
@@ -215,12 +325,13 @@
                         <div class="card-body pt-10 overflow-x-auto">
                             <div class="row mb-5">
                                 <div class="col-md-6">
-                                    <div class="col-md-12 text-start fw-bold fs-4 text-uppercase gs-0">Hasil Parting Produk</div>
+                                    <div class="col-md-12 text-start fw-bold fs-4 text-uppercase gs-0">Hasil Parting
+                                        Produk</div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="col-md-12 text-end">
                                         <a class="btn btn-sm btn-primary" id="add-row-weight">
-                                            <i class="fa-solid fa-plus"></i>Tambah Baris
+                                            <i class="fa-solid fa-plus"></i>Tambah Hasil Parting
                                         </a>
                                     </div>
                                 </div>
@@ -234,8 +345,8 @@
                             </div>
                             <div class="table-responsive">
                                 <!--begin::Table-->
-                                <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0" id="kt_products_table">
-                                    <thead>
+                                <table class="table table-bordered align-middle fs-6 gy-5 mb-0" id="kt_products_table">
+                                    <thead style="background-color:rgb(221, 214, 214);">
                                         <tr id="table-head-row" class="text-start fw-bold fs-7 text-uppercase gs-0">
                                             <th class="min-w-50px text-center">#</th>
                                             <!-- Headers will be dynamically inserted here -->
@@ -267,6 +378,7 @@
 $(document).on("click", "#add-row", function(e) {
     e.preventDefault();
     var row = `<tr>
+                <td class="row-number text-center"></td>
                 <td>
                     <input class="form-control form-control-sm me-2 total-chickens" type="number"
                         name="total_chickens" step="1" min="0"
@@ -290,9 +402,16 @@ $(document).on("click", "#add-row", function(e) {
             </tr>`;
 
     $("#kt_items_table tbody").append(row);
+    updateRowNumbers();
     updateTotalLiveChickens();
     updateTotalWeightLiveToRancung();
 });
+
+function updateRowNumbers() {
+    $("#kt_items_table tbody tr").each(function(index) {
+        $(this).find(".row-number").text(index + 1);
+    });
+}
 
 // Automatically calculate net_weight
 $(document).on("input", ".weight, .container-weight, #total_live_chickens_weight", function() {
@@ -349,8 +468,15 @@ function updatePercentageRancung() {
     var totalLiveWeight = parseFloat($("#total_live_chickens_weight").val()) || 0;
     var totalNetWeight = parseFloat($("#total_weight_live_to_rancung").val()) || 0;
 
-    var percentage = totalLiveWeight > 0 ? (((totalLiveWeight - totalNetWeight) / totalLiveWeight) * 100).toFixed(2) : 0;
+    var percentage = totalLiveWeight > 0 ? (((totalLiveWeight - totalNetWeight) / totalLiveWeight) * 100).toFixed(2) :
+        0;
     $("#total_weight_live_to_rancung_percentage").val(percentage);
+
+    if (percentage < 22) {
+        $("#hasil_cek_susut_ke_rancung").val("OK");
+    } else {
+        $("#hasil_cek_susut_ke_rancung").val("CEK ULANG");
+    }
 }
 
 // fresh cut end here
@@ -381,11 +507,17 @@ function updateRancungToPartingPercentage() {
     let totalRancungToParting = parseFloat($("#total_weight_rancung_to_parting").val()) || 0;
     let totalLiveToRancung = parseFloat($("#total_weight_live_to_rancung").val()) || 0;
 
-    let percentage = totalLiveToRancung > 0
-        ? ((totalLiveToRancung - totalRancungToParting) / totalLiveToRancung) * 100 
-        : 0;
-    
+    let percentage = totalLiveToRancung > 0 ?
+        ((totalLiveToRancung - totalRancungToParting) / totalLiveToRancung) * 100 :
+        0;
+
     $("#total_weight_rancung_to_parting_percentage").val(percentage.toFixed(2));
+
+    if (percentage < 1.5) {
+        $("#hasil_cek_susut_ke_parting").val("OK");
+    } else {
+        $("#hasil_cek_susut_ke_parting").val("CEK ULANG");
+    }
 }
 
 
@@ -411,7 +543,7 @@ document.addEventListener("DOMContentLoaded", function() {
         day: "2-digit"
     };
     let jakartaDate = new Intl.DateTimeFormat("en-CA", options).format(
-    now); // 'en-CA' ensures YYYY-MM-DD format
+        now); // 'en-CA' ensures YYYY-MM-DD format
 
     // Set the value in the input field
     document.getElementById("parting_date").value = jakartaDate;
@@ -462,6 +594,7 @@ $(document).ready(function() {
                 let branchId = $("#branch_id").val();
                 let partingDate = $("#parting_date").val();
                 let butcherId = $("#butcher_id").val();
+                let purchaseOrderItemId = $("#purchase-order-item-id").val();
                 let totalLiveChickens = $("#total_live_chickens").val();
                 let totalLiveChickensWeight = $("#total_live_chickens_weight").val();
                 let totalWeightLiveToRancung = $("#total_weight_live_to_rancung").val();
@@ -489,7 +622,8 @@ $(document).ready(function() {
 
                     $("#kt_products_table thead th[data-id]").each(function() {
                         let productId = $(this).data("id");
-                        let weight = parseFloat(row.find(`td[data-id='${productId}'] input`).val()) || 0;
+                        let weight = parseFloat(row.find(
+                            `td[data-id='${productId}'] input`).val()) || 0;
 
                         if (weight > 0) {
                             partingData.push({
@@ -505,6 +639,7 @@ $(document).ready(function() {
                     branch_id: branchId,
                     parting_date: partingDate,
                     butcher_id: butcherId,
+                    purchase_order_item_id : purchaseOrderItemId,
                     total_live_chickens: totalLiveChickens,
                     total_live_chickens_weight: totalLiveChickensWeight,
                     total_weight_live_to_rancung: totalWeightLiveToRancung,
@@ -530,7 +665,7 @@ $(document).ready(function() {
                             text: "Data submitted successfully.",
                             icon: "success"
                         }).then(() => {
-                            location.reload(); 
+                            location.reload();
                         });
                     },
                     error: function(xhr, status, error) {
@@ -556,7 +691,7 @@ function fetchProducts() {
         url: "/api/allProductsInParting", // Replace with your API URL
         method: "GET",
         dataType: "json",
-        success: function (response) {
+        success: function(response) {
             console.log("API Response:", response); // Debugging: Check the actual API response
 
             let headerRow = $("#table-head-row");
@@ -571,17 +706,18 @@ function fetchProducts() {
             }
 
             // Append dynamic product columns
-            response.data.forEach(function (product) {
+            response.data.forEach(function(product) {
                 if (!product.id || !product.name) {
                     console.warn("Missing product data:", product);
                     return;
                 }
-                headerRow.append(`<th class="min-w-150px" data-id="${product.id}">${product.name}</th>`);
+                headerRow.append(
+                    `<th class="min-w-150px" data-id="${product.id}">${product.name}</th>`);
             });
 
             console.log("Headers added successfully!");
         },
-        error: function (xhr, status, error) {
+        error: function(xhr, status, error) {
             console.error("Error fetching products:", error);
         }
     });
@@ -600,7 +736,7 @@ $(document).on("click", "#add-row-weight", function(e) {
     $("#table-head-row th:not(:first)").each(function() {
         var productId = $(this).data("id"); // Get product ID from <th> data-id
         row += `<td data-id="${productId}">
-                    <input type="text" class="form-control weight-input" placeholder="Enter weight">
+                    <input type="text" class="form-control form-control-sm me-2 weight-input" placeholder="">
                 </td>`;
     });
 
@@ -612,6 +748,31 @@ $(document).on("click", "#add-row-weight", function(e) {
 
 $("#kt_products_table tbody").on("input", "td input", function() {
     updateTotalWeightRancungToParting();
+});
+
+$(document).on("change", "#request-id", function(e) {
+    e.preventDefault();
+    var purchaseRequestId = $(this).val();
+
+    $.ajax({
+        url: `/api/get-purchase-request-by-request-id`, // Laravel route to fetch products
+        type: 'GET',
+        data: {
+            purchaseRequestId: purchaseRequestId,
+        },
+        dataType: 'json',
+        success: function(response) {
+            console.log(response.request_number)
+
+            $("#total_live_chickens").val(response.received_unit);
+            $("#total_live_chickens_weight").val(response.received_quantity);
+            $("#supplier-name").val(response.supplier_name);
+            $("#purchase-order-item-id").val(response.purchase_order_items_id);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching products:', error);
+        }
+    });
 });
 
 function updateTotalWeightRancungToParting() {

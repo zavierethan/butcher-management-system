@@ -100,8 +100,8 @@
                                             <div class="position-relative mb-3">
                                                 <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="payment_status" id="payment-status">
                                                     <option value="">-</option>
-                                                    <option value="1">Unpaid</option>
-                                                    <option value="2">Paid</option>
+                                                    <option value="1">Utang</option>
+                                                    <option value="2">Lunas</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -129,6 +129,7 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-20px">No.</th>
+                                        <th class="min-w-20px">Store</th>
                                         <th class="min-w-125px">Item</th>
                                         <th class="min-w-100px text-center">Jumlah PO (Kg)</th>
                                         <th class="min-w-125px text-center">Harga PO (RP)</th>
@@ -188,6 +189,9 @@ $("#purchase-order-id").on("change", function() {
                         <tr>
                             <td class="">${no++}.</td>
                             <td>
+                                ${items.store}
+                            </td>
+                            <td>
                                 ${items.name}
                                 <input type="hidden" value="${items.purchase_order_item_id}" class="purchase-order-item-id" />
                             </td>
@@ -195,7 +199,7 @@ $("#purchase-order-id").on("change", function() {
                             <td class="item-price text-end">${items.price}</td>
                             <td class="text-center"><input class="form-control form-control-sm me-2 item-received-quantity" type="text" name="received_quantity" value="" /></td>
                             <td class="text-center"><input class="form-control form-control-sm me-2 item-received-unit" type="text" name="received_unit" value="" /></td>
-                            <td class="text-center"><input class="form-control form-control-sm me-2 item-received-price" type="text" name="received_price" value="" /></td>
+                            <td class="text-center"><input class="form-control form-control-sm me-2 item-received-price" type="text" name="received_price" value="${items.price}" readonly /></td>
                             <td class="text-center">
                                 <div class="position-relative">
                                                 <select class="form-select item-realisation" data-control="select2"
@@ -243,7 +247,7 @@ $(document).on('click', '#btn-submit-goods-received', function(e) {
                     var purchaseOrderItemId = $(this).find(".purchase-order-item-id").val();
                     var itemReceivedQuantity = $(this).find(".item-received-quantity").val().trim();
                     var itemReceivedUnit = $(this).find(".item-received-unit").val().trim();
-                    var itemReceivedPrice = $(this).find(".item-received-price").val().trim();
+                    var itemReceivedPrice = $(this).find(".item-received-price").val().trim().replace(/,/g, "");
                     var itemRealisation = $(this).find(".item-realisation").val().trim();
                     var itemRemarks = $(this).find(".item-remarks").val().trim();
 

@@ -106,6 +106,8 @@ class OrderController extends Controller
                         'transactions.code',
                         DB::raw("TO_CHAR(transactions.transaction_date, 'DD/MM/YYYY') as transaction_date"),
                         'transactions.payment_method',
+                        'transactions.transfer_ref',
+                        'transactions.transfer_attch',
                         'transactions.discount',
                         'transactions.shipping_cost',
                         'transactions.total_amount',

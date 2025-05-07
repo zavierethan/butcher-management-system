@@ -25,30 +25,67 @@ class StockController extends Controller
     public function getLists(Request $request) {
         $params = $request->all();
 
-        // Base query
-        $query = DB::table('stocks')
-            ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
-            ->leftJoin('branches', 'stocks.branch_id', '=', 'branches.id')
-            ->leftJoin('stock_logs as sl', 'stocks.id', '=', 'sl.stock_id')
+        // Subquery: logs_today
+        $logsToday = DB::table('stock_logs')
             ->select(
-                'stocks.*',
-                'products.code as product_code',
-                'products.name as product_name',
-                'branches.code as branch_code',
-                'branches.name as branch_name',
-                'products.sort_order',
-                DB::raw('COALESCE(SUM(sl.in_quantity), 0) - COALESCE(SUM(sl.out_quantity), 0) as realtime_quantity')
+                'stock_logs.stock_id',
+                DB::raw('DATE(stock_logs.date) AS tanggal_logs_transaksi'),
+                DB::raw('SUM(stock_logs.in_quantity) AS stok_masuk'),
+                DB::raw('SUM(stock_logs.out_quantity) AS stok_keluar')
             )
+            ->whereRaw('DATE(stock_logs.date) = CURRENT_DATE')
+            ->groupBy('stock_logs.stock_id', DB::raw('DATE(stock_logs.date)'));
+
+        // Subquery: latest_opname (before today)
+        $latestOpname = DB::table('stock_opnames')
+            ->select('stock_opnames.stock_id', 'stock_opnames.quantity', 'stock_opnames.date')
+            ->whereRaw('DATE(stock_opnames.date) < CURRENT_DATE')
+            ->orderBy('stock_opnames.stock_id')
+            ->orderByDesc('stock_opnames.date');
+
+        // Wrap it in a distinct-on simulation using window function (Postgres only)
+        $latestOpnameSub = DB::table(DB::raw("(
+            SELECT DISTINCT ON (stock_id) stock_id, quantity, date
+            FROM stock_opnames
+            WHERE DATE(date) < CURRENT_DATE
+            ORDER BY stock_id, date DESC
+            ) AS latest_opname"));
+
+        // Subquery: today_opname
+        $todayOpname = DB::table(DB::raw("(
+            SELECT DISTINCT ON (stock_id) stock_id, quantity, date
+            FROM stock_opnames
+            WHERE DATE(date) = CURRENT_DATE
+            ORDER BY stock_id, date DESC
+            ) AS today_opname"));
+
+        $query = DB::table('stocks')
+            ->leftJoin('products', 'products.id', '=', 'stocks.product_id')
+            ->leftJoinSub($logsToday, 'logs_today', function ($join) {
+                $join->on('stocks.id', '=', 'logs_today.stock_id');
+            })
+            ->leftJoinSub($latestOpnameSub, 'latest_opname', function ($join) {
+                $join->on('stocks.id', '=', 'latest_opname.stock_id');
+            })
+            ->leftJoinSub($todayOpname, 'today_opname', function ($join) {
+                $join->on('stocks.id', '=', 'today_opname.stock_id');
+            })
             ->where('stocks.branch_id', Auth::user()->branch_id)
-            ->groupBy(
+            ->orderBy('products.sort_order', 'asc')
+            ->select(
                 'stocks.id',
                 'products.code',
                 'products.name',
-                'branches.code',
-                'branches.name',
-                'products.sort_order'
-            )
-            ->orderBy('products.sort_order', 'asc'); // Ensure sorting by sort_order
+                DB::raw('COALESCE(logs_today.tanggal_logs_transaksi, CURRENT_DATE) AS tanggal_logs_transaksi'),
+                DB::raw("TO_CHAR(latest_opname.date, 'dd/mm/YYYY') as tanggal_stock_awal"),
+                'today_opname.date AS tanggal_stock_opname',
+                DB::raw('COALESCE(latest_opname.quantity, 0) AS stock_awal'),
+                DB::raw('COALESCE(logs_today.stok_masuk, 0) AS stok_masuk'),
+                DB::raw('COALESCE(logs_today.stok_keluar, 0) AS stok_keluar'),
+                DB::raw('COALESCE(latest_opname.quantity, 0) + COALESCE(logs_today.stok_masuk, 0) - COALESCE(logs_today.stok_keluar, 0) AS stock_akhir'),
+                DB::raw('COALESCE(today_opname.quantity, 0) AS hasil_stock_opname'),
+                DB::raw('COALESCE(today_opname.quantity, 0) - (COALESCE(latest_opname.quantity, 0) + COALESCE(logs_today.stok_masuk, 0) - COALESCE(logs_today.stok_keluar, 0)) AS selisih')
+            );
 
         // Apply search filter
         $searchValue = $request->input('searchTerm');
@@ -71,33 +108,19 @@ class StockController extends Controller
             }
         }
 
-        // Pagination parameters
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
 
-        // Total records count
-        $totalRecords = DB::table('stocks')->count();
+        $totalRecords = $query->count();
+        $filteredRecords = $query->count();
+        $data = $query->skip($start)->take($length)->get();
 
-        // Correctly count filtered records using subquery
-        $filteredRecords = DB::table(DB::raw("({$query->toSql()}) as subquery"))
-            ->mergeBindings($query)
-            ->count();
-
-        // Get paginated data
-        $data = $query
-            ->skip($start)
-            ->take($length)
-            ->get();
-
-        // Prepare response
-        $response = [
+        return response()->json([
             'draw' => $request->input('draw'),
             'recordsTotal' => $totalRecords,
             'recordsFiltered' => $filteredRecords,
             'data' => $data
-        ];
-
-        return response()->json($response);
+        ]);
     }
 
 
@@ -183,14 +206,14 @@ class StockController extends Controller
             $stockId = $validated['stock_id'];
             $opnameQuantity = $validated['quantity'] ?? 0;
 
-            // Calculate current stock balance from stock_logs
-            $currentStock = DB::table('stock_logs')
-                ->where('stock_id', $stockId)
-                ->selectRaw('COALESCE(SUM(in_quantity), 0) - COALESCE(SUM(out_quantity), 0) AS stock_balance')
-                ->first()->stock_balance;
+            // // Calculate current stock balance from stock_logs
+            // $currentStock = DB::table('stock_logs')
+            //     ->where('stock_id', $stockId)
+            //     ->selectRaw('COALESCE(SUM(in_quantity), 0) - COALESCE(SUM(out_quantity), 0) AS stock_balance')
+            //     ->first()->stock_balance;
 
-            // Determine stock adjustment amount
-            $adjustment = $currentStock - $opnameQuantity;
+            // // Determine stock adjustment amount
+            // $adjustment = $currentStock - $opnameQuantity;
 
             // Insert opname record
             DB::table('stock_opnames')->insert([
@@ -202,15 +225,15 @@ class StockController extends Controller
             ]);
 
             // Insert adjustment entry in stock_logs
-            if ($adjustment != 0) {
-                DB::table('stock_logs')->insert([
-                    'stock_id' => $stockId,
-                    'in_quantity' => $adjustment < 0 ? abs($adjustment) : 0,
-                    'out_quantity' => $adjustment > 0 ? abs($adjustment) : 0,
-                    'date' => now(),
-                    'reference' => 'Stock Opname',
-                ]);
-            }
+            // if ($adjustment != 0) {
+            //     DB::table('stock_logs')->insert([
+            //         'stock_id' => $stockId,
+            //         'in_quantity' => $adjustment < 0 ? abs($adjustment) : 0,
+            //         'out_quantity' => $adjustment > 0 ? abs($adjustment) : 0,
+            //         'date' => now(),
+            //         'reference' => 'Stock Opname',
+            //     ]);
+            // }
 
             DB::commit();
 
@@ -287,27 +310,70 @@ class StockController extends Controller
 
     public function stockOpname() {
         $branch = DB::table('branches')->where('id', Auth::user()->branch_id)->first();
-        $stocks = DB::table('stocks')
-            ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
-            ->leftJoin('branches', 'stocks.branch_id', '=', 'branches.id')
-            ->leftJoin('stock_logs as sl', 'stocks.id', '=', 'sl.stock_id')
+
+        // Subquery: logs_today
+        $logsToday = DB::table('stock_logs')
             ->select(
-                'stocks.*',
+                'stock_logs.stock_id',
+                DB::raw('DATE(stock_logs.date) AS tanggal_logs_transaksi'),
+                DB::raw('SUM(stock_logs.in_quantity) AS stok_masuk'),
+                DB::raw('SUM(stock_logs.out_quantity) AS stok_keluar')
+            )
+            ->whereRaw('DATE(stock_logs.date) = CURRENT_DATE')
+            ->groupBy('stock_logs.stock_id', DB::raw('DATE(stock_logs.date)'));
+
+        // Subquery: latest_opname (before today)
+        $latestOpname = DB::table('stock_opnames')
+            ->select('stock_opnames.stock_id', 'stock_opnames.quantity', 'stock_opnames.date')
+            ->whereRaw('DATE(stock_opnames.date) < CURRENT_DATE')
+            ->orderBy('stock_opnames.stock_id')
+            ->orderByDesc('stock_opnames.date');
+
+        // Wrap it in a distinct-on simulation using window function (Postgres only)
+        $latestOpnameSub = DB::table(DB::raw("(
+            SELECT DISTINCT ON (stock_id) stock_id, quantity, date
+            FROM stock_opnames
+            WHERE DATE(date) < CURRENT_DATE
+            ORDER BY stock_id, date DESC
+            ) AS latest_opname"));
+
+        // Subquery: today_opname
+        $todayOpname = DB::table(DB::raw("(
+            SELECT DISTINCT ON (stock_id) stock_id, quantity, date
+            FROM stock_opnames
+            WHERE DATE(date) = CURRENT_DATE
+            ORDER BY stock_id, date DESC
+            ) AS today_opname"));
+
+        $stocks = DB::table('stocks')
+            ->leftJoin('products', 'products.id', '=', 'stocks.product_id')
+            ->leftJoinSub($logsToday, 'logs_today', function ($join) {
+                $join->on('stocks.id', '=', 'logs_today.stock_id');
+            })
+            ->leftJoinSub($latestOpnameSub, 'latest_opname', function ($join) {
+                $join->on('stocks.id', '=', 'latest_opname.stock_id');
+            })
+            ->leftJoinSub($todayOpname, 'today_opname', function ($join) {
+                $join->on('stocks.id', '=', 'today_opname.stock_id');
+            })
+            ->where('stocks.branch_id', Auth::user()->branch_id)
+            ->orderBy('products.sort_order', 'asc')
+            ->select(
+                'stocks.id',
                 'products.code as product_code',
                 'products.name as product_name',
-                'branches.code as branch_code',
-                'branches.name as branch_name',
-                DB::raw('COALESCE(SUM(sl.in_quantity), 0) - COALESCE(SUM(sl.out_quantity), 0) as realtime_quantity')
+                DB::raw('COALESCE(logs_today.tanggal_logs_transaksi, CURRENT_DATE) AS tanggal_logs_transaksi'),
+                DB::raw("TO_CHAR(latest_opname.date, 'dd/mm/YYYY') as tanggal_stock_awal"),
+                'today_opname.date AS tanggal_stock_opname',
+                DB::raw('COALESCE(latest_opname.quantity, 0) AS stock_awal'),
+                DB::raw('COALESCE(logs_today.stok_masuk, 0) AS stok_masuk'),
+                DB::raw('COALESCE(logs_today.stok_keluar, 0) AS stok_keluar'),
+                DB::raw('COALESCE(latest_opname.quantity, 0) + COALESCE(logs_today.stok_masuk, 0) - COALESCE(logs_today.stok_keluar, 0) AS stock_akhir'),
+                DB::raw('COALESCE(today_opname.quantity, 0) AS hasil_stock_opname'),
+                DB::raw('COALESCE(today_opname.quantity, 0) - (COALESCE(latest_opname.quantity, 0) + COALESCE(logs_today.stok_masuk, 0) - COALESCE(logs_today.stok_keluar, 0)) AS selisih')
             )
-            ->where('stocks.branch_id', Auth::user()->branch_id)
-            ->groupBy(
-                'stocks.id',
-                'products.code',
-                'products.name',
-                'branches.code',
-                'branches.name',
-                'products.sort_order'
-            )->orderBy('products.sort_order', 'asc')->get();
+            ->get();
+
 
         return view('modules.inventory.stock.stock-opname', compact('branch', 'stocks'));
     }

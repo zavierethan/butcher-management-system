@@ -216,7 +216,6 @@
                     return `
                         <div class="text-center">
                             <a href="/procurement/goods-receive/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Lihat</a>
-                            <a href="#" class="btn btn-sm btn-light btn-active-light-primary" title="Sync Jurnal"><i class="fa-solid fa-arrow-right-arrow-left"></i></a>
                         <div>
                     `;
                 }

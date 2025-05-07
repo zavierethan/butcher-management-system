@@ -36,6 +36,7 @@
                 <!--end::Page title-->
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
+                    <a href="{{route('partings.create')}}" class="btn btn-sm fw-bold btn-primary" id="btn-form-stock-opname">Product Parting</a>
                     <a href="{{route('stocks.stock-opnames')}}" class="btn btn-sm fw-bold btn-primary" id="btn-form-stock-opname">Stock Opname</a>
                     <a href="{{route('stocks.mutasi')}}" class="btn btn-sm fw-bold btn-primary" id="btn-form-stock-opname">Mutasi</a>
                     <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export</a>
@@ -91,8 +92,15 @@
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">Kode Produk</th>
                                         <th class="min-w-125px">Nama Produk</th>
-                                        <th class="min-w-125px">Cabang</th>
-                                        <th class="min-w-125px">Kuantitas Stock (Kg)</th>
+                                        <th class="min-w-125px">Tanggal Opname</th>
+                                        <th class="min-w-125px">Stok Awal</th>
+                                        <th class="min-w-125px">Stok Masuk</th>
+                                        <th class="min-w-125px">Stok Keluar</th>
+                                        <th class="min-w-125px">Stok Akhir</th>
+                                        <th class="min-w-125px">Hasil Stok Opename</th>
+                                        <!-- <th class="min-w-125px">Tanggal Opname Terakhir</th>
+                                        <th class="min-w-125px">Tanggal Opname Terakhir</th>
+                                        <th class="min-w-125px">Tanggal Opname Terakhir</th> -->
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -148,16 +156,16 @@
             }
         },
         columns: [
-            {
-                data: 'product_code', name: 'product_code',
-            },
-            {
-                data: 'product_name', name: 'product_name',
-            },
-            {
-                data: 'branch_name', name: 'branch_name',
-            },
-            { data: 'realtime_quantity', name: 'realtime_quantity', className: 'text-center' },
+            {data: 'code', name: 'code'},
+            {data: 'name', name: 'name'},
+            // { data: 'tanggal_logs_transaksi', name: 'tanggal_logs_transaksi', className: 'text-center' },
+            // { data: 'tanggal_stock_awal', name: 'tanggal_stock_awal', className: 'text-center' },
+            { data: 'tanggal_stock_awal', name: 'tanggal_stock_awal', className: 'text-center' },
+            { data: 'stock_awal', name: 'stock_awal', className: 'text-center' },
+            { data: 'stok_masuk', name: 'stok_masuk', className: 'text-center' },
+            { data: 'stok_keluar', name: 'stok_keluar', className: 'text-center' },
+            { data: 'stock_akhir', name: 'stock_akhir', className: 'text-center' },
+            { data: 'hasil_stock_opname', name: 'hasil_stock_opname', className: 'text-center' },
             {
                 data: null, // No direct field from the server
                 name: 'action',

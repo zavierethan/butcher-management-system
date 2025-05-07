@@ -621,7 +621,7 @@
                                         <span class="d-block mb-2">Ongkos Kirim <a href="javascript(0);"
                                                 data-bs-toggle="modal" data-bs-target="#kt_modal_add_shipping_cost"><i
                                                     class="fas fa-edit text-white"></i></a></span>
-                                        <span class="d-block mb-2">Total</span>
+                                        <span class="d-block mb-2">Total Bayar</span>
                                     </div>
                                     <!--end::Content-->
                                     <!--begin::Content-->
@@ -700,18 +700,6 @@
                                             <!--end::Title-->
                                         </label>
                                         <!--end::Radio-->
-                                        <!--begin::Radio-->
-                                        <!-- <label
-                                            class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4"
-                                            data-kt-button="true">
-                                            <input class="btn-check" type="radio" name="payment_method" value="4" />
-                                            <i class="ki-duotone ki-delivery fs-2hx mb-2 pe-0">
-                                                <span class="path1"></span>
-                                                <span class="path2"></span>
-                                            </i>
-                                            <span class="fs-7 fw-bold d-block">COD</span>
-                                        </label> -->
-                                        <!--end::Radio-->
                                     </div>
                                     <!--end::Radio group-->
                                     <div id="form-nominal">
@@ -735,8 +723,47 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div id="form-ref-transfer">
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <div class="position-relative mb-3">
+                                                    <div class="fv-row">
+														<label class="form-label fw-bold fs-6 mb-2">Direct Transfer</label>
+                                                        <div class="d-flex flex-equal gap-2 gap-xxl-9 px-0">
+                                                            <div class="form-check form-check-custom form-check-solid mb-2">
+                                                                <input class="form-check-input" type="radio" value="1" name="is_direct_transfer" checked>
+                                                                <label class="form-check-label">Ya</label>
+                                                            </div>
+                                                            <div class="form-check form-check-custom form-check-solid mb-2">
+                                                                <input class="form-check-input" type="radio" value="0" name="is_direct_transfer">
+                                                                <label class="form-check-label">Tidak</label>
+                                                            </div>
+                                                        </div>
+													</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Ref. Bukti Transfer</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid"
+                                                        type="text" id="transfer-ref"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Lampiran</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid"
+                                                        type="file" id="transfer-attch"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <!--begin::Actions-->
-                                    <button class="btn btn-primary fs-1 w-100 py-4" id="process-transaction">Proses
+                                    <button class="btn btn-success fs-1 w-100 py-4" id="process-transaction">Proses
                                         Transaksi</button>
                                     <!--end::Actions-->
                                 </div>
@@ -1080,6 +1107,7 @@
 $(document).ready(function() {
     $("#product-loader").show();
     $("#form-nominal").hide();
+    $("#form-ref-transfer").hide();
     getProductList();
     getCustomers();
 
@@ -1168,7 +1196,7 @@ $(document).ready(function() {
             const quantityElement = existingProduct.find('.qty');
             const currentQuantity = parseFloat(productQuantity) || 1;
             const newQuantity = currentQuantity + 1;
-            quantityElement.text(`${newQuantity} Kg`);
+            quantityElement.text(`${newQuantity}`);
 
             const priceElement = existingProduct.find('.price');
             const newSubtotal = (productPrice * newQuantity);
@@ -1184,23 +1212,32 @@ $(document).ready(function() {
                                         <div class="d-none product-id">${productId}</div>
                                         <div class="d-none stock-id">${stockId}</div>
                                         <div class="d-none base-price">${productPrice}</div>
-                                        <span class="badge bg-warning text-dark qty">${productQuantity} Kg</span>
+
+                                    </div>
+                                    <div class="text-end me-3 mt-3">
+                                        <a href="#" class="btn btn-sm me-2 edit-item" data-bs-toggle="modal" data-bs-target="#kt_modal_edit_product_item" data-product-id="${productId}" data-product-name="${productName}" data-product-price="${productPrice}" data-product-discount="${productDiscount}">
+                                            <i class="fas fa-edit" style="color: green;"></i>
+                                        </a>
+                                        <i class="fas fa-trash remove-item" data-product-id="${productId}" style="color: red;"></i>
+                                    </div>
+                                </div>
+                                <div class="d-flex">
+                                    <div class="flex-grow-1 mt-3">
+                                        <h6><span class="qty">${productQuantity}</span> x ${productPrice}</h6>
                                     </div>
                                     <div class="text-end me-3 mt-3">
                                         <h6 class="mb-1 price">${formatCurrency(mround((productPrice - productDiscount) * productQuantity, 500))}</h6>
+                                    </div>
+                                </div>
+                                <div class="d-flex">
+                                    <div class="flex-grow-1 mt-3">
                                         ${dicountElem}
                                     </div>
-                                </div>
-                                <div class="d-flex flex-row-reverse">
-                                    <div class="text-end">
-                                        <a href="#" class="btn btn-outline-primary btn-sm me-2 edit-item" data-bs-toggle="modal" data-bs-target="#kt_modal_edit_product_item" data-product-id="${productId}" data-product-name="${productName}" data-product-price="${productPrice}" data-product-discount="${productDiscount}">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button class="btn btn-outline-danger btn-sm remove-item" data-product-id="${productId}">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                    <div class="text-end me-3 mt-3">
+
                                     </div>
                                 </div>
+
                             </div>
                         <div class="separator separator-dashed my-5"></div>
                     </div>`;
@@ -1237,7 +1274,7 @@ $(document).ready(function() {
             const quantityElement = existingProduct.find('.qty');
             // const currentQuantity = parseFloat(quantityElement.text()) || 1;
             const newQuantity = parseFloat(quantity);
-            quantityElement.text(`${newQuantity} Kg`);
+            quantityElement.text(`${newQuantity}`);
 
             const priceElement = existingProduct.find('.price');
             const discountElement = existingProduct.find('.discount').text().replace(/[^\d]/g, '') | 0;
@@ -1290,16 +1327,15 @@ $(document).ready(function() {
                 confirmButtonText: 'Ya, Proses Transaksi'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    const formData = new FormData();
+
                     const products = [];
 
-                    $('.cart-item-lists').each(function() {
-
+                    $('.cart-item-lists').each(function () {
                         const productId = $(this).find('.product-id').text();
                         const stockId = $(this).find('.stock-id').text();
-                        const price = $(this).find('.price').text().replace(/[^\d]/g,
-                            '');
-                        const basePrice = $(this).find('.base-price').text().replace(
-                            /[^\d]/g, '');
+                        const price = $(this).find('.price').text().replace(/[^\d]/g, '');
+                        const basePrice = $(this).find('.base-price').text().replace(/[^\d]/g, '');
                         const productDiscount = $(this).find('.discount').text().replace(/[^\d]/g, '') | 0;
                         const quantity = $(this).find('.qty').text().replace(/ Kg$/, "");
 
@@ -1320,40 +1356,48 @@ $(document).ready(function() {
                     const customerId = $('#customer').val();
                     const butcherName = $('#butcher-name').val();
                     const branchId = $('#branch-id').val();
-                    const nominalCash = $('#nominal-cash').text().replace(/[^\d]/g, '') | 0;
-                    const nominalReturn = $('#nominal-return').text().replace(/[^\d]/g, '') | 0;
+                    const nominalCash = $('#nominal-cash').val().replace(/[^\d]/g, '') | 0;
+                    const nominalReturn = $('#nominal-return').val().replace(/[^\d]/g, '') | 0;
+                    const transferType = $('#form-ref-transfer').find('input[type="radio"]:checked').val();
+                    const transferRef = $('#transfer-ref').val();
+                    const transferAttch = $('#transfer-attch')[0]?.files[0]; // Get file from input
 
-                    // Build the JSON payload
-                    const payload = {
-                        header: {
-                            transaction_date: new Date().toISOString(),
-                            customer_name: customerId,
-                            total_amount: totalAmount,
-                            payment_method: paymentMethod,
-                            customer_id: customerId,
-                            butcher_name: butcherName,
-                            discount: discount,
-                            shipping_cost: shippingCost,
-                            branch_id: branchId,
-                            nominal_cash: nominalCash,
-                            nominal_return: nominalReturn,
-                        },
-                        details: products
-                    };
+                    // Append form fields
+                    formData.append('transaction_date', new Date().toISOString());
+                    formData.append('customer_name', customerId);
+                    formData.append('total_amount', totalAmount);
+                    formData.append('payment_method', paymentMethod);
+                    formData.append('customer_id', customerId);
+                    formData.append('butcher_name', butcherName);
+                    formData.append('discount', discount);
+                    formData.append('shipping_cost', shippingCost);
+                    formData.append('branch_id', branchId);
+                    formData.append('nominal_cash', nominalCash);
+                    formData.append('nominal_return', nominalReturn);
+                    formData.append('transfer_type', transferType);
+                    formData.append('transfer_ref', transferRef);
 
-                    console.log(payload)
+                    if (transferAttch) {
+                        formData.append('transfer_attch', transferAttch);
+                    }
+
+                    // Append products array as JSON string
+                    formData.append('details', JSON.stringify(products));
+
+                    console.log(formData)
 
                     $.ajax({
                         url: `{{route('transactions.store')}}`,
                         type: 'POST',
-                        contentType: 'application/json',
+                        processData: false,
+                        contentType: false,
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        data: JSON.stringify(payload),
-                        success: function(response) {
+                        data: formData,
+                        success: function (response) {
                             Swal.fire({
-                                title: 'Suceess !',
+                                title: 'Success!',
                                 text: `Transaksi berhasil di simpan dengan Nomor ${response.transaction_code}`,
                                 icon: 'success',
                                 showCancelButton: true,
@@ -1361,21 +1405,16 @@ $(document).ready(function() {
                                 cancelButtonText: 'Tidak',
                                 allowOutsideClick: false
                             }).then((result) => {
-
                                 if (result.isConfirmed) {
-                                    // Send AJAX request to print the receipt
                                     $.ajax({
                                         url: `/orders/print-thermal/${response.transaction_id}`,
                                         type: "GET",
                                         dataType: "json",
                                         success: function (response) {
                                             if (response.code == 200) {
-
                                                 var printerName = "{{ ($settings) ? $settings->printer_name : '' }}";
 
-                                                console.log("Printer Name : " +printerName)
-
-                                                if(printerName === '' ) {
+                                                if (printerName === '') {
                                                     Swal.fire({
                                                         title: 'Gagal mencetak nota',
                                                         text: 'Nama Printer tidak ditemukan. harap periksa pengaturan pada sistem.',
@@ -1386,7 +1425,6 @@ $(document).ready(function() {
 
                                                     $(".cart-item-lists").remove();
                                                     calculateTotals();
-
                                                     return;
                                                 }
 
@@ -1401,7 +1439,6 @@ $(document).ready(function() {
 
                                                 $(".cart-item-lists").remove();
                                                 calculateTotals();
-
                                             } else {
                                                 Swal.fire({
                                                     title: 'Gagal Mencetak Nota',
@@ -1427,7 +1464,7 @@ $(document).ready(function() {
                                 }
                             });
                         },
-                        error: function(xhr, status, error) {
+                        error: function (xhr, status, error) {
                             if (xhr.status === 400) {
                                 Swal.fire({
                                     title: 'Warning !',
@@ -1436,15 +1473,12 @@ $(document).ready(function() {
                                     allowOutsideClick: false
                                 });
                             } else {
-                                Swal.fire(
-                                    'Error!',
-                                    error,
-                                    'error'
-                                );
+                                Swal.fire('Error!', error, 'error');
                             }
                         }
                     });
                 }
+
             });
         }
     });
@@ -1525,6 +1559,12 @@ $(document).ready(function() {
         } else {
             $("#form-nominal").hide();
         }
+
+        if ($(this).val() === '3' && $(this).is(':checked')) {
+            $("#form-ref-transfer").show();
+        } else {
+            $("#form-ref-transfer").hide();
+        }
     });
 
     function getProductList(param) {
@@ -1555,16 +1595,15 @@ $(document).ready(function() {
                         `<span>Diskon</span> <span class="fs-6 text-muted">${formatCurrency(parseFloat(product.discount))}</span>` :
                         '';
 
-                    const productItem = `<div class="col-md-3 mb-3 product-l"><div class="card p-6 pb-5 mw-100 product" data-stock-id="${product.stock_id}" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}" data-product-discount="${product.discount}" data-bs-toggle="modal" data-bs-target="#kt_modal_add_product_item">
+                    const productItem = `<div class="col-md-3 mb-3 product-l"><div class="card p-6 pb-5 product" data-stock-id="${product.stock_id}" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}" data-product-discount="${product.discount}" data-bs-toggle="modal" data-bs-target="#kt_modal_add_product_item">
                                             <div class="card-body text-center">
-                                                <img src="${productImg}" class="rounded-3 mb-4 w-150px h-150px w-xxl-200px h-xxl-200px" alt="" />
                                                 <div class="mb-2">
                                                     <div class="text-center">
-                                                        <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-3 fs-xl-1">${product.name}</span>
+                                                        <span class="fw-bold text-gray-800 cursor-pointer">${product.name}</span>
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <span class="text-success text-end fw-bold fs-1">${formatCurrency(parseFloat(product.price))}</span>
+                                                    <span class="text-success text-end fw-bold">${formatCurrency(parseFloat(product.price))}</span>
                                                 </div>
                                                 ${discountHTML}
                                             </div>
@@ -1582,22 +1621,23 @@ $(document).ready(function() {
     }
 
     function getCustomers() {
-
         $.ajax({
-            url: `/api/customers`, // Laravel route to fetch products
+            url: `/api/customers`,
             type: 'GET',
             dataType: 'json',
             beforeSend: function() {
-                // Clear existing options before the request
                 $('#customer').html('<option value="">Pilih Customer</option>');
             },
             success: function(response) {
-                // Loop through each product in the JSON response
                 var data = response.data;
                 const selectBox = $('#customer');
 
                 data.forEach(item => {
-                    selectBox.append(new Option(item.name, item.id));
+                    const option = new Option(item.name, item.id);
+                    if (item.id === 8) {
+                        option.selected = true; // Select the option with id 8
+                    }
+                    selectBox.append(option);
                 });
             },
             error: function(xhr, status, error) {
@@ -1653,64 +1693,96 @@ $(document).ready(function() {
     }
 
     function validate() {
-        var toReturn = true;
+        // === Get form values ===
         const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
         const customerId = $('#customer').val();
         const butcherName = $('#butcher-name').val();
         const branchId = $('#branch-id').val();
+        const transferRef = $('#transfer-ref').val();
+        const cartItems = $('#cart-item .cart-item-lists');
 
+        let toReturn = true;
+
+        console.log("Cart Item Length:", cartItems.length);
+
+        // === Validation rules ===
+
+        // Cart must not be empty
+        if (cartItems.length === 0) {
+            Swal.fire({
+                title: 'Warning!',
+                text: 'Cart tidak boleh kosong',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            });
+            toReturn = false;
+        }
+
+        // Payment method must be selected
         if (!paymentMethod) {
             Swal.fire({
-                title: 'Warning !',
+                title: 'Warning!',
                 text: 'Metode Pembayaran tidak boleh kosong',
                 icon: 'warning',
                 confirmButtonText: 'OK',
                 allowOutsideClick: false
             });
-
             toReturn = false;
         }
 
+        // Customer must be selected
         if (!customerId) {
             Swal.fire({
-                title: 'Warning !',
-                text: 'Nama customer harus di pilih',
+                title: 'Warning!',
+                text: 'Nama customer harus dipilih',
                 icon: 'warning',
                 confirmButtonText: 'OK',
                 allowOutsideClick: false
             });
-
             toReturn = false;
         }
 
+        // Butcher name must not be empty
         if (!butcherName) {
             Swal.fire({
-                title: 'Warning !',
+                title: 'Warning!',
                 text: 'Nama Butcherees tidak boleh kosong',
                 icon: 'warning',
                 confirmButtonText: 'OK',
                 allowOutsideClick: false
             });
-
             toReturn = false;
         }
 
+        // Branch/store must be selected
         if (!branchId) {
             Swal.fire({
-                title: 'Warning !',
-                text: 'Branch / Store harus di pilih',
+                title: 'Warning!',
+                text: 'Branch / Store harus dipilih',
                 icon: 'warning',
                 confirmButtonText: 'OK',
                 allowOutsideClick: false
             });
+            toReturn = false;
+        }
 
+        // If payment method is transfer, reference number must be filled
+        if (paymentMethod === '3' && transferRef.trim() === '') {
+            Swal.fire({
+                title: 'Warning!',
+                text: 'Nomor Referensi Transfer harus diisi',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            });
             toReturn = false;
         }
 
         return toReturn;
     }
 
-    // ✅ List all available printers
+
     function listPrinters() {
         if (!qz.websocket.isActive()) {
             qz.websocket.connect()
@@ -1736,7 +1808,6 @@ $(document).ready(function() {
             .catch(err => console.error("Error listing printers:", err));
     }
 
-    // ✅ Print receipt to POS-58 thermal printer
     function printReceipt(printerName, jsonData) {
         if (!qz.websocket.isActive()) {
             qz.websocket.connect()
