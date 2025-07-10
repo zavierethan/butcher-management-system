@@ -417,6 +417,9 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/create-opname', [App\Http\Controllers\StockController::class, 'createOpname'])->name('create-opname');
             Route::post('/opnames/save', [App\Http\Controllers\StockController::class, 'saveOpname'])->name('save-opname');
             Route::post('/update-opname', [App\Http\Controllers\StockController::class, 'updateOpname'])->name('update-opname');
+
+            Route::get('/limit/{stockId}', [App\Http\Controllers\StockController::class, 'limitIndex'])->name('limit-index');
+            Route::post('/limit/save', [App\Http\Controllers\StockController::class, 'saveLimit'])->name('save-limit');
         });
     });
 

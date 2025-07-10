@@ -333,7 +333,7 @@
                                             <th class="min-w-100px">Product ID</th>
                                             <th class="min-w-150px">Item</th>
                                             <th class="min-w-150px">Date</th>
-                                            <th class="min-w-75px">Qty</th>
+                                            <th class="min-w-75px">Qty Per Date</th>
                                             <th class="min-w-100px">Status</th>
                                         </tr>
                                         <!--end::Table row-->
@@ -523,7 +523,7 @@ function getStockReport() {
             { data: 'code', name: 'code' },
             { data: 'product_name', name: 'product_name' },
             { data: 'stock_logs_date', name: 'date' },
-            { data: 'quantity', name: 'quantity' },
+            { data: 'quantity_per_date', name: 'quantity_per_date' },
             { data: 'stock_status', name: 'stock_status' },
         ]
     });
