@@ -150,7 +150,7 @@
                             <!--end::Table-->
                             <div class="fv-row mb-5">
                                 <div class="mb-1">
-                                    <label class="form-label fw-bold fs-6 mb-2">Harga Ayam Hidup ({{ optional($latestPrice)->received_date ?? '-' }})</label>
+                                    <label class="form-label fw-bold fs-6 mb-2">Harga Ayam Hidup ({{ $latestPrice?->received_date ?? '-' }})</label>
                                     <div class="position-relative mb-3">
                                         <input class="form-control form-control-md form-control-solid" type="text"
                                             id="raw-material-price" value="{{ optional($latestPrice)->received_date ?? '-' }}"/>
