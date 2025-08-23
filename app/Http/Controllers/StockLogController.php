@@ -11,23 +11,31 @@ use Maatwebsite\Excel\Facades\Excel;
 class StockLogController extends Controller
 {
     public function index($id) {
-        $stockHeader = $stock = DB::table('stocks')
-            ->select(
-                'stocks.*',
-                'products.id as product_id',
-                'products.code as product_code',
-                'products.name as product_name',
-                'branches.id as branch_id',
-                'branches.code as branch_code',
-                'branches.name as branch_name',
-                DB::raw('COALESCE(SUM(sl.in_quantity), 0) - COALESCE(SUM(sl.out_quantity), 0) as total_quantity')
-            )
-            ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
-            ->leftJoin('branches', 'stocks.branch_id', '=', 'branches.id')
-            ->leftJoin('stock_logs as sl', 'stocks.id', '=', 'sl.stock_id')
-            ->where('stocks.id', $id)
-            ->groupBy('stocks.id', 'products.id', 'products.code', 'products.name', 'branches.id', 'branches.code', 'branches.name')
-            ->first();
+        $stockHeader = DB::table('stocks')
+        ->select(
+            'stocks.id',
+            'stocks.product_id',
+            'stocks.branch_id',
+            'products.code as product_code',
+            'products.name as product_name',
+            'branches.code as branch_code',
+            'branches.name as branch_name',
+            DB::raw('COALESCE(SUM(sl.in_quantity), 0) - COALESCE(SUM(sl.out_quantity), 0) as total_quantity')
+        )
+        ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
+        ->leftJoin('branches', 'stocks.branch_id', '=', 'branches.id')
+        ->leftJoin('stock_logs as sl', 'stocks.id', '=', 'sl.stock_id')
+        ->where('stocks.id', $id)
+        ->groupBy(
+            'stocks.id',
+            'stocks.product_id',
+            'stocks.branch_id',
+            'products.code',
+            'products.name',
+            'branches.code',
+            'branches.name'
+        )
+        ->first();
 
         return view('modules.inventory.stock.stock-log.index', ['stockId' => $id], compact('stockHeader'));
     }
