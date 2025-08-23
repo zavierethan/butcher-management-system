@@ -19,9 +19,18 @@ class UserController extends Controller
 
         // Base query
         $query = DB::table('users')
-            ->select('users.id', 'users.name as username', 'users.email', 'groups.name as group_name','branches.name as branch_name', 'users.is_active', 'users.created_at')
+            ->select(
+                'users.id',
+                'users.name as username',
+                'users.email',
+                'groups.name as group_name',
+                'branches.name as branch_name',
+                'users.is_active',
+                'users.created_at'
+            )
             ->leftJoin('groups', 'groups.id', '=', 'users.group_id')
-            ->leftJoin('branches', 'branches.id', '=', 'users.branch_id');
+            ->leftJoin('branches', 'branches.id', '=', 'users.branch_id')
+            ->distinct();
 
         // Apply global search if provided
         $searchValue = $request->input('search.value'); // This is where DataTables sends the search input
