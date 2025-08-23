@@ -62,6 +62,7 @@ class BranchController extends Controller
                 $productDetails[] = [
                     'product_id' => $product->id,
                     'branch_id' => $branchId,
+                    'is_active' => 1,
                 ];
 
                 $stocks[] = [
