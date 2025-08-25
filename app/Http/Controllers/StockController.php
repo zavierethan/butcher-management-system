@@ -84,7 +84,7 @@ class StockController extends Controller
                 DB::raw('COALESCE(logs_today.stok_keluar, 0) AS stok_keluar'),
                 DB::raw('COALESCE(latest_opname.quantity, 0) + COALESCE(logs_today.stok_masuk, 0) - COALESCE(logs_today.stok_keluar, 0) AS stock_akhir'),
                 DB::raw('COALESCE(today_opname.quantity, 0) AS hasil_stock_opname'),
-                DB::raw('(COALESCE(today_opname.quantity, 0) - (COALESCE(latest_opname.quantity, 0) + COALESCE(logs_today.stok_masuk, 0) - COALESCE(logs_today.stok_keluar, 0))) AS selisih')
+                DB::raw('(COALESCE(latest_opname.quantity, 0) + COALESCE(logs_today.stok_masuk, 0) - COALESCE(logs_today.stok_keluar, 0)) - COALESCE(today_opname.quantity, 0) AS selisih')
             );
 
         // Apply search filter
