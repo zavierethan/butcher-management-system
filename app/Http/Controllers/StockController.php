@@ -84,7 +84,7 @@ class StockController extends Controller
                 DB::raw('COALESCE(logs_today.stok_keluar, 0) AS stok_keluar'),
                 DB::raw('COALESCE(latest_opname.quantity, 0) + COALESCE(logs_today.stok_masuk, 0) - COALESCE(logs_today.stok_keluar, 0) AS stock_akhir'),
                 DB::raw('COALESCE(today_opname.quantity, 0) AS hasil_stock_opname'),
-                DB::raw('COALESCE(today_opname.quantity, 0) - (COALESCE(latest_opname.quantity, 0) + COALESCE(logs_today.stok_masuk, 0) - COALESCE(logs_today.stok_keluar, 0)) AS selisih')
+                DB::raw('(COALESCE(today_opname.quantity, 0) - COALESCE(latest_opname.quantity, 0) + COALESCE(logs_today.stok_masuk, 0) - COALESCE(logs_today.stok_keluar, 0)) AS selisih')
             );
 
         // Apply search filter
@@ -386,29 +386,6 @@ class StockController extends Controller
         return view('modules.inventory.stock.stock-opname', compact('branch', 'stocks'));
     }
 
-    // public function stockOpnameSave(Request $request) {
-    //     $products = $request->input('products');
-
-    //     foreach ($products as $productData) {
-    //         DB::table('stock_opnames')
-    //             ->insert([
-    //                 "stock_id" => $productData['stock_id'],
-    //                 "quantity" => $productData['quantity'],
-    //                 "date" => $productData['date'],
-    //             ]);
-
-    //         DB::table('stock_logs')
-    //             ->insert([
-    //                 "stock_id" => $productData['stock_id'],
-    //                 "in_quantity" => $productData['quantity'],
-    //                 "date" => $productData['date'],
-    //                 "reference" => "Stock Opname #" . $productData['date'],
-    //             ]);
-    //     }
-
-    //     return response()->json(["message" => "Products updated successfully"]);
-    // }
-
     public function stockOpnameSave(Request $request)
     {
         $products = $request->input('products');
@@ -439,15 +416,15 @@ class StockController extends Controller
                 ]);
 
                 // Insert into stock_logs if adjustment is needed
-                if ($adjustment != 0) {
-                    DB::table('stock_logs')->insert([
-                        "stock_id" => $stockId,
-                        "in_quantity" => $adjustment < 0 ? abs($adjustment) : 0,
-                        "out_quantity" => $adjustment > 0 ? abs($adjustment) : 0,
-                        "date" => $date,
-                        "reference" => "Stock Opname #" . $productData['date'],
-                    ]);
-                }
+                // if ($adjustment != 0) {
+                //     DB::table('stock_logs')->insert([
+                //         "stock_id" => $stockId,
+                //         "in_quantity" => $adjustment < 0 ? abs($adjustment) : 0,
+                //         "out_quantity" => $adjustment > 0 ? abs($adjustment) : 0,
+                //         "date" => $date,
+                //         "reference" => "Stock Opname #" . $productData['date'],
+                //     ]);
+                // }
             }
 
             DB::commit();
@@ -462,6 +439,7 @@ class StockController extends Controller
 
     public function mutasi() {
         $branch = DB::table('branches')->where('id', Auth::user()->branch_id)->first();
+        $branches = DB::table('branches')->whereNotIn('id', [$branch->id])->get();
         $stocks = DB::table('stocks')
             ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
             ->leftJoin('branches', 'stocks.branch_id', '=', 'branches.id')
@@ -479,7 +457,7 @@ class StockController extends Controller
                 'products.code',
                 'products.name'
             )->orderBy('products.sort_order', 'asc')->get();
-        return view('modules.inventory.stock.mutasi.index', compact('stocks', 'branch'));
+        return view('modules.inventory.stock.mutasi.index', compact('stocks', 'branch', 'branches'));
     }
 
     public function mutasiSave(Request $request) {

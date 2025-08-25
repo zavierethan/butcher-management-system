@@ -85,7 +85,7 @@
                         <!--begin::Card body-->
                         <div class="card-body pt-0 overflow-x-auto">
                             <!--begin::Table-->
-                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_products_table">
+                            <table class="table table-hover align-middle table-row-dashed fs-6 gy-5" id="kt_products_table">
                                 <!--begin::Table head-->
                                 <thead>
                                     <!--begin::Table row-->
@@ -98,9 +98,7 @@
                                         <th class="min-w-125px">Stok Keluar</th>
                                         <th class="min-w-125px">Stok Akhir</th>
                                         <th class="min-w-125px">Hasil Stok Opename</th>
-                                        <!-- <th class="min-w-125px">Tanggal Opname Terakhir</th>
-                                        <th class="min-w-125px">Tanggal Opname Terakhir</th>
-                                        <th class="min-w-125px">Tanggal Opname Terakhir</th> -->
+                                        <th class="min-w-125px">Selisih</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -158,14 +156,13 @@
         columns: [
             {data: 'code', name: 'code'},
             {data: 'name', name: 'name'},
-            // { data: 'tanggal_logs_transaksi', name: 'tanggal_logs_transaksi', className: 'text-center' },
-            // { data: 'tanggal_stock_awal', name: 'tanggal_stock_awal', className: 'text-center' },
             { data: 'tanggal_stock_awal', name: 'tanggal_stock_awal', className: 'text-center' },
             { data: 'stock_awal', name: 'stock_awal', className: 'text-center' },
             { data: 'stok_masuk', name: 'stok_masuk', className: 'text-center' },
             { data: 'stok_keluar', name: 'stok_keluar', className: 'text-center' },
             { data: 'stock_akhir', name: 'stock_akhir', className: 'text-center' },
             { data: 'hasil_stock_opname', name: 'hasil_stock_opname', className: 'text-center' },
+            { data: 'selisih', name: 'selisih', className: 'text-center' },
             {
                 data: null, // No direct field from the server
                 name: 'action',
