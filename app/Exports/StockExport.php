@@ -25,20 +25,62 @@ class StockExport implements FromCollection, WithHeadings, WithCustomStartCell, 
         $branchId = $this->filters['branch_id'];
 
         // Fetching data from the database
-        $query = DB::table('stocks')
-            ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
-            ->leftJoin('branches', 'stocks.branch_id', '=', 'branches.id')
-            ->leftJoin('stock_logs as sl', 'stocks.id', '=', 'sl.stock_id')
+        $logsToday = DB::table('stock_logs')
             ->select(
-                'products.code as product_code',
-                'products.name as product_name',
-                DB::raw('COALESCE(SUM(sl.in_quantity), 0) - COALESCE(SUM(sl.out_quantity), 0) AS quantity'),
+                'stock_logs.stock_id',
+                DB::raw('DATE(stock_logs.date) AS tanggal_logs_transaksi'),
+                DB::raw('SUM(stock_logs.in_quantity) AS stok_masuk'),
+                DB::raw('SUM(stock_logs.out_quantity) AS stok_keluar')
             )
-            ->groupBy(
+            ->whereRaw('DATE(stock_logs.date) = CURRENT_DATE')
+            ->groupBy('stock_logs.stock_id', DB::raw('DATE(stock_logs.date)'));
+
+        // Subquery: latest_opname (before today)
+        $latestOpname = DB::table('stock_opnames')
+            ->select('stock_opnames.stock_id', 'stock_opnames.quantity', 'stock_opnames.date')
+            ->whereRaw('DATE(stock_opnames.date) < CURRENT_DATE')
+            ->orderBy('stock_opnames.stock_id')
+            ->orderByDesc('stock_opnames.date');
+
+        // Wrap it in a distinct-on simulation using window function (Postgres only)
+        $latestOpnameSub = DB::table(DB::raw("(
+            SELECT DISTINCT ON (stock_id) stock_id, quantity, date
+            FROM stock_opnames
+            WHERE DATE(date) < CURRENT_DATE
+            ORDER BY stock_id, date DESC
+            ) AS latest_opname"));
+
+        // Subquery: today_opname
+        $todayOpname = DB::table(DB::raw("(
+            SELECT DISTINCT ON (stock_id) stock_id, quantity, date
+            FROM stock_opnames
+            WHERE DATE(date) = CURRENT_DATE
+            ORDER BY stock_id, date DESC
+            ) AS today_opname"));
+
+        $query = DB::table('stocks')
+            ->leftJoin('products', 'products.id', '=', 'stocks.product_id')
+            ->leftJoinSub($logsToday, 'logs_today', function ($join) {
+                $join->on('stocks.id', '=', 'logs_today.stock_id');
+            })
+            ->leftJoinSub($latestOpnameSub, 'latest_opname', function ($join) {
+                $join->on('stocks.id', '=', 'latest_opname.stock_id');
+            })
+            ->leftJoinSub($todayOpname, 'today_opname', function ($join) {
+                $join->on('stocks.id', '=', 'today_opname.stock_id');
+            })
+            ->orderBy('products.sort_order', 'asc')
+            ->select(
                 'products.code',
                 'products.name',
-            )
-            ->orderBy('products.name');
+                'today_opname.date AS tanggal_stock_opname',
+                DB::raw('COALESCE(latest_opname.quantity, 0) AS stock_awal'),
+                DB::raw('COALESCE(logs_today.stok_masuk, 0) AS stok_masuk'),
+                DB::raw('COALESCE(logs_today.stok_keluar, 0) AS stok_keluar'),
+                DB::raw('COALESCE(latest_opname.quantity, 0) + COALESCE(logs_today.stok_masuk, 0) - COALESCE(logs_today.stok_keluar, 0) AS stock_akhir'),
+                DB::raw('COALESCE(today_opname.quantity, 0) AS hasil_stock_opname'),
+                DB::raw('(COALESCE(today_opname.quantity, 0) - (COALESCE(latest_opname.quantity, 0) + COALESCE(logs_today.stok_masuk, 0) - COALESCE(logs_today.stok_keluar, 0))) AS selisih')
+            );
 
         $query->where('stocks.branch_id', $branchId);
 
@@ -57,7 +99,13 @@ class StockExport implements FromCollection, WithHeadings, WithCustomStartCell, 
         return [
             'KODE PRODUK',
             'NAMA PRODUK',
-            'KUANTITAS',
+            'TANGGAL STOCK OPNAME',
+            'STOCK AWAL',
+            'STOCK MASUK',
+            'STOCK KELUAR',
+            'STOCK AKHIR',
+            'HASIL STOCK OPNAME',
+            'SELISIH',
         ];
     }
 
@@ -75,10 +123,10 @@ class StockExport implements FromCollection, WithHeadings, WithCustomStartCell, 
             $printDateTime = $this->filters['print_date_time'];
 
             // Set content for A1 and B1
-            $sheet->setCellValue('A1', 'Cabang');
+            $sheet->setCellValue('A1', 'CABANG (STORE)');
             $sheet->setCellValue('B1', $this->filters['branch_code'] . ' - ' . $this->filters['branch_name']);
 
-            $sheet->setCellValue('A2', 'Tanggal Cetak Laporan');
+            $sheet->setCellValue('A2', 'TANGGAL CETAK');
             $sheet->setCellValue('B2', $printDateTime);
 
             // Apply bold styling only to A1 (Rentang Tanggal)
@@ -87,7 +135,7 @@ class StockExport implements FromCollection, WithHeadings, WithCustomStartCell, 
             ]);
 
             // Apply bold styling to the headings
-            $sheet->getStyle('A5:C5')->applyFromArray([
+            $sheet->getStyle('A5:I5')->applyFromArray([
                 'font' => ['bold' => true],
             ]);
 
