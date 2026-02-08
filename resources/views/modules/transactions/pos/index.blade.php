@@ -1161,13 +1161,15 @@ $(document).ready(function() {
         const productName = $(this).data('product-name');
         const productPrice = $(this).data('product-price');
         const productDiscount = $(this).data('product-discount');
+        const productQuantity = $(this).data('product-quantity');
+
+        console.log(productQuantity);
 
         $("#kt_modal_edit_product_item #product_id").val(productId);
         $("#kt_modal_edit_product_item #product_name").val(productName);
         $("#kt_modal_edit_product_item #product_price").val(productPrice);
         $("#kt_modal_edit_product_item #diskon").val(productDiscount);
-
-        $("#kt_modal_edit_product_item #quantity").val("");
+        $("#kt_modal_edit_product_item #quantity").val(productQuantity);
     });
 
     $(document).on('click', '#add-item', function(e) {
@@ -1215,7 +1217,7 @@ $(document).ready(function() {
 
                                     </div>
                                     <div class="text-end me-3 mt-3">
-                                        <a href="#" class="btn btn-sm me-2 edit-item" data-bs-toggle="modal" data-bs-target="#kt_modal_edit_product_item" data-product-id="${productId}" data-product-name="${productName}" data-product-price="${productPrice}" data-product-discount="${productDiscount}">
+                                        <a href="#" class="btn btn-sm me-2 edit-item" data-bs-toggle="modal" data-bs-target="#kt_modal_edit_product_item" data-product-id="${productId}" data-product-name="${productName}" data-product-price="${productPrice}" data-product-discount="${productDiscount}" data-product-quantity="${productQuantity}">
                                             <i class="fas fa-edit" style="color: green;"></i>
                                         </a>
                                         <i class="fas fa-trash remove-item" data-product-id="${productId}" style="color: red;"></i>
@@ -1261,6 +1263,7 @@ $(document).ready(function() {
     $(document).on('click', '#update-item', function(e) {
 
         e.preventDefault();
+        console.log('update clicked');
 
         const productId = $("#kt_modal_edit_product_item #product_id").val();
         const quantity = $("#kt_modal_edit_product_item #quantity").val();
@@ -1782,7 +1785,6 @@ $(document).ready(function() {
         return toReturn;
     }
 
-
     function listPrinters() {
         if (!qz.websocket.isActive()) {
             qz.websocket.connect()
@@ -1867,8 +1869,6 @@ $(document).ready(function() {
             .then(() => console.log("Print successful"))
             .catch(err => console.error("Print failed:", err));
     }
-
-
     // Auto-connect QZ Tray
     qz.websocket.connect().catch(err => console.error("QZ Tray not running:", err));
 });
