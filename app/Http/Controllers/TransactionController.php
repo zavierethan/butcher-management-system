@@ -66,36 +66,36 @@ class TransactionController extends Controller
 
             // Insert transaction header
             $transactionId = DB::table('transactions')->insertGetId([
-                "code" => $transactionCode,
+                "code"             => $transactionCode,
                 "transaction_date" => now(),
-                "customer_id" => $request->customer_id,
-                "total_amount" => $totalAmount,
-                "payment_method" => $paymentMethod,
-                "butcher_name" => $request->butcher_name,
-                "discount" => $request->discount,
-                "shipping_cost" => $request->shipping_cost,
-                "status" => $status,
-                "nominal_cash" => $request->nominal_cash,
-                "nominal_return" => $request->nominal_return,
-                "created_by" => Auth::id(),
-                "branch_id" => $request->branch_id,
-                "transfer_ref" => $request->transfer_ref,
-                "transfer_attch" => $transferBase64,
+                "customer_id"      => $request->customer_id,
+                "total_amount"     => $totalAmount,
+                "payment_method"   => $paymentMethod,
+                "butcher_name"     => $request->butcher_name,
+                "discount"         => $request->discount,
+                "shipping_cost"    => $request->shipping_cost,
+                "status"           => $status,
+                "nominal_cash"     => $request->nominal_cash,
+                "nominal_return"   => $request->nominal_return,
+                "created_by"       => Auth::id(),
+                "branch_id"        => $request->branch_id,
+                "transfer_ref"     => $request->transfer_ref,
+                "transfer_attch"   => $transferBase64,
             ]);
 
             // Handle credit (payment method 2)
             if ($paymentMethod == '2') {
                 $dueDate = now()->addDays(7)->format('Y-m-d');
                 DB::table('receivables')->insert([
-                    "transaction_id" => $transactionId,
-                    "transaction_no" => $transactionCode,
-                    "transaction_date" => now()->format('Y-m-d'),
-                    "customer_id" => $request->customer_id,
-                    "due_date" => $dueDate,
-                    "total_receivable" => $totalAmount,
-                    "remaining_balance" => $totalAmount,
-                    "status" => 'unpaid',
-                    "created_at" => now(),
+                    "transaction_id"     => $transactionId,
+                    "transaction_no"     => $transactionCode,
+                    "transaction_date"   => now()->format('Y-m-d'),
+                    "customer_id"        => $request->customer_id,
+                    "due_date"           => $dueDate,
+                    "total_receivable"   => $totalAmount,
+                    "remaining_balance"  => $totalAmount,
+                    "status"             => 'unpaid',
+                    "created_at"         => now(),
                 ]);
             }
 
@@ -104,11 +104,11 @@ class TransactionController extends Controller
             foreach ($details as $detail) {
                 DB::table('transaction_items')->insert([
                     "transaction_id" => $transactionId,
-                    "product_id" => $detail["product_id"],
-                    "quantity" => $detail["quantity"],
-                    "base_price" => $detail["base_price"],
-                    "unit_price" => $detail["price"],
-                    "discount" => $detail["discount"],
+                    "product_id"     => $detail["product_id"],
+                    "quantity"       => $detail["quantity"],
+                    "base_price"     => $detail["base_price"],
+                    "unit_price"     => $detail["price"],
+                    "discount"       => $detail["discount"],
                 ]);
 
                 $stockId = DB::table('stocks')
@@ -117,19 +117,19 @@ class TransactionController extends Controller
                     ->value('id');
 
                 DB::table('stock_logs')->insert([
-                    "stock_id" => $stockId,
+                    "stock_id"     => $stockId,
                     "out_quantity" => $detail["quantity"],
-                    "reference" => 'Penjualan #' . $transactionCode,
-                    "date" => now(),
+                    "reference"    => 'Penjualan #' . $transactionCode,
+                    "date"         => now(),
                 ]);
             }
 
             DB::commit();
 
             return response()->json([
-                'message' => 'Transaction successfully created',
+                'message'          => 'Transaction successfully created',
                 'transaction_code' => $transactionCode,
-                'transaction_id' => $transactionId,
+                'transaction_id'   => $transactionId,
             ], 201);
 
         } catch (\Exception $e) {
@@ -137,7 +137,7 @@ class TransactionController extends Controller
 
             return response()->json([
                 'message' => 'Failed to create transaction',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }

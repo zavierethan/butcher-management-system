@@ -516,7 +516,8 @@
                                         <!-- <input type="text" class="form-control form-control-solid"
                                             placeholder="Nama Butcherees" id="butcher-name" /> -->
 
-                                        <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Butcherees" id="butcher-name">
+                                        <select class="form-select form-select-solid" data-control="select2"
+                                            data-placeholder="Pilih Butcherees" id="butcher-name">
                                             @foreach($butcherees as $butcher)
                                             <option value="{{$butcher->name}}">{{$butcher->name}}</option>
                                             @endforeach
@@ -548,10 +549,12 @@
                                         </select>
                                     </div>
                                     <div class="col-md-3">
-                                        <select class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Store" id="branch-id" disabled>
+                                        <select class="form-select form-select-solid" data-control="select2"
+                                            data-placeholder="Pilih Store" id="branch-id" disabled>
                                             @foreach($branches as $branch)
                                             <option value="{{$branch->id}}"
-                                                <?php echo ($branch->id == Auth::user()->branch_id) ? "selected" : ""; ?>>{{$branch->code}}
+                                                <?php echo ($branch->id == Auth::user()->branch_id) ? "selected" : ""; ?>>
+                                                {{$branch->code}}
                                             </option>
                                             @endforeach
                                         </select>
@@ -612,38 +615,77 @@
                                 </div>
                                 <!--end::Table container-->
                                 <!--begin::Summary-->
-                                <div class="d-flex flex-stack bg-success rounded-3 p-6 mb-11">
-                                    <!--begin::Content-->
+                                <div class="bg-success rounded-3 p-6 mb-11">
+                                    <!--begin::Summary Grid-->
                                     <div class="fs-6 fw-bold text-white">
-                                        <span class="d-block lh-1 mb-2">Subtotal</span>
-                                        <!-- <span class="d-block mb-2">Discounts <a href="javascript(0);" data-bs-toggle="modal" data-bs-target="#kt_modal_add_discount"><i
-                                                    class="fas fa-edit text-white"></i></a></span> -->
-                                        <span class="d-block mb-2">Ongkos Kirim <a href="javascript(0);"
-                                                data-bs-toggle="modal" data-bs-target="#kt_modal_add_shipping_cost"><i
-                                                    class="fas fa-edit text-white"></i></a></span>
-                                        <span class="d-block mb-2">Total Bayar</span>
+                                        <!-- Subtotal Row -->
+                                        <div class="row align-items-center pb-3 mb-3" style="border-bottom: 2px dotted rgba(255,255,255,0.5);">
+                                            <div class="col-8">Subtotal</div>
+                                            <div class="col-4 text-end" id="subtotal-amount">Rp. 0,00</div>
+                                        </div>
+                                        <!-- Total Discounts Row -->
+                                        <div class="row align-items-center pb-3 mb-3" style="border-bottom: 2px dotted rgba(255,255,255,0.5);">
+                                            <div class="col-8">Total Discounts</div>
+                                            <div class="col-4 text-end" id="discount">Rp. 0,00</div>
+                                        </div>
+                                        <!-- Shipping Cost Row -->
+                                        <div class="row align-items-center pb-3 mb-3" style="border-bottom: 2px dotted rgba(255,255,255,0.5);">
+                                            <div class="col-8">
+                                                Ongkos Kirim
+                                                <a href="javascript(0);" data-bs-toggle="modal" data-bs-target="#kt_modal_add_shipping_cost">
+                                                    <i class="fas fa-edit text-white ms-2"></i>
+                                                </a>
+                                            </div>
+                                            <div class="col-4 text-end" id="shipping-cost">Rp. 0,00</div>
+                                        </div>
+                                        <!-- Total Bayar Row -->
+                                        <div class="row align-items-center">
+                                            <div class="col-8">Total Bayar</div>
+                                            <div class="col-4 text-end" id="total-amount">Rp. 0,00</div>
+                                        </div>
                                     </div>
-                                    <!--end::Content-->
-                                    <!--begin::Content-->
-                                    <div class="fs-6 fw-bold text-white text-end">
-                                        <span class="d-block lh-1 mb-2" data-kt-pos-element="total"
-                                            id="subtotal-amount">Rp. 0,00</span>
-                                        <!-- <span class="d-block mb-2" id="discount">Rp. 0</span> -->
-                                        <span class="d-block mb-2" id="shipping-cost">Rp. 0,00</span>
-                                        <span class="d-block mb-2" data-kt-pos-element="grand-total"
-                                            id="total-amount">Rp. 0,00</span>
-                                    </div>
-                                    <!--end::Content-->
+                                    <!--end::Summary Grid-->
                                 </div>
                                 <!--end::Summary-->
                                 <!--begin::Payment Method-->
                                 <div class="m-0">
+                                    <h5 class="fw-bold text-gray-800 mb-5">Metode Pemesanan</h5>
+                                    <div class="d-flex flex-equal gap-2 gap-xxl-9 px-0 mb-3" id="ordering-method">
+                                        <div class="form-check form-check-custom form-check-solid mb-2">
+                                            <input class="form-check-input" type="radio" value="1"
+                                                name="ordering_method">
+                                            <label class="form-check-label">Online</label>
+                                        </div>
+                                        <div class="form-check form-check-custom form-check-solid mb-2">
+                                            <input class="form-check-input" type="radio" value="2"
+                                                name="ordering_method">
+                                            <label class="form-check-label">Offline</label>
+                                        </div>
+                                    </div>
+
+                                    <h5 class="fw-bold text-gray-800 mb-5">Metode Pengerjaan</h5>
+                                    <div class="d-flex flex-equal gap-2 gap-xxl-9 px-0 mb-3" id="working-method">
+                                        <div class="form-check form-check-custom form-check-solid mb-2">
+                                            <input class="form-check-input" type="radio" value="1"
+                                                name="working_method">
+                                            <label class="form-check-label">Indirect</label>
+                                        </div>
+                                        <div class="form-check form-check-custom form-check-solid mb-2">
+                                            <input class="form-check-input" type="radio" value="2"
+                                                name="working_method">
+                                            <label class="form-check-label">Processing Order</label>
+                                        </div>
+                                    </div>
+
+                                    <h5 class="fw-bold text-gray-800 mb-5">Catatan Customer</h5>
+                                    <div class="d-flex flex-equal gap-2 gap-xxl-9 px-0 mb-3" id="customer-notes">
+                                        <textarea class="form-control"></textarea>
+                                    </div>
                                     <!--begin::Title-->
-                                    <h1 class="fw-bold text-gray-800 mb-5">Metode Pembayaran</h1>
+                                    <h5 class="fw-bold text-gray-800 mb-5">Metode Pembayaran</h5>
                                     <!--end::Title-->
                                     <!--begin::Radio group-->
-                                    <div class="d-flex flex-equal gap-5 gap-xxl-9 px-0 mb-12" data-kt-buttons="true"
-                                        data-kt-buttons-target="[data-kt-button]" id="payment-method">
+                                    <div class="d-flex flex-equal gap-5 gap-xxl-9 px-0 mb-12" data-kt-buttons="true" data-kt-buttons-target="[data-kt-button]" id="payment-method">
                                         <!--begin::Radio-->
                                         <label
                                             class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4"
@@ -728,18 +770,23 @@
                                             <div class="mb-1">
                                                 <div class="position-relative mb-3">
                                                     <div class="fv-row">
-														<label class="form-label fw-bold fs-6 mb-2">Direct Transfer</label>
+                                                        <label class="form-label fw-bold fs-6 mb-2">Direct
+                                                            Transfer</label>
                                                         <div class="d-flex flex-equal gap-2 gap-xxl-9 px-0">
-                                                            <div class="form-check form-check-custom form-check-solid mb-2">
-                                                                <input class="form-check-input" type="radio" value="1" name="is_direct_transfer" checked>
+                                                            <div
+                                                                class="form-check form-check-custom form-check-solid mb-2">
+                                                                <input class="form-check-input" type="radio" value="1"
+                                                                    name="is_direct_transfer" checked>
                                                                 <label class="form-check-label">Ya</label>
                                                             </div>
-                                                            <div class="form-check form-check-custom form-check-solid mb-2">
-                                                                <input class="form-check-input" type="radio" value="0" name="is_direct_transfer">
+                                                            <div
+                                                                class="form-check form-check-custom form-check-solid mb-2">
+                                                                <input class="form-check-input" type="radio" value="0"
+                                                                    name="is_direct_transfer">
                                                                 <label class="form-check-label">Tidak</label>
                                                             </div>
                                                         </div>
-													</div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -748,7 +795,7 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Ref. Bukti Transfer</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="text" id="transfer-ref"/>
+                                                        type="text" id="transfer-ref" />
                                                 </div>
                                             </div>
                                         </div>
@@ -757,11 +804,12 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Lampiran</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="file" id="transfer-attch"/>
+                                                        type="file" id="transfer-attch" />
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
                                     <!--begin::Actions-->
                                     <button class="btn btn-success fs-1 w-100 py-4" id="process-transaction">Proses
                                         Transaksi</button>
@@ -1184,14 +1232,31 @@ $(document).ready(function() {
         var productDiscount = parseFloat($("#kt_modal_add_product_item #diskon").val()) | 0;
         var productImgUrl = $(this).find('img').attr('src');
 
+        // Validation for productPrice and quantity
+        if (!productPrice || productPrice <= 0) {
+            Swal.fire({
+                title: 'Warning!',
+                text: 'Harga Product tidak boleh kosong atau 0',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            });
+            return;
+        }
+
+        if (!productQuantity || productQuantity <= 0) {
+            Swal.fire({
+                title: 'Warning!',
+                text: 'Quantity tidak boleh kosong atau 0',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            });
+            return;
+        }
+
         // Check if the product already exists in the cart
         var existingProduct = $(`#product-id-${productId}`);
-
-        var dicountElem = `<span class="badge bg-warning text-dark discount"></span>`;
-
-        if(productDiscount > 0) {
-            dicountElem = `<span class="badge bg-warning text-dark discount">- ${productDiscount}</span>`
-        }
 
         if (existingProduct.length > 0) {
             // Update quantity and subtotal for existing product
@@ -1206,43 +1271,50 @@ $(document).ready(function() {
             priceElement.text(formatCurrency(mround(newSubtotal, 500)));
         } else {
             // Add new product to the cart
-            var productItem = `<div class="container py-1 cart-item-lists" id="product-id-${productId}">
-                            <div class="pb-3 mb-3">
-                                <div class="d-flex">
-                                    <div class="flex-grow-1 mt-3">
-                                        <h5 class="mb-1">${productName}</h5>
-                                        <div class="d-none product-id">${productId}</div>
-                                        <div class="d-none stock-id">${stockId}</div>
-                                        <div class="d-none base-price">${productPrice}</div>
+            // Build discount row (only if discount > 0)
+            var discountRow = '';
+            if (productDiscount > 0) {
+                discountRow = `<div class="mb-2 pb-2" style="border-bottom: 1px solid #dee2e6;">
+                    <span class="badge bg-warning text-dark discount" style="font-size: 0.85rem;">- ${formatCurrency(productDiscount)} (Diskon)</span>
+                </div>`;
+            } else {
+                discountRow = `<span class="discount d-none"></span>`;
+            }
 
-                                    </div>
-                                    <div class="text-end me-3 mt-3">
-                                        <a href="#" class="btn btn-sm me-2 edit-item" data-bs-toggle="modal" data-bs-target="#kt_modal_edit_product_item" data-product-id="${productId}" data-product-name="${productName}" data-product-price="${productPrice}" data-product-discount="${productDiscount}" data-product-quantity="${productQuantity}">
-                                            <i class="fas fa-edit" style="color: green;"></i>
-                                        </a>
-                                        <i class="fas fa-trash remove-item" data-product-id="${productId}" style="color: red;"></i>
-                                    </div>
-                                </div>
-                                <div class="d-flex">
-                                    <div class="flex-grow-1 mt-3">
-                                        <h6><span class="qty">${productQuantity}</span> x ${productPrice}</h6>
-                                    </div>
-                                    <div class="text-end me-3 mt-3">
-                                        <h6 class="mb-1 price">${formatCurrency(mround((productPrice - productDiscount) * productQuantity, 500))}</h6>
-                                    </div>
-                                </div>
-                                <div class="d-flex">
-                                    <div class="flex-grow-1 mt-3">
-                                        ${dicountElem}
-                                    </div>
-                                    <div class="text-end me-3 mt-3">
+            var productItem = `<div class="cart-item-lists p-3 mb-2" id="product-id-${productId}" style="border: 1px solid #e9ecef; border-radius: 0.375rem; background-color: #f8f9fa;">
+                <!-- Hidden data fields -->
+                <div class="d-none product-id">${productId}</div>
+                <div class="d-none stock-id">${stockId}</div>
+                <div class="d-none base-price">${productPrice}</div>
 
-                                    </div>
-                                </div>
+                <!-- Row 1: Product Name + Edit & Delete Icons -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="mb-0 fw-bold text-gray-800">${productName}</h6>
+                    <div class="d-flex gap-1">
+                        <a href="#" class="btn btn-sm btn-link edit-item p-1 me-1" data-bs-toggle="modal" data-bs-target="#kt_modal_edit_product_item" data-product-id="${productId}" data-product-name="${productName}" data-product-price="${productPrice}" data-product-discount="${productDiscount}" data-product-quantity="${productQuantity}">
+                            <i class="fas fa-edit text-success" style="font-size: 14px;"></i>
+                        </a>
+                        <a href="#" class="btn btn-sm btn-link remove-item p-1" data-product-id="${productId}">
+                            <i class="fas fa-trash text-danger" style="font-size: 14px;"></i>
+                        </a>
+                    </div>
+                </div>
 
-                            </div>
-                        <div class="separator separator-dashed my-5"></div>
-                    </div>`;
+                <!-- Row 2: Price Calculation (Quantity × Base Price) - ALWAYS SHOWN -->
+                <div class="d-flex justify-content-between align-items-center mb-2 pb-2" style="border-bottom: 1px dotted #dee2e6;">
+                    <small class="text-muted"><span class="qty">${productQuantity}</span> x ${productPrice}</small>
+                    <small class="fw-bold text-dark">${formatCurrency(productPrice * productQuantity)}</small>
+                </div>
+
+                <!-- Row 3: Discount Badge (CONDITIONAL - Only if discount > 0) -->
+                ${discountRow}
+
+                <!-- Row 4: Final Total Price -->
+                <div class="d-flex justify-content-between align-items-center pt-2">
+                    <span class="fw-bold text-dark">Total:</span>
+                    <span class="fw-bold price" style="color: #198754; font-size: 1.05rem;">Rp. ${formatCurrency(mround((productPrice - productDiscount) * productQuantity, 500))}</span>
+                </div>
+            </div>`;
 
             $('#cart-item').append(productItem);
         }
@@ -1263,11 +1335,33 @@ $(document).ready(function() {
     $(document).on('click', '#update-item', function(e) {
 
         e.preventDefault();
-        console.log('update clicked');
 
         const productId = $("#kt_modal_edit_product_item #product_id").val();
         const quantity = $("#kt_modal_edit_product_item #quantity").val();
         const productPrice = $("#kt_modal_edit_product_item #product_price").val();
+
+        // Validation for productPrice and quantity
+        if (!productPrice || productPrice <= 0) {
+            Swal.fire({
+                title: 'Warning!',
+                text: 'Harga Product tidak boleh kosong atau 0',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            });
+            return;
+        }
+
+        if (!quantity || quantity <= 0) {
+            Swal.fire({
+                title: 'Warning!',
+                text: 'Quantity tidak boleh kosong atau 0',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            });
+            return;
+        }
 
         // Check if the product already exists in the cart
         var existingProduct = $(`#product-id-${productId}`);
@@ -1334,7 +1428,7 @@ $(document).ready(function() {
 
                     const products = [];
 
-                    $('.cart-item-lists').each(function () {
+                    $('.cart-item-lists').each(function() {
                         const productId = $(this).find('.product-id').text();
                         const stockId = $(this).find('.stock-id').text();
                         const price = $(this).find('.price').text().replace(/[^\d]/g, '');
@@ -1365,6 +1459,9 @@ $(document).ready(function() {
                     const transferRef = $('#transfer-ref').val();
                     const transferAttch = $('#transfer-attch')[0]?.files[0]; // Get file from input
 
+                    const orderingMethod = $('#ordering-method').find('input[type="radio"]:checked').val();
+                    const workingMethod = $('#working-method').find('input[type="radio"]:checked').val();
+
                     // Append form fields
                     formData.append('transaction_date', new Date().toISOString());
                     formData.append('customer_name', customerId);
@@ -1379,6 +1476,8 @@ $(document).ready(function() {
                     formData.append('nominal_return', nominalReturn);
                     formData.append('transfer_type', transferType);
                     formData.append('transfer_ref', transferRef);
+                    formData.append('ordering_method', orderingMethod);
+                    formData.append('working_method', workingMethod);
 
                     if (transferAttch) {
                         formData.append('transfer_attch', transferAttch);
@@ -1398,7 +1497,7 @@ $(document).ready(function() {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         data: formData,
-                        success: function (response) {
+                        success: function(response) {
                             Swal.fire({
                                 title: 'Success!',
                                 text: `Transaksi berhasil di simpan dengan Nomor ${response.transaction_code}`,
@@ -1413,11 +1512,15 @@ $(document).ready(function() {
                                         url: `/orders/print-thermal/${response.transaction_id}`,
                                         type: "GET",
                                         dataType: "json",
-                                        success: function (response) {
-                                            if (response.code == 200) {
-                                                var printerName = "{{ ($settings) ? $settings->printer_name : '' }}";
+                                        success: function(
+                                        response) {
+                                            if (response.code ==
+                                                200) {
+                                                var printerName =
+                                                    "{{ ($settings) ? $settings->printer_name : '' }}";
 
-                                                if (printerName === '') {
+                                                if (printerName ===
+                                                    '') {
                                                     Swal.fire({
                                                         title: 'Gagal mencetak nota',
                                                         text: 'Nama Printer tidak ditemukan. harap periksa pengaturan pada sistem.',
@@ -1426,12 +1529,17 @@ $(document).ready(function() {
                                                         showConfirmButton: false
                                                     });
 
-                                                    $(".cart-item-lists").remove();
-                                                    calculateTotals();
+                                                    $(".cart-item-lists")
+                                                        .remove();
+                                                    calculateTotals
+                                                        ();
                                                     return;
                                                 }
 
-                                                printReceipt(printerName, response);
+                                                printReceipt(
+                                                    printerName,
+                                                    response
+                                                    );
 
                                                 Swal.fire({
                                                     title: 'Nota Berhasil Dicetak!',
@@ -1440,34 +1548,44 @@ $(document).ready(function() {
                                                     showConfirmButton: false
                                                 });
 
-                                                $(".cart-item-lists").remove();
-                                                calculateTotals();
+                                                $(".cart-item-lists")
+                                                    .remove();
+                                                calculateTotals
+                                                ();
                                             } else {
                                                 Swal.fire({
                                                     title: 'Gagal Mencetak Nota',
-                                                    text: response.message || 'Terjadi kesalahan saat mencetak nota.',
+                                                    text: response
+                                                        .message ||
+                                                        'Terjadi kesalahan saat mencetak nota.',
                                                     icon: 'error'
                                                 });
 
-                                                $(".cart-item-lists").remove();
-                                                calculateTotals();
+                                                $(".cart-item-lists")
+                                                    .remove();
+                                                calculateTotals
+                                                ();
                                             }
                                         },
-                                        error: function (xhr, status, error) {
+                                        error: function(xhr, status,
+                                            error) {
                                             Swal.fire({
                                                 title: 'Error!',
-                                                text: xhr.responseJSON.message,
+                                                text: xhr
+                                                    .responseJSON
+                                                    .message,
                                                 icon: 'error'
                                             });
                                         }
                                     });
-                                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                                } else if (result.dismiss === Swal
+                                    .DismissReason.cancel) {
                                     $(".cart-item-lists").remove();
                                     calculateTotals();
                                 }
                             });
                         },
-                        error: function (xhr, status, error) {
+                        error: function(xhr, status, error) {
                             if (xhr.status === 400) {
                                 Swal.fire({
                                     title: 'Warning !',
@@ -1491,6 +1609,29 @@ $(document).ready(function() {
 
         let customer_name = $("#customer-name").val();
         let customer_phone_number = $("#customer-phone-number").val();
+
+        // Validation for productPrice and quantity
+        if (!customer_name) {
+            Swal.fire({
+                title: 'Warning!',
+                text: 'Nama Customer tidak boleh kosong',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            });
+            return;
+        }
+
+        if (!customer_phone_number) {
+            Swal.fire({
+                title: 'Warning!',
+                text: 'Nomor Telepon Customer tidak boleh kosong ',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            });
+            return;
+        }
 
         const payload = {
             name: customer_name,
@@ -1589,12 +1730,13 @@ $(document).ready(function() {
 
                     console.log(product.url_path)
 
-                    let productImg = product.url_path
-                        ? "storage/" + product.url_path
-                        : "{{ asset('assets/media/products/product-default.png') }}";
+                    let productImg = product.url_path ?
+                        "storage/" + product.url_path :
+                        "{{ asset('assets/media/products/product-default.png') }}";
 
                     // Construct HTML for each product
-                    const discountHTML = product.discount !== 0 && !isNaN(parseFloat(product.discount)) ?
+                    const discountHTML = product.discount !== 0 && !isNaN(parseFloat(product
+                            .discount)) ?
                         `<span>Diskon</span> <span class="fs-6 text-muted">${formatCurrency(parseFloat(product.discount))}</span>` :
                         '';
 
@@ -1696,7 +1838,7 @@ $(document).ready(function() {
     }
 
     function validate() {
-        // === Get form values ===
+
         const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
         const customerId = $('#customer').val();
         const butcherName = $('#butcher-name').val();
@@ -1774,7 +1916,7 @@ $(document).ready(function() {
         if (paymentMethod === '3' && transferRef.trim() === '') {
             Swal.fire({
                 title: 'Warning!',
-                text: 'Nomor Referensi Transfer harus diisi',
+                text: 'Nomor Bukti Transfer harus diisi',
                 icon: 'warning',
                 confirmButtonText: 'OK',
                 allowOutsideClick: false
@@ -1816,7 +1958,7 @@ $(document).ready(function() {
                 .then(() => sendPrintCommand(printerName, jsonData)) // Adjust printer name
                 .catch(err => console.error("QZ Tray connection failed:", err));
         } else {
-            sendPrintCommand(printerName , jsonData);
+            sendPrintCommand(printerName, jsonData);
         }
     }
 
@@ -1849,7 +1991,8 @@ $(document).ready(function() {
                 // **Loop through items**
                 details.forEach(item => {
                     data.push(`${item.name}\n`);
-                    data.push(`${item.quantity} X ${item.base_price} (Discount ${item.discount})\n`);
+                    data.push(
+                    `${item.quantity} X ${item.base_price} (Discount ${item.discount})\n`);
                     data.push('\x1B\x61\x32'); // Right align
                     data.push(`${item.sell_price}\n`);
                     data.push('\x1B\x61\x30'); // Back to left align
