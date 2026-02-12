@@ -26,6 +26,7 @@ Route::get('get-product-categories/', [App\Http\Controllers\ProductCategoryContr
 
 Route::get('customers/', [App\Http\Controllers\CustomerController::class, 'getListFiltered']);
 Route::post('customers/save', [App\Http\Controllers\CustomerController::class, 'saveNewCustomerFromPOS']);
+Route::get('/customer-notes/{id}', [App\Http\Controllers\CustomerController::class, 'customerNotes'])->name('customer-notes');
 
 Route::get('get-purchase-request/', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'getPurchaseRequest']);
 Route::get('get-purchase-request-by-request-id/', [App\Http\Controllers\Procurements\PurchaseRequestController::class, 'getPurchaseRequestByRequestId']);

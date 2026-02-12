@@ -621,12 +621,12 @@
                                         <!-- Subtotal Row -->
                                         <div class="row align-items-center pb-3 mb-3" style="border-bottom: 2px dotted rgba(255,255,255,0.5);">
                                             <div class="col-8">Subtotal</div>
-                                            <div class="col-4 text-end" id="subtotal-amount">Rp. 0,00</div>
+                                            <div class="col-4 text-end" id="subtotal-amount">Rp. 0</div>
                                         </div>
                                         <!-- Total Discounts Row -->
                                         <div class="row align-items-center pb-3 mb-3" style="border-bottom: 2px dotted rgba(255,255,255,0.5);">
                                             <div class="col-8">Total Discounts</div>
-                                            <div class="col-4 text-end" id="discount">Rp. 0,00</div>
+                                            <div class="col-4 text-end" id="total-discount">Rp. 0</div>
                                         </div>
                                         <!-- Shipping Cost Row -->
                                         <div class="row align-items-center pb-3 mb-3" style="border-bottom: 2px dotted rgba(255,255,255,0.5);">
@@ -636,12 +636,12 @@
                                                     <i class="fas fa-edit text-white ms-2"></i>
                                                 </a>
                                             </div>
-                                            <div class="col-4 text-end" id="shipping-cost">Rp. 0,00</div>
+                                            <div class="col-4 text-end" id="shipping-cost">Rp. 0</div>
                                         </div>
                                         <!-- Total Bayar Row -->
                                         <div class="row align-items-center">
                                             <div class="col-8">Total Bayar</div>
-                                            <div class="col-4 text-end" id="total-amount">Rp. 0,00</div>
+                                            <div class="col-4 text-end" id="total-amount">Rp. 0</div>
                                         </div>
                                     </div>
                                     <!--end::Summary Grid-->
@@ -652,14 +652,14 @@
                                     <h5 class="fw-bold text-gray-800 mb-5">Metode Pemesanan</h5>
                                     <div class="d-flex flex-equal gap-2 gap-xxl-9 px-0 mb-3" id="ordering-method">
                                         <div class="form-check form-check-custom form-check-solid mb-2">
+                                            <input class="form-check-input" type="radio" value="2"
+                                                name="ordering_method" checked>
+                                            <label class="form-check-label">Offline</label>
+                                        </div>
+                                        <div class="form-check form-check-custom form-check-solid mb-2">
                                             <input class="form-check-input" type="radio" value="1"
                                                 name="ordering_method">
                                             <label class="form-check-label">Online</label>
-                                        </div>
-                                        <div class="form-check form-check-custom form-check-solid mb-2">
-                                            <input class="form-check-input" type="radio" value="2"
-                                                name="ordering_method">
-                                            <label class="form-check-label">Offline</label>
                                         </div>
                                     </div>
 
@@ -667,8 +667,8 @@
                                     <div class="d-flex flex-equal gap-2 gap-xxl-9 px-0 mb-3" id="working-method">
                                         <div class="form-check form-check-custom form-check-solid mb-2">
                                             <input class="form-check-input" type="radio" value="1"
-                                                name="working_method">
-                                            <label class="form-check-label">Indirect</label>
+                                                name="working_method" checked>
+                                            <label class="form-check-label">Direct</label>
                                         </div>
                                         <div class="form-check form-check-custom form-check-solid mb-2">
                                             <input class="form-check-input" type="radio" value="2"
@@ -677,9 +677,9 @@
                                         </div>
                                     </div>
 
-                                    <h5 class="fw-bold text-gray-800 mb-5">Catatan Customer</h5>
+                                    <h5 class="fw-bold text-gray-800 mb-5">Catatan</h5>
                                     <div class="d-flex flex-equal gap-2 gap-xxl-9 px-0 mb-3" id="customer-notes">
-                                        <textarea class="form-control"></textarea>
+                                        <textarea class="form-control" id="notes"></textarea>
                                     </div>
                                     <!--begin::Title-->
                                     <h5 class="fw-bold text-gray-800 mb-5">Metode Pembayaran</h5>
@@ -1170,7 +1170,7 @@ $(document).ready(function() {
         $("#kt_modal_add_product_item #stock_id").val(stockId);
         $("#kt_modal_add_product_item #product_name").val(productName);
         $("#kt_modal_add_product_item #product_price").val(productPrice);
-        $("#kt_modal_add_product_item #diskon").val(productDiscount);
+        $("#kt_modal_add_product_item #diskon").val(productDiscount == 0 ? '' : productDiscount);
 
     });
 
@@ -1211,9 +1211,7 @@ $(document).ready(function() {
         const productDiscount = $(this).data('product-discount');
         const productQuantity = $(this).data('product-quantity');
 
-        console.log(productQuantity);
-
-        $("#kt_modal_edit_product_item #product_id").val(productId);
+        $("#kt_modal_edit_product_item #product_id").val(formatThausand(productId));
         $("#kt_modal_edit_product_item #product_name").val(productName);
         $("#kt_modal_edit_product_item #product_price").val(productPrice);
         $("#kt_modal_edit_product_item #diskon").val(productDiscount);
@@ -1261,31 +1259,61 @@ $(document).ready(function() {
         if (existingProduct.length > 0) {
             // Update quantity and subtotal for existing product
             const quantityElement = existingProduct.find('.qty');
-            const currentQuantity = parseFloat(productQuantity) || 1;
-            const newQuantity = currentQuantity + 1;
+            const currentQuantity = parseFloat($(existingProduct).find('.quantity-value').text()) || parseFloat(productQuantity) || 1;
+            const newQuantity = currentQuantity + parseFloat(productQuantity);
             quantityElement.text(`${newQuantity}`);
 
-            const priceElement = existingProduct.find('.price');
-            const newSubtotal = (productPrice * newQuantity);
+            // Update stored quantity value
+            existingProduct.find('.quantity-value').text(newQuantity);
 
-            priceElement.text(formatCurrency(mround(newSubtotal, 500)));
-        } else {
-            // Add new product to the cart
-            // Build discount row (only if discount > 0)
-            var discountRow = '';
+            // Update discount per unit storage
+            existingProduct.find('.discount-per-unit').text(productDiscount);
+
+            // Update base price storage
+            existingProduct.find('.base-price').text(productPrice);
+
+            // Recalculate totals
+            const grossTotal = productPrice * newQuantity;
+            const totalDiscount = productDiscount * newQuantity;
+            const netTotal = grossTotal - totalDiscount;
+
+            // Update the gross total display
+            const quantityDisplay = existingProduct.find('.d-flex.justify-content-between.mb-2.pb-2');
+            quantityDisplay.find('small:last-child').text(formatThausand(grossTotal));
+
+            // Update or recreate discount section
+            const discountSection = existingProduct.find('.discount-section');
+
             if (productDiscount > 0) {
-                discountRow = `<div class="mb-2 pb-2" style="border-bottom: 1px solid #dee2e6;">
-                    <span class="badge bg-warning text-dark discount" style="font-size: 0.85rem;">- ${formatCurrency(productDiscount)} (Diskon)</span>
-                </div>`;
+                if (discountSection.length > 0) {
+                    // Update existing discount section
+                    discountSection.find('.discount-total').text(newQuantity);
+                    discountSection.find('small.fw-bold').text(formatThausand(totalDiscount));
+                } else {
+                    // Create discount section if it doesn't exist
+                    const discountHTML = `<div class="mb-2 pb-2 discount-section" style="border-bottom: 1px solid #dee2e6;">
+                        <small class="text-muted">Discount: <span class="discount-total">${newQuantity}</span> kg x ${formatThausand(productDiscount)} = </small>
+                        <small class="fw-bold text-danger">${formatThausand(totalDiscount)}</small>
+                    </div>`;
+                    quantityDisplay.after(discountHTML);
+                }
             } else {
-                discountRow = `<span class="discount d-none"></span>`;
+                // Remove discount section if discount is 0
+                discountSection.remove();
             }
 
+            const priceElement = existingProduct.find('.price');
+            priceElement.text(formatThausand(mround(netTotal, 500)));
+        } else {
+            // Add new product to the cart
             var productItem = `<div class="cart-item-lists p-3 mb-2" id="product-id-${productId}" style="border: 1px solid #e9ecef; border-radius: 0.375rem; background-color: #f8f9fa;">
                 <!-- Hidden data fields -->
                 <div class="d-none product-id">${productId}</div>
                 <div class="d-none stock-id">${stockId}</div>
                 <div class="d-none base-price">${productPrice}</div>
+                <div class="d-none discount-per-unit">${productDiscount}</div>
+                <div class="d-none quantity-value">${productQuantity}</div>
+                <div class="d-none gross-price">${productQuantity * productPrice}</div>
 
                 <!-- Row 1: Product Name + Edit & Delete Icons -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -1302,17 +1330,20 @@ $(document).ready(function() {
 
                 <!-- Row 2: Price Calculation (Quantity × Base Price) - ALWAYS SHOWN -->
                 <div class="d-flex justify-content-between align-items-center mb-2 pb-2" style="border-bottom: 1px dotted #dee2e6;">
-                    <small class="text-muted"><span class="qty">${productQuantity}</span> x ${productPrice}</small>
-                    <small class="fw-bold text-dark">${formatCurrency(productPrice * productQuantity)}</small>
+                    <small class="text-muted"><span class="qty">${productQuantity}</span> x ${formatThausand(productPrice)}</small>
+                    <small class="fw-bold text-dark">Gross: ${formatThausand(productPrice * productQuantity)}</small>
                 </div>
 
                 <!-- Row 3: Discount Badge (CONDITIONAL - Only if discount > 0) -->
-                ${discountRow}
+                ${productDiscount > 0 ? `<div class="mb-2 pb-2 discount-section" style="border-bottom: 1px solid #dee2e6;">
+                    <small class="text-muted">Discount: <span class="discount-total">${productQuantity}</span> kg x ${formatThausand(productDiscount)} = </small>
+                    <small class="fw-bold text-danger">${formatThausand(productDiscount * productQuantity)}</small>
+                </div>` : ''}
 
                 <!-- Row 4: Final Total Price -->
                 <div class="d-flex justify-content-between align-items-center pt-2">
-                    <span class="fw-bold text-dark">Total:</span>
-                    <span class="fw-bold price" style="color: #198754; font-size: 1.05rem;">Rp. ${formatCurrency(mround((productPrice - productDiscount) * productQuantity, 500))}</span>
+                    <span class="fw-bold text-dark">Net Total:</span>
+                    <span class="fw-bold price" style="color: #198754; font-size: 1.05rem;">${formatThausand(mround((productPrice - productDiscount) * productQuantity, 500))}</span>
                 </div>
             </div>`;
 
@@ -1339,6 +1370,7 @@ $(document).ready(function() {
         const productId = $("#kt_modal_edit_product_item #product_id").val();
         const quantity = $("#kt_modal_edit_product_item #quantity").val();
         const productPrice = $("#kt_modal_edit_product_item #product_price").val();
+        const discountPerUnit = $("#kt_modal_edit_product_item #diskon").val();
 
         // Validation for productPrice and quantity
         if (!productPrice || productPrice <= 0) {
@@ -1367,17 +1399,56 @@ $(document).ready(function() {
         var existingProduct = $(`#product-id-${productId}`);
 
         if (existingProduct.length > 0) {
-            // Update quantity and subtotal for existing product
-            const quantityElement = existingProduct.find('.qty');
-            // const currentQuantity = parseFloat(quantityElement.text()) || 1;
             const newQuantity = parseFloat(quantity);
+            const newDiscountPerUnit = parseFloat(discountPerUnit) || 0;
+            const basePrice = parseFloat(productPrice);
+
+            // Update quantity display and storage
+            const quantityElement = existingProduct.find('.qty');
             quantityElement.text(`${newQuantity}`);
+            existingProduct.find('.quantity-value').text(newQuantity);
 
+            // Update discount per unit storage
+            existingProduct.find('.discount-per-unit').text(newDiscountPerUnit);
+
+            // Update base price storage
+            existingProduct.find('.base-price').text(basePrice);
+
+            // Recalculate totals
+            const grossTotal = basePrice * newQuantity;
+            const totalDiscount = newDiscountPerUnit * newQuantity;
+            const netTotal = grossTotal - totalDiscount;
+
+            // Update the gross total display (Quantity x Price)
+            const quantityDisplay = existingProduct.find('.d-flex.justify-content-between.mb-2.pb-2');
+            quantityDisplay.find('small:last-child').text(formatThausand(grossTotal));
+
+            // Update or recreate discount section
+            const discountSection = existingProduct.find('.discount-section');
+
+            if (newDiscountPerUnit > 0) {
+
+                console.log('Updating discount section =>' + newDiscountPerUnit);
+                if (discountSection.length > 0) {
+                    // Update existing discount section
+                    discountSection.find('.discount-total').text(newQuantity);
+                    discountSection.find('small.fw-bold').text(formatThausand(totalDiscount));
+                } else {
+                    // Create discount section if it doesn't exist
+                    const discountHTML = `<div class="mb-2 pb-2 discount-section" style="border-bottom: 1px solid #dee2e6;">
+                        <small class="text-muted">Discount: <span class="discount-total">${newQuantity}</span> kg x ${formatThausand(newDiscountPerUnit)} = </small>
+                        <small class="fw-bold text-danger">${formatThausand(totalDiscount)}</small>
+                    </div>`;
+                    quantityDisplay.after(discountHTML);
+                }
+            } else {
+                // Remove discount section if discount is 0
+                discountSection.remove();
+            }
+
+            // Update the final price display
             const priceElement = existingProduct.find('.price');
-            const discountElement = existingProduct.find('.discount').text().replace(/[^\d]/g, '') | 0;
-            const newSubtotal = (productPrice - discountElement) * newQuantity;
-
-            priceElement.text(formatCurrency(mround(newSubtotal, 500)));
+            priceElement.text(formatThausand(mround(netTotal, 500)));
         }
 
         calculateTotals();
@@ -1433,15 +1504,18 @@ $(document).ready(function() {
                         const stockId = $(this).find('.stock-id').text();
                         const price = $(this).find('.price').text().replace(/[^\d]/g, '');
                         const basePrice = $(this).find('.base-price').text().replace(/[^\d]/g, '');
-                        const productDiscount = $(this).find('.discount').text().replace(/[^\d]/g, '') | 0;
-                        const quantity = $(this).find('.qty').text().replace(/ Kg$/, "");
+                        const discountPerUnit = $(this).find('.discount-per-unit').text().replace(/[^\d]/g, '') | 0;
+                        const quantity = $(this).find('.quantity-value').text().replace(/[^\d]/g, '');
+
+                        // Calculate total discount for this item
+                        const totalItemDiscount = parseFloat(discountPerUnit) * parseFloat(quantity);
 
                         products.push({
                             product_id: productId,
                             stock_id: stockId,
                             base_price: basePrice,
                             price: price,
-                            discount: productDiscount,
+                            discount: totalItemDiscount,
                             quantity: quantity,
                         });
                     });
@@ -1462,6 +1536,8 @@ $(document).ready(function() {
                     const orderingMethod = $('#ordering-method').find('input[type="radio"]:checked').val();
                     const workingMethod = $('#working-method').find('input[type="radio"]:checked').val();
 
+                    const notes = $('#notes').val();
+
                     // Append form fields
                     formData.append('transaction_date', new Date().toISOString());
                     formData.append('customer_name', customerId);
@@ -1478,6 +1554,7 @@ $(document).ready(function() {
                     formData.append('transfer_ref', transferRef);
                     formData.append('ordering_method', orderingMethod);
                     formData.append('working_method', workingMethod);
+                    formData.append('notes', notes);
 
                     if (transferAttch) {
                         formData.append('transfer_attch', transferAttch);
@@ -1737,7 +1814,7 @@ $(document).ready(function() {
                     // Construct HTML for each product
                     const discountHTML = product.discount !== 0 && !isNaN(parseFloat(product
                             .discount)) ?
-                        `<span>Diskon</span> <span class="fs-6 text-muted">${formatCurrency(parseFloat(product.discount))}</span>` :
+                        `<span>Diskon</span> <span class="fs-6 text-muted">${formatThausand(parseFloat(product.discount))}</span>` :
                         '';
 
                     const productItem = `<div class="col-md-3 mb-3 product-l"><div class="card p-6 pb-5 product" data-stock-id="${product.stock_id}" data-product-id="${product.id}" data-product-name="${product.name}" data-product-price="${product.price}" data-product-discount="${product.discount}" data-bs-toggle="modal" data-bs-target="#kt_modal_add_product_item">
@@ -1748,7 +1825,7 @@ $(document).ready(function() {
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <span class="text-success text-end fw-bold">${formatCurrency(parseFloat(product.price))}</span>
+                                                    <span class="text-success text-end fw-bold">${formatThausand(parseFloat(product.price))}</span>
                                                 </div>
                                                 ${discountHTML}
                                             </div>
@@ -1764,6 +1841,23 @@ $(document).ready(function() {
             }
         });
     }
+
+    $('#customer').on('change', function() {
+        let customerId = $(this).val();
+        $.ajax({
+            url: `/api/customer-notes/`+customerId,
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                var notes = response.data;
+
+                $('#notes').text(notes || '');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching products:', error);
+            }
+        });
+    });
 
     function getCustomers() {
         $.ajax({
@@ -1791,39 +1885,91 @@ $(document).ready(function() {
         });
     }
 
+    function getCustomerNotes(customerId) {
+        $.ajax({
+            url: `/customer-notes/`+customerId,
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                var data = response.data;
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching products:', error);
+            }
+        });
+    }
+
     function calculateTotals() {
         let subtotal = 0;
+        let totalProductDiscount = 0;
 
-        // Iterate through each product in the cart and sum up their subtotals
+        // Iterate through each product in the cart and sum up their subtotals and discounts
         $('.cart-item-lists').each(function() {
-            const priceText = $(this).find('.price').text().replace(/[^\d]/g,
-                ''); // Remove currency symbols
-            const price = parseFloat(priceText) || 0; // Ensure numeric value
-            subtotal += price; // Add to the subtotal
+            const priceText = $(this).find('.gross-price').text().replace(/[^\d]/g, '');
+            const price = parseFloat(priceText) || 0;
+            subtotal += price;
+
+            // Extract discount per unit and quantity, then calculate total discount
+            const discountPerUnit = parseFloat($(this).find('.discount-per-unit').text()) || 0;
+            const quantity = parseFloat($(this).find('.quantity-value').text()) || 0;
+
+            // Total discount for this item = discount_per_unit × quantity
+            const itemTotalDiscount = discountPerUnit * quantity;
+            totalProductDiscount += itemTotalDiscount;
         });
 
-        // Update subtotal and total amount in the UI
-        $('#subtotal-amount').text(formatCurrency(subtotal));
+        // Update subtotal in the UI
+        $('#subtotal-amount').text(formatThausand(subtotal));
 
-        const discount = $('#discount').text().replace(/[^\d]/g, '') | 0;
+        // Add global discount to product discounts
+        const globalDiscount = $('#discount').text().replace(/[^\d]/g, '') | 0;
+        const totalDiscount = totalProductDiscount + parseFloat(globalDiscount);
+
+        // Display total discount
+        $('#total-discount').text(formatThausand(totalDiscount));
+
         const shippingCost = $('#shipping-cost').text().replace(/[^\d]/g, '') | 0;
-        console.log("Discount : " + discount);
+        console.log("Total Product Discount: " + totalProductDiscount);
+        console.log("Global Discount: " + globalDiscount);
+        console.log("Total Discount: " + totalDiscount);
 
-        const totalAmount = (subtotal - parseFloat(discount)) + parseFloat(shippingCost);
-        $('#total-amount').text(formatCurrency(totalAmount)); // Add additional charges if needed
+        const totalAmount = (subtotal - totalDiscount) + parseFloat(shippingCost);
+        $('#total-amount').text(formatThausand(totalAmount));
 
         $("#nominal-cash").val("");
         $("#nominal-return").val("");
-
     }
 
     function formatCurrency(amount) {
-        const formatter = new Intl.NumberFormat('id-ID', {
+        const formatter = new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'IDR', // IDR is the currency code for Indonesian Rupiah
+            currency: 'USD', // USD is the currency code for US Dollar
             minimumFractionDigits: 0, // Optional, remove decimals if not needed
         });
         return formatter.format(amount);
+    }
+
+    function formatThausand(value, decimalLength) {
+        if (value === null || value === undefined || value === '') return '';
+
+        // Ensure numeric
+        let number = parseFloat(value.toString().replace(/[^0-9,-]/g, '').replace(',', ','));
+        if (isNaN(number)) return '';
+
+        return number.toLocaleString('en-US', {
+            minimumFractionDigits: decimalLength,
+            maximumFractionDigits: decimalLength
+        });
+    }
+
+    function unformatThausand(value) {
+        if (value === null || value === undefined || value === '') return 0;
+
+        // Ensure numeric
+        let number = parseFloat(value.toString().replace(/[^0-9,-]/g, '').replace(',', '.'));
+        if (isNaN(number)) return 0;
+
+        return number;
     }
 
     function mround(number, multiple) {

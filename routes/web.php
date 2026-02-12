@@ -159,9 +159,6 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/credit-policies/{id}', [App\Http\Controllers\CustomerController::class, 'creditPolicies'])->name('credit-policies');
             Route::post('/credit-policies/save', [App\Http\Controllers\CustomerController::class, 'creditPoliciesSave'])->name('credit-policies-save');
             Route::post('/update', [App\Http\Controllers\CustomerController::class, 'update'])->name('update');
-
-            Route::get('/customer-notes/{id}', [App\Http\Controllers\CustomerController::class, 'customerNotes'])->name('customer-notes');
-
         });
     });
 

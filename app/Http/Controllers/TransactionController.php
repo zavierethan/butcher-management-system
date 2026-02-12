@@ -81,6 +81,9 @@ class TransactionController extends Controller
                 "branch_id"        => $request->branch_id,
                 "transfer_ref"     => $request->transfer_ref,
                 "transfer_attch"   => $transferBase64,
+                "ordering_method"  => $request->ordering_method,
+                "working_method"   => $request->working_method,
+                "notes"            => $request->notes,
             ]);
 
             // Handle credit (payment method 2)

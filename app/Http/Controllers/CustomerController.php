@@ -152,4 +152,14 @@ class CustomerController extends Controller
         return redirect()->route('customers.index');
     }
 
+    public function customerNotes($id) {
+        $customer = DB::table('customers')
+            ->where('id', $id)
+            ->first();
+
+        return response()->json([
+            'data' => $customer->transaction_notes
+        ], 200);
+    }
+
 }
