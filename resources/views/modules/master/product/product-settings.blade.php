@@ -576,6 +576,10 @@
 
 @section('script')
 <script>
+$(document).ready(function() {
+    calculateCogs($("#raw-material-price").val(), $("#prm-kks").val());
+});
+
 $(document).on("keyup", "input", function() {
     var originalVal = $(this).val();
     var formattedVal = formatNumber(originalVal);
@@ -585,12 +589,7 @@ $(document).on("keyup", "input", function() {
 $(document).on('keyup', '#raw-material-price', function() {
     let val = parseFloat($(this).val().replace(/,/g, ""));
     let prmKks = parseFloat($("#prm-kks").val());
-
-    let cogsKks = Math.round(val * prmKks) || 0;
-
-    let formatedKks = formatNumber(cogsKks.toString());
-
-    $("#cogs-price").val(formatedKks);
+    calculateCogs($(this).val(), prmKks);
 });
 
 $(document).on('click', '#btn-generate-price', function() {
@@ -648,14 +647,6 @@ $(document).on('click', '#btn-generate-price', function() {
     });
 
 });
-
-// Function to set formatted values in table row
-function setRowValues(row, cogs, marginPrice, recommendedPrice, finalSalePrice) {
-    row.find('.cogs').val(format(cogs));
-    row.find('.margin-price').val(format(marginPrice));
-    row.find('.cogs-plus-margin').val(format(recommendedPrice));
-    row.find('.final-sale-price').val(format(finalSalePrice));
-}
 
 $(document).on('click', '#btn-bulk-update', function(e) {
     e.preventDefault();
@@ -734,6 +725,15 @@ $(document).on('click', '#btn-bulk-update', function(e) {
     }
 });
 
+// Function to set formatted values in table row
+function setRowValues(row, cogs, marginPrice, recommendedPrice, finalSalePrice) {
+    row.find('.cogs').val(format(cogs));
+    row.find('.margin-price').val(format(marginPrice));
+    row.find('.cogs-plus-margin').val(format(recommendedPrice));
+    row.find('.final-sale-price').val(format(finalSalePrice));
+}
+
+
 function format(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
@@ -747,6 +747,17 @@ function formatNumber(numStr) {
     const parts = cleaned.split('.');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return parts.join('.');
+}
+
+function calculateCogs(rawMaterialPrice, prmKks) {
+    let val = parseFloat(rawMaterialPrice.replace(/,/g, ""));
+    let kks = parseFloat(prmKks);
+
+    let cogsKks = Math.round(val * kks) || 0;
+
+    let formatedKks = formatNumber(cogsKks.toString());
+
+    $("#cogs-price").val(formatedKks);
 }
 </script>
 @endsection
