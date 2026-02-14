@@ -126,6 +126,7 @@ class CustomerController extends Controller
         DB::table('customers')->insert([
             "name" => $request->name,
             "phone_number" => $request->phone_number,
+            "transaction_notes" => $request->transaction_notes,
         ]);
 
         return response()->json([
