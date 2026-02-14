@@ -1873,7 +1873,7 @@ $(document).ready(function() {
 
                 data.forEach(item => {
                     const option = new Option(item.name, item.id);
-                    if (item.id === 8) {
+                    if (item.id === 1) {
                         option.selected = true; // Select the option with id 8
                     }
                     selectBox.append(option);
