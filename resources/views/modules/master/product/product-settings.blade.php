@@ -592,6 +592,35 @@ $(document).on('keyup', '#raw-material-price', function() {
     calculateCogs($(this).val(), prmKks);
 });
 
+// Auto-calculate when margin changes
+$(document).on('change keyup', '.margin', function() {
+    let row = $(this).closest('tr');
+    let productCode = row.find('.product_code').val();
+
+    // Get values
+    let cogsStr = row.find('.cogs').val();
+    let cogs = parseFloat(cogsStr.replace(/,/g, "")) || 0;
+    let marginPercent = parseFloat($(this).val()) || 0;
+
+    // Calculate margin price
+    let marginPrice = Math.round(cogs * (marginPercent / 100));
+
+    // Add special amounts for certain products
+    var productKarkasArr = ["KKS", "DD", "PH", "PHA", "PHP", "SY", "TG", "FDK", "FDB", "FPK", "FPB", "DGL"];
+
+    if (productKarkasArr.includes(productCode)) {
+        if (productCode === "PHP") marginPrice += 2000;
+        if (productCode === "SY") marginPrice += 1000;
+    }
+
+    // Calculate recommended and final prices
+    let recommendedPrice = cogs + marginPrice;
+    let finalSalePrice = roundUp(recommendedPrice);
+
+    // Update the row values
+    setRowValues(row, cogs, marginPrice, recommendedPrice, finalSalePrice);
+});
+
 $(document).on('click', '#btn-generate-price', function() {
     var productKarkasArr = ["KKS", "DD", "PH", "PHA", "PHP", "SY", "TG", "FDK", "FDB", "FPK", "FPB", "DGL"];
     var productFixPriceArr = ["KL", "TRO", "TPH", "TTLN", "TRW", "KPL", "CKR", "AA", "US", "TLR", "SYR", "DLV"];

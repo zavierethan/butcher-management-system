@@ -47,15 +47,14 @@ class CustomerController extends Controller
     }
 
     public function save(Request $request) {
-        $baseUrl = config('app.url');
 
-        //TODO set created_by and updated)_by
         DB::table('customers')->insert([
             "name" => $request->name,
             "ktp_number" => $request->ktp_number,
             "phone_number" => $request->phone_number,
             "type" => $request->type,
             "address" => $request->address,
+            "transaction_notes" => $request->transaction_notes,
             "is_active" => $request->is_active,
         ]);
 
@@ -89,6 +88,7 @@ class CustomerController extends Controller
                 'phone_number' => $request->phone_number,
                 'type' => $request->type,
                 "address" => $request->address,
+                "transaction_notes" => $request->transaction_notes,
                 "is_active" => $request->is_active,
             ]);
 

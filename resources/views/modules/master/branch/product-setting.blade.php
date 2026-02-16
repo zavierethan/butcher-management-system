@@ -52,6 +52,7 @@
                                     <div class="position-relative mb-3">
                                         <input class="form-control form-control-md form-control-solid" type="text"
                                             value="{{$branch->code}}" />
+                                        <input class="form-control form-control-md form-control-solid" type="hidden" name="branch_id" value="{{$branch->id}}" id="branch-id" />
                                     </div>
                                 </div>
                             </div>
@@ -170,8 +171,7 @@
 
                             <div class="text-end">
                                 <a href="{{route('branches.index')}}" class="btn btn-sm btn-danger">Kembali</a>
-                                <a href="javascript:void(0)" class="btn btn-sm btn-primary"
-                                    id="btn-generate-price">Generate Price</a>
+                                <a href="javascript:void(0)" class="btn btn-sm btn-primary" id="btn-generate-price">Generate Price</a>
                                 <a href="#" class="btn btn-sm btn-success" id="btn-bulk-update">Bulk update</a>
                             </div>
                         </div>
@@ -607,6 +607,10 @@
 
 @section('script')
 <script>
+$(document).ready(function() {
+    calculateCogs($("#raw-material-price").val(), $("#prm-kks").val());
+});
+
 $(document).on("keyup", "input", function() {
     var originalVal = $(this).val();
     var formattedVal = formatNumber(originalVal);
@@ -616,12 +620,36 @@ $(document).on("keyup", "input", function() {
 $(document).on('keyup', '#raw-material-price', function() {
     let val = parseFloat($(this).val().replace(/,/g, ""));
     let prmKks = parseFloat($("#prm-kks").val());
+    calculateCogs($(this).val(), prmKks);
+});
 
-    let cogsKks = Math.round(val * prmKks) || 0;
+// Auto-calculate when margin changes
+$(document).on('change keyup', '.margin', function() {
+    let row = $(this).closest('tr');
+    let productCode = row.find('.product_code').val();
 
-    let formatedKks = formatNumber(cogsKks.toString());
+    // Get values
+    let cogsStr = row.find('.cogs').val();
+    let cogs = parseFloat(cogsStr.replace(/,/g, "")) || 0;
+    let marginPercent = parseFloat($(this).val()) || 0;
 
-    $("#cogs-price").val(formatedKks);
+    // Calculate margin price
+    let marginPrice = Math.round(cogs * (marginPercent / 100));
+
+    // Add special amounts for certain products
+    var productKarkasArr = ["KKS", "DD", "PH", "PHA", "PHP", "SY", "TG", "FDK", "FDB", "FPK", "FPB", "DGL"];
+
+    if (productKarkasArr.includes(productCode)) {
+        if (productCode === "PHP") marginPrice += 2000;
+        if (productCode === "SY") marginPrice += 1000;
+    }
+
+    // Calculate recommended and final prices
+    let recommendedPrice = cogs + marginPrice;
+    let finalSalePrice = roundUp(recommendedPrice);
+
+    // Update the row values
+    setRowValues(row, cogs, marginPrice, recommendedPrice, finalSalePrice);
 });
 
 $(document).on('click', '#btn-generate-price', function() {
@@ -680,14 +708,6 @@ $(document).on('click', '#btn-generate-price', function() {
 
 });
 
-// Function to set formatted values in table row
-function setRowValues(row, cogs, marginPrice, recommendedPrice, finalSalePrice) {
-    row.find('.cogs').val(format(cogs));
-    row.find('.margin-price').val(format(marginPrice));
-    row.find('.cogs-plus-margin').val(format(recommendedPrice));
-    row.find('.final-sale-price').val(format(finalSalePrice));
-}
-
 $(document).on('click', '#btn-bulk-update', function(e) {
     e.preventDefault();
 
@@ -708,7 +728,7 @@ $(document).on('click', '#btn-bulk-update', function(e) {
                     if ($(this).hasClass('skip-row')) return;
                     let product = {
                         id: $(this).find(".product_id").val(),
-                        branch_id: $(this).find(".branch_id").val(),
+                        branch_id: $("#branch-id").val(),
                         cogs: $(this).find(".cogs").val().replace(/,/g, ""),
                         margin: $(this).find(".margin").val().replace(/,/g, ""),
                         margin_price: $(this).find(".margin-price").val().replace(/,/g, ""),
@@ -723,8 +743,6 @@ $(document).on('click', '#btn-bulk-update', function(e) {
                     };
                     products.push(product);
                 });
-
-                console.log(products);
 
                 $.ajax({
                     url: `{{route('branches.product-setting-bulk-update')}}`,
@@ -744,8 +762,8 @@ $(document).on('click', '#btn-bulk-update', function(e) {
                             confirmButtonText: 'Ok',
                             allowOutsideClick: false
                         }).then((result) => {
-                            // Redirect the current page to the transaction index
-                            location.href = `{{ route('branches.index') }}`;
+                            // Reload the current page
+                            location.reload();
                         });
                     },
                     error: function(xhr, status, error) {
@@ -761,6 +779,15 @@ $(document).on('click', '#btn-bulk-update', function(e) {
     }
 });
 
+// Function to set formatted values in table row
+function setRowValues(row, cogs, marginPrice, recommendedPrice, finalSalePrice) {
+    row.find('.cogs').val(format(cogs));
+    row.find('.margin-price').val(format(marginPrice));
+    row.find('.cogs-plus-margin').val(format(recommendedPrice));
+    row.find('.final-sale-price').val(format(finalSalePrice));
+}
+
+
 function format(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
@@ -774,6 +801,17 @@ function formatNumber(numStr) {
     const parts = cleaned.split('.');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return parts.join('.');
+}
+
+function calculateCogs(rawMaterialPrice, prmKks) {
+    let val = parseFloat(rawMaterialPrice.replace(/,/g, ""));
+    let kks = parseFloat(prmKks);
+
+    let cogsKks = Math.round(val * kks) || 0;
+
+    let formatedKks = formatNumber(cogsKks.toString());
+
+    $("#cogs-price").val(formatedKks);
 }
 </script>
 @endsection

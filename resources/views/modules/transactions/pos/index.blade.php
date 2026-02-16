@@ -1325,6 +1325,7 @@ $(document).ready(function() {
                 <div class="d-none product-id">${productId}</div>
                 <div class="d-none stock-id">${stockId}</div>
                 <div class="d-none base-price">${productPrice}</div>
+                <div class="d-none discount">${productDiscount}</div>
                 <div class="d-none discount-per-unit">${totalDiscount}</div>
                 <div class="d-none quantity-value">${productQuantity}</div>
                 <div class="d-none gross-price">${grossPrice}</div>
@@ -1531,22 +1532,20 @@ $(document).ready(function() {
                         const price = $(this).find('.price').text().replace(/[^\d]/g, '');
                         const basePrice = $(this).find('.base-price').text().replace(/[^\d]/g, '');
                         const discountPerUnit = $(this).find('.discount-per-unit').text().replace(/[^\d]/g, '') | 0;
-                        const quantity = $(this).find('.quantity-value').text().replace(/[^\d]/g, '');
-
-                        // Calculate total discount for this item
-                        const totalItemDiscount = parseFloat(discountPerUnit) * parseFloat(quantity);
+                        const discount = $(this).find('.discount').text().replace(/[^\d]/g, '') | 0;
+                        const quantity = $(this).find('.quantity-value').text();
 
                         products.push({
                             product_id: productId,
                             stock_id: stockId,
                             base_price: basePrice,
-                            price: price,
-                            discount: totalItemDiscount,
                             quantity: quantity,
+                            price: price,
+                            discount: discount,
                         });
                     });
 
-                    const discount = $('#discount').text().replace(/[^\d]/g, '') | 0;
+                    const discount = $('#total-discount').text().replace(/[^\d]/g, '') | 0;
                     const shippingCost = $('#shipping-cost').text().replace(/[^\d]/g, '') | 0;
                     const totalAmount = $('#subtotal-amount').text().replace(/[^\d]/g, '');
                     const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
@@ -1968,9 +1967,6 @@ $(document).ready(function() {
         $('#total-discount').text(formatThausand(totalDiscount));
 
         const shippingCost = $('#shipping-cost').text().replace(/[^\d]/g, '') | 0;
-        console.log("Total Product Discount: " + totalProductDiscount);
-        console.log("Global Discount: " + globalDiscount);
-        console.log("Total Discount: " + totalDiscount);
 
         const totalAmount = (subtotal - totalDiscount) + parseFloat(shippingCost);
         $('#total-amount').text(formatThausand(totalAmount));

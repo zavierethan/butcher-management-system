@@ -20,7 +20,6 @@ class TransactionController extends Controller
     }
 
     public function store(Request $request){
-
         $status = 0;
 
         try {
@@ -69,10 +68,10 @@ class TransactionController extends Controller
                 "code"             => $transactionCode,
                 "transaction_date" => now(),
                 "customer_id"      => $request->customer_id,
-                "total_amount"     => $totalAmount,
+                //"total_amount"     => $totalAmount,
                 "payment_method"   => $paymentMethod,
                 "butcher_name"     => $request->butcher_name,
-                "discount"         => $request->discount,
+                //"discount"         => $request->discount,
                 "shipping_cost"    => $request->shipping_cost,
                 "status"           => $status,
                 "nominal_cash"     => $request->nominal_cash,
@@ -110,7 +109,7 @@ class TransactionController extends Controller
                     "product_id"     => $detail["product_id"],
                     "quantity"       => $detail["quantity"],
                     "base_price"     => $detail["base_price"],
-                    "unit_price"     => $detail["price"],
+                    //"unit_price"     => $detail["price"],
                     "discount"       => $detail["discount"],
                 ]);
 
