@@ -93,6 +93,7 @@
                                         <th class="min-w-125px">Kategori</th>
                                         <th class="min-w-125px">Klasifikasi</th>
                                         <th class="min-w-125px">Pricing Type</th>
+                                        <th class="min-w-125px">Base Price</th>
                                         <th class="min-w-125px text-center">Active</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
@@ -143,6 +144,7 @@
             { data: 'category_name', name: 'category_name' },
             { data: 'clasification', name: 'clasification' },
             { data: 'pricing_type', name: 'pricing_type' },
+            { data: 'base_price', name: 'base_price' },
             {
                 data: 'is_active',
                 name: 'is_active',

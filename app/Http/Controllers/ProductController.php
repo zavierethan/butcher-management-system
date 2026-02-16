@@ -78,7 +78,8 @@ class ProductController extends Controller
                 "is_active" => $request->is_active,
                 "category_id" => $request->category_id,
                 "url_path" => $imagePath,
-                "unit" => "KG"
+                "unit" => "KG",
+                "base_price" => $request->base_price,
             ]);
 
             // Retrieve all branches
@@ -127,10 +128,11 @@ class ProductController extends Controller
 
         // Initialize update data
         $updateData = [
-            'code' => $request->code,
-            'name' => $request->name,
-            'is_active' => $request->is_active,
+            'code'        => $request->code,
+            'name'        => $request->name,
+            'is_active'   => $request->is_active,
             'category_id' => $request->category_id,
+            'base_price'  => $request->base_price,
         ];
 
         $imagePath = null;

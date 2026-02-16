@@ -149,6 +149,56 @@
                                 <!--end::Table body-->
                             </table>
                             <!--end::Table-->
+
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_items_table">
+                                <!--begin::Table head-->
+                                <thead>
+                                    <!--begin::Table row-->
+                                    <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                        <th class="min-w-125px">MARGIN 1</th>
+                                        <th class="min-w-125px">MARGIN 2</th>
+                                        <th class="min-w-125px">MARGIN 3</th>
+                                        <th class="min-w-125px">MARGIN 4</th>
+                                    </tr>
+                                    <!--end::Table row-->
+                                </thead>
+                                <!--end::Table head-->
+                                <!--begin::Table body-->
+                                <tbody class="fw-bold text-gray-600">
+                                    <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <input type="number"
+                                                    class="form-control form-control-sm inline-edit-end-period me-2"
+                                                    id="group-flag-1"/>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <input type="number"
+                                                    class="form-control form-control-sm inline-edit-end-period me-2"
+                                                    id="group-flag-2"/>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <input type="number"
+                                                    class="form-control form-control-sm inline-edit-end-period me-2"
+                                                    id="group-flag-3"/>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <input type="number"
+                                                    class="form-control form-control-sm inline-edit-end-period me-2"
+                                                    id="group-flag-4"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <!--end::Table body-->
+                            </table>
+
                             <div class="fv-row mb-5">
                                 <div class="mb-1">
                                     <label class="form-label fw-bold fs-6 mb-2">Harga Ayam Hidup ({{ optional($latestPrice)->received_date ?? '-' }})</label>
@@ -213,7 +263,7 @@
                                     @php $num = 1; @endphp
                                     @foreach($products as $product)
                                     @if($product->group_flag == 1)
-                                    <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                    <tr class="text-start fw-bolder fs-7 text-uppercase gs-0" data-group-flag="1">
                                         <td>{{$product->name}} ({{$product->code}})
                                             <input type="hidden"
                                                 class="form-control form-control-sm inline-edit-end-period me-2 product_id"
@@ -310,7 +360,7 @@
 
                                     @foreach($products as $product)
                                     @if($product->group_flag == 2)
-                                    <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                    <tr class="text-start fw-bolder fs-7 text-uppercase gs-0" data-group-flag="2">
                                         <td>{{$product->name}} ({{$product->code}})
                                             <input type="hidden"
                                                 class="form-control form-control-sm inline-edit-end-period me-2 product_id"
@@ -407,7 +457,7 @@
 
                                     @foreach($products as $product)
                                     @if($product->group_flag == 3)
-                                    <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                    <tr class="text-start fw-bolder fs-7 text-uppercase gs-0" data-group-flag="3">
                                         <td>{{$product->name}} ({{$product->code}})
                                             <input type="hidden"
                                                 class="form-control form-control-sm inline-edit-end-period me-2 product_id"
@@ -504,7 +554,7 @@
 
                                     @foreach($products as $product)
                                     @if($product->group_flag == 4)
-                                    <tr class="text-start fw-bolder fs-7 text-uppercase gs-0 skip">
+                                    <tr class="text-start fw-bolder fs-7 text-uppercase gs-0 skip" data-group-flag="4">
                                         <td>{{$product->name}} ({{$product->code}})
                                             <input type="hidden"
                                                 class="form-control form-control-sm inline-edit-end-period me-2 product_id"
@@ -609,6 +659,17 @@
 <script>
 $(document).ready(function() {
     calculateCogs($("#raw-material-price").val(), $("#prm-kks").val());
+});
+
+// Event listener untuk margin group flags
+$(document).on('keyup', '#group-flag-1, #group-flag-2, #group-flag-3, #group-flag-4', function() {
+    let groupFlag = $(this).attr('id').replace('group-flag-', '');
+    let marginValue = $(this).val();
+
+    // Update semua margin untuk group_flag yang sesuai
+    $('#product-table tr[data-group-flag="' + groupFlag + '"]').each(function() {
+        $(this).find('.margin').val(marginValue).trigger('change');
+    });
 });
 
 $(document).on("keyup", "input", function() {
