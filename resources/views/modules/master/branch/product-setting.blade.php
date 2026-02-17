@@ -150,7 +150,7 @@
                             </table>
                             <!--end::Table-->
 
-                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_items_table">
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_items_table_margin">
                                 <!--begin::Table head-->
                                 <thead>
                                     <!--begin::Table row-->
