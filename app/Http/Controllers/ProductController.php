@@ -433,4 +433,15 @@ class ProductController extends Controller
 
         return response()->json(["message" => "Products updated successfully"]);
     }
+
+    public function getProductDetailsByBranch(Request $request) {
+        $branchId = $request->input('branch_id');
+
+        $details = DB::table('product_details')
+            ->select('product_id', 'branch_id', 'cogs', 'margin', 'margin_price', 'cogs_plus_margin', 'price', 'discount', 'start_period', 'end_period', 'is_active')
+            ->where('branch_id', $branchId)
+            ->get();
+
+        return response()->json($details);
+    }
 }

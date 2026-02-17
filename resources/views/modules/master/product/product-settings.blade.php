@@ -46,6 +46,20 @@
                 <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
                     <div class="card">
                         <div class="card-body pt-10">
+                            <div class="fv-row mb-5">
+                                <div class="mb-1">
+                                    <label class="form-label fw-bold fs-6 mb-2">Pilih Store</label>
+                                    <div class="position-relative mb-3">
+                                        <select class="form-select form-select-solid" data-control="select2" data-placeholder="-" name="store_id" id="store-id">
+                                            <option value="">-</option>
+                                            @foreach($branches as $branch)
+                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="separator my-5"></div>
                             <!--begin::Table-->
                             <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_items_table">
                                 <!--begin::Table head-->
@@ -271,7 +285,7 @@
                                             <div class="d-flex align-items-center">
                                                 <input type="text"
                                                     class="form-control form-control-sm inline-edit-end-period me-2 MARGIN-{{$product->code}} margin"
-                                                    value="10" />
+                                                    value="0" />
                                             </div>
                                         </td>
                                         <td>
@@ -363,7 +377,7 @@
                                             <div class="d-flex align-items-center">
                                                 <input type="text"
                                                     class="form-control form-control-sm inline-edit-end-period me-2 MARGIN-{{$product->code}} margin"
-                                                    value="5" />
+                                                    value="0" />
                                             </div>
                                         </td>
                                         <td>
@@ -455,7 +469,7 @@
                                             <div class="d-flex align-items-center">
                                                 <input type="text"
                                                     class="form-control form-control-sm inline-edit-end-period me-2 MARGIN-{{$product->code}} margin"
-                                                    value="5" />
+                                                    value="0" />
                                             </div>
                                         </td>
                                         <td>
@@ -547,7 +561,7 @@
                                             <div class="d-flex align-items-center">
                                                 <input type="text"
                                                     class="form-control form-control-sm inline-edit-end-period me-2 MARGIN-{{$product->code}} margin"
-                                                    value="5" />
+                                                    value="0" />
                                             </div>
                                         </td>
                                         <td>
@@ -650,6 +664,12 @@ $(document).on('keyup', '#raw-material-price', function() {
     let prmKks = parseFloat($("#prm-kks").val());
     calculateCogs($(this).val(), prmKks);
 });
+
+$(document).on('change', '#store-id', function() {
+    let branchId = $(this).val();
+    getDetailProduct(branchId);
+});
+
 
 // Auto-calculate when margin changes
 $(document).on('change keyup', '.margin', function() {
@@ -846,6 +866,44 @@ function calculateCogs(rawMaterialPrice, prmKks) {
     let formatedKks = formatNumber(cogsKks.toString());
 
     $("#cogs-price").val(formatedKks);
+}
+
+function getDetailProduct(branch_id) {
+    $.ajax({
+        url: `{{ route('products.get-product-details-by-branch') }}`,
+        type: 'GET',
+        data: { branch_id: branch_id },
+        success: function(response) {
+            // Uncheck all branch checkboxes first
+            $('.branch-checkbox').prop('checked', false);
+            // response is expected to be an array of product data
+            if (Array.isArray(response) && response.length > 0) {
+                // Check the branch-checkbox for the branch_id in the first item (all items should have the same branch_id)
+                var branchId = response[0].branch_id;
+                $("#branch_" + branchId).prop('checked', true);
+                response.forEach(function(item) {
+                    // Find the row with the matching product_id
+                    var row = $("#product-table tr").filter(function() {
+                        return $(this).find('.product_id').val() == item.product_id;
+                    });
+                    if (row.length) {
+                        row.find('.cogs').val(format(item.cogs || '0'));
+                        row.find('.margin').val(item.margin || '0');
+                        row.find('.margin-price').val(format(item.margin_price || '0'));
+                        row.find('.cogs-plus-margin').val(format(item.cogs_plus_margin || '0'));
+                        row.find('.final-sale-price').val(format(item.price || '0'));
+                        row.find('.discount').val(format(item.discount || '0'));
+                        row.find('.disc-start-period').val(item.start_period || '');
+                        row.find('.disc-end-period').val(item.end_period || '');
+                        row.find('.toggle-status').prop('checked', item.is_active == 1);
+                    }
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
 }
 </script>
 @endsection

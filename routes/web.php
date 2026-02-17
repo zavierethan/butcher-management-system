@@ -106,6 +106,7 @@ Route::group(['middleware' => ['auth']], function() {
 
             Route::get('/product-settings', [App\Http\Controllers\ProductController::class, 'productSettings'])->name('product-settings');
             Route::post('/product-settings/bulk-update', [App\Http\Controllers\ProductController::class, 'productSettingBulkUpdate'])->name('product-setting-bulk-update');
+            Route::get('/product-details-by-branch', [App\Http\Controllers\ProductController::class, 'getProductDetailsByBranch'])->name('get-product-details-by-branch');
         });
     });
 
