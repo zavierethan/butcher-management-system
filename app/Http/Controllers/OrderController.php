@@ -184,7 +184,7 @@ class OrderController extends Controller
                     ->select(
                         'transactions.id',
                         'transactions.code',
-                        DB::raw("TO_CHAR(transactions.transaction_date, 'dd/mm/YYYY') as transaction_date"),
+                        DB::raw("TO_CHAR(transactions.transaction_date, 'DD/MM/YYYY HH24:MI:SS') as transaction_date"),
                         DB::raw("
                             CASE
                                 WHEN transactions.payment_method = '1' THEN 'TUNAI'

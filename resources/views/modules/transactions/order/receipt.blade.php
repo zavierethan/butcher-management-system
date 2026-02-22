@@ -178,39 +178,65 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @php $no = 1 @endphp
+                    @php
+                        $counter = 1;
+                        $subTotal = 0;
+                        $discountTotal = 0;
+                        $deliveryFee = 0;
+                        $totalPay = 0;
+                    @endphp
+
                     @foreach($items as $item)
+                        @php
+                        $roundedTotalPrice = round($item->quantity * $item->base_price / 100) * 100;
+                        $productDiscount = $item->discount * floor($item->quantity);
+                        $totalPrice = $roundedTotalPrice - $productDiscount;
+
+                        $subTotal += $roundedTotalPrice;
+                        $discountTotal += $productDiscount;
+                    @endphp
                     <tr>
-                        <td>{{$no++}}.</td>
+                        <td>{{$counter++}}.</td>
                         <td>{{$item->name}}</td>
                         <td style="text-align: center;">{{$item->quantity}}</td>
-                        <td style="text-align: right;">{{$item->base_price}}</td>
-                        <td style="text-align: right;">{{$item->sell_price}}</td>
+                        <td style="text-align: right;">@php echo number_format($item->base_price, 0, '.', ',') @endphp</td>
+                        <td style="text-align: right;">@php echo number_format($roundedTotalPrice, 0, '.', ',') @endphp</td>
                     </tr>
                     @if($item->discount > 0)
                     <tr>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td style="text-align: right;">- {{$item->discount}}</td>
-                        <td style="text-align: right;"></td>
+                        <td style="text-align: right;">- @php echo number_format($item->discount, 0, '.', ',') @endphp</td>
+                        <td style="text-align: right;">@php echo number_format($totalPrice, 0, '.', ',') @endphp</td>
                     </tr>
                     @endif
                     @endforeach
                 </tbody>
+                @php
+                    $deliveryFee = $info->shipping_cost;
+                    $totalPay = $subTotal - $discountTotal + $deliveryFee;
+                @endphp
                 <tfoot>
                     <tr style="border-top: 1px dotted #000;">
                         <td style="font-weight: bold;" colspan="2">Subtotal</td>
                         <td></td>
                         <td></td>
-                        <td style="text-align: right;">@php echo number_format($info->total_amount, 0, '.', ',') @endphp
+                        <td style="text-align: right;">Rp. @php echo number_format($subTotal, 0, '.', ',') @endphp
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;" colspan="2">Total Discount</td>
+                        <td></td>
+                        <td></td>
+                        <td style="text-align: right;">Rp. @php echo number_format($discountTotal, 0, '.', ',') @endphp
                         </td>
                     </tr>
                     <tr>
                         <td style="font-weight: bold;" colspan="2">Ongkos Kirim</td>
                         <td></td>
                         <td></td>
-                        <td style="text-align: right;">@php echo number_format($info->shipping_cost, 0, '.', ',')
+                        <td style="text-align: right;">Rp. @php echo number_format($deliveryFee, 0, '.', ',')
                             @endphp</td>
                     </tr>
                     <tr>
@@ -219,10 +245,7 @@
                         <td></td>
                         <td></td>
                         <td style="text-align: right;">
-                            @php
-                            $grand_total = ($info->total_amount - $info->discount) + $info->shipping_cost;
-                            echo number_format($grand_total, 0, '.', ',');
-                            @endphp
+                            Rp. @php echo number_format($totalPay, 0, '.', ',');@endphp
                         </td>
                     </tr>
                 </tfoot>
