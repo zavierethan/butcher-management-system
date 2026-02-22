@@ -177,8 +177,9 @@
                                         <th class="min-w-125px">KODE TRANSAKSI</th>
                                         <th class="min-w-125px">TANGGAL</th>
                                         <th class="min-w-125px">CUSTOMER</th>
+                                        <th class="min-w-125px">METODE PEMESANAN</th>
+                                        <th class="min-w-125px">METODE PENGERJAAN</th>
                                         <th class="min-w-125px">JENIS PEMBAYARAN</th>
-                                        <th class="min-w-125px text-end">TOTAL TRANSAKSI</th>
                                         <th class="min-w-125px text-center">STATUS</th>
                                         <th class="min-w-125px">DIBUAT OLEH</th>
                                         <th class="text-center min-w-70px">Actions</th>
@@ -323,6 +324,14 @@ $(document).ready(function() {
                 name: 'customer_name'
             },
             {
+                data: 'ordering_method_name',
+                name: 'ordering_method_name',
+            },
+            {
+                data: 'working_method_name',
+                name: 'working_method_name',
+            },
+            {
                 data: 'payment_method',
                 name: 'payment_method',
                 render: function(data, type, row) {
@@ -342,11 +351,6 @@ $(document).ready(function() {
 
                     return paymentMethod;
                 }
-            },
-            {
-                data: 'total_amount',
-                name: 'total_amount',
-                className: 'text-end',
             },
             {
                 data: 'status',

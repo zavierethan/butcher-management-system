@@ -31,8 +31,9 @@ class OrderController extends Controller
                     'transactions.code',
                     DB::raw("TO_CHAR(transactions.transaction_date, 'dd/mm/YYYY HH24:MI:SS') as transaction_date"),
                     'transactions.payment_method',
-                    DB::raw("TO_CHAR(transactions.total_amount, 'FM999,999,999') as total_amount"),
                     'transactions.status',
+                    DB::raw("CASE WHEN transactions.ordering_method = 1 THEN 'Offline' ELSE 'Online' END AS ordering_method_name"),
+                    DB::raw("CASE WHEN transactions.working_method = 1 THEN 'Direct' ELSE 'Processing Order' END AS working_method_name"),
                     'customers.name as customer_name',
                     'users.name as created_by'
                 )
@@ -198,6 +199,8 @@ class OrderController extends Controller
                         'transactions.shipping_cost',
                         'transactions.total_amount',
                         'transactions.status',
+                        'transactions.nominal_cash',
+                        'transactions.nominal_return',
                         'customers.name as customer_name',
                         'users.name as created_by',
                         'branches.name as branhces',
@@ -229,7 +232,7 @@ class OrderController extends Controller
             "items" => $detailItems
         ])->setPaper([0, 0, 330, 700]);
 
-        return $pdf->stream('receipt.pdf'); // To display
+        return $pdf->stream($detailTransaction->code.'_receipt.pdf'); // To display
     }
 
     public function printThermal($id) {

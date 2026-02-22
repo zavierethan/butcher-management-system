@@ -250,7 +250,7 @@
                     </tr>
                 </tfoot>
             </table>
-        </div>
+        </div>`
 
         <div class="line"></div>
         <div class="line"></div>

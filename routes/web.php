@@ -436,6 +436,19 @@ Route::group(['middleware' => ['auth']], function() {
         });
     });
 
+    Route::prefix('fresh-chicken-cutting')->group(function () {
+        Route::name('fresh-chicken-cutting.')->group(function () {
+            Route::get('/', [App\Http\Controllers\FreshChickenCuttingController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\FreshChickenCuttingController::class, 'getLists'])->name('lists');
+            Route::get('/create', [App\Http\Controllers\FreshChickenCuttingController::class, 'create'])->name('create');
+            Route::post('/save', [App\Http\Controllers\FreshChickenCuttingController::class, 'save'])->name('save');
+            Route::get('/edit/{id}', [App\Http\Controllers\FreshChickenCuttingController::class, 'edit'])->name('edit');
+            Route::post('/update/{id}', [App\Http\Controllers\FreshChickenCuttingController::class, 'update'])->name('update');
+            Route::post('/update-row/{id}', [App\Http\Controllers\FreshChickenCuttingController::class, 'updateRow']);
+            Route::post('/delete-row/{id}', [App\Http\Controllers\FreshChickenCuttingController::class, 'deleteRow']);
+        });
+    });
+
     Route::prefix('stock-logs')->group(function () {
         Route::name('stock-logs.')->group(function () {
             Route::get('/{stockId}', [App\Http\Controllers\StockLogController::class, 'index'])->name('index');
