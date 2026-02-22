@@ -82,6 +82,40 @@
                                 <div class="col-md-6">
                                     <div class="fv-row mb-5">
                                         <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Metode Pemesanan</label>
+                                            <div class="position-relative mb-3">
+                                                <select class="form-select form-select-solid" data-control="select2"
+                                                    data-placeholder="-" name="ordering-method" id="ordering-method" disabled>
+                                                    <option value="1"
+                                                        <?php echo ($detailTransaction->ordering_method == 1) ? "selected" : ""; ?>>
+                                                        Offline</option>
+                                                    <option value="2"
+                                                        <?php echo ($detailTransaction->ordering_method == 2) ? "selected" : ""; ?>>
+                                                        Online </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5"></div>
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Metode Pengerjaan</label>
+                                            <div class="position-relative mb-3">
+                                                <select class="form-select form-select-solid" data-control="select2"
+                                                    data-placeholder="-" name="working-method" id="working-method" disabled>
+                                                    <option value="1"
+                                                        <?php echo ($detailTransaction->working_method == 1) ? "selected" : ""; ?>>
+                                                        Direct</option>
+                                                    <option value="2"
+                                                        <?php echo ($detailTransaction->working_method == 2) ? "selected" : ""; ?>>
+                                                        Processing Order </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5"></div>
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
                                             <label class="form-label fw-bold fs-6 mb-2">Metode Pembayaran</label>
                                             <div class="position-relative mb-3">
                                                 <select class="form-select form-select-solid" data-control="select2"

@@ -311,6 +311,7 @@
                     </div>
                     <!--end::Col-->
                 </div>
+
                 <div class="row g-5 g-xl-10 mb-xl-10">
                     <!--begin::Col-->
                     <div class="col-lg-6 col-xl-6 col-xxl-6 mb-5 mb-xl-0">
@@ -346,6 +347,34 @@
                     <!--end::Col-->
                 </div>
                 <!--end::Row-->
+                <!--begin::Row Processing Order-->
+                <div class="row mt-10">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Transaksi Processing Order</h3>
+                            </div>
+                            <div class="card-body">
+                                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_transactions_table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nomor Transaksi</th>
+                                            <th>Tanggal Transaksi</th>
+                                            <th>Customer</th>
+                                            <th>Total Amount</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Data akan diisi via AJAX -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--end::Row Processing Order-->
             </div>
             <!--end::Content container-->
         </div>
@@ -363,6 +392,101 @@
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script>
 $(document).ready(function() {
+    // AJAX untuk tabel Processing Order
+    $('.loader').hide();
+
+    const table = $("#kt_transactions_table").DataTable({
+        processing: true,
+        order: [
+            [0, 'desc']
+        ],
+        serverSide: true,
+        paging: true, // Enable pagination
+        pageLength: 10, // Number of rows per page
+        ajax: {
+            url: `{{route('orders.get-lists')}}`, // Replace with your route
+            type: 'GET',
+            data: function (d) {
+                // Add filter data to the request
+                d.start_date = $('#start-date').val();
+                d.end_date = $('#end-date').val();
+                d.customer = $('#customer').val();
+                d.payment_method = $('#payment-method').val();
+                d.status = $('#status').val();
+                d.branch_id = $('#branch-id').val();
+            },
+            dataSrc: function(json) {
+                return json.data; // Map the 'data' field
+            }
+        },
+        columns: [
+            {
+                data: 'code',
+                name: 'code'
+            },
+            {
+                data: 'transaction_date',
+                name: 'transaction_date',
+            },
+            {
+                data: 'customer_name',
+                name: 'customer_name'
+            },
+            {
+                data: 'total_amount',
+                name: 'total_amount',
+                className: 'text-end',
+            },
+            {
+                data: 'status',
+                name: 'status',
+                className: 'text-center',
+                render: function(data, type, row) {
+                    var status = "";
+
+                    if (row.status == 1) {
+                        status = `<span class="badge bg-success text-dark">Lunas</span>`
+                    }
+
+                    if (row.status == 2) {
+                        status = `<span class="badge bg-warning text-dark">Piutang</span>`
+                    }
+
+                    if (row.status == 3) {
+                        status = `<span class="badge bg-warning text-dark">Pending (Transfer)</span>`
+                    }
+
+                    if (row.status == 4) {
+                        status = `<span class="badge bg-danger text-dark">Batal</span>`
+                    }
+
+                    return status;
+                }
+            },
+            {
+                data: null, // No direct field from the server
+                name: 'action',
+                orderable: false, // Disable ordering for this column
+                searchable: false, // Disable searching for this column
+                render: function(data, type, row) {
+                    return `
+                        <div class="text-center">
+                            <a href="/orders/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail Transaksi"><i class="fa-solid fa-magnifying-glass"></i></a>
+                        <div>
+                    `;
+                }
+            }
+        ]
+    });
+
+    $('[data-kt-customer-table-filter="search"]').on('keyup', function() {
+        const searchTerm = $(this).val(); // Get the value from the search input
+        table.search(searchTerm).draw(); // Trigger the search and refresh the DataTable
+    });
+
+    $('#start-date, #end-date, #customer, #payment-method, #status, #branch-id').on('change', function () {
+        table.draw(); // Trigger DataTable redraw with updated filter values
+    });
 
     $.ajax({
         url: '/dashboards/transaction-summary', // API Laravel
@@ -372,6 +496,18 @@ $(document).ready(function() {
             console.log(response);
             $('#total-transactions').text(response.total_transactions);
             $('#total-omzet').text(response.total_omzet);
+                // Tambahkan AJAX untuk transaksi Processing Order
+                $.ajax({
+                    url: '/dashboards/processing-order-count',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(res) {
+                        $('#processing-order-count').text(res.count);
+                    },
+                    error: function(xhr, status, error) {
+                        $('#processing-order-count').text('0');
+                    }
+                });
         },
         error: function(xhr, status, error) {
             console.error("Error fetching data:", error);

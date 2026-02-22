@@ -114,7 +114,9 @@ class OrderController extends Controller
                         'transactions.status',
                         'customers.name as customer_name',
                         'transactions.butcher_name',
-                        'users.name as created_by'
+                        'users.name as created_by',
+                        'transactions.ordering_method',
+                        'transactions.working_method',
                     )
                     ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
                     ->leftJoin('users', 'users.id', '=', 'transactions.created_by')

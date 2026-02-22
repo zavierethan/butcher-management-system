@@ -35,6 +35,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/transaction-summary', [App\Http\Controllers\Dashboards\GeneralDashboardController::class, 'getTransactionSummary'])->name('transaction-summary');
             Route::get('/sales-trend', [App\Http\Controllers\Dashboards\GeneralDashboardController::class, 'getWeeklySales'])->name('sales-trend');
             Route::get('/top-selling-products', [App\Http\Controllers\Dashboards\GeneralDashboardController::class, 'topSellingProducts'])->name('top-selling-products');
+            Route::get('/transactions/processing-order/lists', [App\Http\Controllers\OrderController::class, 'getProcessingOrderLists'])->name('get-processing-order-lists');
         });
     });
 
