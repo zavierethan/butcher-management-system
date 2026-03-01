@@ -66,7 +66,8 @@ class MutasiController extends Controller
                 'stocks.id',
                 'products.id',
                 'products.code',
-                'products.name'
+                'products.name',
+                'products.sort_order'
             )->orderBy('products.sort_order', 'asc')->get();
 
         return view('modules.inventory.mutasi.create', compact('stocks', 'branch', 'branches'));
