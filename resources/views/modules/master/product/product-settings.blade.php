@@ -198,7 +198,7 @@
                                     <label class="form-label fw-bold fs-6 mb-2">COGS (KKS)</label>
                                     <div class="position-relative mb-3">
                                         <input class="form-control form-control-md form-control-solid" type="text"
-                                            id="cogs-price" readonly />
+                                            id="cogs-price"/>
                                     </div>
                                 </div>
                             </div>

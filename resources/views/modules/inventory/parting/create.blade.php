@@ -12,7 +12,7 @@
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
                     <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-                        Parting</h1>
+                        Product Parting</h1>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
@@ -27,7 +27,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Parting</li>
+                        <li class="breadcrumb-item text-muted">Product Parting</li>
                         <!--end::Item-->
                         <!--begin::Item-->
                         <li class="breadcrumb-item">
@@ -281,43 +281,6 @@
                                 </div>
                             </form>
                         </div>
-                    </div>
-
-                    <div class="card card-flush py-4 flex-row-fluid overflow-hidden">
-                        <!--begin::Card body-->
-                        <div class="card-body pt-10 overflow-x-auto">
-                            <div class="row mb-5">
-                                <div class="col-md-6">
-
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="col-md-12 text-end"><a class="btn btn-sm btn-primary" id="add-row"><i
-                                                class="fa-solid fa-plus"></i>Tambah Hasil Potong</a></div>
-                                </div>
-                            </div>
-                            <div class="table-responsive">
-                                <!--begin::Table-->
-                                <table class="table table-bordered" id="kt_items_table">
-                                    <thead style="background-color:rgb(221, 214, 214);">
-                                        <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
-                                            <th class="text-center" colspan="6">HASIL POTONG AYAM FRESH</th>
-                                        </tr>
-                                        <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
-                                            <th class="text-center">No.</th>
-                                            <th class="min-w-70px">Jumlah Ekor</th>
-                                            <th class="min-w-70px">Berat</th>
-                                            <th class="min-w-70px">Berat Wadah</th>
-                                            <th class="min-w-70px">Berat Bersih</th>
-                                            <th class="min-w-70px text-center">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="fw-semibold text-gray-600">
-                                    </tbody>
-                                </table>
-                                <!--end::Table-->
-                            </div>
-                        </div>
-                        <!--end::Card body-->
                     </div>
 
                     <div class="card card-flush py-4 flex-row-fluid overflow-hidden">
@@ -740,14 +703,32 @@ $(document).on("click", "#add-row-weight", function(e) {
                 </td>`;
     });
 
+    // Tambahkan kolom aksi delete
+    row += `<td class="text-center">
+                <a href="#" class="btn btn-sm btn-light btn-active-light-primary delete-parting-row"><i class="fa-solid fa-trash-can"></i></a>
+            </td>`;
+
     row += `</tr>`;
 
     $("#kt_products_table tbody").append(row);
 });
 
 
+
+// Event untuk update total ketika input berubah
 $("#kt_products_table tbody").on("input", "td input", function() {
     updateTotalWeightRancungToParting();
+});
+
+// Event untuk menghapus row hasil parting
+$(document).on("click", ".delete-parting-row", function(e) {
+    e.preventDefault();
+    $(this).closest("tr").remove();
+    updateTotalWeightRancungToParting();
+    // Update nomor urut setelah delete
+    $("#kt_products_table tbody tr").each(function(index) {
+        $(this).find("td:first").text(index + 1);
+    });
 });
 
 $(document).on("change", "#request-id", function(e) {

@@ -449,6 +449,28 @@ Route::group(['middleware' => ['auth']], function() {
         });
     });
 
+    Route::prefix('stock-opname')->group(function () {
+        Route::name('stock-opname.')->group(function () {
+            Route::get('/', [App\Http\Controllers\StockOpnameController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\StockOpnameController::class, 'getLists'])->name('lists');
+            Route::get('/create', [App\Http\Controllers\StockOpnameController::class, 'create'])->name('create');
+            Route::post('/save', [App\Http\Controllers\StockOpnameController::class, 'save'])->name('save');
+            Route::get('/edit/{id}', [App\Http\Controllers\StockOpnameController::class, 'edit'])->name('edit');
+            Route::post('/update/{id}', [App\Http\Controllers\StockOpnameController::class, 'update'])->name('update');
+        });
+    });
+
+    Route::prefix('mutasi')->group(function () {
+        Route::name('mutasi.')->group(function () {
+            Route::get('/', [App\Http\Controllers\MutasiController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\MutasiController::class, 'getLists'])->name('lists');
+            Route::get('/create', [App\Http\Controllers\MutasiController::class, 'create'])->name('create');
+            Route::post('/save', [App\Http\Controllers\MutasiController::class, 'save'])->name('save');
+            Route::get('/edit/{id}', [App\Http\Controllers\MutasiController::class, 'edit'])->name('edit');
+            Route::post('/update/{id}', [App\Http\Controllers\MutasiController::class, 'update'])->name('update');
+        });
+    });
+
     Route::prefix('stock-logs')->group(function () {
         Route::name('stock-logs.')->group(function () {
             Route::get('/{stockId}', [App\Http\Controllers\StockLogController::class, 'index'])->name('index');

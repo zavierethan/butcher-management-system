@@ -516,22 +516,20 @@ class StockController extends Controller
         return view('modules.inventory.stock.limit.index', ['stockId' => $id], compact('stockHeader'));
     }
 
-public function saveLimit(Request $request)
-{
-    // Validate the incoming data
-    $request->validate([
-        'stock_id' => 'required|exists:stocks,id',  // Ensure the stock exists in the database
-        'limit' => 'required|numeric|min:0',        // Ensure the limit is a valid number and non-negative
-    ]);
+    public function saveLimit(Request $request)
+    {
+        // Validate the incoming data
+        $request->validate([
+            'stock_id' => 'required|exists:stocks,id',  // Ensure the stock exists in the database
+            'limit' => 'required|numeric|min:0',        // Ensure the limit is a valid number and non-negative
+        ]);
 
-    // Update the stock limit using a raw SQL query
-    DB::table('stocks')
-        ->where('id', $request->stock_id)
-        ->update(['max_quantity' => $request->limit]);
+        // Update the stock limit using a raw SQL query
+        DB::table('stocks')
+            ->where('id', $request->stock_id)
+            ->update(['max_quantity' => $request->limit]);
 
-    // Return a success response
-    return response()->json(['success' => true, 'message' => 'Stock limit updated successfully']);
-}
-
-
+        // Return a success response
+        return response()->json(['success' => true, 'message' => 'Stock limit updated successfully']);
+    }
 }
