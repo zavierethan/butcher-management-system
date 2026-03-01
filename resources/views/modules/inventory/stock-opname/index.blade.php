@@ -91,7 +91,6 @@
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">TANGGAL</th>
                                         <th class="min-w-125px">NAMA PRODUK</th>
-                                        <th class="min-w-125px">STOCK AKHIR (KG)</th>
                                         <th class="min-w-125px">HASIL SO (KG)</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -172,11 +171,6 @@ $(document).ready(function() {
             {
                 data: 'product_name',
                 name: 'product_name'
-            },
-            {
-                data: 'quantity',
-                name: 'quantity',
-                className: 'text-end'
             },
             {
                 data: 'quantity',
