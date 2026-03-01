@@ -27,11 +27,8 @@ class StockOpnameController extends Controller
             )
             ->where('stocks.branch_id', Auth::user()->branch_id);
 
-        if (!empty($params['start_date']) && !empty($params['end_date'])) {
-            $query->whereBetween(DB::raw('DATE(stock_opnames.date)'), [
-                $params['start_date'],
-                $params['end_date']
-            ]);
+        if (!empty($params['date'])) {
+            $query->where(DB::raw('DATE(stock_opnames.date)'), $params['date']);
         }
 
         $start = $request->input('start', 0);

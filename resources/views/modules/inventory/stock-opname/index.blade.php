@@ -72,8 +72,7 @@
                                         <div class="text-gray-500 fs-7 me-2">Tanggal</div>
                                         <!--end::Label-->
                                         <!--begin::Select-->
-                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="start-date"/> -
-                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="end-date"/>
+                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="date" value="{{ date('Y-m-d') }}"/>
                                         <!--end::Select-->
                                     </div>
                                 </div>
@@ -92,8 +91,8 @@
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">TANGGAL</th>
                                         <th class="min-w-125px">NAMA PRODUK</th>
-                                        <th class="min-w-125px">QUANTITY (KG)</th>
-                                        <th class="text-center min-w-70px">Actions</th>
+                                        <th class="min-w-125px">STOCK AKHIR (KG)</th>
+                                        <th class="min-w-125px">HASIL SO (KG)</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -154,13 +153,12 @@ $(document).ready(function() {
         ],
         serverSide: true,
         paging: true, // Enable pagination
-        pageLength: 10, // Number of rows per page
+        pageLength: 50, // Number of rows per page
         ajax: {
             url: `{{route('stock-opname.lists')}}`, // Replace with your route
             type: 'GET',
             data: function (d) {
-                d.start_date = $('#start-date').val();
-                d.end_date = $('#end-date').val();
+                d.date = $('#date').val();
             },
             dataSrc: function(json) {
                 return json.data; // Map the 'data' field
@@ -181,22 +179,14 @@ $(document).ready(function() {
                 className: 'text-end'
             },
             {
-                data: null, // No direct field from the server
-                name: 'action',
-                orderable: false, // Disable ordering for this column
-                searchable: false, // Disable searching for this column
-                render: function(data, type, row) {
-                    return `
-                        <div class="text-center">
-                            <a href="/stock-opname/edit/${row.date}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail Transaksi"><i class="fa-solid fa-edit"></i></a>
-                        <div>
-                    `;
-                }
+                data: 'quantity',
+                name: 'quantity',
+                className: 'text-end'
             }
         ]
     });
 
-    $('#start-date, #end-date').on('change', function () {
+    $('#date').on('change', function () {
         table.draw(); // Trigger DataTable redraw with updated filter values
     });
 });

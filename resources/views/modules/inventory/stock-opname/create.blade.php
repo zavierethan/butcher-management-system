@@ -65,7 +65,7 @@
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
                                                         type="text" value="{{$branch->name}}" readonly />
-                                                    <input class="form-control form-control-md form-control-solid"
+                                                    <input class="form-control form-control-md"
                                                         type="hidden" value="{{$branch->id}}" readonly />
                                                 </div>
                                             </div>
@@ -77,8 +77,8 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Tanggal Stock Opname</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md" type="date"
-                                                        value="<?php echo date("Y-m-d"); ?>" id="date"/>
+                                                    <input class="form-control form-control-md form-control-solid" type="date"
+                                                        value="<?php echo date("Y-m-d"); ?>" id="date" readonly/>
                                                 </div>
                                             </div>
                                         </div>

@@ -110,8 +110,9 @@
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-250px">NAMA PRODUK</th>
                                         <th class="min-w-125px">JENIS MUTASI</th>
-                                        <th class="min-w-125px">MUTASI KE / DARI</th>
+                                        <!-- <th class="min-w-125px">MUTASI KE / DARI</th> -->
                                         <th class="min-w-125px">KUANTITAS (KG)</th>
+                                        <th class="min-w-125px">KETERANGAN</th>
                                         <th class="min-w-125px text-center">ACTION</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -144,7 +145,7 @@
                                                 </select>
                                             </div>
                                         </td>
-                                        <td>
+                                        <!-- <td>
                                             <div class="position-relative">
                                                 <select class="form-select me-2 destination" data-control="select2"
                                                     name="destination">
@@ -156,9 +157,13 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                                        </td>
+                                        </td> -->
                                         <td><input class="form-control form-control-md me-2 quantity" type="text"
                                             name="quantity" value="0" /></td>
+                                        <td>
+                                            <textarea type="text"
+                                                class="form-control form-control-sm remarks"></textarea>
+                                        </td>
                                         <td class="text-center">
                                             <a href="#"><i class="fa-solid fa-trash-can"></i></a>
                                         </td>
@@ -208,21 +213,11 @@ $(document).ready(function() {
                             </select>
                         </div>
                     </td>
-                    <td>
-                        <div class="position-relative">
-                            <select class="form-select me-2 destination" data-control="select2"
-                                name="destination">
-                                <option value="">-</option>
-                                @foreach($branches as $b)
-                                    <option value="{{$b->id}}">
-                                        {{$b->name}}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </td>
                     <td><input class="form-control form-control-md me-2 quantity" type="text"
                             name="quantity" value="0" /></td>
+                    <td>
+                        <textarea type="text" class="form-control form-control-sm remarks"></textarea>
+                    </td>
                     <td class="text-center">
                         <a href="#"><i class="fa-solid fa-trash-can"></i></a>
                     </td>
@@ -269,6 +264,7 @@ $(document).on('click', '#btn-submit-mutasi', function(e) {
                         type: $(this).find(".type").val(),
                         quantity: $(this).find(".quantity").val(),
                         destination: $(this).find(".destination").val(),
+                        remarks: $(this).find(".remarks").val(),
                         date: date,
                     };
                     products.push(product);

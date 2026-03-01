@@ -470,6 +470,7 @@ class StockController extends Controller
                     "mutation_type" => $productData['type'],
                     "quantity" => $productData['quantity'],
                     "mutation_date" => $productData['date'],
+                    "remarks" => $productData['remarks'] ?? null,
                 ]);
 
             if($productData['type'] == 'IN') {

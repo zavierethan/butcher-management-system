@@ -70,8 +70,7 @@
                                         <div class="text-gray-500 fs-7 me-2">Tanggal</div>
                                         <!--end::Label-->
                                         <!--begin::Select-->
-                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="start-date"/> -
-                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="end-date"/>
+                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="date"/>
                                         <!--end::Select-->
                                     </div>
                                 </div>
@@ -88,11 +87,7 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">Tanggal</th>
-                                        <th class="min-w-125px">Cabang</th>
-                                        <th class="min-w-125px">Ayam Hidup (Ekor)</th>
-                                        <th class="min-w-125px">Ayam Hidup (Kg)</th>
-                                        <th class="min-w-125px">Susut Ayam Hidup Ke Rancung</th>
-                                        <th class="min-w-125px">Susut Rancung Ke Parting</th>
+                                        <th class="min-w-125px">Nama Product</th>
                                         <th class="min-w-125px">Hasil Parting (Kg)</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
@@ -139,51 +134,16 @@
             url: `{{ route('partings.get-lists') }}`, // Replace with your route
             type: 'GET',
             data: function (d) {
-                // Send filter values to the server along with the pagination params
-                d.searchTerm = $('[data-kt-customer-table-filter="search"]').val();
-                d.startDate = $('#start-date').val();
-                d.endDate = $('#end-date').val();
+                d.date = $('#date').val();
             },
-            dataSrc: function (json) {
-                // Modify data before passing it to DataTables
-                json.data.forEach(item => {
-                    if (item.total_live_chickens_weight && item.total_weight_live_to_rancung) {
-                        item.susut_live_to_rancung = ((item.total_weight_live_to_rancung / item.total_live_chickens_weight ) * 100) - 100;
-                    } else {
-                        item.susut_live_to_rancung = null; // Handle cases where values are missing
-                    }
-
-                    if (item.total_weight_live_to_rancung && item.total_weight_rancung_to_parting) {
-                        item.susut_rancung_to_parting = ((item.total_weight_rancung_to_parting / item.total_weight_live_to_rancung ) * 100) - 100;
-                    } else {
-                        item.susut_rancung_to_parting = null; // Handle cases where values are missing
-                    }
-                });
-                return json.data;
+            dataSrc: function(json) {
+                return json.data; // Map the 'data' field
             }
         },
         columns: [
             { data: 'date', name: 'date' },
-            { data: 'branch_name', name: 'branch_name' },
-            { data: 'total_live_chickens_number', name: 'total_live_chickens_number' },
-            { data: 'total_live_chickens_weight', name: 'total_live_chickens_weight' },
-            { data: 'total_weight_live_to_rancung', name: 'total_weight_live_to_rancung' },
-            { data: 'total_weight_rancung_to_parting', name: 'total_weight_rancung_to_parting' },
-            // {
-            //     data: 'susut_live_to_rancung',
-            //     name: 'susut_live_to_rancung',
-            //     render: function (data, type, row) {
-            //         return data !== null ? data.toFixed(2) + "%" : "N/A"; // Format to 2 decimal places
-            //     }
-            // },
-            // {
-            //     data: 'susut_rancung_to_parting',
-            //     name: 'susut_rancung_to_parting',
-            //     render: function (data, type, row) {
-            //         return data !== null ? data.toFixed(2) + "%" : "N/A"; // Format to 2 decimal places
-            //     }
-            // },
-            { data: null, name: 'branch_name' },
+            { data: 'product_name', name: 'product_name' },
+            { data: 'total_quantity', name: 'total_quantity', className: 'text-end' },
             {
                 data: null, // No direct field from the server
                 name: 'action',
@@ -208,9 +168,7 @@
 
     const sanitizeDate = (value) => (value === '' || value === '-' ? null : value);
 
-    $('#start-date, #end-date').on('change', function () {
-        const startDate = sanitizeDate($('#start-date').val());
-        const endDate = sanitizeDate($('#end-date').val());
+    $('#date').on('change', function () {
         table.draw();
     });
 

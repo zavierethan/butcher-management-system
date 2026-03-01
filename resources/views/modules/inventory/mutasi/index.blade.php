@@ -175,14 +175,17 @@ $(document).ready(function() {
             {
                 data: 'total_in',
                 name: 'total_in',
+                className: 'text-end'
             },
             {
                 data: 'total_out',
-                name: 'total_out'
+                name: 'total_out',
+                className: 'text-end'
             },
             {
                 data: 'total_prive',
-                name: 'total_prive'
+                name: 'total_prive',
+                className: 'text-end'
             },
             {
                 data: null, // No direct field from the server
@@ -192,7 +195,7 @@ $(document).ready(function() {
                 render: function(data, type, row) {
                     return `
                         <div class="text-center">
-                            <a href="/fresh-chicken-cutting/edit/${row.date}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail Transaksi"><i class="fa-solid fa-edit"></i></a>
+                            <a href="/mutasi/edit/${row.mutation_date}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail Transaksi"><i class="fa-solid fa-edit"></i></a>
                         <div>
                     `;
                 }

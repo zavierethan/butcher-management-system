@@ -496,18 +496,6 @@ $(document).ready(function() {
             console.log(response);
             $('#total-transactions').text(response.total_transactions);
             $('#total-omzet').text(response.total_omzet);
-                // Tambahkan AJAX untuk transaksi Processing Order
-                $.ajax({
-                    url: '/dashboards/processing-order-count',
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function(res) {
-                        $('#processing-order-count').text(res.count);
-                    },
-                    error: function(xhr, status, error) {
-                        $('#processing-order-count').text('0');
-                    }
-                });
         },
         error: function(xhr, status, error) {
             console.error("Error fetching data:", error);

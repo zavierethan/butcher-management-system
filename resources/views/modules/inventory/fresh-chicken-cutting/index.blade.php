@@ -91,7 +91,6 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">TANGGAL</th>
-                                        <th class="min-w-125px">BRANCH / STORE</th>
                                         <th class="min-w-125px">JUMLAH EKOR</th>
                                         <th class="min-w-125px">BERAT BERSIH (KG)</th>
                                         <th class="text-center min-w-70px">Actions</th>
@@ -173,16 +172,14 @@ $(document).ready(function() {
                 name: 'date_formated'
             },
             {
-                data: 'branch_name',
-                name: 'branch_name',
-            },
-            {
                 data: 'total_chickens',
-                name: 'total_chickens'
+                name: 'total_chickens',
+                className: 'text-end'
             },
             {
                 data: 'total_weight',
-                name: 'total_weight'
+                name: 'total_weight',
+                className: 'text-end'
             },
             {
                 data: null, // No direct field from the server
