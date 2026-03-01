@@ -212,7 +212,7 @@ $(document).on('click', '#btn-submit-so', function(e) {
                             allowOutsideClick: false
                         }).then((result) => {
                             // Redirect the current page to the transaction index
-                            location.href = `{{ route('stocks.index') }}`;
+                            location.href = `{{ route('stock-opname.index') }}`;
                         });
                     },
                     error: function(xhr, status, error) {
