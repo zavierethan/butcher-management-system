@@ -361,9 +361,8 @@
                                             <th>Nomor Transaksi</th>
                                             <th>Tanggal Transaksi</th>
                                             <th>Customer</th>
-                                            <th>Total Amount</th>
                                             <th>Status</th>
-                                            <th>Action</th>
+                                            <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -431,11 +430,6 @@ $(document).ready(function() {
             {
                 data: 'customer_name',
                 name: 'customer_name'
-            },
-            {
-                data: 'total_amount',
-                name: 'total_amount',
-                className: 'text-end',
             },
             {
                 data: 'status',
