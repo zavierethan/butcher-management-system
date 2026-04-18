@@ -231,38 +231,44 @@
                                                     <span class="badge badge-success me-2"
                                                         style="width: 14px; height: 14px; border-radius: 2px;"></span>
                                                     <span class="fs-8 text-gray-700 me-auto">Tunai</span>
-                                                    <span class="fs-8 fw-bold text-end" id="legend-tunai">Rp 0 (0%)</span>
+                                                    <span class="fs-8 fw-bold text-end" id="legend-tunai">Rp 0
+                                                        (0%)</span>
                                                 </div>
                                                 <div class="d-flex align-items-center mb-3">
                                                     <span class="badge"
                                                         style="background-color: #34D399; width: 14px; height: 14px; border-radius: 2px;"></span>
                                                     <span class="fs-8 text-gray-700 me-auto">Transfer</span>
-                                                    <span class="fs-8 fw-bold text-end" id="legend-transfer">Rp 0 (0%)</span>
+                                                    <span class="fs-8 fw-bold text-end" id="legend-transfer">Rp 0
+                                                        (0%)</span>
                                                 </div>
                                                 <div class="d-flex align-items-center mb-3">
                                                     <span class="badge"
                                                         style="background-color: #6EE7B7; width: 14px; height: 14px; border-radius: 2px;"></span>
                                                     <span class="fs-8 text-gray-700 me-auto">Piutang</span>
-                                                    <span class="fs-8 fw-bold text-end" id="legend-piutang">Rp 0 (0%)</span>
+                                                    <span class="fs-8 fw-bold text-end" id="legend-piutang">Rp 0
+                                                        (0%)</span>
                                                 </div>
                                                 <div class="d-flex align-items-center mb-3">
                                                     <span class="badge badge-warning me-2"
                                                         style="width: 14px; height: 14px; border-radius: 2px;"></span>
                                                     <span class="fs-8 text-gray-700 me-auto">Pengeluaran Tunai</span>
-                                                    <span class="fs-8 fw-bold text-end" id="legend-pengeluaran-tunai">Rp 0 (0%)</span>
+                                                    <span class="fs-8 fw-bold text-end" id="legend-pengeluaran-tunai">Rp
+                                                        0 (0%)</span>
                                                 </div>
                                                 <div class="d-flex align-items-center mb-3">
                                                     <span class="badge"
                                                         style="background-color: #FCA5A5; width: 14px; height: 14px; border-radius: 2px;"></span>
                                                     <span class="fs-8 text-gray-700 me-auto">Pembayaran Piutang</span>
-                                                    <span class="fs-8 fw-bold text-end" id="legend-pembayaran-piutang">Rp 0 (0%)</span>
+                                                    <span class="fs-8 fw-bold text-end"
+                                                        id="legend-pembayaran-piutang">Rp 0 (0%)</span>
                                                 </div>
                                                 <div class="d-flex align-items-center">
                                                     <span class="badge badge-danger me-2"
                                                         style="width: 14px; height: 14px; border-radius: 2px;"></span>
                                                     <span class="fs-8 text-gray-700 me-auto">Pembayaran Piutang
                                                         Transfer</span>
-                                                    <span class="fs-8 fw-bold text-end" id="legend-pembayaran-transfer">Rp 0 (0%)</span>
+                                                    <span class="fs-8 fw-bold text-end"
+                                                        id="legend-pembayaran-transfer">Rp 0 (0%)</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -274,11 +280,70 @@
                 </div>
                 <!-- End Main Content Row -->
 
-                <!-- Pie Chart Row -->
                 <div class="row gy-5 g-xl-10 mb-5">
-
+                    <!--begin::Table-->
+                    <div class="card">
+                        <div class="card-header border-0 pt-6">
+                            <!--begin::Card title-->
+                            <div class="card-title">
+                                <!--begin::Search-->
+                                <h3 class="card-title fw-bold">STOK PRODUK</h3>
+                                <!--end::Search-->
+                            </div>
+                            <!--begin::Card toolbar-->
+                            <div class="card-toolbar">
+                                <!--begin::Toolbar-->
+                                <div class="d-flex flex-stack flex-wrap gap-4">
+                                    <!--begin::Search-->
+                                    <div class="position-relative my-1">
+                                        <i
+                                            class="ki-duotone ki-magnifier fs-2 position-absolute top-50 translate-middle-y ms-4">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                        <input type="text" data-kt-customer-table-filter="search"
+                                            class="form-control form-control-solid w-250px ps-15"
+                                            placeholder="Nama Produk" />
+                                    </div>
+                                    <!--end::Search-->
+                                </div>
+                                <!--end::Toolbar-->
+                            </div>
+                            <!--end::Card toolbar-->
+                        </div>
+                        <!--begin::Card body-->
+                        <div class="card-body pt-0 overflow-x-auto">
+                            <!--begin::Table-->
+                            <table class="table table-hover align-middle table-row-dashed fs-6 gy-5"
+                                id="kt_products_table">
+                                <!--begin::Table head-->
+                                <thead>
+                                    <!--begin::Table row-->
+                                    <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                        <th class="min-w-125px">Kode Produk</th>
+                                        <th class="min-w-125px">Nama Produk</th>
+                                        <th class="min-w-125px">Tanggal Opname</th>
+                                        <th class="min-w-125px">Stock Awal</th>
+                                        <th class="min-w-125px">Stock Masuk</th>
+                                        <th class="min-w-125px">Stock Keluar</th>
+                                        <th class="min-w-125px">Stock Akhir</th>
+                                        <th class="min-w-125px">Hasil Opname</th>
+                                        <th class="min-w-125px">Selisih</th>
+                                    </tr>
+                                    <!--end::Table row-->
+                                </thead>
+                                <!--end::Table head-->
+                                <!--begin::Table body-->
+                                <tbody class="fw-bold text-gray-600">
+                                </tbody>
+                                <!--end::Table body-->
+                            </table>
+                            <!--end::Table-->
+                        </div>
+                        <!--end::Card body-->
+                    </div>
+                    <!--end::Table-->
                 </div>
-                <!-- End Pie Chart Row -->
             </div>
         </div>
         <!--end::Content container-->
@@ -304,11 +369,77 @@ $(document).ready(function() {
     // Initialize charts with dummy data
     initializePieChart();
 
+    const table = $("#kt_products_table").DataTable({
+        processing: true,
+        serverSide: true,
+        paging: true, // Enable pagination
+        pageLength: 10, // Number of rows per page
+        ajax: {
+            url: `{{ route('stocks.get-lists') }}`, // Replace with your route
+            type: 'GET',
+            data: function(d) {
+                // Send filter values to the server along with the pagination params
+                d.searchTerm = $('[data-kt-customer-table-filter="search"]').val();
+                d.startDate = $('#date').val();
+                d.endDate = $('#date').val();
+            },
+            dataSrc: function(json) {
+                return json.data; // Map the 'data' field
+            }
+        },
+        columns: [{
+                data: 'code',
+                name: 'code'
+            },
+            {
+                data: 'name',
+                name: 'name'
+            },
+            {
+                data: 'tanggal_stock_awal',
+                name: 'tanggal_stock_awal',
+                className: 'text-center'
+            },
+            {
+                data: 'stock_awal',
+                name: 'stock_awal',
+                className: 'text-center'
+            },
+            {
+                data: 'stok_masuk',
+                name: 'stok_masuk',
+                className: 'text-center'
+            },
+            {
+                data: 'stok_keluar',
+                name: 'stok_keluar',
+                className: 'text-center'
+            },
+            {
+                data: 'stock_akhir',
+                name: 'stock_akhir',
+                className: 'text-center'
+            },
+            {
+                data: 'hasil_stock_opname',
+                name: 'hasil_stock_opname',
+                className: 'text-center'
+            },
+            {
+                data: 'selisih',
+                name: 'selisih',
+                className: 'text-center'
+            }
+        ]
+    });
+
     $('#date').on('change', function() {
         var param = $(this).val();
 
         fetchSummary(param);
         fetchIncomeComposition(param);
+
+        table.draw();
     });
 });
 
@@ -451,29 +582,45 @@ function updatePieChart(data) {
 
     // Calculate total
     const total = parseFloat(data.total_cash) +
-                  parseFloat(data.total_transfer) +
-                  parseFloat(data.total_receivable) +
-                  parseFloat(data.total_cash_expanse) +
-                  parseFloat(data.total_transfer_expanse) +
-                  parseFloat(data.total_cash_payment_of_receivable) +
-                  parseFloat(data.total_transfer_payment_of_receivable);
+        parseFloat(data.total_transfer) +
+        parseFloat(data.total_receivable) +
+        parseFloat(data.total_cash_expanse) +
+        parseFloat(data.total_transfer_expanse) +
+        parseFloat(data.total_cash_payment_of_receivable) +
+        parseFloat(data.total_transfer_payment_of_receivable);
 
     // Avoid division by zero
     if (total === 0) {
         pieChart.data.datasets[0].data = [0, 0, 0, 0, 0, 0];
         pieChart.update();
-        updateLegend({total_cash: 0, total_transfer: 0, total_receivable: 0, total_cash_expanse: 0, total_transfer_expanse: 0, total_cash_payment_of_receivable: 0, total_transfer_payment_of_receivable: 0}, 0);
-        updateIncomeTable({total_cash: 0, total_transfer: 0, total_receivable: 0, total_cash_expanse: 0, total_transfer_expanse: 0, total_cash_payment_of_receivable: 0, total_transfer_payment_of_receivable: 0});
+        updateLegend({
+            total_cash: 0,
+            total_transfer: 0,
+            total_receivable: 0,
+            total_cash_expanse: 0,
+            total_transfer_expanse: 0,
+            total_cash_payment_of_receivable: 0,
+            total_transfer_payment_of_receivable: 0
+        }, 0);
+        updateIncomeTable({
+            total_cash: 0,
+            total_transfer: 0,
+            total_receivable: 0,
+            total_cash_expanse: 0,
+            total_transfer_expanse: 0,
+            total_cash_payment_of_receivable: 0,
+            total_transfer_payment_of_receivable: 0
+        });
         return;
     }
 
     // Calculate percentages
     const percentages = [
-        (parseFloat(data.total_cash) / total) * 100,           // Tunai
-        (parseFloat(data.total_transfer) / total) * 100,       // Transfer
-        (parseFloat(data.total_receivable) / total) * 100,     // Piutang
-        (parseFloat(data.total_cash_expanse) / total) * 100,   // Pengeluaran Tunai
-        (parseFloat(data.total_cash_payment_of_receivable) / total) * 100,    // Pembayaran Piutang
+        (parseFloat(data.total_cash) / total) * 100, // Tunai
+        (parseFloat(data.total_transfer) / total) * 100, // Transfer
+        (parseFloat(data.total_receivable) / total) * 100, // Piutang
+        (parseFloat(data.total_cash_expanse) / total) * 100, // Pengeluaran Tunai
+        (parseFloat(data.total_cash_payment_of_receivable) / total) * 100, // Pembayaran Piutang
         (parseFloat(data.total_transfer_payment_of_receivable) / total) * 100 // Pembayaran Piutang Transfer
     ];
 
@@ -486,13 +633,36 @@ function updatePieChart(data) {
 }
 
 function updateLegend(data, total) {
-    const legendItems = [
-        { id: 'legend-tunai', value: parseFloat(data.total_cash), percentage: total > 0 ? (parseFloat(data.total_cash) / total) * 100 : 0 },
-        { id: 'legend-transfer', value: parseFloat(data.total_transfer), percentage: total > 0 ? (parseFloat(data.total_transfer) / total) * 100 : 0 },
-        { id: 'legend-piutang', value: parseFloat(data.total_receivable), percentage: total > 0 ? (parseFloat(data.total_receivable) / total) * 100 : 0 },
-        { id: 'legend-pengeluaran-tunai', value: parseFloat(data.total_cash_expanse), percentage: total > 0 ? (parseFloat(data.total_cash_expanse) / total) * 100 : 0 },
-        { id: 'legend-pembayaran-piutang', value: parseFloat(data.total_cash_payment_of_receivable), percentage: total > 0 ? (parseFloat(data.total_cash_payment_of_receivable) / total) * 100 : 0 },
-        { id: 'legend-pembayaran-transfer', value: parseFloat(data.total_transfer_payment_of_receivable), percentage: total > 0 ? (parseFloat(data.total_transfer_payment_of_receivable) / total) * 100 : 0 }
+    const legendItems = [{
+            id: 'legend-tunai',
+            value: parseFloat(data.total_cash),
+            percentage: total > 0 ? (parseFloat(data.total_cash) / total) * 100 : 0
+        },
+        {
+            id: 'legend-transfer',
+            value: parseFloat(data.total_transfer),
+            percentage: total > 0 ? (parseFloat(data.total_transfer) / total) * 100 : 0
+        },
+        {
+            id: 'legend-piutang',
+            value: parseFloat(data.total_receivable),
+            percentage: total > 0 ? (parseFloat(data.total_receivable) / total) * 100 : 0
+        },
+        {
+            id: 'legend-pengeluaran-tunai',
+            value: parseFloat(data.total_cash_expanse),
+            percentage: total > 0 ? (parseFloat(data.total_cash_expanse) / total) * 100 : 0
+        },
+        {
+            id: 'legend-pembayaran-piutang',
+            value: parseFloat(data.total_cash_payment_of_receivable),
+            percentage: total > 0 ? (parseFloat(data.total_cash_payment_of_receivable) / total) * 100 : 0
+        },
+        {
+            id: 'legend-pembayaran-transfer',
+            value: parseFloat(data.total_transfer_payment_of_receivable),
+            percentage: total > 0 ? (parseFloat(data.total_transfer_payment_of_receivable) / total) * 100 : 0
+        }
     ];
 
     legendItems.forEach(item => {
@@ -503,14 +673,34 @@ function updateLegend(data, total) {
 }
 
 function updateIncomeTable(data) {
-    const tableItems = [
-        { id: 'table-tunai', value: parseFloat(data.total_cash) },
-        { id: 'table-transfer', value: parseFloat(data.total_transfer) },
-        { id: 'table-piutang', value: parseFloat(data.total_receivable) },
-        { id: 'table-pengeluaran-tunai', value: parseFloat(data.total_cash_expanse) },
-        { id: 'table-pengeluaran-transfer', value: parseFloat(data.total_transfer_expanse) },
-        { id: 'table-pembayaran-piutang', value: parseFloat(data.total_cash_payment_of_receivable) },
-        { id: 'table-pembayaran-transfer', value: parseFloat(data.total_transfer_payment_of_receivable) }
+    const tableItems = [{
+            id: 'table-tunai',
+            value: parseFloat(data.total_cash)
+        },
+        {
+            id: 'table-transfer',
+            value: parseFloat(data.total_transfer)
+        },
+        {
+            id: 'table-piutang',
+            value: parseFloat(data.total_receivable)
+        },
+        {
+            id: 'table-pengeluaran-tunai',
+            value: parseFloat(data.total_cash_expanse)
+        },
+        {
+            id: 'table-pengeluaran-transfer',
+            value: parseFloat(data.total_transfer_expanse)
+        },
+        {
+            id: 'table-pembayaran-piutang',
+            value: parseFloat(data.total_cash_payment_of_receivable)
+        },
+        {
+            id: 'table-pembayaran-transfer',
+            value: parseFloat(data.total_transfer_payment_of_receivable)
+        }
     ];
 
     tableItems.forEach(item => {
@@ -536,12 +726,14 @@ function fetchSummary(params) {
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
-        data: {date: params},
-        beforeSend: function () {
+        data: {
+            date: params
+        },
+        beforeSend: function() {
             console.log('Fetching summary...');
         },
 
-        success: function (response) {
+        success: function(response) {
             console.log('Response:', response);
 
             // Example mapping (adjust based on your JSON structure)
@@ -551,11 +743,11 @@ function fetchSummary(params) {
             $('#total-cash').text(formatRupiah(response.total_cash));
             $('#total-kasir').text(formatRupiah(response.total_cash_in_casheer));
         },
-        error: function (xhr) {
+        error: function(xhr) {
             console.error('Error:', xhr.responseText);
             alert('Gagal mengambil data summary');
         },
-        complete: function () {
+        complete: function() {
             console.log('Done');
             // hide loader
         }
@@ -569,25 +761,26 @@ function fetchIncomeComposition(params) {
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
-        data: {date: params},
-        beforeSend: function () {
+        data: {
+            date: params
+        },
+        beforeSend: function() {
             console.log('Fetching income composition...');
         },
-        success: function (response) {
+        success: function(response) {
             console.log('Income Composition Response:', response);
             // Update pie chart with new data
             updatePieChart(response);
         },
-        error: function (xhr) {
+        error: function(xhr) {
             console.error('Error:', xhr.responseText);
             alert('Gagal mengambil data komposisi pemasukan');
         },
-        complete: function () {
+        complete: function() {
             console.log('Done fetching income composition');
             // hide loader
         }
     });
 }
-
 </script>
 @endsection
