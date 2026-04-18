@@ -58,6 +58,43 @@
         <!--end::Toolbar-->
         <!--begin::Content-->
         <div id="kt_app_content" class="app-content flex-column-fluid">
+            <!--begin::Loader Backdrop-->
+            <div id="loader-backdrop" style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: none;
+                z-index: 9999;
+                justify-content: center;
+                align-items: center;
+            ">
+                <div style="
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 15px;
+                ">
+                    <div style="
+                        border: 4px solid rgba(255, 255, 255, 0.3);
+                        border-top: 4px solid #ffffff;
+                        border-radius: 50%;
+                        width: 50px;
+                        height: 50px;
+                        animation: spin 1s linear infinite;
+                    "></div>
+                    <span style="color: #ffffff; font-size: 16px; font-weight: 500;">Loading...</span>
+                </div>
+            </div>
+            <!--end::Loader Backdrop-->
+            <style>
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            </style>
             <!--begin::Content container-->
             <div id="kt_app_content_container" class="app-container">
                 <!-- Stat Cards Row -->
@@ -361,6 +398,15 @@
 let pieChart = null;
 let mixedChart = null;
 
+// Loader functions
+function showLoader() {
+    $('#loader-backdrop').css('display', 'flex');
+}
+
+function hideLoader() {
+    $('#loader-backdrop').css('display', 'none');
+}
+
 $(document).ready(function() {
     // Get initial date from input
     var initialDate = $('#date').val();
@@ -444,9 +490,11 @@ $(document).ready(function() {
 });
 
 $("#btn-form-export").on("click", function() {
-    const start_date = $("#start-date").val();
-    const end_date = $("#end-date").val();
+    const start_date = $("#date").val();
+    const end_date = $("#date").val();
     const branch_id = `{{Auth::user()->branch_id}}`;
+
+    showLoader();
 
     $.ajax({
         url: `{{route('retails.daily-report.export')}}`,
@@ -489,6 +537,9 @@ $("#btn-form-export").on("click", function() {
         error: function(xhr, status, error) {
             Swal.fire('Error!', 'Failed to export the transaction report.', 'error');
         },
+        complete: function() {
+            hideLoader();
+        }
     });
 });
 
@@ -731,6 +782,7 @@ function fetchSummary(params) {
         },
         beforeSend: function() {
             console.log('Fetching summary...');
+            showLoader();
         },
 
         success: function(response) {
@@ -749,7 +801,7 @@ function fetchSummary(params) {
         },
         complete: function() {
             console.log('Done');
-            // hide loader
+            hideLoader();
         }
     });
 }
@@ -766,6 +818,7 @@ function fetchIncomeComposition(params) {
         },
         beforeSend: function() {
             console.log('Fetching income composition...');
+            showLoader();
         },
         success: function(response) {
             console.log('Income Composition Response:', response);
@@ -778,7 +831,7 @@ function fetchIncomeComposition(params) {
         },
         complete: function() {
             console.log('Done fetching income composition');
-            // hide loader
+            hideLoader();
         }
     });
 }
