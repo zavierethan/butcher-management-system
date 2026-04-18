@@ -289,6 +289,14 @@ function getReceivableItems(params) {
             var data = response;
             var total_billed = 0;
             data.forEach(function(items) {
+
+                let basePrice = Number(items.base_price.replace(/,/g, ''));
+
+                let roundedTotalPrice = Math.round(items.quantity * basePrice / 100) * 100;
+                let productDiscount = items.discount * Math.floor(items.quantity);
+                let totalPrice = roundedTotalPrice - productDiscount;
+
+                console.log(`Base Price Price : ${items.base_price} - Product Discount : ${productDiscount} = Total Price : ${totalPrice}`)
                 var row = `
                         <tr>
                             <td class="text-center">
@@ -301,11 +309,11 @@ function getReceivableItems(params) {
                             <td class="text-end">${items.quantity}</td>
                             <td class="text-end">${items.base_price}</td>
                             <td class="text-end">${items.discount}</td>
-                            <td class="text-end">${items.sell_price}</td>
+                            <td class="text-end">${formatNumber(totalPrice.toString())}</td>
                         </tr>
                     `;
 
-                    total_billed += parseFloat(items.sell_price.replace(/,/g, ""));
+                    total_billed += parseFloat(totalPrice);
                 // Append the product to the product list container
                 $("#kt_items_table tbody").append(row);
 
@@ -314,7 +322,7 @@ function getReceivableItems(params) {
 
             console.log("Total Billed : " + total_billed);
 
-            $("#total-billed").val(total_billed);
+            $("#total-billed").val(formatNumber(total_billed.toString()));
         },
         error: function(xhr, status, error) {
             console.error('Error fetching data:', error);

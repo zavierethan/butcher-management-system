@@ -192,7 +192,7 @@ class InvoiceController extends Controller
                 'transactions.code as transaction_no',
                 'products.name',
                 'transaction_items.quantity',
-                DB::raw("TO_CHAR(transaction_items.base_price, 'FM999,999,999') as base_price"),
+                DB::raw("transaction_items.base_price"),
                 DB::raw("TO_CHAR(transaction_items.unit_price, 'FM999,999,999') as sell_price"),
                 'transaction_items.discount'
             )

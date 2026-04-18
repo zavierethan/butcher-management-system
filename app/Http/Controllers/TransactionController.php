@@ -38,6 +38,32 @@ class TransactionController extends Controller
                 DB::statement("CALL create_journal_proc(?, ?, ?, ?)", [
                     'sales_cash', $transactionCode, 'Penjualan dengan pembayaran Cash', $totalAmount
                 ]);
+
+                // 🔎 ambil session aktif
+                $session = DB::table('pos_sessions')
+                    ->where('branch_id', Auth::user()->branch_id)
+                    ->where('status', 'OPEN')
+                    ->where('created_at', '>=', now()->startOfDay())
+                    ->where('created_at', '<', now()->endOfDay())
+                    ->first();
+
+                if (!$session) {
+                    throw new \Exception('POS session tidak ditemukan / belum dibuka');
+                }
+
+                // 💰 insert cash movement (IN)
+                DB::table('cash_movements')->insert([
+                    'pos_session_id' => $session->id,
+                    'user_id'        => Auth::user()->id,
+                    'type'           => 'SALE',
+                    'direction'      => 'IN',
+                    'amount'         => $totalAmount,
+                    'reference_type' => 'ORDER',
+                    'reference_id'   => $session->id,
+                    'description'    => 'Penjualan cash',
+                    'created_at'     => now()
+                ]);
+
             } elseif ($paymentMethod == '2') {
                 $status = 2; // Pending Piutang
                 DB::statement("CALL create_journal_proc(?, ?, ?, ?)", [

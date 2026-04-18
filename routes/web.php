@@ -507,4 +507,8 @@ Route::group(['middleware' => ['auth']], function() {
             // Route::post('/update', [App\Http\Controllers\InventoryDetailLogController::class, 'update'])->name('update');
         });
     });
+
+    Route::get('/pos-session/check', [App\Http\Controllers\PosSessionController::class, 'checkOpenSession']);
+    Route::post('/pos-session/open', [App\Http\Controllers\PosSessionController::class, 'openSession']);
+    Route::get('/pos-session/remaining-cash', [App\Http\Controllers\PosSessionController::class, 'getRemainingCashTodayByBranch']);
 });

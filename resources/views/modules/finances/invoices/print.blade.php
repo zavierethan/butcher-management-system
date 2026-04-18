@@ -144,22 +144,36 @@
                 </thead>
                 <tbody>
                     <?php $no = 1; ?>
+                    @php
+                        $subTotal = 0;
+                        $discountTotal = 0;
+                        $deliveryFee = 0;
+                        $totalPay = 0;
+                    @endphp
                     @foreach($invoiceItems as $items)
+                    @php
+                        $roundedTotalPrice = round($items->quantity * $items->base_price / 100) * 100;
+                        $productDiscount = $items->discount * floor($items->quantity);
+                        $totalPrice = $roundedTotalPrice - $productDiscount;
+
+                        $subTotal += $roundedTotalPrice;
+                        $discountTotal += $productDiscount;
+                    @endphp
                     <tr>
                         <td style="text-align: center"><?php echo $no++; ?>.</td>
                         <td>{{$items->transaction_no}}</td>
                         <td>{{$items->date}}</td>
                         <td>{{$items->name}}</td>
                         <td>{{$items->quantity}}</td>
-                        <td style="text-align: right">{{$items->base_price}}</td>
-                        <td style="text-align: right">{{$items->sell_price}}</td>
+                        <td style="text-align: right">{{number_format($items->base_price, 0, '.', ',')}}</td>
+                        <td style="text-align: right">{{number_format($totalPrice, 0, '.', ',')}}</td>
                     </tr>
                     @endforeach
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="6" style="text-align: right;"><strong>TOTAL</strong></td>
-                        <td style="text-align: right"><strong>{{$totalSellPrice}}</strong></td>
+                        <td colspan="6" style="text-align: right;"><strong>SUB TOTAL</strong></td>
+                        <td style="text-align: right"><strong>{{ number_format($subTotal, 0, '.', ',') }}</strong></td>
                     </tr>
                 </tfoot>
             </table>

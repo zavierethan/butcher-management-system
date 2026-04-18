@@ -105,8 +105,13 @@ License: For each use you must have a valid license purchased only from above li
                             <!--end::Input group=-->
                             <div class="fv-row mb-3">
                                 <!--begin::Password-->
-                                <input type="password" placeholder="Password" name="password" autocomplete="off"
-                                    class="form-control bg-transparent @error('password') is-invalid @enderror" />
+                                <div class="position-relative">
+                                    <input type="password" placeholder="Password" name="password" id="password_input" autocomplete="off"
+                                        class="form-control bg-transparent @error('password') is-invalid @enderror" />
+                                    <span class="position-absolute end-0 top-50 translate-middle-y pe-3" id="toggle_password" style="cursor: pointer; user-select: none;">
+                                        <i class="fas fa-eye" style="color: #6c757d;"></i>
+                                    </span>
+                                </div>
                                 @error('password')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -167,6 +172,27 @@ License: For each use you must have a valid license purchased only from above li
     <!--end::Global Javascript Bundle-->
     <!--begin::Custom Javascript(used for this page only)-->
     <!-- <script src="assets/js/custom/authentication/sign-in/general.js"></script> -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password_input');
+            const togglePassword = document.getElementById('toggle_password');
+            const icon = togglePassword.querySelector('i');
+
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+
+                // Toggle icon
+                if (type === 'text') {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        });
+    </script>
     <!--end::Custom Javascript-->
     <!--end::Javascript-->
 </body>

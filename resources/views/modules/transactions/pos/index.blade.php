@@ -486,6 +486,7 @@
         <div id="kt_app_content" class="app-content flex-column-fluid mt-5">
             <!--begin::Content container-->
             <div id="kt_app_content_container" class="app-container">
+                <div id="modalBackdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
                 <!--begin::Layout-->
                 <div class="row mb-3">
                     <!--begin::Content-->
@@ -494,10 +495,12 @@
                         <div class="card card-p-0 border-0">
                             <!--begin::Body-->
                             <div class="card-body p-3">
-                                <div class="d-flex">
-                                    <div class="d-flex align-items-center position-relative">
-                                        <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
+                                <div class="d-flex justify-content-between align-items-center">
+
+                                    <!-- LEFT: Search -->
+                                    <div class="d-flex align-items-center position-relative w-50">
                                         <span class="svg-icon svg-icon-1 position-absolute ms-6">
+                                            <!-- icon tetap -->
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none">
                                                 <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2"
@@ -507,22 +510,20 @@
                                                     fill="black" />
                                             </svg>
                                         </span>
-                                        <!--end::Svg Icon-->
+
                                         <input type="text" data-product-filter="search"
                                             class="form-control form-control-solid ps-15" placeholder="Cari Product"
                                             id="product-search" />
                                     </div>
-                                    <div class="ms-auto">
-                                        <!-- <input type="text" class="form-control form-control-solid"
-                                            placeholder="Nama Butcherees" id="butcher-name" /> -->
 
-                                        <select class="form-select form-select-solid" data-control="select2"
-                                            data-placeholder="Pilih Butcherees" id="butcher-name">
-                                            @foreach($butcherees as $butcher)
-                                            <option value="{{$butcher->name}}">{{$butcher->name}}</option>
-                                            @endforeach
-                                        </select>
+                                    <!-- RIGHT: Remaining Cash -->
+                                    <div class="text-end">
+                                        <div class="fw-bold text-gray-600">Sisa Cash</div>
+                                        <div class="fs-4 fw-bold text-success" id="remaining-cash">
+                                            Rp 0
+                                        </div>
                                     </div>
+
                                 </div>
                             </div>
                             <!--end: Card Body-->
@@ -619,20 +620,24 @@
                                     <!--begin::Summary Grid-->
                                     <div class="fs-6 fw-bold text-white">
                                         <!-- Subtotal Row -->
-                                        <div class="row align-items-center pb-3 mb-3" style="border-bottom: 2px dotted rgba(255,255,255,0.5);">
+                                        <div class="row align-items-center pb-3 mb-3"
+                                            style="border-bottom: 2px dotted rgba(255,255,255,0.5);">
                                             <div class="col-8">Subtotal</div>
                                             <div class="col-4 text-end" id="subtotal-amount">Rp. 0</div>
                                         </div>
                                         <!-- Total Discounts Row -->
-                                        <div class="row align-items-center pb-3 mb-3" style="border-bottom: 2px dotted rgba(255,255,255,0.5);">
+                                        <div class="row align-items-center pb-3 mb-3"
+                                            style="border-bottom: 2px dotted rgba(255,255,255,0.5);">
                                             <div class="col-8">Total Discounts</div>
                                             <div class="col-4 text-end" id="total-discount">Rp. 0</div>
                                         </div>
                                         <!-- Shipping Cost Row -->
-                                        <div class="row align-items-center pb-3 mb-3" style="border-bottom: 2px dotted rgba(255,255,255,0.5);">
+                                        <div class="row align-items-center pb-3 mb-3"
+                                            style="border-bottom: 2px dotted rgba(255,255,255,0.5);">
                                             <div class="col-8">
                                                 Ongkos Kirim
-                                                <a href="javascript(0);" data-bs-toggle="modal" data-bs-target="#kt_modal_add_shipping_cost">
+                                                <a href="javascript(0);" data-bs-toggle="modal"
+                                                    data-bs-target="#kt_modal_add_shipping_cost">
                                                     <i class="fas fa-edit text-white ms-2"></i>
                                                 </a>
                                             </div>
@@ -663,11 +668,11 @@
                                         </div>
                                     </div>
 
-                                    <h5 class="fw-bold text-gray-800 mb-5">Metode Pengerjaan</h5>
+                                    <h5 class="fw-bold text-gray-800 mb-5">Methode Pengerjaan</h5>
                                     <div class="d-flex flex-equal gap-2 gap-xxl-9 px-0 mb-3" id="working-method">
                                         <div class="form-check form-check-custom form-check-solid mb-2">
-                                            <input class="form-check-input" type="radio" value="1"
-                                                name="working_method" checked>
+                                            <input class="form-check-input" type="radio" value="1" name="working_method"
+                                                checked>
                                             <label class="form-check-label">Direct</label>
                                         </div>
                                         <div class="form-check form-check-custom form-check-solid mb-2">
@@ -675,6 +680,16 @@
                                                 name="working_method">
                                             <label class="form-check-label">Processing Order</label>
                                         </div>
+                                    </div>
+
+                                    <h5 class="fw-bold text-gray-800 mb-5">Bucheries</h5>
+                                    <div class="d-flex flex-equal gap-2 gap-xxl-9 px-0 mb-3" id="working-method">
+                                        <select class="form-select form-select-solid" data-control="select2"
+                                            data-placeholder="Pilih Butcherees" id="butcher-name">
+                                            @foreach($butcherees as $butcher)
+                                            <option value="{{$butcher->name}}">{{$butcher->name}}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
 
                                     <h5 class="fw-bold text-gray-800 mb-5">Catatan</h5>
@@ -685,7 +700,8 @@
                                     <h5 class="fw-bold text-gray-800 mb-5">Metode Pembayaran</h5>
                                     <!--end::Title-->
                                     <!--begin::Radio group-->
-                                    <div class="d-flex flex-equal gap-5 gap-xxl-9 px-0 mb-12" data-kt-buttons="true" data-kt-buttons-target="[data-kt-button]" id="payment-method">
+                                    <div class="d-flex flex-equal gap-5 gap-xxl-9 px-0 mb-12" data-kt-buttons="true"
+                                        data-kt-buttons-target="[data-kt-button]" id="payment-method">
                                         <!--begin::Radio-->
                                         <label
                                             class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4"
@@ -893,8 +909,7 @@
                     <div class="mb-1">
                         <label class="form-label fw-bold fs-6 mb-2">Quantity (kg)</label>
                         <div class="position-relative mb-3">
-                            <input class="form-control form-control-md form-control-solid" type="text"
-                                id="quantity" />
+                            <input class="form-control form-control-md form-control-solid" type="text" id="quantity" />
                         </div>
                     </div>
                 </div>
@@ -974,8 +989,7 @@
                     <div class="mb-1">
                         <label class="form-label fw-bold fs-6 mb-2">Quantity (kg)</label>
                         <div class="position-relative mb-3">
-                            <input class="form-control form-control-md form-control-solid" type="text"
-                                id="quantity" />
+                            <input class="form-control form-control-md form-control-solid" type="text" id="quantity" />
                         </div>
                     </div>
                 </div>
@@ -1157,16 +1171,101 @@
     </div>
     <!--end::Modal dialog-->
 </div>
+
+<!--begin::Modal - Add Customer-->
+<div class="modal fade" id="kt_modal_add_nominal_cash" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog mw-650px">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div class="modal-header pb-0 border-0 justify-content-end">
+
+            </div>
+            <!--begin::Modal header-->
+            <!--begin::Modal body-->
+            <div class="modal-body scroll-y mx-5 mx-xl-18 pt-0 pb-15">
+                <!--begin::Heading-->
+                <div class="text-center mb-13">
+                    <!--begin::Title-->
+                    <h1 class="mb-3">Nominal Cash</h1>
+                    <!--end::Title-->
+                </div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Masukan Nominal Cash</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid" type="number"
+                                id="nominal-cash-value" />
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="flex justify-content-center">
+                    <button type="button" class="btn btn-primary" id="btn-save-nominal-cash-value">Simpan</button>
+                </div>
+            </div>
+            <!--end::Modal body-->
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div>
 @endsection
 
 @section('script')
 <script>
 $(document).ready(function() {
+
+    checkOpenSession();
+    getRemainingCashToday();
+
+    $("#modalBackdrop").show();
     $("#product-loader").show();
     $("#form-nominal").hide();
     $("#form-ref-transfer").hide();
     getProductList();
     getCustomers();
+
+    $('#btn-save-nominal-cash-value').on('click', function() {
+
+        let nominal = $('#nominal-cash-value').val();
+
+        $.ajax({
+            url: '/pos-session/open',
+            method: 'POST',
+            data: {
+                opening_cash: nominal
+            },
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(res) {
+                if (res.success) {
+
+                    // close modal
+                    let modalEl = document.getElementById('kt_modal_add_nominal_cash');
+                    let modal = bootstrap.Modal.getInstance(modalEl);
+                    modal.hide();
+
+                    console.log('Session created:', res.data.session_id);
+
+                    // 🔄 optional: reload atau lanjut POS
+                    location.reload();
+                }
+            },
+            error: function(err) {
+                if (err.status === 409) {
+                    alert('Session sudah terbuka');
+                    location.reload();
+                } else {
+                    console.error(err);
+                    alert('Terjadi kesalahan');
+                }
+            }
+        });
+
+    });
 
     $(document).on('click', '.product', function() {
         var productId = $(this).data('product-id');
@@ -1235,7 +1334,8 @@ $(document).ready(function() {
         var stockId = $("#kt_modal_add_product_item #stock_id").val();
         var productName = $("#kt_modal_add_product_item #product_name").val();
         var productQuantity = parseFloat($("#kt_modal_add_product_item #quantity").val());
-        var productPrice = parseFloat($("#kt_modal_add_product_item #product_price").val()); // Ensure price is a number
+        var productPrice = parseFloat($("#kt_modal_add_product_item #product_price")
+    .val()); // Ensure price is a number
         var productDiscount = parseFloat($("#kt_modal_add_product_item #diskon").val()) | 0;
         var productImgUrl = $(this).find('img').attr('src');
 
@@ -1268,7 +1368,8 @@ $(document).ready(function() {
         if (existingProduct.length > 0) {
             // Update quantity and subtotal for existing product
             const quantityElement = existingProduct.find('.qty');
-            const currentQuantity = parseFloat($(existingProduct).find('.quantity-value').text()) || parseFloat(productQuantity) || 1;
+            const currentQuantity = parseFloat($(existingProduct).find('.quantity-value').text()) ||
+                parseFloat(productQuantity) || 1;
             const newQuantity = currentQuantity + parseFloat(productQuantity);
             quantityElement.text(`${newQuantity}`);
 
@@ -1487,7 +1588,7 @@ $(document).ready(function() {
         $("#shipment-cost-value").val(0);
     });
 
-    $(document).on('keyup', '#nominal-cash', function () {
+    $(document).on('keyup', '#nominal-cash', function() {
 
         // Ambil nominal cash (hanya digit)
         let nominalCash = parseInt($(this).val().replace(/[^\d]/g, ''), 10) || 0;
@@ -1507,7 +1608,6 @@ $(document).ready(function() {
         // Tampilkan hasil (support minus)
         $("#nominal-return").val(formatThausand(nominalReturn));
     });
-
 
     $(document).on('click', '#process-transaction', function(e) {
         e.preventDefault();
@@ -1529,10 +1629,14 @@ $(document).ready(function() {
                     $('.cart-item-lists').each(function() {
                         const productId = $(this).find('.product-id').text();
                         const stockId = $(this).find('.stock-id').text();
-                        const price = $(this).find('.price').text().replace(/[^\d]/g, '');
-                        const basePrice = $(this).find('.base-price').text().replace(/[^\d]/g, '');
-                        const discountPerUnit = $(this).find('.discount-per-unit').text().replace(/[^\d]/g, '') | 0;
-                        const discount = $(this).find('.discount').text().replace(/[^\d]/g, '') | 0;
+                        const price = $(this).find('.price').text().replace(/[^\d]/g,
+                            '');
+                        const basePrice = $(this).find('.base-price').text().replace(
+                            /[^\d]/g, '');
+                        const discountPerUnit = $(this).find('.discount-per-unit')
+                        .text().replace(/[^\d]/g, '') | 0;
+                        const discount = $(this).find('.discount').text().replace(
+                            /[^\d]/g, '') | 0;
                         const quantity = $(this).find('.quantity-value').text();
 
                         products.push({
@@ -1548,18 +1652,23 @@ $(document).ready(function() {
                     const discount = $('#total-discount').text().replace(/[^\d]/g, '') | 0;
                     const shippingCost = $('#shipping-cost').text().replace(/[^\d]/g, '') | 0;
                     const totalAmount = $('#subtotal-amount').text().replace(/[^\d]/g, '');
-                    const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
+                    const paymentMethod = $('#payment-method').find(
+                        'input[type="radio"]:checked').val();
                     const customerId = $('#customer').val();
                     const butcherName = $('#butcher-name').val();
                     const branchId = $('#branch-id').val();
                     const nominalCash = $('#nominal-cash').val().replace(/[^\d]/g, '') | 0;
                     const nominalReturn = $('#nominal-return').val().replace(/[^\d]/g, '') | 0;
-                    const transferType = $('#form-ref-transfer').find('input[type="radio"]:checked').val();
+                    const transferType = $('#form-ref-transfer').find(
+                        'input[type="radio"]:checked').val();
                     const transferRef = $('#transfer-ref').val();
-                    const transferAttch = $('#transfer-attch')[0]?.files[0]; // Get file from input
+                    const transferAttch = $('#transfer-attch')[0]?.files[
+                    0]; // Get file from input
 
-                    const orderingMethod = $('#ordering-method').find('input[type="radio"]:checked').val();
-                    const workingMethod = $('#working-method').find('input[type="radio"]:checked').val();
+                    const orderingMethod = $('#ordering-method').find(
+                        'input[type="radio"]:checked').val();
+                    const workingMethod = $('#working-method').find(
+                        'input[type="radio"]:checked').val();
 
                     const notes = $('#notes').val();
 
@@ -1615,7 +1724,7 @@ $(document).ready(function() {
                                         type: "GET",
                                         dataType: "json",
                                         success: function(
-                                        response) {
+                                            response) {
                                             if (response.code ==
                                                 200) {
                                                 var printerName =
@@ -1641,7 +1750,7 @@ $(document).ready(function() {
                                                 printReceipt(
                                                     printerName,
                                                     response
-                                                    );
+                                                );
 
                                                 Swal.fire({
                                                     title: 'Nota Berhasil Dicetak!',
@@ -1653,7 +1762,7 @@ $(document).ready(function() {
                                                 $(".cart-item-lists")
                                                     .remove();
                                                 calculateTotals
-                                                ();
+                                                    ();
                                             } else {
                                                 Swal.fire({
                                                     title: 'Gagal Mencetak Nota',
@@ -1666,7 +1775,7 @@ $(document).ready(function() {
                                                 $(".cart-item-lists")
                                                     .remove();
                                                 calculateTotals
-                                                ();
+                                                    ();
                                             }
                                         },
                                         error: function(xhr, status,
@@ -1813,7 +1922,7 @@ $(document).ready(function() {
         }
     });
 
-    $("#kt_modal_add_product_item #quantity, #kt_modal_edit_product_item #quantity").on("keyup", function () {
+    $("#kt_modal_add_product_item #quantity, #kt_modal_edit_product_item #quantity").on("keyup", function() {
         let value = $(this).val();
 
         console.log("Original Input: " + value);
@@ -1883,7 +1992,7 @@ $(document).ready(function() {
     $('#customer').on('change', function() {
         let customerId = $(this).val();
         $.ajax({
-            url: `/api/customer-notes/`+customerId,
+            url: `/api/customer-notes/` + customerId,
             type: 'GET',
             dataType: 'json',
             success: function(response) {
@@ -1896,6 +2005,59 @@ $(document).ready(function() {
             }
         });
     });
+
+    function getRemainingCashToday() {
+        $.ajax({
+            url: `/pos-session/remaining-cash`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                if (res.success) {
+                    $('#remaining-cash').text(formatRupiah(res.data.remaining_cash));
+                }
+            },
+            error: function(err) {
+                console.error('Error fetching remaining cash', err);
+                $('#remaining-cash').text('0');
+            }
+        });
+    }
+
+    function checkOpenSession() {
+        $.ajax({
+            url: `/pos-session/check`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                if (res.success) {
+
+                    if (!res.data.has_open_session) {
+                        let modal = new bootstrap.Modal(
+                            document.getElementById('kt_modal_add_nominal_cash'), {
+                                backdrop: 'static',
+                                keyboard: false
+                            }
+                        );
+                        modal.show();
+                    } else {
+                        console.log('Session already OPEN');
+                    }
+
+                }
+            },
+            error: function(err) {
+                console.error('Error checking session', err);
+
+                let modal = new bootstrap.Modal(
+                    document.getElementById('kt_modal_add_nominal_cash'), {
+                        backdrop: 'static',
+                        keyboard: false
+                    }
+                );
+                modal.show();
+            }
+        });
+    }
 
     function getCustomers() {
         $.ajax({
@@ -1925,7 +2087,7 @@ $(document).ready(function() {
 
     function getCustomerNotes(customerId) {
         $.ajax({
-            url: `/customer-notes/`+customerId,
+            url: `/customer-notes/` + customerId,
             type: 'GET',
             dataType: 'json',
             success: function(response) {
@@ -1982,6 +2144,15 @@ $(document).ready(function() {
             minimumFractionDigits: 0, // Optional, remove decimals if not needed
         });
         return formatter.format(amount);
+    }
+
+    function formatRupiah(num) {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(num);
     }
 
     function formatThausand(value, decimalLength) {
@@ -2185,7 +2356,7 @@ $(document).ready(function() {
                 details.forEach(item => {
                     data.push(`${item.name}\n`);
                     data.push(
-                    `${item.quantity} X ${item.base_price} (Discount ${item.discount})\n`);
+                        `${item.quantity} X ${item.base_price} (Discount ${item.discount})\n`);
                     data.push('\x1B\x61\x32'); // Right align
                     data.push(`${item.sell_price}\n`);
                     data.push('\x1B\x61\x30'); // Back to left align
