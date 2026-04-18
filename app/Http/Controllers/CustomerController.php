@@ -153,6 +153,39 @@ class CustomerController extends Controller
         return redirect()->route('customers.index');
     }
 
+    public function productDiscounts($id) {
+        $customer = DB::table('customers')
+            ->select('customers.id','customers.name')
+            ->where('customers.id', $id)->first();
+
+        $products = DB::table('products')->orderBy('sort_order', 'asc')->get();
+
+        return view('modules.master.customer.product-discounts', compact('customer', 'products'));
+    }
+
+    public function productDiscountsSave(Request $request) {
+        DB::beginTransaction();
+
+        try {
+            $products = $request->input('products', []);
+            foreach ($products as $item) {
+                DB::table('customer_product_discounts')->insert([
+                    'customer_id' => $item['customer_id'],
+                    'product_id' => $item['product_id'],
+                    'discount' => $item['discount']
+                ]);
+            }
+            DB::commit();
+            return response()->json(['message' => 'Success']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Failed to create transaction',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function customerNotes($id) {
         $customer = DB::table('customers')
             ->where('id', $id)

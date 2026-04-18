@@ -158,9 +158,13 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/create', [App\Http\Controllers\CustomerController::class, 'create'])->name('create');
             Route::post('/save', [App\Http\Controllers\CustomerController::class, 'save'])->name('save');
             Route::get('/edit/{id}', [App\Http\Controllers\CustomerController::class, 'edit'])->name('edit');
+            Route::post('/update', [App\Http\Controllers\CustomerController::class, 'update'])->name('update');
+
             Route::get('/credit-policies/{id}', [App\Http\Controllers\CustomerController::class, 'creditPolicies'])->name('credit-policies');
             Route::post('/credit-policies/save', [App\Http\Controllers\CustomerController::class, 'creditPoliciesSave'])->name('credit-policies-save');
-            Route::post('/update', [App\Http\Controllers\CustomerController::class, 'update'])->name('update');
+
+            Route::get('/product-discounts/{id}', [App\Http\Controllers\CustomerController::class, 'productDiscounts'])->name('product-discounts');
+            Route::post('/product-discounts/save', [App\Http\Controllers\CustomerController::class, 'productDiscountsSave'])->name('product-discounts-save');
         });
     });
 

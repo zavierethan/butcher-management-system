@@ -149,6 +149,7 @@
                     return `
                         <div class="text-center">
                             <a href="/customers/credit-policies/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Credit policies</a>
+                            <a href="/customers/product-discounts/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Product discounts</a>
                             <a href="/customers/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Edit</a>
                         <div>
                     `;

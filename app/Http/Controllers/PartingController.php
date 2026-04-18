@@ -17,26 +17,26 @@ class PartingController extends Controller
 
         $params = $request->all();
 
-        $query = DB::table('partings')
-            ->leftJoin('branches', 'branches.id', '=', 'partings.branch_id')
-            ->leftJoin('products', 'products.id', '=', 'partings.product_id')
+        $query = DB::table('parting_cut_results')
+            ->leftJoin('branches', 'branches.id', '=', 'parting_cut_results.branch_id')
+            ->leftJoin('products', 'products.id', '=', 'parting_cut_results.product_id')
             ->select(
-                DB::raw("TO_CHAR(partings.date, 'dd/mm/YYYY') as date"),
-                'partings.product_id',
-                DB::raw('SUM(partings.quantity) as total_quantity'),
+                DB::raw("TO_CHAR(parting_cut_results.date, 'dd/mm/YYYY') as date"),
+                'parting_cut_results.product_id',
+                DB::raw('SUM(parting_cut_results.quantity) as total_quantity'),
                 'products.name as product_name',
                 'branches.name as branch_name'
             )
-            ->where('partings.branch_id', Auth::user()->branch_id)
+            ->where('parting_cut_results.branch_id', Auth::user()->branch_id)
             ->groupBy(
-                DB::raw("TO_CHAR(partings.date, 'dd/mm/YYYY')"),
-                'partings.product_id',
+                DB::raw("TO_CHAR(parting_cut_results.date, 'dd/mm/YYYY')"),
+                'parting_cut_results.product_id',
                 'products.name',
                 'branches.name'
             );
 
         if (!empty($params['date'])) {
-            $query->where(DB::raw('DATE(partings.date)'), $params['date']);
+            $query->where(DB::raw('DATE(parting_cut_results.date)'), $params['date']);
         }
 
         $start = $request->input('start', 0);
@@ -87,7 +87,7 @@ class PartingController extends Controller
         try {
             $products = $request->input('products', []);
             foreach ($products as $item) {
-                DB::table('partings')->insert([
+                DB::table('parting_cut_results')->insert([
                     'product_id' => $item['product_id'],
                     'quantity' => $item['quantity'],
                     'date' => $item['date'],
