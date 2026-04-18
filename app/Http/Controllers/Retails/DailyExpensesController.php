@@ -119,6 +119,33 @@ class DailyExpensesController extends Controller
             "created_by" => Auth::user()->id,
         ]);
 
+        if($request->payment_method == '1') {
+            // 🔎 ambil session aktif
+                $session = DB::table('pos_sessions')
+                    ->where('branch_id', Auth::user()->branch_id)
+                    ->where('status', 'OPEN')
+                    ->where('created_at', '>=', now()->startOfDay())
+                    ->where('created_at', '<', now()->endOfDay())
+                    ->first();
+
+                if (!$session) {
+                    throw new \Exception('POS session tidak ditemukan / belum dibuka');
+                }
+
+                // 💰 insert cash movement (IN)
+                DB::table('cash_movements')->insert([
+                    'pos_session_id' => $session->id,
+                    'user_id'        => Auth::user()->id,
+                    'type'           => 'SALE',
+                    'direction'      => 'OUT',
+                    'amount'         => $request->total_amount,
+                    'reference_type' => 'ORDER',
+                    'reference_id'   => $session->id,
+                    'description'    => 'Pengeluaran cash',
+                    'created_at'     => now()
+                ]);
+        }
+
         DB::table('journal_entries')->insert([
             "journal_id" => $journalId,
             "account_id" =>  $request->credit,
