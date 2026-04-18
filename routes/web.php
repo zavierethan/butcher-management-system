@@ -242,7 +242,8 @@ Route::group(['middleware' => ['auth']], function() {
             Route::prefix('daily-report')->group(function () {
                 Route::name('daily-report.')->group(function () {
                     Route::get('/', [App\Http\Controllers\Retails\DailyReportController::class, 'index'])->name('index');
-                    Route::get('/get-data-summary', [App\Http\Controllers\Retails\DailyReportController::class, 'getDataSummary'])->name('summary');
+                    Route::post('/get-data-summary', [App\Http\Controllers\Retails\DailyReportController::class, 'getDataSummary'])->name('summary');
+                    Route::post('/get-income-composition', [App\Http\Controllers\Retails\DailyReportController::class, 'getIncomeComposition'])->name('income-composition');
                     Route::get('/export', [App\Http\Controllers\Retails\DailyReportController::class, 'export'])->name('export');
                     Route::get('/get-stock-report', [App\Http\Controllers\Retails\DailyReportController::class, 'getStockReport'])->name('get-stock-report');
                 });

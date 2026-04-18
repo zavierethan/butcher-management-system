@@ -1649,7 +1649,7 @@ $(document).ready(function() {
                         });
                     });
 
-                    const discount = $('#total-discount').text().replace(/[^\d]/g, '') | 0;
+                    const totalDiscount = $('#total-discount').text().replace(/[^\d]/g, '') | 0;
                     const shippingCost = $('#shipping-cost').text().replace(/[^\d]/g, '') | 0;
                     const totalAmount = $('#subtotal-amount').text().replace(/[^\d]/g, '');
                     const paymentMethod = $('#payment-method').find(
@@ -1679,7 +1679,7 @@ $(document).ready(function() {
                     formData.append('payment_method', paymentMethod);
                     formData.append('customer_id', customerId);
                     formData.append('butcher_name', butcherName);
-                    formData.append('discount', discount);
+                    formData.append('total_discount', totalDiscount);
                     formData.append('shipping_cost', shippingCost);
                     formData.append('branch_id', branchId);
                     formData.append('nominal_cash', nominalCash);
