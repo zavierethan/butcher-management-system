@@ -306,7 +306,7 @@ class DailyReportController extends Controller
                 AND t.transaction_date >= CURRENT_DATE
                 AND t.transaction_date < CURRENT_DATE + INTERVAL '1 day'
                 AND t.branch_id = ?
-            GROUP BY p.id, p.name
+            GROUP BY p.id, p.name, p.sort_order
             ORDER BY p.sort_order
         ";
 
