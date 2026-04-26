@@ -296,7 +296,7 @@ class DailyReportController extends Controller
         // 3. Query utama
         $sql = "
             SELECT
-                p.name,
+                p.name AS PRODUK,
                 " . (count($columns) ? implode(",\n", $columns) : "0 AS \"no_data\"") . "
             FROM products p
             LEFT JOIN transaction_items ti

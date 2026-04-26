@@ -378,28 +378,10 @@
                                 <h3 class="card-title fw-bold">SVC PFMN</h3>
                             </div>
                             <div class="card-toolbar">
-                                <!-- <div class="d-flex flex-stack flex-wrap gap-4">
-                                    <div class="position-relative my-1">
-                                        <i
-                                            class="ki-duotone ki-magnifier fs-2 position-absolute top-50 translate-middle-y ms-4">
-                                            <span class="path1"></span>
-                                            <span class="path2"></span>
-                                        </i>
-                                        <input type="text" data-kt-customer-table-filter="search"
-                                            class="form-control form-control-solid w-250px ps-15"
-                                            placeholder="Nama Produk" />
-                                    </div>
-                                </div> -->
                             </div>
                         </div>
                         <div class="card-body pt-0 overflow-x-auto">
-                            <table class="table table-hover align-middle table-row-dashed fs-6 gy-5" id="report-table">
-                                <thead>
-
-                                </thead>
-                                <tbody class="fw-bold text-gray-600">
-                                </tbody>
-                            </table>
+                            <table id="report-table" class="table table-hover align-middle table-row-dashed fs-6 gy-5"></table>
                         </div>
                     </div>
                 </div>
@@ -423,8 +405,8 @@
                         <div class="mb-1">
                             <label class="form-label fw-bold fs-6 mb-2">Opening Cash</label>
                             <div class="position-relative mb-3">
-                                <input class="form-control form-control-md form-control-solid"
-                                    type="number" name="opening_cash" id="opening_cash" disabled/>
+                                <input class="form-control form-control-md form-control-solid" type="number"
+                                    name="opening_cash" id="opening_cash" disabled />
                             </div>
                         </div>
                     </div>
@@ -433,8 +415,8 @@
                         <div class="mb-1">
                             <label class="form-label fw-bold fs-6 mb-2">Cash in Cashier</label>
                             <div class="position-relative mb-3">
-                                <input class="form-control form-control-md form-control-solid"
-                                    type="number" name="closing_cash" id="closing_cash" disabled/>
+                                <input class="form-control form-control-md form-control-solid" type="number"
+                                    name="closing_cash" id="closing_cash" disabled />
                             </div>
                         </div>
                     </div>
@@ -443,8 +425,8 @@
                         <div class="mb-1">
                             <label class="form-label fw-bold fs-6 mb-2">Actual Cash</label>
                             <div class="position-relative mb-3">
-                                <input class="form-control form-control-md form-control-solid"
-                                    type="number" name="actual_cash" id="actual_cash"/>
+                                <input class="form-control form-control-md form-control-solid" type="number"
+                                    name="actual_cash" id="actual_cash" />
                             </div>
                         </div>
                     </div>
@@ -453,7 +435,8 @@
                         <div class="mb-1">
                             <label class="form-label fw-bold fs-6 mb-2">Catatan</label>
                             <div class="position-relative mb-3">
-                                <textarea class="form-control form-control-md form-control-solid" name="notes" id="notes"></textarea>
+                                <textarea class="form-control form-control-md form-control-solid" name="notes"
+                                    id="notes"></textarea>
                             </div>
                         </div>
                     </div>
@@ -686,7 +669,7 @@ $("#btn-form-export").on("click", function() {
 });
 
 $("#btn-close-trx").on("click", function() {
-    const date = $('#date').val();          // pastikan ada input ini
+    const date = $('#date').val(); // pastikan ada input ini
     const branchId = $('#branch_id').val(); // sesuaikan dengan field kamu
 
     $.ajax({
@@ -696,7 +679,7 @@ $("#btn-close-trx").on("click", function() {
             date: date,
             branch_id: branchId
         },
-        success: function (res) {
+        success: function(res) {
             // asumsi response JSON
             // contoh: { total_cash: 100000, total_trx: 20, ... }
 
@@ -707,7 +690,7 @@ $("#btn-close-trx").on("click", function() {
             // tampilkan modal
             $('#modal-close-trx').modal('show');
         },
-        error: function (err) {
+        error: function(err) {
             console.error(err);
             alert('Gagal mengambil data. Silakan coba lagi.');
         }
@@ -730,12 +713,12 @@ $("#btn-confirm-close-trx").on("click", function() {
             actual_cash: actualCash,
             notes: notes
         },
-        success: function (res) {
+        success: function(res) {
             alert('Transaksi berhasil ditutup!');
             $('#modal-close-trx').modal('hide');
             // refresh data atau redirect jika perlu
         },
-        error: function (err) {
+        error: function(err) {
             console.error(err);
             alert('Gagal menutup transaksi. Silakan coba lagi.');
         }
@@ -1007,53 +990,50 @@ function loadPivotReport(branchId) {
         data: {
             branch_id: branchId
         },
-        success: function (res) {
-            renderDynamicTable(res);
+        success: function(res) {
+
+            if (!res || res.length === 0) {
+                $('#report-table').html('<tr><td>No data</td></tr>');
+                return;
+            }
+
+            // 🔥 ambil kolom dinamis
+            const keys = Object.keys(res[0]);
+
+            const columns = keys.map((key, index) => ({
+                data: key,
+                title: key,
+                className: index === 0 ? 'text-start' : 'text-center',
+                defaultContent: 0,
+                render: function (data) {
+                    if (!isNaN(data)) {
+                        return parseFloat(data).toLocaleString('id-ID');
+                    }
+                    return data;
+                }
+            }));
+
+            // 🔥 destroy jika sudah ada
+            if ($.fn.DataTable.isDataTable('#report-table')) {
+                $('#report-table').DataTable().destroy();
+                $('#report-table').empty();
+            }
+
+            // 🔥 init DataTable
+            $('#report-table').DataTable({
+                data: res,
+                columns: columns,
+                scrollX: true, // wajib untuk pivot
+                autoWidth: false,
+                pageLength: 10,
+                searching: true,
+            });
+
         },
-        error: function (err) {
+        error: function(err) {
             console.error(err);
             alert('Gagal mengambil data report');
         }
-    });
-}
-
-function renderDynamicTable(data) {
-    const $thead = $('#report-table thead');
-    const $tbody = $('#report-table tbody');
-
-    $thead.empty();
-    $tbody.empty();
-
-    if (!data || data.length === 0) {
-        $tbody.append(`
-            <tr>
-                <td colspan="100%" class="text-center">No data available</td>
-            </tr>
-        `);
-        return;
-    }
-
-    // 1. Build Header
-    const columns = Object.keys(data[0]);
-
-    let headerHtml = '<tr class="text-start fw-bolder fs-7 text-uppercase gs-0">';
-    columns.forEach(col => {
-        headerHtml += `<th>${col}</th>`;
-    });
-    headerHtml += '</tr>';
-
-    $thead.html(headerHtml);
-
-    // 2. Build Body
-    data.forEach(row => {
-        let rowHtml = '<tr>';
-
-        columns.forEach(col => {
-            rowHtml += `<td>${row[col] ?? 0}</td>`;
-        });
-
-        rowHtml += '</tr>';
-        $tbody.append(rowHtml);
     });
 }
 </script>
