@@ -213,4 +213,58 @@ class DailyReportController extends Controller
             'data' => $data
         ]);
     }
+
+    public function getDataFromPosSessions() {
+        $branchId = Auth::user()->branch_id;
+        // $data = DB::table('pos_sessions')
+        //     ->where('branch_id', $branchId)
+        //     ->whereNull('closed_at')
+        //     ->first();
+
+        $data = DB::table('pos_sessions as ps')
+        ->leftJoin('cash_movements as cm', 'cm.pos_session_id', '=', 'ps.id')
+        ->selectRaw("
+            ps.opening_cash,
+            COALESCE(SUM(
+                CASE
+                    WHEN cm.direction = 'IN' THEN cm.amount
+                    WHEN cm.direction = 'OUT' THEN -cm.amount
+                    ELSE 0
+                END
+            ), 0) as total_cash_in_cashier
+        ")
+        ->where('ps.branch_id', $branchId)
+        ->whereNull('ps.closed_at')
+        ->groupBy('ps.id', 'ps.opening_cash')
+        ->first();
+
+        return response()->json($data);
+    }
+
+    public function closeTransaction(Request $request) {
+        $branchId = Auth::user()->branch_id;
+        $params = $request->all();
+
+        // Validasi input
+        $request->validate([
+            'closing_cash' => 'required|numeric',
+            'actual_cash' => 'required|numeric',
+            'notes' => 'nullable|string',
+        ]);
+
+        // Update pos_sessions untuk menutup transaksi
+        DB::table('pos_sessions')
+            ->where('branch_id', $branchId)
+            ->where('status', 'OPEN')
+            ->update([
+                'status' => 'CLOSED',
+                'closed_at' => now(),
+                'closing_cash' => $params['closing_cash'],
+                'expected_cash' => $params['actual_cash'],
+                'notes' => $params['notes'] ?? null,
+                'updated_at' => now()
+            ]);
+
+        return response()->json(['message' => 'Transaksi berhasil ditutup']);
+    }
 }

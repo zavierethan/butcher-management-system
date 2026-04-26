@@ -159,7 +159,8 @@
                                         <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
                                             <th class="min-w-70px">Tanggal Pembayaran</th>
                                             <th class="min-w-70px">Ref.</th>
-                                            <th class="min-w-70px">Nominal</th>
+                                            <th class="min-w-70px">Total Tagihan</th>
+                                            <th class="min-w-70px">Nominal Bayar</th>
                                             <th class="min-w-70px">Bukti Pembayaran</th>
                                             <th class="min-w-70px text-center">Action</th>
                                         </tr>
@@ -174,6 +175,19 @@
                                             <td>
                                                 <input class="form-control form-control-sm me-2 reference" type="text"
                                                     name="reference" value="{{$py->reference}}"/>
+                                            </td>
+                                            <td>
+                                                <div class="position-relative mb-3">
+                                                    <select class="form-select form-select-solid" data-control="select2"
+                                                        data-placeholder="-" name="status" id="status">
+                                                        <option value="">-</option>
+                                                        @foreach($invoices as $inv)
+                                                            <option value="{{ $inv->id }}" {{ $py->invoice_id == $inv->id ? 'selected' : '' }}>
+                                                                {{ $inv->invoice_no }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
                                             </td>
                                             <td><input class="form-control form-control-sm me-2 amount-paid" type="text"
                                                     name="amount_paid" value="{{$py->amount_paid}}"/>
@@ -225,8 +239,18 @@ $(document).on("click", "#add-row", function(e) {
                         name="date"/>
                 </td>
                 <td>
+                    <select class="form-select" data-control="select2" data-placeholder="-" name="status" id="status">
+                        <option value="">-</option>
+                        @foreach($invoices as $inv)
+                            <option value="{{ $inv->id }}">
+                                {{ $inv->invoice_no }}
+                            </option>
+                        @endforeach
+                    </select>
+                </td>
+                <td>
                     <input class="form-control form-control-sm me-2 reference" type="text"
-                        name="reference"/>
+                        name="reference" value="0"/>
                 </td>
                 <td><input class="form-control form-control-sm me-2 amount-paid" type="text"
                         name="amount_paid" value="0" /></td>

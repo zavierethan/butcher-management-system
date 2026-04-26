@@ -136,6 +136,7 @@ class AccountReceivableController extends Controller
         ->leftJoin('transactions', 'transactions.id', '=', 'receivables.transaction_id')
         ->leftJoin('customers', 'customers.id', '=', 'receivables.customer_id')->where('receivables.id', $id)->first();
 
+        $invoices = DB::table('invoices')->get();
         $payments = DB::table('payments')
             ->select(
                 'payment_date',
@@ -145,7 +146,7 @@ class AccountReceivableController extends Controller
             )
             ->where('receivable_id', $receivable->id)->get();
 
-        return view('modules.finances.account-receivable.edit', compact('receivable', 'payments'));
+        return view('modules.finances.account-receivable.edit', compact('receivable', 'payments', 'invoices'));
     }
 
     public function savePayments(Request $request) {

@@ -45,23 +45,27 @@
                         <input type="date"
                             class="form-control form-control-solid text-gray-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
                             id="date" value="{{ date('Y-m-d') }}" {{ Auth::user()->group_id != 1 ? 'readonly' : '' }}>
-                        @if(Auth::user()->group_id == 1)
                         <div class="text-gray-500 fs-7 me-2">Store</div>
                         <select
                             class="form-select form-select-transparent text-gray-900 fs-7 lh-1 fw-bold py-0 ps-3 w-auto"
                             data-control="select2" data-hide-search="true" data-dropdown-css-class="w-150px"
-                            data-placeholder="Select an option" id="branch">
-                            <option value=" " selected="selected">Show All</option>
+                            data-placeholder="Select an option" id="branch"
+                            {{ Auth::user()->group_id != 1 ? 'disabled' : '' }}>
+                            <option value="" selected="selected">Show All</option>
                             @foreach($branches as $branch)
-                            <option value="{{$branch->id}}">
+                            <option value="{{$branch->id}}"
+                                {{ Auth::user()->branch_id == $branch->id ? 'selected' : '' }}>
                                 {{$branch->name}}
                             </option>
                             @endforeach
                         </select>
-                        @endif
                     </div>
                     <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export ke Excel</a>
                     <!--end::Secondary button-->
+                    <button type="button" class="btn btn-danger d-flex align-items-center gap-2" id="btn-close-trx">
+                        <i class="bi bi-cash-stack"></i>
+                        Tutup Transaksi
+                    </button>
                 </div>
                 <!--end::Actions-->
             </div>
@@ -323,7 +327,8 @@
                                 <h3 class="card-title fw-bold">Detail Pengeluaran</h3>
                             </div>
                             <div class="card-body pt-3 overflow-x-auto">
-                                <table class="table table-hover align-middle table-row-dashed fs-6 gy-5" id="kt_expenses_table">
+                                <table class="table table-hover align-middle table-row-dashed fs-6 gy-5"
+                                    id="kt_expenses_table">
                                     <thead>
                                         <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                             <th class="min-w-125px">Deskripsi</th>
@@ -347,7 +352,8 @@
                                 <h3 class="card-title fw-bold">Detail Pembayaran Piutang</h3>
                             </div>
                             <div class="card-body pt-3 overflow-x-auto">
-                                <table class="table table-hover align-middle table-row-dashed fs-6 gy-5" id="kt_receive_table">
+                                <table class="table table-hover align-middle table-row-dashed fs-6 gy-5"
+                                    id="kt_receive_table">
                                     <thead>
                                         <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                             <th class="min-w-125px">Customer</th>
@@ -412,6 +418,66 @@
         <!--end::Content container-->
     </div>
     <!--end::Content-->
+
+    <div class="modal fade" id="modal-close-trx" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Tutup Transaksi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="fv-row mb-5">
+                        <div class="mb-1">
+                            <label class="form-label fw-bold fs-6 mb-2">Opening Cash</label>
+                            <div class="position-relative mb-3">
+                                <input class="form-control form-control-md form-control-solid"
+                                    type="number" name="opening_cash" id="opening_cash" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="separator my-5"></div>
+                    <div class="fv-row mb-5">
+                        <div class="mb-1">
+                            <label class="form-label fw-bold fs-6 mb-2">Cash in Cashier</label>
+                            <div class="position-relative mb-3">
+                                <input class="form-control form-control-md form-control-solid"
+                                    type="number" name="closing_cash" id="closing_cash" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="separator my-5"></div>
+                    <div class="fv-row mb-5">
+                        <div class="mb-1">
+                            <label class="form-label fw-bold fs-6 mb-2">Actual Cash</label>
+                            <div class="position-relative mb-3">
+                                <input class="form-control form-control-md form-control-solid"
+                                    type="number" name="actual_cash" id="actual_cash"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="separator my-5"></div>
+                    <div class="fv-row mb-5">
+                        <div class="mb-1">
+                            <label class="form-label fw-bold fs-6 mb-2">Catatan</label>
+                            <div class="position-relative mb-3">
+                                <textarea class="form-control form-control-md form-control-solid" name="notes" id="notes"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="separator my-5"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button class="btn btn-danger" id="btn-confirm-close-trx">Tutup Transaksi</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
 <!--end::Content wrapper-->
 </div>
@@ -513,7 +579,7 @@ $(document).ready(function() {
         ajax: {
             url: `{{route('retails.daily-report.get-daily-expenses')}}`, // Replace with your route
             type: 'GET',
-            data: function (d) {
+            data: function(d) {
                 // Add filter data to the request
                 d.date = $('#date').val();
             },
@@ -521,8 +587,7 @@ $(document).ready(function() {
                 return json.data; // Map the 'data' field
             }
         },
-        columns: [
-            {
+        columns: [{
                 data: 'description',
                 name: 'description',
             },
@@ -548,7 +613,8 @@ $(document).ready(function() {
                     }
 
                     if (row.payment_method == 2) {
-                        payment_method = `<span class="badge bg-warning text-dark">TRANSFER</span>`
+                        payment_method =
+                            `<span class="badge bg-warning text-dark">TRANSFER</span>`
                     }
 
                     return payment_method;
@@ -623,6 +689,63 @@ $("#btn-form-export").on("click", function() {
         },
         complete: function() {
             hideLoader();
+        }
+    });
+});
+
+$("#btn-close-trx").on("click", function() {
+    const date = $('#date').val();          // pastikan ada input ini
+    const branchId = $('#branch_id').val(); // sesuaikan dengan field kamu
+
+    $.ajax({
+        url: '/retails/daily-report/get-data-from-pos-sessions',
+        method: 'GET', // atau POST sesuai API kamu
+        data: {
+            date: date,
+            branch_id: branchId
+        },
+        success: function (res) {
+            // asumsi response JSON
+            // contoh: { total_cash: 100000, total_trx: 20, ... }
+
+            // Autofill ke modal
+            $('#opening_cash').val(res.opening_cash);
+            $('#closing_cash').val(res.total_cash_in_cashier);
+
+            // tampilkan modal
+            $('#modal-close-trx').modal('show');
+        },
+        error: function (err) {
+            console.error(err);
+            alert('Gagal mengambil data. Silakan coba lagi.');
+        }
+    });
+});
+
+$("#btn-confirm-close-trx").on("click", function() {
+    const closingCash = $('#closing_cash').val();
+    const actualCash = $('#actual_cash').val();
+    const notes = $('#notes').val();
+
+    $.ajax({
+        url: '/retails/daily-report/close-transaction',
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: {
+            closing_cash: closingCash,
+            actual_cash: actualCash,
+            notes: notes
+        },
+        success: function (res) {
+            alert('Transaksi berhasil ditutup!');
+            $('#modal-close-trx').modal('hide');
+            // refresh data atau redirect jika perlu
+        },
+        error: function (err) {
+            console.error(err);
+            alert('Gagal menutup transaksi. Silakan coba lagi.');
         }
     });
 });
@@ -840,7 +963,9 @@ function fetchSummary(params) {
             $("#total-discount").text(formatRupiah(response.total_discount));
             $('#total-cash').text(formatRupiah(response.total_cash));
             $('#total-kasir').text(formatRupiah(response.total_cash_in_casheer));
-            $('#total-selisih').text('Selisih antara Uang di kasir dan total uang tunai adalah : ' + formatRupiah(response.total_cash - response.total_cash_expanse + response.total_cash_receive));
+            $('#total-selisih').text('Selisih antara Uang di kasir dan total uang tunai adalah : ' +
+                formatRupiah(response.total_cash - response.total_cash_expanse + response
+                    .total_cash_receive));
         },
         error: function(xhr) {
             console.error('Error:', xhr.responseText);
