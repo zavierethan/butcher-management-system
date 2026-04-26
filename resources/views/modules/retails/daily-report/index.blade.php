@@ -378,7 +378,7 @@
                                 <h3 class="card-title fw-bold">SVC PFMN</h3>
                             </div>
                             <div class="card-toolbar">
-                                <div class="d-flex flex-stack flex-wrap gap-4">
+                                <!-- <div class="d-flex flex-stack flex-wrap gap-4">
                                     <div class="position-relative my-1">
                                         <i
                                             class="ki-duotone ki-magnifier fs-2 position-absolute top-50 translate-middle-y ms-4">
@@ -389,23 +389,13 @@
                                             class="form-control form-control-solid w-250px ps-15"
                                             placeholder="Nama Produk" />
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                         <div class="card-body pt-0 overflow-x-auto">
-                            <table class="table table-hover align-middle table-row-dashed fs-6 gy-5" id="kt_svc_table">
+                            <table class="table table-hover align-middle table-row-dashed fs-6 gy-5" id="report-table">
                                 <thead>
-                                    <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">Kode Produk</th>
-                                        <th class="min-w-125px">Nama Produk</th>
-                                        <th class="min-w-125px">Tanggal Opname</th>
-                                        <th class="min-w-125px">Stock Awal</th>
-                                        <th class="min-w-125px">Stock Masuk</th>
-                                        <th class="min-w-125px">Stock Keluar</th>
-                                        <th class="min-w-125px">Stock Akhir</th>
-                                        <th class="min-w-125px">Hasil Opname</th>
-                                        <th class="min-w-125px">Selisih</th>
-                                    </tr>
+
                                 </thead>
                                 <tbody class="fw-bold text-gray-600">
                                 </tbody>
@@ -506,6 +496,8 @@ $(document).ready(function() {
     fetchIncomeComposition(initialDate);
     // Initialize charts with dummy data
     initializePieChart();
+
+    loadPivotReport($('#branch').val());
 
     const table = $("#kt_products_table").DataTable({
         processing: true,
@@ -1005,6 +997,63 @@ function fetchIncomeComposition(params) {
             console.log('Done fetching income composition');
             hideLoader();
         }
+    });
+}
+
+function loadPivotReport(branchId) {
+    $.ajax({
+        url: '/retails/daily-report/get-product-qty-pivot-today',
+        method: 'GET',
+        data: {
+            branch_id: branchId
+        },
+        success: function (res) {
+            renderDynamicTable(res);
+        },
+        error: function (err) {
+            console.error(err);
+            alert('Gagal mengambil data report');
+        }
+    });
+}
+
+function renderDynamicTable(data) {
+    const $thead = $('#report-table thead');
+    const $tbody = $('#report-table tbody');
+
+    $thead.empty();
+    $tbody.empty();
+
+    if (!data || data.length === 0) {
+        $tbody.append(`
+            <tr>
+                <td colspan="100%" class="text-center">No data available</td>
+            </tr>
+        `);
+        return;
+    }
+
+    // 1. Build Header
+    const columns = Object.keys(data[0]);
+
+    let headerHtml = '<tr class="text-start fw-bolder fs-7 text-uppercase gs-0">';
+    columns.forEach(col => {
+        headerHtml += `<th>${col}</th>`;
+    });
+    headerHtml += '</tr>';
+
+    $thead.html(headerHtml);
+
+    // 2. Build Body
+    data.forEach(row => {
+        let rowHtml = '<tr>';
+
+        columns.forEach(col => {
+            rowHtml += `<td>${row[col] ?? 0}</td>`;
+        });
+
+        rowHtml += '</tr>';
+        $tbody.append(rowHtml);
     });
 }
 </script>

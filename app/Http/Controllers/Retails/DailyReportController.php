@@ -267,4 +267,62 @@ class DailyReportController extends Controller
 
         return response()->json(['message' => 'Transaksi berhasil ditutup']);
     }
+
+    public function getProductQtyPivotToday(Request $request) {
+
+        $branchId = Auth::user()->branch_id;
+        // 1. Ambil semua butcher dari master (bukan dari transactions)
+        $butchers = DB::table('butcherees')
+            ->where('branch_id', $branchId)
+            ->pluck('name');
+
+        // 2. Build dynamic columns
+        $columns = [];
+        foreach ($butchers as $b) {
+            $alias = str_replace('"', '""', $b);
+
+            $columns[] = "
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN t.butcher_name = ? THEN ti.quantity
+                            ELSE 0
+                        END
+                    ), 0
+                ) AS \"$alias\"
+            ";
+        }
+
+        // 3. Query utama
+        $sql = "
+            SELECT
+                p.name,
+                " . (count($columns) ? implode(",\n", $columns) : "0 AS \"no_data\"") . "
+            FROM products p
+            LEFT JOIN transaction_items ti
+                ON ti.product_id = p.id
+            LEFT JOIN transactions t
+                ON t.id = ti.transaction_id
+                AND t.transaction_date >= CURRENT_DATE
+                AND t.transaction_date < CURRENT_DATE + INTERVAL '1 day'
+                AND t.branch_id = ?
+            GROUP BY p.id, p.name
+            ORDER BY p.sort_order
+        ";
+
+        // 4. Bindings
+        $bindings = [];
+
+        // binding untuk CASE WHEN butcher_name
+        foreach ($butchers as $b) {
+            $bindings[] = $b;
+        }
+
+        // binding untuk branch_id
+        $bindings[] = $branchId;
+
+        // 5. Execute
+        return response()->json(DB::select($sql, $bindings));
+
+    }
 }
