@@ -105,8 +105,6 @@
                                             </div>
                                         </div>
                                         <div class="separator my-5"></div>
-                                    </div>
-                                    <div class="col-md-6">
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Jenis Pembayaran</label>
@@ -117,16 +115,6 @@
                                                         <option value="1">TUNAI</option>
                                                         <option value="2">TRANSFER</option>
                                                     </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="separator my-5"></div>
-                                        <div class="fv-row mb-5">
-                                            <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Total Nominal</label>
-                                                <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid"
-                                                        type="text" name="amount" id="total-amount"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -147,6 +135,52 @@
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
                                                         type="file" name="attachment" id="attachment"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Harga</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid"
+                                                        type="number" name="price" id="price"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Quantity</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid"
+                                                        type="number" name="quantity" id="quantity"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Satuan</label>
+                                                <div class="position-relative mb-3">
+                                                    <select class="form-select form-select-solid" data-control="select2"
+                                                        data-placeholder="-" name="unit" id="unit">
+                                                        <option value="">-</option>
+                                                        <option value="UNIT">UNIT</option>
+                                                        <option value="KG">KG</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Total Harga</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid"
+                                                        type="number" name="total_price" id="total-price"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -195,13 +229,21 @@ $(document).on('click', '#btn-submit', function(e) {
             if (result.isConfirmed) {
                 var formData = new FormData();
 
+                let price = parseFloat($('#price').val()) || 0;
+                let quantity = parseFloat($('#quantity').val()) || 0;
+
+                let amount = price * quantity;
+
                 formData.append('date', $('#date').val());
                 formData.append('description', $('#description').val());
                 formData.append('credit', $('#credit').val());
                 formData.append('debit', $('#debit').val());
                 formData.append('reference', $('#reference').val());
                 formData.append('payment_method', $('#payment-method').val());
-                formData.append('total_amount', parseInt($('#total-amount').val().replace(/[^\d]/g, ''), 10) || 0);
+                formData.append('price', $('#price').val());
+                formData.append('quantity', $('#quantity').val());
+                formData.append('unit', $('#unit').val());
+                formData.append('amount', amount);
 
                 // Append file (only if selected)
                 var attachment = $('#attachment')[0].files[0];
@@ -232,12 +274,22 @@ $(document).on('click', '#btn-submit', function(e) {
                         });
                     },
                     error: function(xhr, status, error) {
-                        console.log(xhr.responseText);
-                        Swal.fire(
-                            'Error!',
-                            'Gagal mengupload file atau menyimpan data',
-                            'error'
-                        );
+                        let message = 'Terjadi kesalahan';
+
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            message = xhr.responseJSON.message;
+                        } else if (xhr.responseText) {
+                            try {
+                                let res = JSON.parse(xhr.responseText);
+                                message = res.message || message;
+                            } catch (e) {
+                                message = xhr.responseText;
+                            }
+                        }
+
+                        console.log("ERROR:", xhr);
+
+                        Swal.fire('Error!', message, 'error');
                     }
                 });
             }

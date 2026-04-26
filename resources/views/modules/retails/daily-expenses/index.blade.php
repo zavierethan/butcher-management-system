@@ -94,7 +94,9 @@
                                         <th class="min-w-125px">TANGGAL</th>
                                         <th class="min-w-125px">DESKRIPSI</th>
                                         <th class="min-w-125px">REF.</th>
-                                        <th class="min-w-125px text-end">TOTAL</th>
+                                        <th class="min-w-125px text-end">HARGA</th>
+                                        <th class="min-w-125px text-end">QUANITY</th>
+                                        <th class="min-w-125px text-end">TOTAL HARGA</th>
                                         <th class="min-w-125px text-center">JENIS PEMBAYARAN</th>
                                         <th class="text-center min-w-70px">ACTIONS</th>
                                     </tr>
@@ -153,6 +155,16 @@ $(document).ready(function() {
             {
                 data: 'reference',
                 name: 'reference'
+            },
+            {
+                data: 'price',
+                name: 'price',
+                className: 'text-end'
+            },
+            {
+                data: 'quantity',
+                name: 'quantity',
+                className: 'text-end'
             },
             {
                 data: 'amount',

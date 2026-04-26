@@ -109,8 +109,6 @@
                                             </div>
                                         </div>
                                         <div class="separator my-5"></div>
-                                    </div>
-                                    <div class="col-md-6">
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Jenis Pembayaran</label>
@@ -121,16 +119,6 @@
                                                         <option value="1" <?php echo ($data->payment_method == 1) ? 'selected' : '';?>>Tunai</option>
                                                         <option value="2" <?php echo ($data->payment_method == 2) ? 'selected' : '';?>>Transfer</option>
                                                     </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="separator my-5"></div>
-                                        <div class="fv-row mb-5">
-                                            <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Total Nominal</label>
-                                                <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid"
-                                                        type="text" name="amount" value="{{$data->amount}}"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -151,6 +139,52 @@
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
                                                         type="file" name="attachment" id="attachment"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Harga</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid"
+                                                        type="number" name="price" id="price" value="{{$data->price}}"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Quantity</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid"
+                                                        type="number" name="quantity" id="quantity" value="{{$data->quantity}}"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Satuan</label>
+                                                <div class="position-relative mb-3">
+                                                    <select class="form-select form-select-solid" data-control="select2"
+                                                        data-placeholder="-" name="unit" id="unit">
+                                                        <option value="">-</option>
+                                                        <option value="UNIT" {{ $data->unit == 'UNIT' ? 'selected' : '' }}>UNIT</option>
+                                                        <option value="KG" {{ $data->unit == 'KG' ? 'selected' : '' }}>KG</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Total Harga</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid"
+                                                        type="text" name="amount" value="{{$data->amount}}"/>
                                                 </div>
                                             </div>
                                         </div>

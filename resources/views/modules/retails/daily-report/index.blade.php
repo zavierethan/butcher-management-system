@@ -42,11 +42,23 @@
                         <!--begin::Label-->
                         <div class="text-gray-500 fs-7 me-2">Tanggal</div>
                         <!--end::Label-->
-                        <!--begin::Select-->
                         <input type="date"
-                            class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
-                            id="date" value="<?php echo date("Y-m-d"); ?>" />
-                        <!--end::Select-->
+                            class="form-control form-control-solid text-gray-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
+                            id="date" value="{{ date('Y-m-d') }}" {{ Auth::user()->group_id != 1 ? 'readonly' : '' }}>
+                        @if(Auth::user()->group_id == 1)
+                        <div class="text-gray-500 fs-7 me-2">Store</div>
+                        <select
+                            class="form-select form-select-transparent text-gray-900 fs-7 lh-1 fw-bold py-0 ps-3 w-auto"
+                            data-control="select2" data-hide-search="true" data-dropdown-css-class="w-150px"
+                            data-placeholder="Select an option" id="branch">
+                            <option value=" " selected="selected">Show All</option>
+                            @foreach($branches as $branch)
+                            <option value="{{$branch->id}}">
+                                {{$branch->name}}
+                            </option>
+                            @endforeach
+                        </select>
+                        @endif
                     </div>
                     <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export ke Excel</a>
                     <!--end::Secondary button-->
@@ -90,10 +102,15 @@
             </div>
             <!--end::Loader Backdrop-->
             <style>
-                @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
                 }
+
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
             </style>
             <!--begin::Content container-->
             <div id="kt_app_content_container" class="app-container">
@@ -115,7 +132,7 @@
                                 <div class="d-flex flex-column">
                                     <span class="text-gray-700 fs-7 fw-semibold mb-2">TOTAL OMZET</span>
                                     <span class="fw-bold fs-2 text-gray-900" id="total-revenue">Rp.0</span>
-                                    <span class="text-gray-600 fs-8" id="total-transactions">0 Transaksi</span>
+                                    <span class="text-gray-600 fs-8" id="total-transactions"></span>
                                 </div>
                             </div>
                         </div>
@@ -158,6 +175,7 @@
                                 <div class="d-flex flex-column">
                                     <span class="text-gray-700 fs-7 fw-semibold mb-2">UANG DI KASIR</span>
                                     <span class="fw-bold fs-2 text-gray-900" id="total-kasir">Rp.0</span>
+                                    <span class="text-gray-600 fs-8" id="total-selisih"></span>
                                 </div>
                             </div>
                         </div>
@@ -193,7 +211,7 @@
                         <!-- Revenue Summary Table -->
                         <div class="card card-flush">
                             <div class="card-header pt-5">
-                                <h3 class="card-title fw-bold">RINGKASAN PEMASUKAN</h3>
+                                <h3 class="card-title fw-bold">Ringkasan Transaksi</h3>
                             </div>
                             <div class="card-body pt-3 overflow-x-auto">
                                 <table class="table table-striped fs-7 align-middle">
@@ -250,7 +268,7 @@
                     <div class="col-lg-6">
                         <div class="card card-flush">
                             <div class="card-header pt-5">
-                                <h3 class="card-title fw-bold">KOMPOSISI PEMASUKAN</h3>
+                                <h3 class="card-title fw-bold">Komposisi Transaksi</h3>
                             </div>
                             <div class="card-body pt-5 pb-5">
                                 <div class="row align-items-center">
@@ -285,28 +303,6 @@
                                                     <span class="fs-8 fw-bold text-end" id="legend-piutang">Rp 0
                                                         (0%)</span>
                                                 </div>
-                                                <div class="d-flex align-items-center mb-3">
-                                                    <span class="badge badge-warning me-2"
-                                                        style="width: 14px; height: 14px; border-radius: 2px;"></span>
-                                                    <span class="fs-8 text-gray-700 me-auto">Pengeluaran Tunai</span>
-                                                    <span class="fs-8 fw-bold text-end" id="legend-pengeluaran-tunai">Rp
-                                                        0 (0%)</span>
-                                                </div>
-                                                <div class="d-flex align-items-center mb-3">
-                                                    <span class="badge"
-                                                        style="background-color: #FCA5A5; width: 14px; height: 14px; border-radius: 2px;"></span>
-                                                    <span class="fs-8 text-gray-700 me-auto">Pembayaran Piutang</span>
-                                                    <span class="fs-8 fw-bold text-end"
-                                                        id="legend-pembayaran-piutang">Rp 0 (0%)</span>
-                                                </div>
-                                                <div class="d-flex align-items-center">
-                                                    <span class="badge badge-danger me-2"
-                                                        style="width: 14px; height: 14px; border-radius: 2px;"></span>
-                                                    <span class="fs-8 text-gray-700 me-auto">Pembayaran Piutang
-                                                        Transfer</span>
-                                                    <span class="fs-8 fw-bold text-end"
-                                                        id="legend-pembayaran-transfer">Rp 0 (0%)</span>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -317,21 +313,66 @@
                 </div>
                 <!-- End Main Content Row -->
 
+                <!-- Main Content Row -->
                 <div class="row gy-5 g-xl-10 mb-5">
-                    <!--begin::Table-->
-                    <div class="card">
-                        <div class="card-header border-0 pt-6">
-                            <!--begin::Card title-->
-                            <div class="card-title">
-                                <!--begin::Search-->
-                                <h3 class="card-title fw-bold">STOK PRODUK</h3>
-                                <!--end::Search-->
+                    <!-- Left Column: Table -->
+                    <div class="col-lg-6">
+                        <!-- Revenue Summary Table -->
+                        <div class="card card-flush">
+                            <div class="card-header pt-5">
+                                <h3 class="card-title fw-bold">Detail Pengeluaran</h3>
                             </div>
-                            <!--begin::Card toolbar-->
+                            <div class="card-body pt-3 overflow-x-auto">
+                                <table class="table table-hover align-middle table-row-dashed fs-6 gy-5" id="kt_expenses_table">
+                                    <thead>
+                                        <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                            <th class="min-w-125px">Deskripsi</th>
+                                            <th class="min-w-125px">Qty</th>
+                                            <th class="min-w-125px">Harga / PCS</th>
+                                            <th class="min-w-125px">Tunai / Tansfer</th>
+                                            <th class="min-w-125px">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Bar/Line Chart -->
+                    <div class="col-lg-6">
+                        <div class="card card-flush">
+                            <div class="card-header pt-5">
+                                <h3 class="card-title fw-bold">Detail Pembayaran Piutang</h3>
+                            </div>
+                            <div class="card-body pt-3 overflow-x-auto">
+                                <table class="table table-hover align-middle table-row-dashed fs-6 gy-5" id="kt_receive_table">
+                                    <thead>
+                                        <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                            <th class="min-w-125px">Customer</th>
+                                            <th class="min-w-125px">Nomor Transaksi</th>
+                                            <th class="min-w-125px">Tanggal Transaksi</th>
+                                            <th class="min-w-125px">Nominal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Main Content Row -->
+
+                <div class="row gy-5 g-xl-10 mb-5">
+                    <div class="card card-flush">
+                        <div class="card-header border-0 pt-6">
+                            <div class="card-title">
+                                <h3 class="card-title fw-bold">SVC PFMN</h3>
+                            </div>
                             <div class="card-toolbar">
-                                <!--begin::Toolbar-->
                                 <div class="d-flex flex-stack flex-wrap gap-4">
-                                    <!--begin::Search-->
                                     <div class="position-relative my-1">
                                         <i
                                             class="ki-duotone ki-magnifier fs-2 position-absolute top-50 translate-middle-y ms-4">
@@ -342,20 +383,12 @@
                                             class="form-control form-control-solid w-250px ps-15"
                                             placeholder="Nama Produk" />
                                     </div>
-                                    <!--end::Search-->
                                 </div>
-                                <!--end::Toolbar-->
                             </div>
-                            <!--end::Card toolbar-->
                         </div>
-                        <!--begin::Card body-->
                         <div class="card-body pt-0 overflow-x-auto">
-                            <!--begin::Table-->
-                            <table class="table table-hover align-middle table-row-dashed fs-6 gy-5"
-                                id="kt_products_table">
-                                <!--begin::Table head-->
+                            <table class="table table-hover align-middle table-row-dashed fs-6 gy-5" id="kt_svc_table">
                                 <thead>
-                                    <!--begin::Table row-->
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">Kode Produk</th>
                                         <th class="min-w-125px">Nama Produk</th>
@@ -367,19 +400,12 @@
                                         <th class="min-w-125px">Hasil Opname</th>
                                         <th class="min-w-125px">Selisih</th>
                                     </tr>
-                                    <!--end::Table row-->
                                 </thead>
-                                <!--end::Table head-->
-                                <!--begin::Table body-->
                                 <tbody class="fw-bold text-gray-600">
                                 </tbody>
-                                <!--end::Table body-->
                             </table>
-                            <!--end::Table-->
                         </div>
-                        <!--end::Card body-->
                     </div>
-                    <!--end::Table-->
                 </div>
             </div>
         </div>
@@ -479,6 +505,63 @@ $(document).ready(function() {
         ]
     });
 
+    const expenesTable = $("#kt_expenses_table").DataTable({
+        processing: true,
+        serverSide: true,
+        paging: true, // Enable pagination
+        pageLength: 5, // Number of rows per page
+        ajax: {
+            url: `{{route('retails.daily-report.get-daily-expenses')}}`, // Replace with your route
+            type: 'GET',
+            data: function (d) {
+                // Add filter data to the request
+                d.date = $('#date').val();
+            },
+            dataSrc: function(json) {
+                return json.data; // Map the 'data' field
+            }
+        },
+        columns: [
+            {
+                data: 'description',
+                name: 'description',
+            },
+            {
+                data: 'quantity',
+                name: 'quantity',
+                className: 'text-end'
+            },
+            {
+                data: 'price',
+                name: 'price',
+                className: 'text-end'
+            },
+            {
+                data: 'payment_method',
+                name: 'payment_method',
+                className: 'text-center',
+                render: function(data, type, row) {
+                    var payment_method = "";
+
+                    if (row.payment_method == 1) {
+                        payment_method = `<span class="badge bg-success text-dark">TUNAI</span>`
+                    }
+
+                    if (row.payment_method == 2) {
+                        payment_method = `<span class="badge bg-warning text-dark">TRANSFER</span>`
+                    }
+
+                    return payment_method;
+                }
+            },
+            {
+                data: 'amount',
+                name: 'amount',
+                className: 'text-end'
+            }
+        ]
+    });
+
     $('#date').on('change', function() {
         var param = $(this).val();
 
@@ -486,6 +569,7 @@ $(document).ready(function() {
         fetchIncomeComposition(param);
 
         table.draw();
+        expenesTable.draw();
     });
 });
 
@@ -591,18 +675,13 @@ function initializePieChart() {
     pieChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['Tunai', 'Transfer', 'Piutang', 'Pengeluaran Tunai', 'Pembayaran Piutang',
-                'Pembayaran Piutang Transfer'
-            ],
+            labels: ['Tunai', 'Transfer', 'Piutang'],
             datasets: [{
-                data: [57.4, 24.9, 17.7, 8.2, 0.0, 77.7],
+                data: [57.4, 24.9, 17.7],
                 backgroundColor: [
-                    '#10B981', // Tunai - Green
-                    '#34D399', // Transfer - Light Green
+                    '#104bb9', // Tunai - Green
+                    '#a3d334', // Transfer - Light Green
                     '#6EE7B7', // Piutang - Lighter Green
-                    '#FBBF24', // Pengeluaran Tunai - Yellow
-                    '#FCA5A5', // Pembayaran Piutang - Light Red
-                    '#EF4444' // Pembayaran Piutang Transfer - Red
                 ],
                 borderColor: '#fff',
                 borderWidth: 2
@@ -632,47 +711,37 @@ function updatePieChart(data) {
     if (!pieChart || !data) return;
 
     // Calculate total
-    const total = parseFloat(data.total_cash) +
+    const total =
+        parseFloat(data.total_cash) +
         parseFloat(data.total_transfer) +
         parseFloat(data.total_receivable) +
         parseFloat(data.total_cash_expanse) +
-        parseFloat(data.total_transfer_expanse) +
-        parseFloat(data.total_cash_payment_of_receivable) +
-        parseFloat(data.total_transfer_payment_of_receivable);
+        parseFloat(data.total_transfer_expanse);
 
     // Avoid division by zero
     if (total === 0) {
-        pieChart.data.datasets[0].data = [0, 0, 0, 0, 0, 0];
+        pieChart.data.datasets[0].data = [0, 0, 0];
         pieChart.update();
         updateLegend({
             total_cash: 0,
             total_transfer: 0,
-            total_receivable: 0,
-            total_cash_expanse: 0,
-            total_transfer_expanse: 0,
-            total_cash_payment_of_receivable: 0,
-            total_transfer_payment_of_receivable: 0
+            total_receivable: 0
         }, 0);
         updateIncomeTable({
             total_cash: 0,
             total_transfer: 0,
             total_receivable: 0,
             total_cash_expanse: 0,
-            total_transfer_expanse: 0,
-            total_cash_payment_of_receivable: 0,
-            total_transfer_payment_of_receivable: 0
+            total_transfer_expanse: 0
         });
         return;
     }
 
     // Calculate percentages
     const percentages = [
-        (parseFloat(data.total_cash) / total) * 100, // Tunai
-        (parseFloat(data.total_transfer) / total) * 100, // Transfer
-        (parseFloat(data.total_receivable) / total) * 100, // Piutang
-        (parseFloat(data.total_cash_expanse) / total) * 100, // Pengeluaran Tunai
-        (parseFloat(data.total_cash_payment_of_receivable) / total) * 100, // Pembayaran Piutang
-        (parseFloat(data.total_transfer_payment_of_receivable) / total) * 100 // Pembayaran Piutang Transfer
+        ((parseFloat(data.total_cash) / total) * 100).toFixed(1), // Tunai
+        ((parseFloat(data.total_transfer) / total) * 100).toFixed(1), // Transfer
+        ((parseFloat(data.total_receivable) / total) * 100).toFixed(1), // Piutang
     ];
 
     pieChart.data.datasets[0].data = percentages;
@@ -698,21 +767,6 @@ function updateLegend(data, total) {
             id: 'legend-piutang',
             value: parseFloat(data.total_receivable),
             percentage: total > 0 ? (parseFloat(data.total_receivable) / total) * 100 : 0
-        },
-        {
-            id: 'legend-pengeluaran-tunai',
-            value: parseFloat(data.total_cash_expanse),
-            percentage: total > 0 ? (parseFloat(data.total_cash_expanse) / total) * 100 : 0
-        },
-        {
-            id: 'legend-pembayaran-piutang',
-            value: parseFloat(data.total_cash_payment_of_receivable),
-            percentage: total > 0 ? (parseFloat(data.total_cash_payment_of_receivable) / total) * 100 : 0
-        },
-        {
-            id: 'legend-pembayaran-transfer',
-            value: parseFloat(data.total_transfer_payment_of_receivable),
-            percentage: total > 0 ? (parseFloat(data.total_transfer_payment_of_receivable) / total) * 100 : 0
         }
     ];
 
@@ -743,14 +797,6 @@ function updateIncomeTable(data) {
         {
             id: 'table-pengeluaran-transfer',
             value: parseFloat(data.total_transfer_expanse)
-        },
-        {
-            id: 'table-pembayaran-piutang',
-            value: parseFloat(data.total_cash_payment_of_receivable)
-        },
-        {
-            id: 'table-pembayaran-transfer',
-            value: parseFloat(data.total_transfer_payment_of_receivable)
         }
     ];
 
@@ -790,10 +836,11 @@ function fetchSummary(params) {
 
             // Example mapping (adjust based on your JSON structure)
             $('#total-revenue').text(formatRupiah(response.total_revenue));
-            $('#total-transactions').text(response.total_transactions + ' Transaksi');
+            $('#total-transactions').text('Total Transaksi: ' + response.total_transactions);
             $("#total-discount").text(formatRupiah(response.total_discount));
             $('#total-cash').text(formatRupiah(response.total_cash));
             $('#total-kasir').text(formatRupiah(response.total_cash_in_casheer));
+            $('#total-selisih').text('Selisih antara Uang di kasir dan total uang tunai adalah : ' + formatRupiah(response.total_cash - response.total_cash_expanse + response.total_cash_receive));
         },
         error: function(xhr) {
             console.error('Error:', xhr.responseText);

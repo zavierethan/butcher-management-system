@@ -23,6 +23,9 @@ class DailyExpensesController extends Controller
                 DB::raw("TO_CHAR(daily_expenses.date, 'DD/MM/YYYY') as date"),
                 'daily_expenses.description',
                 'daily_expenses.reference',
+                DB::raw("TO_CHAR(daily_expenses.price, 'FM999,999,999') as price"),
+                'daily_expenses.quantity',
+                'daily_expenses.unit',
                 DB::raw("TO_CHAR(daily_expenses.amount, 'FM999,999,999') as amount"),
                 'daily_expenses.status',
                 'daily_expenses.payment_method'
@@ -82,85 +85,88 @@ class DailyExpensesController extends Controller
         return view('modules.retails.daily-expenses.create', compact('debitAccounts', 'creditAccounts'));
     }
 
-    public function save(Request $request) {
+    public function save(Request $request)
+    {
+        DB::transaction(function () use ($request) {
 
-        $base64File = null;
+            $base64File = null;
 
-        if ($request->hasFile('attachment')) {
-            $file = $request->file('attachment');
-            $fileContents = file_get_contents($file->getRealPath());
-            $base64File = base64_encode($fileContents);
-        }
+            if ($request->hasFile('attachment')) {
+                $file = $request->file('attachment');
+                $fileContents = file_get_contents($file->getRealPath());
+                $base64File = base64_encode($fileContents);
+            }
 
-        DB::table('daily_expenses')->insert([
-            'date' => $request->date,
-            'description' => $request->description,
-            'reference' => $request->reference,
-            'payment_method' => $request->payment_method,
-            'amount' => $request->total_amount,
-            'branch_id' => Auth::user()->branch_id,
-            'attachment' => $base64File,
-            'debit' => $request->debit,
-            'credit' => $request->credit,
-            'created_by' => Auth::user()->id
-        ]);
+            DB::table('daily_expenses')->insert([
+                'date' => $request->date,
+                'description' => $request->description,
+                'reference' => $request->reference,
+                'payment_method' => $request->payment_method,
+                'branch_id' => auth()->user()->branch_id,
+                'attachment' => $base64File,
+                'debit' => $request->debit,
+                'credit' => $request->credit,
+                'price' => $request->price,
+                'quantity' => $request->quantity,
+                'unit' => $request->unit,
+                'amount' => $request->amount,
+                'created_by' => auth()->user()->id
+            ]);
 
-        // DB::statement("CALL create_journal_proc(?, ?, ?, ?)", [
-        //     'sales_transfer', $transactionCode, 'Penjualan dengan pembayaran Transfer', $payloads["header"]["total_amount"]
-        // ]);
+            $journalId = DB::table('journals')->insertGetId([
+                "code" => DB::select('SELECT generate_journal_number() AS journal_number')[0]->journal_number,
+                "date" => $request->date,
+                "description" => $request->description,
+                "reference" => $request->reference,
+                "reference_type" => "expenses",
+                "status" => "DRAFT",
+                "created_by" => auth()->user()->id,
+            ]);
 
-        $journalId = DB::table('journals')->insertGetId([
-            "code" => DB::select('SELECT generate_journal_number() AS journal_number')[0]->journal_number,
-            "date" => $request->date,
-            "description" => $request->description,
-            "reference" => $request->reference,
-            "reference_type" => "expenses",
-            "status" => "DRAFT",
-            "created_by" => Auth::user()->id,
-        ]);
+            if ($request->payment_method == '1') {
 
-        if($request->payment_method == '1') {
-            // 🔎 ambil session aktif
                 $session = DB::table('pos_sessions')
-                    ->where('branch_id', Auth::user()->branch_id)
+                    ->where('branch_id', auth()->user()->branch_id)
                     ->where('status', 'OPEN')
-                    ->where('created_at', '>=', now()->startOfDay())
-                    ->where('created_at', '<', now()->endOfDay())
+                    ->whereBetween('created_at', [now()->startOfDay(), now()->endOfDay()])
                     ->first();
 
                 if (!$session) {
                     throw new \Exception('POS session tidak ditemukan / belum dibuka');
                 }
 
-                // 💰 insert cash movement (IN)
                 DB::table('cash_movements')->insert([
                     'pos_session_id' => $session->id,
-                    'user_id'        => Auth::user()->id,
+                    'user_id'        => auth()->user()->id,
                     'type'           => 'SALE',
                     'direction'      => 'OUT',
-                    'amount'         => $request->total_amount,
+                    'amount'         => $request->amount,
                     'reference_type' => 'ORDER',
                     'reference_id'   => $session->id,
                     'description'    => 'Pengeluaran cash',
                     'created_at'     => now()
                 ]);
-        }
+            }
 
-        DB::table('journal_entries')->insert([
-            "journal_id" => $journalId,
-            "account_id" =>  $request->credit,
-            "debit" => 0,
-            "credit" => $request->total_amount
+            DB::table('journal_entries')->insert([
+                "journal_id" => $journalId,
+                "account_id" => $request->credit,
+                "debit" => 0,
+                "credit" => $request->amount
+            ]);
+
+            DB::table('journal_entries')->insert([
+                "journal_id" => $journalId,
+                "account_id" => $request->debit,
+                "debit" => $request->amount,
+                "credit" => 0
+            ]);
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil disimpan'
         ]);
-
-        DB::table('journal_entries')->insert([
-            "journal_id" => $journalId,
-            "account_id" =>  $request->debit,
-            "debit" => $request->total_amount,
-            "credit" => 0
-        ]);
-
-        return redirect()->route('retails.daily-expenses.index');
     }
 
     public function edit($id) {

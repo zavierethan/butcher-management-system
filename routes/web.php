@@ -246,6 +246,7 @@ Route::group(['middleware' => ['auth']], function() {
                     Route::post('/get-income-composition', [App\Http\Controllers\Retails\DailyReportController::class, 'getIncomeComposition'])->name('income-composition');
                     Route::get('/export', [App\Http\Controllers\Retails\DailyReportController::class, 'export'])->name('export');
                     Route::get('/get-stock-report', [App\Http\Controllers\Retails\DailyReportController::class, 'getStockReport'])->name('get-stock-report');
+                    Route::get('/get-daily-expenses', [App\Http\Controllers\Retails\DailyReportController::class, 'getDailyExpenses'])->name('get-daily-expenses');
                 });
             });
 
