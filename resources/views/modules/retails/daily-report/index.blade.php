@@ -372,16 +372,18 @@
                 <!-- End Main Content Row -->
 
                 <div class="row gy-5 g-xl-10 mb-5">
-                    <div class="card card-flush">
-                        <div class="card-header border-0 pt-6">
-                            <div class="card-title">
-                                <h3 class="card-title fw-bold">SVC PFMN</h3>
+                    <div class="col-lg-12">
+                        <div class="card card-flush">
+                            <div class="card-header border-0 pt-6">
+                                <div class="card-title">
+                                    <h3 class="card-title fw-bold">SVC PFMN</h3>
+                                </div>
+                                <div class="card-toolbar">
+                                </div>
                             </div>
-                            <div class="card-toolbar">
+                            <div class="card-body pt-0 overflow-x-auto">
+                                <table id="report-table" class="table table-hover align-middle table-row-dashed fs-6 gy-5"></table>
                             </div>
-                        </div>
-                        <div class="card-body pt-0 overflow-x-auto">
-                            <table id="report-table" class="table table-hover align-middle table-row-dashed fs-6 gy-5"></table>
                         </div>
                     </div>
                 </div>
