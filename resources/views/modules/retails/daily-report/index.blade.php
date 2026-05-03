@@ -357,8 +357,8 @@
                                     <thead>
                                         <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                             <th class="min-w-125px">Customer</th>
-                                            <th class="min-w-125px">Nomor Transaksi</th>
-                                            <th class="min-w-125px">Tanggal Transaksi</th>
+                                            <th class="min-w-125px">Nomor Invoice</th>
+                                            <th class="min-w-125px">Tanggal Invoice</th>
                                             <th class="min-w-125px">Nominal</th>
                                         </tr>
                                     </thead>
@@ -613,6 +613,43 @@ $(document).ready(function() {
 
         table.draw();
         expenesTable.draw();
+        receivableTable.draw();
+    });
+
+    const receivableTable = $("#kt_receive_table").DataTable({
+        processing: true,
+        serverSide: true,
+        paging: true, // Enable pagination
+        pageLength: 5, // Number of rows per page
+        ajax: {
+            url: `{{route('retails.daily-report.get-receivable-payments')}}`, // Replace with your route
+            type: 'GET',
+            data: function(d) {
+                // Add filter data to the request
+                d.date = $('#date').val();
+            },
+            dataSrc: function(json) {
+                return json.data; // Map the 'data' field
+            }
+        },
+        columns: [{
+                data: 'customer_name',
+                name: 'customer_name',
+            },
+            {
+                data: 'invoice_number',
+                name: 'invoice_number',
+            },
+            {
+                data: 'date',
+                name: 'date',
+            },
+            {
+                data: 'amount',
+                name: 'amount',
+                className: 'text-end'
+            }
+        ]
     });
 });
 

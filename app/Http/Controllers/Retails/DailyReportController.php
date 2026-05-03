@@ -241,6 +241,49 @@ class DailyReportController extends Controller
         ]);
     }
 
+    public function getReceivablePayments(Request $request) {
+        $params = $request->all();
+        $query = DB::table('receivable_payments')
+            ->select(
+                'receivable_payments.id',
+                DB::raw("TO_CHAR(receivable_payments.payment_date, 'DD/MM/YYYY') as date"),
+                DB::raw("TO_CHAR(receivable_payments.amount, 'FM999,999,999') as amount"),
+                'receivable_payments.payment_method',
+                'customers.name as customer_name',
+                'invoices.invoice_no as invoice_number'
+            )
+            ->leftJoin('invoices', 'invoices.id', '=', 'receivable_payments.invoice_id')
+            ->leftJoin('customers', 'customers.id', '=', 'invoices.customer_id')
+            ->where('receivable_payments.branch_id', Auth::user()->branch_id);
+
+        if (!empty($params['date'])) {
+            $query->where(DB::raw('DATE(receivable_payments.payment_date)'), $params['date']);
+        }
+
+        // Apply sorting
+        if ($request->has('order') && $request->order) {
+            $columnIndex = $request->order[0]['column']; // Column index from the DataTable
+            $sortDirection = $request->order[0]['dir']; // 'asc' or 'desc'
+            $columnName = $request->columns[$columnIndex]['data']; // Column name
+
+            $query->orderBy($columnName, $sortDirection);
+        }
+
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 10);
+
+        $totalRecords = $query->count();
+        $filteredRecords = $query->count();
+        $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get();
+
+        return response()->json([
+            'draw' => $request->input('draw'),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $data
+        ]);
+    }
+
     public function getDataFromPosSessions() {
         $branchId = Auth::user()->branch_id;
         $data = DB::table('pos_sessions as ps')

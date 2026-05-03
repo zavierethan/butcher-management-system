@@ -146,6 +146,11 @@
                     </div>
 
                     <div class="card card-flush py-4 flex-row-fluid overflow-hidden">
+                        <div class="card-header pt-5">
+                            <h3 class="card-title fw-bold">Detail
+                                Transaksi
+                            </h3>
+                        </div>
                         <!--begin::Card body-->
                         <div class="card-body pt-10 overflow-x-auto">
                             <div class="table-responsive">
@@ -156,7 +161,7 @@
                                             <th class="">No.</th>
                                             <th class="">Nomor Transaksi</th>
                                             <th class="">Tanggal</th>
-                                            <th class="text-end">Total</th>
+                                            <th class="text-end">Total Tagihan</th>
                                             <th class="text-end">Sisa Tagihan</th>
                                         </tr>
                                     </thead>
@@ -171,6 +176,46 @@
                                             <td>{{ $item->transaction_date }}</td>
                                             <td class="text-end">{{ number_format($item->total_amount, 0, '.', ',') }}</td>
                                             <td class="text-end">{{ number_format($item->remaining_amount, 0, '.', ',') }}</td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                                <!--end::Table-->
+                            </div>
+                        </div>
+                        <!--end::Card body-->
+                    </div>
+
+                    <div class="card card-flush py-4 flex-row-fluid overflow-hidden">
+                        <div class="card-header pt-5">
+                            <h3 class="card-title fw-bold">History Pembayaran
+                            </h3>
+                        </div>
+                        <!--begin::Card body-->
+                        <div class="card-body pt-10 overflow-x-auto">
+                            <div class="table-responsive">
+                                <!--begin::Table-->
+                                <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0" id="kt_payment_histories_table">
+                                    <thead>
+                                        <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
+                                            <th class="">No.</th>
+                                            <th class="">Store</th>
+                                            <th class="">Tanggal Pembayaran</th>
+                                            <th class="text-center">Metode Pembayaran</th>
+                                            <th class="text-end">Total Pembayaran</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="fw-semibold text-gray-600">
+                                         @php $counting = 1; @endphp
+                                        @foreach ($paymentHistories as $history)
+                                        <tr>
+                                            <td class="">
+                                                {{ $counting++ }}
+                                            </td>
+                                            <td>{{ $history->branch_name }}</td>
+                                            <td>{{ $history->date }}</td>
+                                            <td class="text-center">{{ $history->payment_method }}</td>
+                                            <td class="text-end">{{ $history->amount }}</td>
                                         </tr>
                                         @endforeach
                                     </tbody>

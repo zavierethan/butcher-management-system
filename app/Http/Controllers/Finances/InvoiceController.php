@@ -272,6 +272,22 @@ class InvoiceController extends Controller
             ->orderBy('transactions.transaction_date', 'asc')
             ->get();
 
-        return view('modules.finances.invoices.edit', compact('customers','invoice', 'invoiceItems'));
+        $paymentHistories = DB::table('receivable_payments')
+            ->select(
+                'receivable_payments.id',
+                DB::raw("TO_CHAR(receivable_payments.payment_date, 'DD/MM/YYYY') as date"),
+                DB::raw("TO_CHAR(receivable_payments.amount, 'FM999,999,999') as amount"),
+                DB::raw("CASE WHEN receivable_payments.payment_method = 1 THEN 'Tunai' ELSE 'Transfer' END as payment_method"),
+                'customers.name as customer_name',
+                'invoices.invoice_no as invoice_number',
+                'branches.name as branch_name'
+            )
+            ->leftJoin('invoices', 'invoices.id', '=', 'receivable_payments.invoice_id')
+            ->leftJoin('customers', 'customers.id', '=', 'invoices.customer_id')
+            ->leftJoin('branches', 'branches.id', '=', 'receivable_payments.branch_id')
+            ->where('invoices.id', $id)
+            ->get();
+
+        return view('modules.finances.invoices.edit', compact('customers','invoice', 'invoiceItems', 'paymentHistories'));
     }
 }
