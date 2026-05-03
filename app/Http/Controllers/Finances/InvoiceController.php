@@ -129,8 +129,8 @@ class InvoiceController extends Controller
                 DB::table('invoice_details')->insertGetId([
                     "invoice_id"       => $invoiceId,
                     "transaction_id"   => $value,
-                    "amount"           => $transaction->total_amount,
-                    "remaining_amount" => $transaction->total_amount,
+                    "amount"           => $transaction->total_amount - $transaction->discount,
+                    "remaining_amount" => $transaction->total_amount - $transaction->discount,
                 ]);
             }
 

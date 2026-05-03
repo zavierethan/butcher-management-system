@@ -172,7 +172,7 @@
                                             <td class="">
                                                 {{ $counting++ }}</a>
                                             </td>
-                                            <td>{{ $item->transaction_no }}</td>
+                                            <td><a href="/orders/edit/{{ $item->transaction_id }}" target="_blank">{{ $item->transaction_no }}</a></td>
                                             <td>{{ $item->transaction_date }}</td>
                                             <td class="text-end">{{ number_format($item->total_amount, 0, '.', ',') }}</td>
                                             <td class="text-end">{{ number_format($item->remaining_amount, 0, '.', ',') }}</td>
@@ -256,11 +256,6 @@ $(document).on("click", "#btn-form-add-receivable-item", function() {
     });
 
     getReceivableItems(checkedIds);
-});
-
-$(document).on("click", "#kt_items_table tbody a", function(e) {
-    e.preventDefault();
-    $(this).closest("tr").remove();
 });
 
 
