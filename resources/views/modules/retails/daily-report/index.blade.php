@@ -255,12 +255,12 @@
                                         <tr>
                                             <td>6</td>
                                             <td>PEMBAYARAN PIUTANG TUNAI</td>
-                                            <td class="text-end fw-bold" id="table-pembayaran-piutang">Rp 0</td>
+                                            <td class="text-end fw-bold" id="table-pembayaran-piutang-tunai">Rp 0</td>
                                         </tr>
                                         <tr>
                                             <td>7</td>
                                             <td>PEMBAYARAN PIUTANG TRANSFER</td>
-                                            <td class="text-end fw-bold" id="table-pembayaran-transfer">Rp 0</td>
+                                            <td class="text-end fw-bold" id="table-pembayaran-piutang-transfer">Rp 0</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -832,7 +832,9 @@ function updatePieChart(data) {
             total_transfer: 0,
             total_receivable: 0,
             total_cash_expanse: 0,
-            total_transfer_expanse: 0
+            total_transfer_expanse: 0,
+            total_cash_payment_of_receivable: 0,
+            total_transfer_payment_of_receivable: 0
         });
         return;
     }
@@ -897,7 +899,15 @@ function updateIncomeTable(data) {
         {
             id: 'table-pengeluaran-transfer',
             value: parseFloat(data.total_transfer_expanse)
-        }
+        },
+        {
+            id: 'table-pembayaran-piutang-tunai',
+            value: parseFloat(data.total_cash_payment_of_receivable)
+        },
+        {
+            id: 'table-pembayaran-piutang-transfer',
+            value: parseFloat(data.total_transfer_payment_of_receivable)
+        },
     ];
 
     tableItems.forEach(item => {
@@ -934,15 +944,16 @@ function fetchSummary(params) {
         success: function(response) {
             console.log('Response:', response);
 
+            let totalCash = parseFloat(response.total_cash) - parseFloat(response.total_cash_expanse) + parseFloat(response.total_cash_payment_of_receivable);
+
             // Example mapping (adjust based on your JSON structure)
             $('#total-revenue').text(formatRupiah(response.total_revenue));
             $('#total-transactions').text('Total Transaksi: ' + response.total_transactions);
             $("#total-discount").text(formatRupiah(response.total_discount));
-            $('#total-cash').text(formatRupiah(response.total_cash));
+            $('#total-cash').text(formatRupiah(totalCash));
             $('#total-kasir').text(formatRupiah(response.total_cash_in_casheer));
-            $('#total-selisih').text('Selisih antara Uang di kasir dan total uang tunai adalah : ' +
-                formatRupiah(response.total_cash - response.total_cash_expanse + response
-                    .total_cash_receive));
+            $('#total-selisih').text('Selisih : ' +
+                formatRupiah(response.total_cash_in_casheer - totalCash));
         },
         error: function(xhr) {
             console.error('Error:', xhr.responseText);

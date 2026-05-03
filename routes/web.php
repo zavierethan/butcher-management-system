@@ -239,6 +239,17 @@ Route::group(['middleware' => ['auth']], function() {
                 });
             });
 
+            Route::prefix('receivable-payments')->group(function () {
+                Route::name('receivable-payments.')->group(function () {
+                    Route::get('/', [App\Http\Controllers\Retails\ReceivablePaymentController::class, 'index'])->name('index');
+                    Route::get('/lists', [App\Http\Controllers\Retails\ReceivablePaymentController::class, 'getLists'])->name('get-lists');
+                    Route::get('/create', [App\Http\Controllers\Retails\ReceivablePaymentController::class, 'create'])->name('create');
+                    Route::post('/save', [App\Http\Controllers\Retails\ReceivablePaymentController::class, 'save'])->name('save');
+                    Route::get('/edit/{id}', [App\Http\Controllers\Retails\ReceivablePaymentController::class, 'edit'])->name('edit');
+                    Route::post('/update', [App\Http\Controllers\Retails\ReceivablePaymentController::class, 'update'])->name('update');
+                });
+            });
+
             Route::prefix('daily-report')->group(function () {
                 Route::name('daily-report.')->group(function () {
                     Route::get('/', [App\Http\Controllers\Retails\DailyReportController::class, 'index'])->name('index');
@@ -371,8 +382,8 @@ Route::group(['middleware' => ['auth']], function() {
 
                     Route::get('/print-invoice/{id}', [App\Http\Controllers\Finances\InvoiceController::class, 'printInvoice'])->name('print-invoice');
 
-                    Route::get('/get-receivable', [App\Http\Controllers\Finances\InvoiceController::class, 'getReceivable'])->name('get-receivable');
-                    Route::post('/get-receivable-items', [App\Http\Controllers\Finances\InvoiceController::class, 'getReceivableItems'])->name('get-receivable-items');
+                    Route::get('/getTransactions', [App\Http\Controllers\Finances\InvoiceController::class, 'getTransactions'])->name('getTransactions');
+                    Route::post('/getTransactionItems', [App\Http\Controllers\Finances\InvoiceController::class, 'getTransactionItems'])->name('getTransactionItems');
                 });
             });
 

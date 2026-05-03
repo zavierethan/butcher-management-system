@@ -1,93 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pryadis Butchers</title>
     <style>
-        /* General Styles */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    /* General Styles */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        h1, h2, h3 {
-            margin: 0;
-            padding-bottom: 5px;
-        }
+    h1,
+    h2,
+    h3 {
+        margin: 0;
+        padding-bottom: 5px;
+    }
 
-        .header {
-            display: flex;
-            justify-content: space-between; /* Aligns children to the left and right */
-            align-items: center; /* Vertically aligns items */
-            padding: 10px 20px;
-        }
+    .header {
+        display: flex;
+        justify-content: space-between;
+        /* Aligns children to the left and right */
+        align-items: center;
+        /* Vertically aligns items */
+        padding: 10px 20px;
+    }
 
-        .company-details {
-            text-align: left;
-        }
+    .company-details {
+        text-align: left;
+    }
 
-        .logo img {
-            text-align: right;
-            max-width: 150px; /* Adjust as needed */
-            height: auto;
-        }
+    .logo img {
+        text-align: right;
+        max-width: 150px;
+        /* Adjust as needed */
+        height: auto;
+    }
 
-        .content {
-            margin-top: 20px;
-        }
+    .content {
+        margin-top: 20px;
+    }
 
-        .content .details {
-            margin-bottom: 20px;
-        }
+    .content .details {
+        margin-bottom: 20px;
+    }
 
-        .details .row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
+    .details .row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
 
-        table th, table td {
-            border: 1px solid #000;
-            padding: 8px;
-            text-align: left;
-        }
+    table th,
+    table td {
+        border: 1px solid #000;
+        padding: 8px;
+        text-align: left;
+    }
 
-        table th {
-            background-color: #f2f2f2;
-        }
+    table th {
+        background-color: #f2f2f2;
+    }
 
-        .footer {
-            margin-top: 40px;
-            text-align: center;
-        }
+    .footer {
+        margin-top: 40px;
+        text-align: center;
+    }
 
-        .footer .signature {
-            margin-top: 40px;
-            display: flex;
-            justify-content: space-around;
-        }
+    .footer .signature {
+        margin-top: 40px;
+        display: flex;
+        justify-content: space-around;
+    }
 
-        .signature div {
-            width: 30%;
-            text-align: center;
-        }
+    .signature div {
+        width: 30%;
+        text-align: center;
+    }
 
-        .signature div hr {
-            margin-top: 60px;
-            border: none;
-            border-top: 1px solid #000;
-        }
+    .signature div hr {
+        margin-top: 60px;
+        border: none;
+        border-top: 1px solid #000;
+    }
+
+    .page-break {
+        page-break-before: always;
+    }
     </style>
 </head>
+
 <body>
     <div class="a4">
         <!-- Header -->
@@ -145,19 +157,19 @@
                 <tbody>
                     <?php $no = 1; ?>
                     @php
-                        $subTotal = 0;
-                        $discountTotal = 0;
-                        $deliveryFee = 0;
-                        $totalPay = 0;
+                    $subTotal = 0;
+                    $discountTotal = 0;
+                    $deliveryFee = 0;
+                    $totalPay = 0;
                     @endphp
                     @foreach($invoiceItems as $items)
                     @php
-                        $roundedTotalPrice = round($items->quantity * $items->base_price / 100) * 100;
-                        $productDiscount = $items->discount * floor($items->quantity);
-                        $totalPrice = $roundedTotalPrice - $productDiscount;
+                    $roundedTotalPrice = round($items->quantity * $items->base_price / 100) * 100;
+                    $productDiscount = $items->discount * floor($items->quantity);
+                    $totalPrice = $roundedTotalPrice - $productDiscount;
 
-                        $subTotal += $roundedTotalPrice;
-                        $discountTotal += $productDiscount;
+                    $subTotal += $roundedTotalPrice;
+                    $discountTotal += $productDiscount;
                     @endphp
                     <tr>
                         <td style="text-align: center"><?php echo $no++; ?>.</td>
@@ -183,7 +195,9 @@
             <tr style="border: none;">
                 <!-- Left-aligned content -->
                 <td style="text-align: left; border: none; padding: 0;">
-                    <strong><p>INFORMASI PEMBAYARAN :</p></strong>
+                    <strong>
+                        <p>INFORMASI PEMBAYARAN :</p>
+                    </strong>
                     <div>No. Rekening : 1480802205</div>
                     <div>Atas Nama : Zia Hasan</div>
                     <div>Bank : BCA</div>
@@ -194,22 +208,36 @@
                 </td>
             </tr>
         </table>
+        <div class="page-break"></div>
 
-        <table width="100%" style="border-collapse: collapse; border: none;">
-            <tr style="border: none;">
-                <!-- Left-aligned content -->
-                <td style="text-align: left; border: none; padding: 0;">
-                    <strong><p style="margin-left: 20px; margin-bottom: 60px;">{{$invoice->customer_name}}</p></strong>
-                    <strong><p>(---------------------------)</p></strong>
-                </td>
+        <div>
+            <h2><b>Detail Pengambilan Barang</b></h2>
 
-                <!-- Right-aligned logo -->
-                <td style="text-align: right; border: none; padding: 0;">
-                    <strong><p style="margin-right: 10px; margin-bottom: 60px;">Priyadis Butchers</p></strong>
-                    <strong><p>(---------------------------)</p></strong>
-                </td>
-            </tr>
-        </table>
+            <table width="100%" style="border-collapse: collapse; border: none;">
+                <tr style="border: none;">
+                    <!-- Left-aligned content -->
+                    <td style="text-align: left; border: none; padding: 0;">
+                        <strong>
+                            <p style="margin-left: 10px; margin-bottom: 60px;">{{$invoice->customer_name}}</p>
+                        </strong>
+                        <strong>
+                            <p>(---------------------------)</p>
+                        </strong>
+                    </td>
+
+                    <!-- Right-aligned logo -->
+                    <td style="text-align: right; border: none; padding: 0;">
+                        <strong>
+                            <p style="margin-right: 10px; margin-bottom: 60px;">Priyadis Butchers</p>
+                        </strong>
+                        <strong>
+                            <p>(---------------------------)</p>
+                        </strong>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
 </body>
+
 </html>

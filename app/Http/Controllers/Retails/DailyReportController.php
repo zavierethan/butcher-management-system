@@ -71,6 +71,19 @@ class DailyReportController extends Controller
 
         $totalTransactions = $totalTransactionsQuery->count();
 
+        $totalReceivable = DB::table('receivable_payments')
+            ->selectRaw("
+                COALESCE(SUM(CASE WHEN payment_method = '1' THEN amount ELSE 0 END), 0) AS total_cash,
+                COALESCE(SUM(CASE WHEN payment_method = '2' THEN amount ELSE 0 END), 0) AS total_transfer
+            ")
+            ->where('branch_id', $branchId);
+
+        if (!empty($params['date'])) {
+            $totalReceivable->where(DB::raw('DATE(receivable_payments.payment_date)'), $params['date']);
+        }
+
+        $totalReceivable = $totalReceivable->first();
+
         // Format numbers
         $formattedTotals = [
             'total_transactions'      => $totalTransactions ?? 0,
@@ -81,7 +94,8 @@ class DailyReportController extends Controller
             'total_cash_in_casheer'   => $totalCashInCasheer ?? 0,
             'total_cash_expanse'      => $totalExpenses->total_cash ?? 0,
             'total_transfer_expanse'  => $totalExpenses->total_transfer ?? 0,
-            'total_cash_receive'      => 0
+            'total_cash_payment_of_receivable'      => $totalReceivable->total_cash ?? 0,
+            'total_transfer_payment_of_receivable'  => $totalReceivable->total_transfer ?? 0
         ];
 
         return response()->json($formattedTotals);
@@ -123,14 +137,27 @@ class DailyReportController extends Controller
 
         $totalExpenses = $totalExpenses->first();
 
+        $totalReceivable = DB::table('receivable_payments')
+            ->selectRaw("
+                COALESCE(SUM(CASE WHEN payment_method = '1' THEN amount ELSE 0 END), 0) AS total_cash,
+                COALESCE(SUM(CASE WHEN payment_method = '2' THEN amount ELSE 0 END), 0) AS total_transfer
+            ")
+            ->where('branch_id', $branchId);
+
+        if (!empty($params['date'])) {
+            $totalReceivable->where(DB::raw('DATE(receivable_payments.payment_date)'), $params['date']);
+        }
+
+        $totalReceivable = $totalReceivable->first();
+
         $formattedTotals = [
             'total_cash'                          => $totals->total_cash ?? 0,
             'total_transfer'                      => $totals->total_transfer ?? 0,
             'total_receivable'                    => $totals->total_receivable ?? 0,
             'total_cash_expanse'                  => $totalExpenses->total_cash ?? 0,
             'total_transfer_expanse'              => $totalExpenses->total_transfer ?? 0,
-            'total_cash_payment_of_receivable'    => 0,
-            'total_transfer_payment_of_receivable'=> 0,
+            'total_cash_payment_of_receivable'    => $totalReceivable->total_cash ?? 0,
+            'total_transfer_payment_of_receivable'=> $totalReceivable->total_transfer ?? 0,
         ];
 
         return response()->json($formattedTotals);
