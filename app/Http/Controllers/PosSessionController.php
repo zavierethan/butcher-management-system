@@ -51,7 +51,7 @@ class PosSessionController extends Controller
                 ], 409);
             }
 
-            // 🟢 insert pos_session
+            // insert pos_session
             $sessionId = DB::table('pos_sessions')->insertGetId([
                 'user_id'      => $userId,
                 'branch_id'    => $branchId,
@@ -62,7 +62,7 @@ class PosSessionController extends Controller
                 'updated_at'   => now(),
             ]);
 
-            // 💰 insert cash_movements (ledger)
+            // insert cash_movements (ledger)
             DB::table('cash_movements')->insert([
                 'pos_session_id' => $sessionId,
                 'user_id'        => $userId,
@@ -82,6 +82,34 @@ class PosSessionController extends Controller
                 ]
             ]);
         });
+    }
+
+    public function closeSession(Request $request)
+    {
+        $branchId = Auth::user()->branch_id;
+        $params = $request->all();
+
+        // Validasi input
+        $request->validate([
+            'closing_cash' => 'required|numeric',
+            'actual_cash' => 'required|numeric',
+            'notes' => 'nullable|string',
+        ]);
+
+        // Update pos_sessions untuk menutup transaksi
+        DB::table('pos_sessions')
+            ->where('branch_id', $branchId)
+            ->where('status', 'OPEN')
+            ->update([
+                'status' => 'CLOSED',
+                'closed_at' => now(),
+                'closing_cash' => $params['closing_cash'],
+                'expected_cash' => $params['actual_cash'],
+                'notes' => $params['notes'] ?? null,
+                'updated_at' => now()
+            ]);
+
+        return response()->json(['message' => 'Transaksi berhasil ditutup']);
     }
 
     public function getRemainingCashTodayByBranch(Request $request)

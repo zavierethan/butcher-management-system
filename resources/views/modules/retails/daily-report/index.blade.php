@@ -179,7 +179,6 @@
                                 <div class="d-flex flex-column">
                                     <span class="text-gray-700 fs-7 fw-semibold mb-2">UANG DI KASIR</span>
                                     <span class="fw-bold fs-2 text-gray-900" id="total-kasir">Rp.0</span>
-                                    <span class="text-gray-600 fs-8" id="total-selisih"></span>
                                 </div>
                             </div>
                         </div>
@@ -415,7 +414,7 @@
                     <div class="separator my-5"></div>
                     <div class="fv-row mb-5">
                         <div class="mb-1">
-                            <label class="form-label fw-bold fs-6 mb-2">Cash in Cashier</label>
+                            <label class="form-label fw-bold fs-6 mb-2">Total Uang Tunai</label>
                             <div class="position-relative mb-3">
                                 <input class="form-control form-control-md form-control-solid" type="number"
                                     name="closing_cash" id="closing_cash" disabled />
@@ -425,7 +424,7 @@
                     <div class="separator my-5"></div>
                     <div class="fv-row mb-5">
                         <div class="mb-1">
-                            <label class="form-label fw-bold fs-6 mb-2">Actual Cash</label>
+                            <label class="form-label fw-bold fs-6 mb-2">Cash in Cashier</label>
                             <div class="position-relative mb-3">
                                 <input class="form-control form-control-md form-control-solid" type="number"
                                     name="actual_cash" id="actual_cash" />
@@ -719,8 +718,6 @@ $("#btn-close-trx").on("click", function() {
             branch_id: branchId
         },
         success: function(res) {
-            // asumsi response JSON
-            // contoh: { total_cash: 100000, total_trx: 20, ... }
 
             // Autofill ke modal
             $('#opening_cash').val(res.opening_cash);
@@ -731,7 +728,16 @@ $("#btn-close-trx").on("click", function() {
         },
         error: function(err) {
             console.error(err);
-            alert('Gagal mengambil data. Silakan coba lagi.');
+            let message = 'Gagal mengambl data. Silahkan coba lagi';
+            if(err.responseJSON && err.responseJSON.message) {
+                message = err.responseJSON.message;
+            }
+            Swal.fire({
+                icon: 'warning',
+                title: 'Session Tidak Ditemukan',
+                text: message,
+                confirmButtonText: 'OK'
+            });
         }
     });
 });
@@ -742,7 +748,7 @@ $("#btn-confirm-close-trx").on("click", function() {
     const notes = $('#notes').val();
 
     $.ajax({
-        url: '/retails/daily-report/close-transaction',
+        url: '/pos-session/close-transaction',
         method: 'POST',
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -989,8 +995,6 @@ function fetchSummary(params) {
             $("#total-discount").text(formatRupiah(response.total_discount));
             $('#total-cash').text(formatRupiah(totalCash));
             $('#total-kasir').text(formatRupiah(response.total_cash_in_casheer));
-            $('#total-selisih').text('Selisih : ' +
-                formatRupiah(response.total_cash_in_casheer - totalCash));
         },
         error: function(xhr) {
             console.error('Error:', xhr.responseText);
