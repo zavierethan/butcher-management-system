@@ -90,13 +90,38 @@ class ReceivablePaymentController extends Controller
                 'payment_date' => $request->date,
                 'payment_code' => "000" . $invoiceId . date('YmdHis'),
                 'invoice_id' => $invoiceId,
-                'branch_id' => auth()->user()->branch_id,
+                'branch_id' => Auth::user()->branch_id,
                 'payment_method' => $request->payment_method,
                 'amount' => $paymentAmount
             ]);
 
             // Implement FIFO payment allocation
             $this->allocatePaymentFIFO($invoiceId, $paymentAmount);
+
+            if ($request->payment_method == '1') {
+
+                $session = DB::table('pos_sessions')
+                    ->where('branch_id', Auth::user()->branch_id)
+                    ->where('status', 'OPEN')
+                    ->whereBetween('created_at', [now()->startOfDay(), now()->endOfDay()])
+                    ->first();
+
+                if (!$session) {
+                    throw new \Exception('POS session tidak ditemukan / belum dibuka');
+                }
+
+                DB::table('cash_movements')->insert([
+                    'pos_session_id' => $session->id,
+                    'user_id'        => Auth::user()->id,
+                    'type'           => 'SALE',
+                    'direction'      => 'IN',
+                    'amount'         => $paymentAmount,
+                    'reference_type' => $paymentId,
+                    'reference_id'   => $session->id,
+                    'description'    => 'Penerimaan cash (Piutang)',
+                    'created_at'     => now()
+                ]);
+            }
         });
 
         return response()->json([

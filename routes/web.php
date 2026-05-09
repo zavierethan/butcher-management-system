@@ -260,7 +260,6 @@ Route::group(['middleware' => ['auth']], function() {
                     Route::get('/get-daily-expenses', [App\Http\Controllers\Retails\DailyReportController::class, 'getDailyExpenses'])->name('get-daily-expenses');
                     Route::get('/get-receivable-payments', [App\Http\Controllers\Retails\DailyReportController::class, 'getReceivablePayments'])->name('get-receivable-payments');
                     Route::get('/get-data-from-pos-sessions', [App\Http\Controllers\Retails\DailyReportController::class, 'getDataFromPosSessions'])->name('get-data-from-pos-sessions');
-                    Route::post('/close-transaction', [App\Http\Controllers\Retails\DailyReportController::class, 'closeTransaction'])->name('close-transaction');
 
                     Route::get('/get-product-qty-pivot-today', [App\Http\Controllers\Retails\DailyReportController::class, 'getProductQtyPivotToday'])->name('get-product-qty-pivot-today');
                 });
@@ -529,4 +528,5 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/pos-session/check', [App\Http\Controllers\PosSessionController::class, 'checkOpenSession']);
     Route::post('/pos-session/open', [App\Http\Controllers\PosSessionController::class, 'openSession']);
     Route::get('/pos-session/remaining-cash', [App\Http\Controllers\PosSessionController::class, 'getRemainingCashTodayByBranch']);
+    Route::post('/pos-session/close-transaction', [App\Http\Controllers\PosSessionController::class, 'closeSession'])->name('close-transaction');
 });
