@@ -4,6 +4,7 @@ use App\Http\Controllers\CustomerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,8 +82,7 @@ Route::prefix('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth:api')->group(function () {
-    // Tambahkan route-route yang butuh autentikasi di sini
-    // Contoh:
-    // Route::apiResource('products', ProductController::class);
-    // Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::prefix('pos')->group(function () {
+        Route::get('/products',[ProductController::class, 'getListProducts']);
+    });
 });
