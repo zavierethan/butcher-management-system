@@ -731,7 +731,19 @@ $("#btn-close-trx").on("click", function() {
         },
         error: function(err) {
             console.error(err);
-            alert('Gagal mengambil data. Silakan coba lagi.');
+
+            let message = 'Gagal mengambil data. Silakan coba lagi.';
+
+            if (err.responseJSON && err.responseJSON.message) {
+                message = err.responseJSON.message;
+            }
+
+            Swal.fire({
+                icon: 'warning',
+                title: 'Session Tidak Ditemukan',
+                text: message,
+                confirmButtonText: 'OK'
+            });
         }
     });
 });

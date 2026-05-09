@@ -8,8 +8,6 @@ use DB;
 class BranchController extends Controller
 {
     public function index() {
-
-        //
         return view('modules.master.branch.index');
     }
 

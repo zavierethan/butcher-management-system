@@ -32,12 +32,10 @@ class PosSessionController extends Controller
         ]);
 
         // idealnya dari auth
-        $userId   = auth()->user()->id;
-        $branchId = auth()->user()->branch_id;
+        $userId   = Auth::user()->id;
+        $branchId = Auth::user()->branch_id;
 
         return DB::transaction(function () use ($request, $userId, $branchId) {
-
-            // 🔒 cek lagi (anti race condition)
             $exists = DB::table('pos_sessions')
                 ->where('branch_id', $branchId)
                 ->where('status', 'OPEN')
@@ -51,7 +49,6 @@ class PosSessionController extends Controller
                 ], 409);
             }
 
-            // 🟢 insert pos_session
             $sessionId = DB::table('pos_sessions')->insertGetId([
                 'user_id'      => $userId,
                 'branch_id'    => $branchId,
@@ -62,7 +59,6 @@ class PosSessionController extends Controller
                 'updated_at'   => now(),
             ]);
 
-            // 💰 insert cash_movements (ledger)
             DB::table('cash_movements')->insert([
                 'pos_session_id' => $sessionId,
                 'user_id'        => $userId,
@@ -86,7 +82,7 @@ class PosSessionController extends Controller
 
     public function getRemainingCashTodayByBranch(Request $request)
     {
-        $branchId = auth()->user()->branch_id;
+        $branchId = Auth::user()->branch_id;
 
         $total = DB::table('cash_movements as cm')
             ->join('pos_sessions as ps', 'cm.pos_session_id', '=', 'ps.id')

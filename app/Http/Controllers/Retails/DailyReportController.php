@@ -306,6 +306,12 @@ class DailyReportController extends Controller
             ->groupBy('ps.id', 'ps.opening_cash')
             ->first();
 
+        if (!$data) {
+        return response()->json([
+                'message' => 'Tidak ada session untuk store ini, harap lakukan open session terlebih dahulu.'
+            ], 404); // gunakan status code yang proper
+        }
+
         return response()->json($data);
     }
 

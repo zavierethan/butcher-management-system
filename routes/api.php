@@ -3,6 +3,7 @@
 use App\Http\Controllers\CustomerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,3 +42,47 @@ Route::get('stock-header/{stockId}', [App\Http\Controllers\StockLogController::c
 
 // Dashboards Summary
 Route::get('dashboard/store/get-data-summary/', [App\Http\Controllers\Dashboards\StoreDashboardController::class, 'getTransactionSummary']);
+
+/*
+|--------------------------------------------------------------------------
+| JWT Authentication Routes
+|--------------------------------------------------------------------------
+|
+| Semua route untuk autentikasi JWT dikelompokkan di sini.
+| Letakkan di dalam file: routes/api.php
+|
+*/
+
+Route::prefix('auth')->group(function () {
+
+    // -------------------------
+    // PUBLIC ROUTES (tanpa auth)
+    // -------------------------
+    Route::post('/register',      [AuthController::class, 'register']);
+    Route::post('/login',         [AuthController::class, 'login']);
+
+    // Refresh token bisa diakses meski token hampir expired
+    // (middleware 'jwt.refresh' atau 'auth:api' tergantung konfigurasi)
+    Route::post('/refresh-token', [AuthController::class, 'refreshToken']);
+
+    // -------------------------
+    // PROTECTED ROUTES (butuh token valid)
+    // -------------------------
+    Route::middleware('auth:api')->group(function () {
+        Route::post('/logout',      [AuthController::class, 'logout']);
+        Route::get('/me',           [AuthController::class, 'me']);
+        Route::get('/check-token',  [AuthController::class, 'checkToken']);
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| Protected API Routes (contoh penggunaan middleware)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth:api')->group(function () {
+    // Tambahkan route-route yang butuh autentikasi di sini
+    // Contoh:
+    // Route::apiResource('products', ProductController::class);
+    // Route::get('/dashboard', [DashboardController::class, 'index']);
+});

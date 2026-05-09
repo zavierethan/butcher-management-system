@@ -80,16 +80,6 @@
                                     </div>
                                 </div>
                                 <div class="separator my-5"></div>
-                                <div class="fv-row mb-5">
-                                    <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Kuantitas Realtime</label>
-                                        <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid"
-                                                value="{{ $stockHeader->total_quantity }}" readonly />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="separator my-5"></div>
                                 <div class="text-end">
                                     <a href="{{ route('stocks.index') }}" class="btn btn-danger">Back</a>
                                     <a href="#" class="btn btn-primary" id="btn-update"
