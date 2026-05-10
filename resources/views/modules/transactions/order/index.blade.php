@@ -123,8 +123,8 @@
                                             <option></option>
                                             <option value=" " selected="selected">Show All</option>
                                             <option value="1">Lunas</option>
-                                            <option value="2">Piutang</option>
-                                            <option value="3">Pending (Transfer)</option>
+                                            <option value="2">Pending (Transfer)</option>
+                                            <option value="3">Pending (Piutang)</option>
                                             <option value="4">Batal (Return)</option>
                                         </select>
                                         <!--end::Select-->
@@ -364,7 +364,7 @@ $(document).ready(function() {
                     }
 
                     if (row.status == 2) {
-                        status = `<span class="badge bg-warning text-dark">Piutang</span>`
+                        status = `<span class="badge bg-warning text-dark">Pending (Piutang)</span>`
                     }
 
                     if (row.status == 3) {

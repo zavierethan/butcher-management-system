@@ -725,9 +725,9 @@
                                         <!--begin::Radio-->
                                         <label
                                             class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4"
-                                            data-kt-button="true">
+                                            data-kt-button="true" id="payment-method-credit" >
                                             <!--begin::Input-->
-                                            <input class="btn-check" type="radio" name="payment_method" value="2" />
+                                            <input class="btn-check" type="radio" name="payment_method" value="2"/>
                                             <!--end::Input-->
                                             <!--begin::Icon-->
                                             <i class="ki-duotone ki-credit-cart fs-2hx mb-2 pe-0">
@@ -745,7 +745,7 @@
                                             class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4"
                                             data-kt-button="true">
                                             <!--begin::Input-->
-                                            <input class="btn-check" type="radio" name="payment_method" value="3" />
+                                            <input class="btn-check" type="radio" name="payment_method" value="3" id="payment-method-transfer" />
                                             <!--end::Input-->
                                             <!--begin::Icon-->
                                             <i class="ki-duotone ki-delivery fs-2hx mb-2 pe-0">
@@ -1227,6 +1227,8 @@ $(document).ready(function() {
     getProductList();
     getCustomers();
 
+    $("#payment-method-credit").hide();
+
     $('#btn-save-nominal-cash-value').on('click', function() {
 
         let nominal = $('#nominal-cash-value').val();
@@ -1594,10 +1596,7 @@ $(document).ready(function() {
         let nominalCash = parseInt($(this).val().replace(/[^\d]/g, ''), 10) || 0;
 
         // Ambil total
-        let totalAmount = parseInt(
-            $('#total-amount').text().replace(/[^\d]/g, ''),
-            10
-        ) || 0;
+        let totalAmount = parseInt($('#total-amount').text().replace(/[^\d]/g, ''), 10) || 0;
 
         // Format ulang cash input
         $(this).val(formatThausand(nominalCash));
@@ -1651,36 +1650,33 @@ $(document).ready(function() {
 
                     const totalDiscount = $('#total-discount').text().replace(/[^\d]/g, '') | 0;
                     const shippingCost = $('#shipping-cost').text().replace(/[^\d]/g, '') | 0;
-                    const totalAmount = $('#subtotal-amount').text().replace(/[^\d]/g, '');
-                    const paymentMethod = $('#payment-method').find(
-                        'input[type="radio"]:checked').val();
+                    const subTotal = $('#subtotal-amount').text().replace(/[^\d]/g, '');
+                    const totalAmount = $('#total-amount').text().replace(/[^\d]/g, '');
+                    const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
                     const customerId = $('#customer').val();
                     const butcherName = $('#butcher-name').val();
                     const branchId = $('#branch-id').val();
                     const nominalCash = $('#nominal-cash').val().replace(/[^\d]/g, '') | 0;
                     const nominalReturn = $('#nominal-return').val().replace(/[^\d]/g, '') | 0;
-                    const transferType = $('#form-ref-transfer').find(
-                        'input[type="radio"]:checked').val();
+                    const transferType = $('#form-ref-transfer').find('input[type="radio"]:checked').val();
                     const transferRef = $('#transfer-ref').val();
-                    const transferAttch = $('#transfer-attch')[0]?.files[
-                    0]; // Get file from input
+                    const transferAttch = $('#transfer-attch')[0]?.files[0]; // Get file from input
 
-                    const orderingMethod = $('#ordering-method').find(
-                        'input[type="radio"]:checked').val();
-                    const workingMethod = $('#working-method').find(
-                        'input[type="radio"]:checked').val();
+                    const orderingMethod = $('#ordering-method').find('input[type="radio"]:checked').val();
+                    const workingMethod = $('#working-method').find('input[type="radio"]:checked').val();
 
                     const notes = $('#notes').val();
 
                     // Append form fields
                     formData.append('transaction_date', new Date().toISOString());
                     formData.append('customer_name', customerId);
-                    formData.append('total_amount', totalAmount);
                     formData.append('payment_method', paymentMethod);
                     formData.append('customer_id', customerId);
                     formData.append('butcher_name', butcherName);
                     formData.append('total_discount', totalDiscount);
                     formData.append('shipping_cost', shippingCost);
+                    formData.append('sub_total', subTotal);
+                    formData.append('total_amount', totalAmount);
                     formData.append('branch_id', branchId);
                     formData.append('nominal_cash', nominalCash);
                     formData.append('nominal_return', nominalReturn);
@@ -2004,6 +2000,15 @@ $(document).ready(function() {
                 console.error('Error fetching products:', error);
             }
         });
+
+        if (customerId == 1) {
+
+            $('#payment-method-credit').hide();
+
+        } else {
+
+            $('#payment-method-credit').show();
+        }
     });
 
     function getRemainingCashToday() {

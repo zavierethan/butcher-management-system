@@ -124,7 +124,7 @@
 
         /* Force the exact paper size */
         @page {
-            size: 58mm 210mm;
+            /* size: 58mm 210mm; */
             /* Set the correct paper size */
             margin-bottom: 0;
             /* Remove any default browser margins */
@@ -151,16 +151,16 @@
             <table>
                 <tbody>
                     <tr>
-                        <td style="font-weight: bold;">No Transaksi</td>
-                        <td>: {{$info->code}}</td>
+                        <td style="font-weight: bold; padding-bottom: 4px;">No Transaksi</td>
+                        <td style="padding-bottom: 4px;">: {{$info->code}}</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: bold;">Tanggal</td>
-                        <td>: {{$info->transaction_date}}</td>
+                        <td style="font-weight: bold; padding-bottom: 4px;">Tanggal</td>
+                        <td style="padding-bottom: 4px;">: {{$info->transaction_date}}</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: bold;">Kasir</td>
-                        <td>: {{$info->created_by}}</td>
+                        <td style="font-weight: bold; padding-bottom: 4px;">Kasir</td>
+                        <td style="padding-bottom: 4px;">: {{$info->created_by}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -188,13 +188,13 @@
 
                     @foreach($items as $item)
                         @php
-                        $roundedTotalPrice = round($item->quantity * $item->base_price / 100) * 100;
-                        $productDiscount = $item->discount * floor($item->quantity);
-                        $totalPrice = $roundedTotalPrice - $productDiscount;
+                            $roundedTotalPrice = round($item->quantity * $item->base_price / 100) * 100;
+                            $productDiscount = $item->discount * floor($item->quantity);
+                            $totalPrice = $roundedTotalPrice - $productDiscount;
 
-                        $subTotal += $roundedTotalPrice;
-                        $discountTotal += $productDiscount;
-                    @endphp
+                            $subTotal += $roundedTotalPrice;
+                            $discountTotal += $productDiscount;
+                        @endphp
                     <tr>
                         <td>{{$counter++}}.</td>
                         <td>{{$item->name}}</td>
@@ -222,21 +222,21 @@
                         <td style="font-weight: bold;" colspan="2">Subtotal</td>
                         <td></td>
                         <td></td>
-                        <td style="text-align: right;">Rp. @php echo number_format($subTotal, 0, '.', ',') @endphp
+                        <td style="text-align: right;">@php echo number_format($subTotal, 0, '.', ',') @endphp
                         </td>
                     </tr>
                     <tr>
                         <td style="font-weight: bold;" colspan="2">Total Discount</td>
                         <td></td>
                         <td></td>
-                        <td style="text-align: right;">Rp. @php echo number_format($discountTotal, 0, '.', ',') @endphp
+                        <td style="text-align: right;">@php echo number_format($discountTotal, 0, '.', ',') @endphp
                         </td>
                     </tr>
                     <tr>
                         <td style="font-weight: bold;" colspan="2">Ongkos Kirim</td>
                         <td></td>
                         <td></td>
-                        <td style="text-align: right;">Rp. @php echo number_format($deliveryFee, 0, '.', ',')
+                        <td style="text-align: right;">@php echo number_format($deliveryFee, 0, '.', ',')
                             @endphp</td>
                     </tr>
                     <tr>
@@ -245,12 +245,12 @@
                         <td></td>
                         <td></td>
                         <td style="text-align: right;">
-                            Rp. @php echo number_format($totalPay, 0, '.', ',');@endphp
+                            @php echo number_format($totalPay, 0, '.', ',');@endphp
                         </td>
                     </tr>
                 </tfoot>
             </table>
-        </div>`
+        </div>
 
         <div class="line"></div>
         <div class="line"></div>
