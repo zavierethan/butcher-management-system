@@ -121,8 +121,8 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Total Bayar</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid"
-                                                        type="number" name="total_amount" id="total-amount"/>
+                                                    <input class="form-control form-control-md form-control-solid format-number"
+                                                        type="text" name="total_amount" id="total-amount"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -155,6 +155,13 @@
 //     $(this).val(formattedVal);
 // });
 
+$(document).on('keyup', '.format-number', function () {
+
+    let value = $(this).val().replace(/\D/g, '');
+
+    $(this).val(new Intl.NumberFormat('en-US').format(value));
+});
+
 $(document).on('click', '#btn-submit', function(e) {
     e.preventDefault();
 
@@ -171,10 +178,12 @@ $(document).on('click', '#btn-submit', function(e) {
             if (result.isConfirmed) {
                 var formData = new FormData();
 
+                let amount = parseFloat($('#total-amount').val().replace(/,/g, '')) || 0;
+
                 formData.append('date', $('#date').val());
                 formData.append('invoice_id', $('#invoice-id').val());
                 formData.append('payment_method', $('#payment-method').val());
-                formData.append('amount', $('#total-amount').val().replace(/[^\d.]/g, ''));
+                formData.append('amount', amount);
 
                 $.ajax({
                     url: `{{route('retails.receivable-payments.save')}}`,

@@ -891,7 +891,7 @@
                     <div class="mb-1">
                         <label class="form-label fw-bold fs-6 mb-2">Harga Product</label>
                         <div class="position-relative mb-3">
-                            <input class="form-control form-control-md form-control-solid" type="text"
+                            <input class="form-control form-control-md form-control-solid format-number" type="text"
                                 id="product_price" />
                         </div>
                     </div>
@@ -901,7 +901,7 @@
                     <div class="mb-1">
                         <label class="form-label fw-bold fs-6 mb-2">Diskon</label>
                         <div class="position-relative mb-3">
-                            <input class="form-control form-control-md form-control-solid" type="number" id="diskon" />
+                            <input class="form-control form-control-md form-control-solid format-number" type="text" id="diskon" />
                         </div>
                     </div>
                 </div>
@@ -971,7 +971,7 @@
                     <div class="mb-1">
                         <label class="form-label fw-bold fs-6 mb-2">Harga Product</label>
                         <div class="position-relative mb-3">
-                            <input class="form-control form-control-md form-control-solid" type="text"
+                            <input class="form-control form-control-md form-control-solid format-number" type="text"
                                 id="product_price" />
                         </div>
                     </div>
@@ -981,7 +981,7 @@
                     <div class="mb-1">
                         <label class="form-label fw-bold fs-6 mb-2">Diskon</label>
                         <div class="position-relative mb-3">
-                            <input class="form-control form-control-md form-control-solid" type="number" id="diskon" />
+                            <input class="form-control form-control-md form-control-solid format-number" type="text" id="diskon" />
                         </div>
                     </div>
                 </div>
@@ -1346,9 +1346,8 @@ $(document).ready(function() {
         var stockId = $("#kt_modal_add_product_item #stock_id").val();
         var productName = $("#kt_modal_add_product_item #product_name").val();
         var productQuantity = parseFloat($("#kt_modal_add_product_item #quantity").val());
-        var productPrice = parseFloat($("#kt_modal_add_product_item #product_price")
-    .val()); // Ensure price is a number
-        var productDiscount = parseFloat($("#kt_modal_add_product_item #diskon").val()) | 0;
+        var productPrice = parseFloat($("#kt_modal_add_product_item #product_price").val().replace(/,/g, ''));
+        var productDiscount = parseFloat($("#kt_modal_add_product_item #diskon").val().replace(/,/g, '')) | 0;
         var productImgUrl = $(this).find('img').attr('src');
 
         // Validation for productPrice and quantity
@@ -1388,16 +1387,19 @@ $(document).ready(function() {
             // Update stored quantity value
             existingProduct.find('.quantity-value').text(newQuantity);
 
-            // Update discount per unit storage
-            existingProduct.find('.discount-per-unit').text(productDiscount);
+            // Calculate and update discount per unit storage (total discount for this item)
+            const totalDiscount = productDiscount * newQuantity;
+            existingProduct.find('.discount-per-unit').text(totalDiscount);
 
             // Update base price storage
             existingProduct.find('.base-price').text(productPrice);
 
             // Recalculate totals
-            const grossTotal = productPrice * newQuantity;
-            const totalDiscount = productDiscount * newQuantity;
+            const grossTotal = mround(productPrice * newQuantity);
             const netTotal = grossTotal - totalDiscount;
+
+            // Update hidden gross-price storage (IMPORTANT: must update this)
+            existingProduct.find('.gross-price').text(grossTotal);
 
             // Update the gross total display
             const quantityDisplay = existingProduct.find('.d-flex.justify-content-between.mb-2.pb-2');
@@ -1407,18 +1409,16 @@ $(document).ready(function() {
             const discountSection = existingProduct.find('.discount-section');
 
             if (productDiscount > 0) {
+                // Always recreate discount section to ensure all values are updated correctly
                 if (discountSection.length > 0) {
-                    // Update existing discount section
-                    discountSection.find('.discount-total').text(newQuantity);
-                    discountSection.find('small.fw-bold').text(formatThausand(totalDiscount));
-                } else {
-                    // Create discount section if it doesn't exist
-                    const discountHTML = `<div class="mb-2 pb-2 discount-section" style="border-bottom: 1px solid #dee2e6;">
-                        <small class="text-muted">Discount: <span class="discount-total">${newQuantity}</span> kg x ${formatThausand(productDiscount)} = </small>
-                        <small class="fw-bold text-danger">${formatThausand(totalDiscount)}</small>
-                    </div>`;
-                    quantityDisplay.after(discountHTML);
+                    discountSection.remove();
                 }
+
+                const discountHTML = `<div class="mb-2 pb-2 discount-section" style="border-bottom: 1px solid #dee2e6;">
+                    <small class="text-muted">Discount: <span class="discount-total">${newQuantity}</span> kg x ${formatThausand(productDiscount)} = </small>
+                    <small class="fw-bold text-danger">${formatThausand(totalDiscount)}</small>
+                </div>`;
+                quantityDisplay.after(discountHTML);
             } else {
                 // Remove discount section if discount is 0
                 discountSection.remove();
@@ -1497,8 +1497,8 @@ $(document).ready(function() {
 
         const productId = $("#kt_modal_edit_product_item #product_id").val();
         const quantity = $("#kt_modal_edit_product_item #quantity").val();
-        const productPrice = $("#kt_modal_edit_product_item #product_price").val();
-        const discountPerUnit = $("#kt_modal_edit_product_item #diskon").val();
+        const productPrice = parseFloat($("#kt_modal_edit_product_item #product_price").val().replace(/,/g, ''));
+        const discountPerUnit = parseFloat($("#kt_modal_edit_product_item #diskon").val().replace(/,/g, '')) || 0;
 
         // Validation for productPrice and quantity
         if (!productPrice || productPrice <= 0) {
@@ -1536,16 +1536,19 @@ $(document).ready(function() {
             quantityElement.text(`${newQuantity}`);
             existingProduct.find('.quantity-value').text(newQuantity);
 
-            // Update discount per unit storage
-            existingProduct.find('.discount-per-unit').text(newDiscountPerUnit);
+            // Update discount per unit storage (total discount for this item)
+            const totalDiscount = newDiscountPerUnit * newQuantity;
+            existingProduct.find('.discount-per-unit').text(totalDiscount);
 
             // Update base price storage
             existingProduct.find('.base-price').text(basePrice);
 
             // Recalculate totals
-            const grossTotal = basePrice * newQuantity;
-            const totalDiscount = newDiscountPerUnit * newQuantity;
+            const grossTotal = mround(basePrice * newQuantity);
             const netTotal = grossTotal - totalDiscount;
+
+            // Update hidden gross-price storage
+            existingProduct.find('.gross-price').text(grossTotal);
 
             // Update the gross total display (Quantity x Price)
             const quantityDisplay = existingProduct.find('.d-flex.justify-content-between.mb-2.pb-2');
@@ -1555,20 +1558,16 @@ $(document).ready(function() {
             const discountSection = existingProduct.find('.discount-section');
 
             if (newDiscountPerUnit > 0) {
-
-                console.log('Updating discount section =>' + newDiscountPerUnit);
+                // Always recreate discount section to ensure all values are updated correctly
                 if (discountSection.length > 0) {
-                    // Update existing discount section
-                    discountSection.find('.discount-total').text(newQuantity);
-                    discountSection.find('small.fw-bold').text(formatThausand(totalDiscount));
-                } else {
-                    // Create discount section if it doesn't exist
-                    const discountHTML = `<div class="mb-2 pb-2 discount-section" style="border-bottom: 1px solid #dee2e6;">
-                        <small class="text-muted">Discount: <span class="discount-total">${newQuantity}</span> kg x ${formatThausand(newDiscountPerUnit)} = </small>
-                        <small class="fw-bold text-danger">${formatThausand(totalDiscount)}</small>
-                    </div>`;
-                    quantityDisplay.after(discountHTML);
+                    discountSection.remove();
                 }
+
+                const discountHTML = `<div class="mb-2 pb-2 discount-section" style="border-bottom: 1px solid #dee2e6;">
+                    <small class="text-muted">Discount: <span class="discount-total">${newQuantity}</span> kg x ${formatThausand(newDiscountPerUnit)} = </small>
+                    <small class="fw-bold text-danger">${formatThausand(totalDiscount)}</small>
+                </div>`;
+                quantityDisplay.after(discountHTML);
             } else {
                 // Remove discount section if discount is 0
                 discountSection.remove();
@@ -1763,6 +1762,7 @@ $(document).ready(function() {
                                                 $(".cart-item-lists").remove();
                                                 calculateTotals();
                                                 getRemainingCashToday();
+                                                window.location.reload(true);
                                             } else {
                                                 Swal.fire({
                                                     title: 'Gagal Mencetak Nota',
@@ -1795,6 +1795,7 @@ $(document).ready(function() {
                                     $(".cart-item-lists").remove();
                                     calculateTotals();
                                     getRemainingCashToday();
+                                    window.location.reload(true);
                                 }
                             });
                         },
@@ -2191,13 +2192,9 @@ $(document).ready(function() {
             const price = parseFloat(priceText) || 0;
             subtotal += price;
 
-            // Extract discount per unit and quantity, then calculate total discount
-            const discountPerUnit = parseFloat($(this).find('.discount-per-unit').text()) || 0;
-            const quantity = parseFloat($(this).find('.quantity-value').text()) || 0;
-
-            // Total discount for this item = discount_per_unit × quantity
-            const itemTotalDiscount = discountPerUnit * quantity;
-            totalProductDiscount += discountPerUnit;
+            // Extract total discount for this item (already calculated as discount_per_unit × quantity)
+            const itemTotalDiscount = parseFloat($(this).find('.discount-per-unit').text()) || 0;
+            totalProductDiscount += itemTotalDiscount;
         });
 
         // Update subtotal in the UI

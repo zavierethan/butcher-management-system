@@ -145,8 +145,8 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Harga</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid"
-                                                        type="number" name="price" id="price"/>
+                                                    <input class="form-control form-control-md form-control-solid format-number"
+                                                        type="text" name="price" id="price"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -179,8 +179,8 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Total Harga</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid"
-                                                        type="number" name="total_price" id="total-price"/>
+                                                    <input class="form-control form-control-md form-control-solid format-number"
+                                                        type="text" name="total_price" id="total-price" readonly/>
                                                 </div>
                                             </div>
                                         </div>
@@ -213,6 +213,21 @@ $(document).on("keyup", "#total-amount", function() {
     $(this).val(formattedVal);
 });
 
+$(document).on('keyup', '.format-number', function () {
+
+    let value = $(this).val().replace(/\D/g, '');
+
+    $(this).val(new Intl.NumberFormat('en-US').format(value));
+});
+
+$(document).on('keyup', '#price, #quantity', function() {
+    let price = parseFloat($('#price').val().replace(/,/g, '')) || 0;
+    let quantity = parseFloat($('#quantity').val()) || 0;
+    let total = price * quantity;
+
+    $('#total-price').val(formatNumber(total.toString()));
+});
+
 $(document).on('click', '#btn-submit', function(e) {
     e.preventDefault();
 
@@ -229,7 +244,7 @@ $(document).on('click', '#btn-submit', function(e) {
             if (result.isConfirmed) {
                 var formData = new FormData();
 
-                let price = parseFloat($('#price').val()) || 0;
+                let price = parseFloat($('#price').val().replace(/,/g, '')) || 0;
                 let quantity = parseFloat($('#quantity').val()) || 0;
 
                 let amount = price * quantity;
@@ -240,8 +255,8 @@ $(document).on('click', '#btn-submit', function(e) {
                 formData.append('debit', $('#debit').val());
                 formData.append('reference', $('#reference').val());
                 formData.append('payment_method', $('#payment-method').val());
-                formData.append('price', $('#price').val());
-                formData.append('quantity', $('#quantity').val());
+                formData.append('price', price); // gunakan variable price yang sudah di-parse
+                formData.append('quantity', quantity); // gunakan variable quantity yang sudah di-parse
                 formData.append('unit', $('#unit').val());
                 formData.append('amount', amount);
 
