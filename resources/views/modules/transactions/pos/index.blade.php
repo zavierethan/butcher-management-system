@@ -1346,8 +1346,8 @@ $(document).ready(function() {
         var stockId = $("#kt_modal_add_product_item #stock_id").val();
         var productName = $("#kt_modal_add_product_item #product_name").val();
         var productQuantity = parseFloat($("#kt_modal_add_product_item #quantity").val());
-        var productPrice = parseFloat($("#kt_modal_add_product_item #product_price").val().replace(/,/g, ''));
-        var productDiscount = parseFloat($("#kt_modal_add_product_item #diskon").val().replace(/,/g, '')) | 0;
+        var productPrice = parseFloat($("#kt_modal_add_product_item #product_price").val().replace(/,/g, '')) || 0;
+        var productDiscount = parseFloat($("#kt_modal_add_product_item #diskon").val().replace(/,/g, '')) || 0;
         var productImgUrl = $(this).find('img').attr('src');
 
         // Validation for productPrice and quantity
@@ -1430,7 +1430,7 @@ $(document).ready(function() {
             // Add new product to the cart
 
             var grossPrice = mround(productPrice * productQuantity);
-            var totalDiscount = productDiscount * Math.floor(productQuantity);
+            var totalDiscount = productDiscount * productQuantity;
             var nettPrice = grossPrice - totalDiscount;
 
             var productItem = `<div class="cart-item-lists p-3 mb-2" id="product-id-${productId}" style="border: 1px solid #e9ecef; border-radius: 0.375rem; background-color: #f8f9fa;">
