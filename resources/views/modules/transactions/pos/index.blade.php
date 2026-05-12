@@ -2029,37 +2029,107 @@ $(document).ready(function() {
     }
 
     function checkOpenSession() {
+
         $.ajax({
             url: `/pos-session/check`,
             type: 'GET',
             dataType: 'json',
-            success: function(res) {
-                if (res.success) {
 
-                    if (!res.data.has_open_session) {
+            success: function(res) {
+
+                if (!res.success) {
+                    return;
+                }
+
+                switch (res.type) {
+
+                    // 1. Masih ada session OPEN di hari sebelumnya
+                    case 'PREVIOUS_OPEN_SESSION':
+
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Session Sebelumnya Belum Ditutup',
+                            html: `
+                                Terdapat session yang masih terbuka
+                                di hari sebelumnya yaitu tanggal
+                                <b>${res.data.opened_at}</b>.
+                                <br><br>
+                                Harap tutup session terlebih dahulu
+                                untuk membuka sesi hari ini.
+                            `,
+                            confirmButtonText: 'Ok',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        }).then((result) => {
+
+                            if (result.isConfirmed) {
+                                window.location.href = '/retails/daily-report';
+                            }
+
+                        });
+
+                        break;
+
+                    // 2. Hari ini sudah pernah buka session tapi sudah CLOSE
+                    case 'TODAY_SESSION_CLOSED':
+
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Session Hari Ini Sudah Ditutup',
+                            html: `
+                                Pada hari ini terdapat session yang
+                                sudah dibuat namun statusnya sudah CLOSE.
+                                <br><br>
+                                Untuk membuka session baru,
+                                harap tunggu jam operational
+                                di hari berikutnya.
+                            `,
+                            confirmButtonText: 'Ok',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        }).then((result) => {
+
+                            if (result.isConfirmed) {
+                                window.location.href = '/retails/daily-report';
+                            }
+
+                        });
+
+                        break;
+
+                    // 3. Tidak ada session hari ini -> buka modal
+                    case 'NO_SESSION_TODAY':
+
                         let modal = new bootstrap.Modal(
-                            document.getElementById('kt_modal_add_nominal_cash'), {
+                            document.getElementById('kt_modal_add_nominal_cash'),
+                            {
                                 backdrop: 'static',
                                 keyboard: false
                             }
                         );
-                        modal.show();
-                    } else {
-                        console.log('Session already OPEN');
-                    }
 
+                        modal.show();
+
+                        break;
+
+                    // 4. Session hari ini masih OPEN
+                    case 'TODAY_SESSION_OPEN':
+
+                        console.log('Session already open');
+
+                        break;
                 }
             },
-            error: function(err) {
-                console.error('Error checking session', err);
 
-                let modal = new bootstrap.Modal(
-                    document.getElementById('kt_modal_add_nominal_cash'), {
-                        backdrop: 'static',
-                        keyboard: false
-                    }
-                );
-                modal.show();
+            error: function(err) {
+
+                console.error(err);
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Terjadi Kesalahan',
+                    text: 'Gagal melakukan pengecekan session POS.',
+                });
             }
         });
     }

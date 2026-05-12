@@ -5,23 +5,62 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Auth;
 use DB;
+use Carbon\Carbon;
 
 class PosSessionController extends Controller
 {
     public function checkOpenSession(Request $request)
     {
         $branchId = Auth::user()->branch_id;
-        $hasOpenSession = DB::table('pos_sessions')
+
+        $todayStart = now()->startOfDay();
+        $todayEnd = now()->endOfDay();
+
+        // Cek session OPEN sebelum hari ini
+        $previousOpenSession = DB::table('pos_sessions')
             ->where('branch_id', $branchId)
             ->where('status', 'OPEN')
-            ->whereDate('opened_at', now()->toDateString())
-            ->exists();
+            ->where('opened_at', '<', $todayStart)
+            ->orderBy('opened_at', 'asc')
+            ->first();
 
+        if ($previousOpenSession) {
+            return response()->json([
+                'success' => true,
+                'type' => 'PREVIOUS_OPEN_SESSION',
+                'data' => [
+                    'opened_at' => Carbon::parse($previousOpenSession->opened_at)
+                        ->format('d M Y H:i')
+                ]
+            ]);
+        }
+
+        // Cek session hari ini
+        $todaySession = DB::table('pos_sessions')
+            ->where('branch_id', $branchId)
+            ->whereBetween('opened_at', [$todayStart, $todayEnd])
+            ->first();
+
+        // Tidak ada session hari ini
+        if (!$todaySession) {
+            return response()->json([
+                'success' => true,
+                'type' => 'NO_SESSION_TODAY',
+            ]);
+        }
+
+        // Ada session hari ini tapi sudah CLOSE
+        if ($todaySession->status === 'CLOSE') {
+            return response()->json([
+                'success' => true,
+                'type' => 'TODAY_SESSION_CLOSED',
+            ]);
+        }
+
+        // Session hari ini masih OPEN
         return response()->json([
             'success' => true,
-            'data' => [
-                'has_open_session' => $hasOpenSession
-            ]
+            'type' => 'TODAY_SESSION_OPEN',
         ]);
     }
 

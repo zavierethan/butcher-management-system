@@ -375,7 +375,7 @@
                         <div class="card card-flush">
                             <div class="card-header border-0 pt-6">
                                 <div class="card-title">
-                                    <h3 class="card-title fw-bold">SVC PFMN</h3>
+                                    <h3 class="card-title fw-bold">Service Performance</h3>
                                 </div>
                                 <div class="card-toolbar">
                                 </div>
