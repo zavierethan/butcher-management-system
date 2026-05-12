@@ -1333,8 +1333,8 @@ $(document).ready(function() {
 
         $("#kt_modal_edit_product_item #product_id").val(formatThausand(productId));
         $("#kt_modal_edit_product_item #product_name").val(productName);
-        $("#kt_modal_edit_product_item #product_price").val(productPrice);
-        $("#kt_modal_edit_product_item #diskon").val(productDiscount);
+        $("#kt_modal_edit_product_item #product_price").val(formatThausand(productPrice));
+        $("#kt_modal_edit_product_item #diskon").val(formatThausand(productDiscount));
         $("#kt_modal_edit_product_item #quantity").val(productQuantity);
     });
 
