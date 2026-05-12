@@ -686,6 +686,7 @@
                                     <div class="d-flex flex-equal gap-2 gap-xxl-9 px-0 mb-3" id="working-method">
                                         <select class="form-select form-select-solid" data-control="select2"
                                             data-placeholder="Pilih Butcherees" id="butcher-name">
+                                            <option value="">Pilih Butcherees</option>
                                             @foreach($butcherees as $butcher)
                                             <option value="{{$butcher->name}}">{{$butcher->name}}</option>
                                             @endforeach
@@ -1195,7 +1196,7 @@
                     <div class="mb-1">
                         <label class="form-label fw-bold fs-6 mb-2">Masukan Nominal Cash</label>
                         <div class="position-relative mb-3">
-                            <input class="form-control form-control-md form-control-solid" type="number"
+                            <input class="form-control form-control-md form-control-solid format-number" type="text"
                                 id="nominal-cash-value" />
                         </div>
                     </div>
@@ -1231,7 +1232,7 @@ $(document).ready(function() {
 
     $('#btn-save-nominal-cash-value').on('click', function() {
 
-        let nominal = $('#nominal-cash-value').val();
+        let nominal = unformatNumber($('#nominal-cash-value').val());
 
         $.ajax({
             url: '/pos-session/open',
@@ -1267,6 +1268,15 @@ $(document).ready(function() {
             }
         });
 
+    });
+
+    $(document).on('keyup', '.format-number', function () {
+
+        let value = $(this).val().replace(/\D/g, '');
+
+        $(this).val(
+            new Intl.NumberFormat('en-US').format(value)
+        );
     });
 
     $(document).on('click', '.product', function() {
@@ -1719,15 +1729,11 @@ $(document).ready(function() {
                                         url: `/orders/print-thermal/${response.transaction_id}`,
                                         type: "GET",
                                         dataType: "json",
-                                        success: function(
-                                            response) {
-                                            if (response.code ==
-                                                200) {
-                                                var printerName =
-                                                    "{{ ($settings) ? $settings->printer_name : '' }}";
+                                        success: function(response) {
+                                            if (response.code == 200) {
+                                                var printerName = "{{ ($settings) ? $settings->printer_name : '' }}";
 
-                                                if (printerName ===
-                                                    '') {
+                                                if (printerName === '') {
                                                     Swal.fire({
                                                         title: 'Gagal mencetak nota',
                                                         text: 'Nama Printer tidak ditemukan. harap periksa pengaturan pada sistem.',
@@ -1736,8 +1742,7 @@ $(document).ready(function() {
                                                         showConfirmButton: false
                                                     });
 
-                                                    $(".cart-item-lists")
-                                                        .remove();
+                                                    $(".cart-item-lists").remove();
                                                     calculateTotals
                                                         ();
                                                     return;
@@ -1755,10 +1760,9 @@ $(document).ready(function() {
                                                     showConfirmButton: false
                                                 });
 
-                                                $(".cart-item-lists")
-                                                    .remove();
-                                                calculateTotals
-                                                    ();
+                                                $(".cart-item-lists").remove();
+                                                calculateTotals();
+                                                getRemainingCashToday();
                                             } else {
                                                 Swal.fire({
                                                     title: 'Gagal Mencetak Nota',
@@ -1772,6 +1776,7 @@ $(document).ready(function() {
                                                     .remove();
                                                 calculateTotals
                                                     ();
+                                                getRemainingCashToday();
                                             }
                                         },
                                         error: function(xhr, status,
@@ -1789,6 +1794,7 @@ $(document).ready(function() {
                                     .DismissReason.cancel) {
                                     $(".cart-item-lists").remove();
                                     calculateTotals();
+                                    getRemainingCashToday();
                                 }
                             });
                         },
@@ -1987,6 +1993,7 @@ $(document).ready(function() {
 
     $('#customer').on('change', function() {
         let customerId = $(this).val();
+        $('#notes').text("");
         $.ajax({
             url: `/api/customer-notes/` + customerId,
             type: 'GET',
@@ -2453,6 +2460,22 @@ $(document).ready(function() {
     }
     // Auto-connect QZ Tray
     qz.websocket.connect().catch(err => console.error("QZ Tray not running:", err));
+
+    function formatNumberInput(input) {
+
+        // Ambil hanya angka
+        let value = input.value.replace(/\D/g, '');
+
+        // Format ribuan
+        value = new Intl.NumberFormat('en-US').format(value);
+
+        // Set kembali ke input
+        input.value = value;
+    }
+
+    function unformatNumber(value) {
+        return value.replace(/,/g, '');
+    }
 });
 </script>
 
