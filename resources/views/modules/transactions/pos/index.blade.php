@@ -1326,16 +1326,22 @@ $(document).ready(function() {
         e.preventDefault();
 
         const productId = $(this).data('product-id');
-        const productName = $(this).data('product-name');
-        const productPrice = $(this).data('product-price');
-        const productDiscount = $(this).data('product-discount');
-        const productQuantity = $(this).data('product-quantity');
+        const cartItem = $(`#product-id-${productId}`);
 
-        $("#kt_modal_edit_product_item #product_id").val(formatThausand(productId));
+        // Get data from the cart item itself (current values), not from button data attributes
+        // Strip comma before parsing to ensure correct number extraction
+        const currentProductPrice = parseFloat(cartItem.find('.base-price').text().replace(/,/g, ''));
+        const currentQuantity = parseFloat(cartItem.find('.quantity-value').text().replace(/,/g, ''));
+        const currentTotalDiscount = parseFloat(cartItem.find('.discount-per-unit').text().replace(/,/g, ''));
+        const currentDiscountPerUnit = currentTotalDiscount / currentQuantity; // Calculate discount per unit
+
+        const productName = $(this).data('product-name');
+
+        $("#kt_modal_edit_product_item #product_id").val(productId);
         $("#kt_modal_edit_product_item #product_name").val(productName);
-        $("#kt_modal_edit_product_item #product_price").val(formatThausand(productPrice));
-        $("#kt_modal_edit_product_item #diskon").val(formatThausand(productDiscount));
-        $("#kt_modal_edit_product_item #quantity").val(productQuantity);
+        $("#kt_modal_edit_product_item #product_price").val(formatThausand(currentProductPrice));
+        $("#kt_modal_edit_product_item #diskon").val(formatThausand(currentDiscountPerUnit));
+        $("#kt_modal_edit_product_item #quantity").val(currentQuantity);
     });
 
     $(document).on('click', '#add-item', function(e) {
@@ -1496,7 +1502,7 @@ $(document).ready(function() {
         e.preventDefault();
 
         const productId = $("#kt_modal_edit_product_item #product_id").val();
-        const quantity = $("#kt_modal_edit_product_item #quantity").val();
+        const quantity = parseFloat($("#kt_modal_edit_product_item #quantity").val());
         const productPrice = parseFloat($("#kt_modal_edit_product_item #product_price").val().replace(/,/g, ''));
         const discountPerUnit = parseFloat($("#kt_modal_edit_product_item #diskon").val().replace(/,/g, '')) || 0;
 
@@ -1531,21 +1537,21 @@ $(document).ready(function() {
             const newDiscountPerUnit = parseFloat(discountPerUnit) || 0;
             const basePrice = parseFloat(productPrice);
 
+            // Calculate totals
+            const grossTotal = mround(basePrice * newQuantity);
+            const totalDiscount = newDiscountPerUnit * newQuantity;
+            const netTotal = grossTotal - totalDiscount;
+
             // Update quantity display and storage
             const quantityElement = existingProduct.find('.qty');
             quantityElement.text(`${newQuantity}`);
             existingProduct.find('.quantity-value').text(newQuantity);
 
             // Update discount per unit storage (total discount for this item)
-            const totalDiscount = newDiscountPerUnit * newQuantity;
             existingProduct.find('.discount-per-unit').text(totalDiscount);
 
             // Update base price storage
             existingProduct.find('.base-price').text(basePrice);
-
-            // Recalculate totals
-            const grossTotal = mround(basePrice * newQuantity);
-            const netTotal = grossTotal - totalDiscount;
 
             // Update hidden gross-price storage
             existingProduct.find('.gross-price').text(grossTotal);
