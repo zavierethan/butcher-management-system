@@ -32,7 +32,7 @@ class OrderController extends Controller
                     DB::raw("TO_CHAR(transactions.transaction_date, 'dd/mm/YYYY HH24:MI:SS') as transaction_date"),
                     'transactions.payment_method',
                     'transactions.status',
-                    DB::raw("CASE WHEN transactions.ordering_method = 1 THEN 'Offline' ELSE 'Online' END AS ordering_method_name"),
+                    DB::raw("CASE WHEN transactions.ordering_method = 1 THEN 'Online' ELSE 'Offline' END AS ordering_method_name"),
                     DB::raw("CASE WHEN transactions.working_method = 1 THEN 'Direct' ELSE 'Processing Order' END AS working_method_name"),
                     'customers.name as customer_name',
                     'users.name as created_by'

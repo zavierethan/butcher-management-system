@@ -1077,10 +1077,11 @@ function loadPivotReport(branchId) {
             $('#report-table').DataTable({
                 data: res,
                 columns: columns,
-                scrollX: true, // wajib untuk pivot
+                scrollX: true,
                 autoWidth: false,
                 pageLength: 10,
                 searching: true,
+                ordering: false
             });
 
         },
