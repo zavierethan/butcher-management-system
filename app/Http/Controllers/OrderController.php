@@ -68,6 +68,10 @@ class OrderController extends Controller
             $query->where('transactions.branch_id', $params['branch_id']);
         }
 
+        if (!empty($params['working_method'])) {
+            $query->where('transactions.working_method', $params['working_method']);
+        }
+
         // Apply global search if provided
         $searchValue = $request->input('search.value'); // This is where DataTables sends the search input
         if (!empty($searchValue)) {

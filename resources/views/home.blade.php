@@ -407,12 +407,8 @@ $(document).ready(function() {
             type: 'GET',
             data: function (d) {
                 // Add filter data to the request
-                d.start_date = $('#start-date').val();
-                d.end_date = $('#end-date').val();
-                d.customer = $('#customer').val();
-                d.payment_method = $('#payment-method').val();
-                d.status = $('#status').val();
                 d.branch_id = $('#branch-id').val();
+                d.working_method = 2; // Processing Order
             },
             dataSrc: function(json) {
                 return json.data; // Map the 'data' field
