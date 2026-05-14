@@ -1284,13 +1284,13 @@ $(document).ready(function() {
         var stockId = $(this).data('stock-id');
         var productName = $(this).data('product-name');
         var productPrice = parseFloat($(this).data('product-price')); // Ensure price is a number
-        var productDiscount = parseFloat($(this).data('product-discount')) | 0;
+        var productDiscount = parseFloat($(this).data('product-discount')) || 0;
 
         $("#kt_modal_add_product_item #product_id").val(productId);
         $("#kt_modal_add_product_item #stock_id").val(stockId);
         $("#kt_modal_add_product_item #product_name").val(productName);
-        $("#kt_modal_add_product_item #product_price").val(productPrice);
-        $("#kt_modal_add_product_item #diskon").val(productDiscount == 0 ? '' : productDiscount);
+        $("#kt_modal_add_product_item #product_price").val(formatThausand(productPrice));
+        $("#kt_modal_add_product_item #diskon").val(productDiscount == 0 ? '' : formatThausand(productDiscount));
 
     });
 
@@ -1648,9 +1648,9 @@ $(document).ready(function() {
                         const basePrice = $(this).find('.base-price').text().replace(
                             /[^\d]/g, '');
                         const discountPerUnit = $(this).find('.discount-per-unit')
-                        .text().replace(/[^\d]/g, '') | 0;
+                        .text().replace(/[^\d]/g, '') || 0;
                         const discount = $(this).find('.discount').text().replace(
-                            /[^\d]/g, '') | 0;
+                            /[^\d]/g, '') || 0;
                         const quantity = $(this).find('.quantity-value').text();
 
                         products.push({
@@ -1663,16 +1663,16 @@ $(document).ready(function() {
                         });
                     });
 
-                    const totalDiscount = $('#total-discount').text().replace(/[^\d]/g, '') | 0;
-                    const shippingCost = $('#shipping-cost').text().replace(/[^\d]/g, '') | 0;
+                    const totalDiscount = $('#total-discount').text().replace(/[^\d]/g, '') || 0;
+                    const shippingCost = $('#shipping-cost').text().replace(/[^\d]/g, '') || 0;
                     const subTotal = $('#subtotal-amount').text().replace(/[^\d]/g, '');
                     const totalAmount = $('#total-amount').text().replace(/[^\d]/g, '');
                     const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
                     const customerId = $('#customer').val();
                     const butcherName = $('#butcher-name').val();
                     const branchId = $('#branch-id').val();
-                    const nominalCash = $('#nominal-cash').val().replace(/[^\d]/g, '') | 0;
-                    const nominalReturn = $('#nominal-return').val().replace(/[^\d]/g, '') | 0;
+                    const nominalCash = $('#nominal-cash').val().replace(/[^\d]/g, '') || 0;
+                    const nominalReturn = $('#nominal-return').val().replace(/[^\d]/g, '') || 0;
                     const transferType = $('#form-ref-transfer').find('input[type="radio"]:checked').val();
                     const transferRef = $('#transfer-ref').val();
                     const transferAttch = $('#transfer-attch')[0]?.files[0]; // Get file from input
@@ -2207,13 +2207,13 @@ $(document).ready(function() {
         $('#subtotal-amount').text(formatThausand(subtotal));
 
         // Add global discount to product discounts
-        const globalDiscount = $('#discount').text().replace(/[^\d]/g, '') | 0;
+        const globalDiscount = $('#discount').text().replace(/[^\d]/g, '') || 0;
         const totalDiscount = totalProductDiscount + parseFloat(globalDiscount);
 
         // Display total discount
         $('#total-discount').text(formatThausand(totalDiscount));
 
-        const shippingCost = $('#shipping-cost').text().replace(/[^\d]/g, '') | 0;
+        const shippingCost = $('#shipping-cost').text().replace(/[^\d]/g, '') || 0;
 
         const totalAmount = (subtotal - totalDiscount) + parseFloat(shippingCost);
         $('#total-amount').text(formatThausand(totalAmount));
@@ -2256,8 +2256,8 @@ $(document).ready(function() {
     function unformatThausand(value) {
         if (value === null || value === undefined || value === '') return 0;
 
-        // Ensure numeric
-        let number = parseFloat(value.toString().replace(/[^0-9,-]/g, '').replace(',', '.'));
+        // Ensure numeric - remove ALL commas (thousands separators), not just replace first
+        let number = parseFloat(value.toString().replace(/,/g, '').replace(/[^0-9.-]/g, ''));
         if (isNaN(number)) return 0;
 
         return number;
