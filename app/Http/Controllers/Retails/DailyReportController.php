@@ -319,16 +319,26 @@ class DailyReportController extends Controller
     }
 
     public function getProductQtyPivotToday(Request $request) {
+        $branchId = $request->branch_id;
+        $date = $request->date;
 
-        $branchId = Auth::user()->branch_id;
-        // 1. Ambil semua butcher dari master (bukan dari transactions)
+        // fallback jika date kosong
+        if (empty($date)) {
+            $date = now()->format('Y-m-d');
+        }
+
+        // 1. Ambil semua butcher master
         $butchers = DB::table('butcherees')
             ->where('branch_id', $branchId)
+            ->orderBy('name')
             ->pluck('name');
 
-        // 2. Build dynamic columns
+        // 2. Build dynamic pivot columns
         $columns = [];
+
         foreach ($butchers as $b) {
+
+            // escape alias postgres
             $alias = str_replace('"', '""', $b);
 
             $columns[] = "
@@ -338,42 +348,65 @@ class DailyReportController extends Controller
                             WHEN t.butcher_name = ? THEN ti.quantity
                             ELSE 0
                         END
-                    ), 0
-                ) AS \"$alias\"
+                    ),
+                0) AS \"$alias\"
             ";
         }
 
-        // 3. Query utama
+        // 3. Main query
         $sql = "
             SELECT
-                p.name AS PRODUK,
-                " . (count($columns) ? implode(",\n", $columns) : "0 AS \"no_data\"") . "
+                p.name AS \"PRODUK\",
+
+                " . (
+                    count($columns)
+                        ? implode(",\n", $columns)
+                        : "0 AS \"NO_DATA\""
+                ) . "
+
             FROM products p
-            LEFT JOIN transaction_items ti
+
+            LEFT JOIN (
+                transaction_items ti
+                INNER JOIN transactions t
+                    ON t.id = ti.transaction_id
+                    AND t.branch_id = ?
+                    AND t.transaction_date >= ?
+                    AND t.transaction_date < (?::date + INTERVAL '1 day')
+            )
                 ON ti.product_id = p.id
-            LEFT JOIN transactions t
-                ON t.id = ti.transaction_id
-                AND t.transaction_date >= CURRENT_DATE
-                AND t.transaction_date < CURRENT_DATE + INTERVAL '1 day'
-                AND t.branch_id = ?
+
             WHERE p.code NOT IN ('DLV', 'RW')
-            GROUP BY p.id, p.name, p.sort_order
-            ORDER BY p.sort_order
+
+            GROUP BY
+                p.id,
+                p.name,
+                p.sort_order
+
+            ORDER BY
+                p.sort_order ASC
         ";
 
         // 4. Bindings
         $bindings = [];
 
-        // binding untuk CASE WHEN butcher_name
+        // binding butcher_name untuk CASE WHEN
         foreach ($butchers as $b) {
             $bindings[] = $b;
         }
 
-        // binding untuk branch_id
+        // branch_id
         $bindings[] = $branchId;
 
-        // 5. Execute
-        return response()->json(DB::select($sql, $bindings));
+        // start date
+        $bindings[] = $date;
 
+        // end date
+        $bindings[] = $date;
+
+        // 5. Execute
+        $data = DB::select($sql, $bindings);
+
+        return response()->json($data);
     }
 }

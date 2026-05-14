@@ -477,12 +477,13 @@ function hideLoader() {
 $(document).ready(function() {
     // Get initial date from input
     var initialDate = $('#date').val();
+    var branch = $('#branch').val();
     fetchSummary(initialDate);
     fetchIncomeComposition(initialDate);
     // Initialize charts with dummy data
     initializePieChart();
 
-    loadPivotReport($('#branch').val());
+    loadPivotReport(branch, initialDate);
 
     const table = $("#kt_products_table").DataTable({
         processing: true,
@@ -1038,12 +1039,13 @@ function fetchIncomeComposition(params) {
     });
 }
 
-function loadPivotReport(branchId) {
+function loadPivotReport(branchId, currentDate) {
     $.ajax({
         url: '/retails/daily-report/get-product-qty-pivot-today',
         method: 'GET',
         data: {
-            branch_id: branchId
+            branch_id: branchId,
+            date: currentDate
         },
         success: function(res) {
 
@@ -1055,14 +1057,57 @@ function loadPivotReport(branchId) {
             // 🔥 ambil kolom dinamis
             const keys = Object.keys(res[0]);
 
-            const columns = keys.map((key, index) => ({
+            // Tambahkan kolom TOTAL di akhir
+            const columnsData = [...keys, 'TOTAL'];
+
+            // Hitung total untuk setiap row dan tambahkan ke data
+            const dataWithTotals = res.map(row => {
+                let rowTotal = 0;
+                // Hitung total dari semua kolom kecuali kolom pertama (PRODUK)
+                keys.forEach((key, index) => {
+                    if (index > 0) { // Skip kolom pertama (PRODUK)
+                        rowTotal += parseFloat(row[key]) || 0;
+                    }
+                });
+                return {
+                    ...row,
+                    TOTAL: rowTotal
+                };
+            });
+
+            // Hitung total untuk setiap kolom (grand total row)
+            const columnTotals = {};
+            columnsData.forEach((key, index) => {
+                if (index === 0) {
+                    columnTotals[key] = 'TOTAL';
+                } else {
+                    let colTotal = 0;
+                    dataWithTotals.forEach(row => {
+                        colTotal += parseFloat(row[key]) || 0;
+                    });
+                    columnTotals[key] = colTotal;
+                }
+            });
+
+            // Tambahkan row total di akhir
+            const finalData = [...dataWithTotals, columnTotals];
+
+            const columns = columnsData.map((key, index) => ({
                 data: key,
                 title: key,
                 className: index === 0 ? 'text-start' : 'text-center',
                 defaultContent: 0,
-                render: function (data) {
+                render: function (data, type, row) {
                     if (!isNaN(data)) {
-                        return parseFloat(data).toLocaleString('id-ID');
+                        const value = parseFloat(data).toLocaleString('id-ID');
+                        // Highlight row dan kolom TOTAL dengan warna hijau
+                        const isLastRow = row === columnTotals;
+                        const isLastCol = key === 'TOTAL';
+
+                        if (isLastRow || isLastCol) {
+                            return `<span class="badge bg-success text-white fw-bold">${value}</span>`;
+                        }
+                        return value;
                     }
                     return data;
                 }
@@ -1076,13 +1121,19 @@ function loadPivotReport(branchId) {
 
             // 🔥 init DataTable
             $('#report-table').DataTable({
-                data: res,
+                data: finalData,
                 columns: columns,
                 scrollX: true,
                 autoWidth: false,
-                pageLength: 10,
+                pageLength: 50,
                 searching: true,
-                ordering: false
+                ordering: false,
+                rowCallback: function(row, data, index) {
+                    // Highlight row TOTAL dengan background hijau
+                    if (data === columnTotals) {
+                        $(row).css('background-color', '#d1f4e0').css('font-weight', 'bold');
+                    }
+                }
             });
 
         },
