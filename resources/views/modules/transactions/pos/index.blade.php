@@ -767,7 +767,7 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Masukan Nominal
                                                     Bayar</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid"
+                                                    <input class="form-control form-control-md form-control-solid format-number"
                                                         type="text" id="nominal-cash" />
                                                 </div>
                                             </div>
@@ -2262,7 +2262,13 @@ $(document).ready(function() {
     // IMPROVED: Safe extraction of numeric values from DOM elements
     function extractNumericValue(element) {
         if (!element) return 0;
-        let text = $(element).text().trim() || '';
+        // For input elements, use .val(); for other elements, use .text()
+        let text = '';
+        if ($(element).is('input')) {
+            text = $(element).val() || '';
+        } else {
+            text = $(element).text() || '';
+        }
         return unformatThausand(text);
     }
 
