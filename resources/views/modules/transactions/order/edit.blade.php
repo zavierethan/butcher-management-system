@@ -211,11 +211,29 @@
                                             $discountTotal = 0;
                                             $deliveryFee = 0;
                                             $totalPay = 0;
+
+                                            // Helper function to match POS mround() - rounds to nearest 1000
+                                            function phpMround($value) {
+                                                $number = (int)$value;
+                                                $base = floor($number / 1000) * 1000;
+                                                $remainder = $number % 1000;
+
+                                                if ($remainder > 500) {
+                                                    return $base + 1000;
+                                                } elseif ($remainder < 500) {
+                                                    return $base;
+                                                } else {
+                                                    // exactly 500
+                                                    return $base + 500;
+                                                }
+                                            }
                                         @endphp
 
                                         @foreach($detailItems as $detail)
                                             @php
-                                                $roundedTotalPrice = round($detail->quantity * $detail->base_price / 100) * 100;
+                                                // FIXED: Use same rounding as POS (mround to nearest 1000)
+                                                $roundedTotalPrice = phpMround($detail->quantity * $detail->base_price);
+                                                // FIXED: Discount applies only for whole kg (floor of quantity)
                                                 $productDiscount = $detail->discount * floor($detail->quantity);
                                                 $totalPrice = $roundedTotalPrice - $productDiscount;
 
