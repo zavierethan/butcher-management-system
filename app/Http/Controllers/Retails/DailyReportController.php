@@ -32,7 +32,7 @@ class DailyReportController extends Controller
                 SUM(total_amount) AS total_revenue,
                 SUM(discount) AS total_discount"
             )
-            ->where('branch_id', $branchId);
+            ->where('branch_id', $params['branch_id']);
 
         if (!empty($params['date'])) {
             $totalsQuery->where(DB::raw('DATE(transactions.transaction_date)'), $params['date']);
@@ -45,7 +45,7 @@ class DailyReportController extends Controller
                 COALESCE(SUM(CASE WHEN payment_method = '1' THEN amount ELSE 0 END), 0) AS total_cash,
                 COALESCE(SUM(CASE WHEN payment_method = '2' THEN amount ELSE 0 END), 0) AS total_transfer
             ")
-            ->where('branch_id', $branchId);
+            ->where('branch_id', $params['branch_id']);
 
         if (!empty($params['date'])) {
             $totalExpenses->where(DB::raw('DATE(daily_expenses.date)'), $params['date']);
@@ -55,7 +55,7 @@ class DailyReportController extends Controller
 
         $totalCash = DB::table('cash_movements as cm')
             ->join('pos_sessions as ps', 'cm.pos_session_id', '=', 'ps.id')
-            ->where('ps.branch_id', $branchId)
+            ->where('ps.branch_id', $params['branch_id'])
             ->where(DB::raw('DATE(cm.created_at)'), '=', $params['date'])
             ->groupBy('ps.id', 'ps.closing_cash')
             ->selectRaw("
@@ -69,7 +69,7 @@ class DailyReportController extends Controller
             ")
             ->first();
 
-        $totalTransactionsQuery = DB::table('transactions')->where('branch_id', $branchId)->where(DB::raw('DATE(transactions.transaction_date)'), $params['date']);
+        $totalTransactionsQuery = DB::table('transactions')->where('branch_id', $params['branch_id'])->where(DB::raw('DATE(transactions.transaction_date)'), $params['date']);
 
         $totalTransactions = $totalTransactionsQuery->count();
 
@@ -78,7 +78,7 @@ class DailyReportController extends Controller
                 COALESCE(SUM(CASE WHEN payment_method = '1' THEN amount ELSE 0 END), 0) AS total_cash,
                 COALESCE(SUM(CASE WHEN payment_method = '2' THEN amount ELSE 0 END), 0) AS total_transfer
             ")
-            ->where('branch_id', $branchId);
+            ->where('branch_id', $params['branch_id']);
 
         if (!empty($params['date'])) {
             $totalReceivable->where(DB::raw('DATE(receivable_payments.payment_date)'), $params['date']);
@@ -119,7 +119,7 @@ class DailyReportController extends Controller
                 SUM(total_amount) AS total_revenue,
                 SUM(discount) AS total_discount"
             )
-            ->where('branch_id', $branchId);
+            ->where('branch_id', $params['branch_id']);
 
         if (!empty($params['date'])) {
             $totalsQuery->where(DB::raw('DATE(transactions.transaction_date)'), $params['date']);
@@ -132,7 +132,7 @@ class DailyReportController extends Controller
                 COALESCE(SUM(CASE WHEN payment_method = '1' THEN amount ELSE 0 END), 0) AS total_cash,
                 COALESCE(SUM(CASE WHEN payment_method = '2' THEN amount ELSE 0 END), 0) AS total_transfer
             ")
-            ->where('branch_id', $branchId);
+            ->where('branch_id', $params['branch_id']);
 
         if (!empty($params['date'])) {
             $totalExpenses->where(DB::raw('DATE(daily_expenses.date)'), $params['date']);
@@ -145,7 +145,7 @@ class DailyReportController extends Controller
                 COALESCE(SUM(CASE WHEN payment_method = '1' THEN amount ELSE 0 END), 0) AS total_cash,
                 COALESCE(SUM(CASE WHEN payment_method = '2' THEN amount ELSE 0 END), 0) AS total_transfer
             ")
-            ->where('branch_id', $branchId);
+            ->where('branch_id', $params['branch_id']);
 
         if (!empty($params['date'])) {
             $totalReceivable->where(DB::raw('DATE(receivable_payments.payment_date)'), $params['date']);
@@ -214,7 +214,7 @@ class DailyReportController extends Controller
                 'daily_expenses.status',
                 'daily_expenses.payment_method'
             )
-            ->where('daily_expenses.branch_id', Auth::user()->branch_id);
+            ->where('daily_expenses.branch_id', $params['branch_id']);
 
         if (!empty($params['date'])) {
             $query->where('daily_expenses.date', $params['date']);
@@ -257,7 +257,7 @@ class DailyReportController extends Controller
             )
             ->leftJoin('invoices', 'invoices.id', '=', 'receivable_payments.invoice_id')
             ->leftJoin('customers', 'customers.id', '=', 'invoices.customer_id')
-            ->where('receivable_payments.branch_id', Auth::user()->branch_id);
+            ->where('receivable_payments.branch_id', $params['branch_id']);
 
         if (!empty($params['date'])) {
             $query->where(DB::raw('DATE(receivable_payments.payment_date)'), $params['date']);

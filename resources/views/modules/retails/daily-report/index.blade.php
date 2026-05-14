@@ -53,8 +53,7 @@
                             {{ Auth::user()->group_id != 1 ? 'disabled' : '' }}>
                             <option value="" selected="selected">Show All</option>
                             @foreach($branches as $branch)
-                            <option value="{{$branch->id}}"
-                                {{ Auth::user()->branch_id == $branch->id ? 'selected' : '' }}>
+                            <option value="{{$branch->id}}" {{ Auth::user()->branch_id == $branch->id ? 'selected' : '' }}>
                                 {{$branch->name}}
                             </option>
                             @endforeach
@@ -180,6 +179,7 @@
                                 <div class="d-flex flex-column">
                                     <span class="text-gray-700 fs-7 fw-semibold mb-2">UANG DI KASIR</span>
                                     <span class="fw-bold fs-2 text-gray-900" id="total-kasir">Rp.0</span>
+                                    <small class="text-danger italics" id="difference-kasir"></small>
                                 </div>
                             </div>
                         </div>
@@ -478,9 +478,8 @@ $(document).ready(function() {
     // Get initial date from input
     var initialDate = $('#date').val();
     var branch = $('#branch').val();
-    fetchSummary(initialDate);
-    fetchIncomeComposition(initialDate);
-    // Initialize charts with dummy data
+    fetchSummary(branch, initialDate);
+    fetchIncomeComposition(branch, initialDate);
     initializePieChart();
 
     loadPivotReport(branch, initialDate);
@@ -560,6 +559,7 @@ $(document).ready(function() {
             data: function(d) {
                 // Add filter data to the request
                 d.date = $('#date').val();
+                d.branch_id = $('#branch').val();
             },
             dataSrc: function(json) {
                 return json.data; // Map the 'data' field
@@ -606,17 +606,6 @@ $(document).ready(function() {
         ]
     });
 
-    $('#date').on('change', function() {
-        var param = $(this).val();
-
-        fetchSummary(param);
-        fetchIncomeComposition(param);
-
-        table.draw();
-        expenesTable.draw();
-        receivableTable.draw();
-    });
-
     const receivableTable = $("#kt_receive_table").DataTable({
         processing: true,
         serverSide: true,
@@ -628,6 +617,7 @@ $(document).ready(function() {
             data: function(d) {
                 // Add filter data to the request
                 d.date = $('#date').val();
+                d.branch_id = $('#branch').val();
             },
             dataSrc: function(json) {
                 return json.data; // Map the 'data' field
@@ -651,6 +641,21 @@ $(document).ready(function() {
                 className: 'text-end'
             }
         ]
+    });
+
+    $(document).on('change', '#date, #branch', function() {
+        var date = $('#date').val();
+        var branch = $('#branch').val();
+
+        fetchSummary(branch, date);
+        fetchIncomeComposition(branch, date);
+        loadPivotReport(branch, date);
+
+        table.draw();
+        expenesTable.draw();
+        receivableTable.draw();
+
+
     });
 });
 
@@ -970,8 +975,7 @@ function formatRupiah(num) {
     }).format(num);
 }
 
-
-function fetchSummary(params) {
+function fetchSummary(branchId, date) {
     $.ajax({
         url: `/retails/daily-report/get-data-summary`,
         method: 'POST',
@@ -979,7 +983,8 @@ function fetchSummary(params) {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         data: {
-            date: params
+            branch_id: branchId,
+            date: date
         },
         beforeSend: function() {
             console.log('Fetching summary...');
@@ -989,14 +994,19 @@ function fetchSummary(params) {
         success: function(response) {
             console.log('Response:', response);
 
-            let totalCash = parseFloat(response.total_cash) - parseFloat(response.total_cash_expanse) + parseFloat(response.total_cash_payment_of_receivable);
+            let selisih = parseFloat(response.total_cash_in_casheer) - parseFloat(response.actual_cash_in_casheer);
 
             // Example mapping (adjust based on your JSON structure)
             $('#total-revenue').text(formatRupiah(response.total_revenue));
-            $('#total-transactions').text('Total Transaksi: ' + response.total_transactions);
+            $('#total-transactions').text('Total Transaksi: ' + formatRupiah(response.total_transactions));
             $("#total-discount").text(formatRupiah(response.total_discount));
             $('#total-cash').text(formatRupiah(response.total_cash_in_casheer));
             $('#total-kasir').text(formatRupiah(response.actual_cash_in_casheer));
+
+            if(response.actual_cash_in_casheer != 0) {
+                $('#difference-kasir').text('Selisih antara Total Uang Tunai dengan Uang di Kasir: ' + formatRupiah(selisih));
+            }
+
         },
         error: function(xhr) {
             console.error('Error:', xhr.responseText);
@@ -1009,7 +1019,7 @@ function fetchSummary(params) {
     });
 }
 
-function fetchIncomeComposition(params) {
+function fetchIncomeComposition(branchId, date) {
     $.ajax({
         url: `/retails/daily-report/get-income-composition`,
         method: 'POST',
@@ -1017,7 +1027,8 @@ function fetchIncomeComposition(params) {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         data: {
-            date: params
+            branch_id: branchId,
+            date: date
         },
         beforeSend: function() {
             console.log('Fetching income composition...');
@@ -1143,5 +1154,6 @@ function loadPivotReport(branchId, currentDate) {
         }
     });
 }
+
 </script>
 @endsection

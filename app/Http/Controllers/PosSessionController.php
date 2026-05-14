@@ -140,8 +140,8 @@ class PosSessionController extends Controller
             ->update([
                 'status' => 'CLOSE',
                 'closed_at' => now(),
-                'closing_cash' => $params['closing_cash'],
-                'expected_cash' => $params['actual_cash'],
+                'closing_cash' => $params['actual_cash'],
+                'expected_cash' => $params['closing_cash'],
                 'notes' => $params['notes'] ?? null,
                 'updated_at' => now()
             ]);
