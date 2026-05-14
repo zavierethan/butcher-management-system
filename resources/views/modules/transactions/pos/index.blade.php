@@ -1332,7 +1332,8 @@ $(document).ready(function() {
         const currentProductPrice = extractNumericValue(cartItem.find('.base-price'));
         const currentQuantity = extractNumericValue(cartItem.find('.quantity-value'));
         const currentTotalDiscount = extractNumericValue(cartItem.find('.discount-per-unit'));
-        const currentDiscountPerUnit = currentQuantity > 0 ? currentTotalDiscount / currentQuantity : 0;
+        // FIXED: Divide by floor(quantity) not actual quantity, since discount was calculated with floor
+        const currentDiscountPerUnit = currentQuantity > 0 ? currentTotalDiscount / Math.floor(currentQuantity) : 0;
 
         const productName = $(this).data('product-name');
 
@@ -1393,7 +1394,8 @@ $(document).ready(function() {
             existingProduct.find('.quantity-value').text(newQuantity);
 
             // Calculate and update discount per unit storage (total discount for this item)
-            const totalDiscount = productDiscount * newQuantity;
+            // FIXED: Discount applies only for whole kg (floor of quantity)
+            const totalDiscount = productDiscount * Math.floor(newQuantity);
             existingProduct.find('.discount-per-unit').text(totalDiscount);
 
             // Update base price storage
@@ -1420,7 +1422,7 @@ $(document).ready(function() {
                 }
 
                 const discountHTML = `<div class="mb-2 pb-2 discount-section" style="border-bottom: 1px solid #dee2e6;">
-                    <small class="text-muted">Discount: <span class="discount-total">${newQuantity}</span> kg x ${formatThausand(productDiscount)} = </small>
+                    <small class="text-muted">Discount: <span class="discount-total">${Math.floor(newQuantity)}</span> kg x ${formatThausand(productDiscount)} = </small>
                     <small class="fw-bold text-danger">${formatThausand(totalDiscount)}</small>
                 </div>`;
                 quantityDisplay.after(discountHTML);
@@ -1435,7 +1437,8 @@ $(document).ready(function() {
             // Add new product to the cart
 
             var grossPrice = mround(productPrice * productQuantity);
-            var totalDiscount = productDiscount * productQuantity;
+            // FIXED: Discount applies only for whole kg (floor of quantity)
+            var totalDiscount = productDiscount * Math.floor(productQuantity);
             var nettPrice = grossPrice - totalDiscount;
 
             var productItem = `<div class="cart-item-lists p-3 mb-2" id="product-id-${productId}" style="border: 1px solid #e9ecef; border-radius: 0.375rem; background-color: #f8f9fa;">
@@ -1469,7 +1472,7 @@ $(document).ready(function() {
 
                 <!-- Row 3: Discount Badge (CONDITIONAL - Only if discount > 0) -->
                 ${productDiscount > 0 ? `<div class="mb-2 pb-2 discount-section" style="border-bottom: 1px solid #dee2e6;">
-                    <small class="text-muted">Discount: <span class="discount-total">${productQuantity}</span> kg x ${formatThausand(productDiscount)} = </small>
+                    <small class="text-muted">Discount: <span class="discount-total">${Math.floor(productQuantity)}</span> kg x ${formatThausand(productDiscount)} = </small>
                     <small class="fw-bold text-danger">${formatThausand(totalDiscount)}</small>
                 </div>` : ''}
 
@@ -1538,7 +1541,8 @@ $(document).ready(function() {
 
             // Calculate totals
             const grossTotal = mround(basePrice * newQuantity);
-            const totalDiscount = newDiscountPerUnit * newQuantity;
+            // FIXED: Discount applies only for whole kg (floor of quantity)
+            const totalDiscount = newDiscountPerUnit * Math.floor(newQuantity);
             const netTotal = grossTotal - totalDiscount;
 
             // Update quantity display and storage
@@ -1569,7 +1573,7 @@ $(document).ready(function() {
                 }
 
                 const discountHTML = `<div class="mb-2 pb-2 discount-section" style="border-bottom: 1px solid #dee2e6;">
-                    <small class="text-muted">Discount: <span class="discount-total">${newQuantity}</span> kg x ${formatThausand(newDiscountPerUnit)} = </small>
+                    <small class="text-muted">Discount: <span class="discount-total">${Math.floor(newQuantity)}</span> kg x ${formatThausand(newDiscountPerUnit)} = </small>
                     <small class="fw-bold text-danger">${formatThausand(totalDiscount)}</small>
                 </div>`;
                 quantityDisplay.after(discountHTML);
