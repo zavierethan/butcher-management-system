@@ -623,13 +623,13 @@
                                         <div class="row align-items-center pb-3 mb-3"
                                             style="border-bottom: 2px dotted rgba(255,255,255,0.5);">
                                             <div class="col-8">Subtotal</div>
-                                            <div class="col-4 text-end" id="subtotal-amount">Rp. 0</div>
+                                            <div class="col-4 text-end" id="subtotal-amount">0</div>
                                         </div>
                                         <!-- Total Discounts Row -->
                                         <div class="row align-items-center pb-3 mb-3"
                                             style="border-bottom: 2px dotted rgba(255,255,255,0.5);">
                                             <div class="col-8">Total Discounts</div>
-                                            <div class="col-4 text-end" id="total-discount">Rp. 0</div>
+                                            <div class="col-4 text-end" id="total-discount">0</div>
                                         </div>
                                         <!-- Shipping Cost Row -->
                                         <div class="row align-items-center pb-3 mb-3"
@@ -641,12 +641,12 @@
                                                     <i class="fas fa-edit text-white ms-2"></i>
                                                 </a>
                                             </div>
-                                            <div class="col-4 text-end" id="shipping-cost">Rp. 0</div>
+                                            <div class="col-4 text-end" id="shipping-cost">0</div>
                                         </div>
                                         <!-- Total Bayar Row -->
                                         <div class="row align-items-center">
                                             <div class="col-8">Total Bayar</div>
-                                            <div class="col-4 text-end" id="total-amount">Rp. 0</div>
+                                            <div class="col-4 text-end" id="total-amount">0</div>
                                         </div>
                                     </div>
                                     <!--end::Summary Grid-->
@@ -1328,12 +1328,11 @@ $(document).ready(function() {
         const productId = $(this).data('product-id');
         const cartItem = $(`#product-id-${productId}`);
 
-        // Get data from the cart item itself (current values), not from button data attributes
-        // Strip comma before parsing to ensure correct number extraction
-        const currentProductPrice = parseFloat(cartItem.find('.base-price').text().replace(/,/g, ''));
-        const currentQuantity = parseFloat(cartItem.find('.quantity-value').text().replace(/,/g, ''));
-        const currentTotalDiscount = parseFloat(cartItem.find('.discount-per-unit').text().replace(/,/g, ''));
-        const currentDiscountPerUnit = currentTotalDiscount / currentQuantity; // Calculate discount per unit
+        // IMPROVED: Use safe extraction for all values
+        const currentProductPrice = extractNumericValue(cartItem.find('.base-price'));
+        const currentQuantity = extractNumericValue(cartItem.find('.quantity-value'));
+        const currentTotalDiscount = extractNumericValue(cartItem.find('.discount-per-unit'));
+        const currentDiscountPerUnit = currentQuantity > 0 ? currentTotalDiscount / currentQuantity : 0;
 
         const productName = $(this).data('product-name');
 
@@ -1607,13 +1606,12 @@ $(document).ready(function() {
 
     $(document).on('keyup', '#nominal-cash', function() {
 
-        // Ambil nominal cash (hanya digit)
-        let nominalCash = parseInt($(this).val().replace(/[^\d]/g, ''), 10) || 0;
+        // IMPROVED: Use safe extraction for numeric values
+        let nominalCash = extractNumericValue(this) || 0;
 
-        // Ambil total
-        let totalAmount = parseInt($('#total-amount').text().replace(/[^\d]/g, ''), 10) || 0;
+        let totalAmount = extractNumericValue($('#total-amount'));
 
-        // Format ulang cash input
+        // Format and update cash input
         $(this).val(formatThausand(nominalCash));
 
         // Hitung return (boleh negatif)
@@ -1641,17 +1639,14 @@ $(document).ready(function() {
                     const products = [];
 
                     $('.cart-item-lists').each(function() {
-                        const productId = $(this).find('.product-id').text();
-                        const stockId = $(this).find('.stock-id').text();
-                        const price = $(this).find('.price').text().replace(/[^\d]/g,
-                            '');
-                        const basePrice = $(this).find('.base-price').text().replace(
-                            /[^\d]/g, '');
-                        const discountPerUnit = $(this).find('.discount-per-unit')
-                        .text().replace(/[^\d]/g, '') || 0;
-                        const discount = $(this).find('.discount').text().replace(
-                            /[^\d]/g, '') || 0;
-                        const quantity = $(this).find('.quantity-value').text();
+                        // IMPROVED: Use safe extraction for all numeric values
+                        const productId = $(this).find('.product-id').text().trim();
+                        const stockId = $(this).find('.stock-id').text().trim();
+                        const price = extractNumericValue($(this).find('.price'));
+                        const basePrice = extractNumericValue($(this).find('.base-price'));
+                        const discountPerUnit = extractNumericValue($(this).find('.discount-per-unit'));
+                        const discount = extractNumericValue($(this).find('.discount'));
+                        const quantity = extractNumericValue($(this).find('.quantity-value'));
 
                         products.push({
                             product_id: productId,
@@ -1663,16 +1658,17 @@ $(document).ready(function() {
                         });
                     });
 
-                    const totalDiscount = $('#total-discount').text().replace(/[^\d]/g, '') || 0;
-                    const shippingCost = $('#shipping-cost').text().replace(/[^\d]/g, '') || 0;
-                    const subTotal = $('#subtotal-amount').text().replace(/[^\d]/g, '');
-                    const totalAmount = $('#total-amount').text().replace(/[^\d]/g, '');
+                    // IMPROVED: Use safe extraction for all values
+                    const totalDiscount = extractNumericValue($('#total-discount'));
+                    const shippingCost = extractNumericValue($('#shipping-cost'));
+                    const subTotal = extractNumericValue($('#subtotal-amount'));
+                    const totalAmount = extractNumericValue($('#total-amount'));
                     const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
                     const customerId = $('#customer').val();
                     const butcherName = $('#butcher-name').val();
                     const branchId = $('#branch-id').val();
-                    const nominalCash = $('#nominal-cash').val().replace(/[^\d]/g, '') || 0;
-                    const nominalReturn = $('#nominal-return').val().replace(/[^\d]/g, '') || 0;
+                    const nominalCash = unformatNumber($('#nominal-cash').val()) || 0;
+                    const nominalReturn = unformatNumber($('#nominal-return').val()) || 0;
                     const transferType = $('#form-ref-transfer').find('input[type="radio"]:checked').val();
                     const transferRef = $('#transfer-ref').val();
                     const transferAttch = $('#transfer-attch')[0]?.files[0]; // Get file from input
@@ -2194,12 +2190,12 @@ $(document).ready(function() {
 
         // Iterate through each product in the cart and sum up their subtotals and discounts
         $('.cart-item-lists').each(function() {
-            const priceText = $(this).find('.gross-price').text().replace(/[^\d]/g, '');
-            const price = parseFloat(priceText) || 0;
+            // IMPROVED: Use safe extraction instead of direct text parsing
+            const price = extractNumericValue($(this).find('.gross-price'));
             subtotal += price;
 
             // Extract total discount for this item (already calculated as discount_per_unit × quantity)
-            const itemTotalDiscount = parseFloat($(this).find('.discount-per-unit').text()) || 0;
+            const itemTotalDiscount = extractNumericValue($(this).find('.discount-per-unit'));
             totalProductDiscount += itemTotalDiscount;
         });
 
@@ -2207,15 +2203,15 @@ $(document).ready(function() {
         $('#subtotal-amount').text(formatThausand(subtotal));
 
         // Add global discount to product discounts
-        const globalDiscount = $('#discount').text().replace(/[^\d]/g, '') || 0;
-        const totalDiscount = totalProductDiscount + parseFloat(globalDiscount);
+        const globalDiscount = extractNumericValue($('#discount'));
+        const totalDiscount = totalProductDiscount + globalDiscount;
 
         // Display total discount
         $('#total-discount').text(formatThausand(totalDiscount));
 
-        const shippingCost = $('#shipping-cost').text().replace(/[^\d]/g, '') || 0;
+        const shippingCost = extractNumericValue($('#shipping-cost'));
 
-        const totalAmount = (subtotal - totalDiscount) + parseFloat(shippingCost);
+        const totalAmount = (subtotal - totalDiscount) + shippingCost;
         $('#total-amount').text(formatThausand(totalAmount));
 
         $("#nominal-cash").val("");
@@ -2243,8 +2239,8 @@ $(document).ready(function() {
     function formatThausand(value, decimalLength) {
         if (value === null || value === undefined || value === '') return '';
 
-        // Ensure numeric
-        let number = parseFloat(value.toString().replace(/[^0-9,-]/g, '').replace(',', ','));
+        // Ensure numeric - FIXED: remove ALL commas before parsing
+        let number = parseFloat(value.toString().replace(/,/g, '').replace(/[^0-9.-]/g, ''));
         if (isNaN(number)) return '';
 
         return number.toLocaleString('en-US', {
@@ -2261,6 +2257,13 @@ $(document).ready(function() {
         if (isNaN(number)) return 0;
 
         return number;
+    }
+
+    // IMPROVED: Safe extraction of numeric values from DOM elements
+    function extractNumericValue(element) {
+        if (!element) return 0;
+        let text = $(element).text().trim() || '';
+        return unformatThausand(text);
     }
 
     function mround(value) {
@@ -2477,7 +2480,9 @@ $(document).ready(function() {
     }
 
     function unformatNumber(value) {
-        return value.replace(/,/g, '');
+        if (!value) return 0;
+        const num = parseFloat(value.toString().replace(/,/g, ''));
+        return isNaN(num) ? 0 : num;
     }
 });
 </script>
