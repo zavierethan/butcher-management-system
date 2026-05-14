@@ -516,12 +516,17 @@
                                             id="product-search" />
                                     </div>
 
-                                    <!-- RIGHT: Remaining Cash -->
-                                    <div class="text-end">
-                                        <div class="fw-bold text-gray-600">Sisa Cash</div>
-                                        <div class="fs-4 fw-bold text-success" id="remaining-cash">
-                                            Rp 0
+                                    <!-- RIGHT: Remaining Cash & Shutdown Button -->
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="text-end">
+                                            <div class="fw-bold text-gray-600">Total Uang Tunai</div>
+                                            <div class="fs-4 fw-bold text-success" id="remaining-cash">
+                                                 0
+                                            </div>
                                         </div>
+                                        <button class="btn btn-sm btn-danger" id="btn-close-session" title="Tutup Session">
+                                            <i class="fas fa-power-off"></i>
+                                        </button>
                                     </div>
 
                                 </div>
@@ -543,22 +548,12 @@
                                             data-bs-target="#kt_modal_add_customer"><i
                                                 class="fa-solid fa-user-plus"></i></button>
                                     </div>
-                                    <div class="col-md-8">
+                                    <div class="col-md-11">
                                         <select class="form-select form-select-solid" data-control="select2"
                                             data-placeholder="Pilih Customer" name="customer" id="customer">
                                             <option value=""></option>
                                         </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <select class="form-select form-select-solid" data-control="select2"
-                                            data-placeholder="Pilih Store" id="branch-id" disabled>
-                                            @foreach($branches as $branch)
-                                            <option value="{{$branch->id}}"
-                                                <?php echo ($branch->id == Auth::user()->branch_id) ? "selected" : ""; ?>>
-                                                {{$branch->code}}
-                                            </option>
-                                            @endforeach
-                                        </select>
+                                        <input type="hidden" id="branch-id" value="{{ Auth::user()->branch_id }}" readonly/>
                                     </div>
                                 </div>
                             </div>
@@ -1212,6 +1207,67 @@
     </div>
     <!--end::Modal dialog-->
 </div>
+
+<!-- Modal: Close Session / Close Transaction -->
+<div class="modal fade" id="modal-close-session" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tutup Session</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Opening Cash</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid" type="text"
+                                name="opening_cash" id="modal-opening-cash" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Total Uang Tunai</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid" type="text"
+                                name="closing_cash" id="modal-closing-cash" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Uang di Kasir (Actual Cash)</label>
+                        <div class="position-relative mb-3">
+                            <input class="form-control form-control-md form-control-solid format-number" type="text"
+                                name="actual_cash" id="modal-actual-cash" />
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Catatan</label>
+                        <div class="position-relative mb-3">
+                            <textarea class="form-control form-control-md form-control-solid" name="notes"
+                                id="modal-notes"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button class="btn btn-danger" id="btn-confirm-close-session">Tutup Session</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('script')
@@ -1268,6 +1324,99 @@ $(document).ready(function() {
             }
         });
 
+    });
+
+    $('#btn-close-session').on('click', function() {
+
+        const date = new Date().toISOString().split('T')[0]; // Get today's date
+        const branchId = '{{ Auth::user()->branch_id }}';
+
+        $.ajax({
+            url: '/retails/daily-report/get-data-from-pos-sessions',
+            method: 'GET',
+            data: {
+                date: date,
+                branch_id: branchId
+            },
+            success: function(res) {
+                // Autofill ke modal
+                $('#modal-opening-cash').val(res.opening_cash);
+                $('#modal-closing-cash').val(res.total_cash_in_cashier);
+
+                // Clear previous values
+                $('#modal-actual-cash').val('');
+                $('#modal-notes').val('');
+
+                // tampilkan modal
+                $('#modal-close-session').modal('show');
+            },
+            error: function(err) {
+                console.error(err);
+                let message = 'Gagal mengambil data. Silahkan coba lagi';
+                if(err.responseJSON && err.responseJSON.message) {
+                    message = err.responseJSON.message;
+                }
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Session Tidak Ditemukan',
+                    text: message,
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+
+    $('#btn-confirm-close-session').on('click', function() {
+        const closingCash = $('#modal-closing-cash').val().replace(/,/g, '') || 0;
+        const actualCash = $('#modal-actual-cash').val().replace(/,/g, '') || 0;
+        const notes = $('#modal-notes').val();
+
+        if (!actualCash) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Perhatian',
+                text: 'Silahkan isi nominal uang di kasir',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        $.ajax({
+            url: '/pos-session/close-transaction',
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                closing_cash: closingCash,
+                actual_cash: actualCash,
+                notes: notes
+            },
+            success: function(res) {
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: 'Session POS telah ditutup',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    $('#modal-close-session').modal('hide');
+                    window.location.href = '/retails/daily-report';
+                });
+            },
+            error: function(err) {
+                console.error(err);
+                let message = 'Gagal menutup session. Silakan coba lagi.';
+                if(err.responseJSON && err.responseJSON.message) {
+                    message = err.responseJSON.message;
+                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: message,
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
     });
 
     $(document).on('keyup', '.format-number', function () {
@@ -1670,7 +1819,7 @@ $(document).ready(function() {
                     const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
                     const customerId = $('#customer').val();
                     const butcherName = $('#butcher-name').val();
-                    const branchId = $('#branch-id').val();
+                    const branchId = `{{Auth::user()->branch_id}}`;
                     const nominalCash = unformatNumber($('#nominal-cash').val()) || 0;
                     const nominalReturn = unformatNumber($('#nominal-return').val()) || 0;
                     const transferType = $('#form-ref-transfer').find('input[type="radio"]:checked').val();
@@ -2032,7 +2181,7 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(res) {
                 if (res.success) {
-                    $('#remaining-cash').text(formatRupiah(res.data.remaining_cash));
+                    $('#remaining-cash').text(res.data.remaining_cash);
                 }
             },
             error: function(err) {
@@ -2304,7 +2453,7 @@ $(document).ready(function() {
         const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
         const customerId = $('#customer').val();
         const butcherName = $('#butcher-name').val();
-        const branchId = $('#branch-id').val();
+        // const branchId = $('#branch-id').val();
         const transferRef = $('#transfer-ref').val();
         const cartItems = $('#cart-item .cart-item-lists');
 
@@ -2363,16 +2512,16 @@ $(document).ready(function() {
         }
 
         // Branch/store must be selected
-        if (!branchId) {
-            Swal.fire({
-                title: 'Warning!',
-                text: 'Branch / Store harus dipilih',
-                icon: 'warning',
-                confirmButtonText: 'OK',
-                allowOutsideClick: false
-            });
-            toReturn = false;
-        }
+        // if (!branchId) {
+        //     Swal.fire({
+        //         title: 'Warning!',
+        //         text: 'Branch / Store harus dipilih',
+        //         icon: 'warning',
+        //         confirmButtonText: 'OK',
+        //         allowOutsideClick: false
+        //     });
+        //     toReturn = false;
+        // }
 
         // If payment method is transfer, reference number must be filled
         if (paymentMethod === '3' && transferRef.trim() === '') {

@@ -53,11 +53,13 @@ class DailyReportController extends Controller
 
         $totalExpenses = $totalExpenses->first();
 
-        $totalCashInCasheer = DB::table('cash_movements as cm')
+        $totalCash = DB::table('cash_movements as cm')
             ->join('pos_sessions as ps', 'cm.pos_session_id', '=', 'ps.id')
             ->where('ps.branch_id', $branchId)
             ->where(DB::raw('DATE(cm.created_at)'), '=', $params['date'])
+            ->groupBy('ps.id', 'ps.closing_cash')
             ->selectRaw("
+                ps.closing_cash,
                 COALESCE(SUM(
                     CASE
                         WHEN cm.direction = 'IN' THEN cm.amount
@@ -65,7 +67,7 @@ class DailyReportController extends Controller
                     END
                 ), 0) as total_cash
             ")
-            ->value('total_cash');
+            ->first();
 
         $totalTransactionsQuery = DB::table('transactions')->where('branch_id', $branchId)->where(DB::raw('DATE(transactions.transaction_date)'), $params['date']);
 
@@ -91,7 +93,8 @@ class DailyReportController extends Controller
             'total_cash'              => $totals->total_cash ?? 0,
             'total_discount'          => $totals->total_discount ?? 0,
             'total_transfer'          => $totals->total_transfer ?? 0,
-            'total_cash_in_casheer'   => $totalCashInCasheer ?? 0,
+            'total_cash_in_casheer'   => $totalCash->total_cash ?? 0,
+            'actual_cash_in_casheer'  => $totalCash->closing_cash ?? 0,
             'total_cash_expanse'      => $totalExpenses->total_cash ?? 0,
             'total_transfer_expanse'  => $totalExpenses->total_transfer ?? 0,
             'total_cash_payment_of_receivable'      => $totalReceivable->total_cash ?? 0,
@@ -204,10 +207,10 @@ class DailyReportController extends Controller
                 DB::raw("TO_CHAR(daily_expenses.date, 'DD/MM/YYYY') as date"),
                 'daily_expenses.description',
                 'daily_expenses.reference',
-                DB::raw("TO_CHAR(daily_expenses.price, 'FM999,999,999') as price"),
+                DB::raw("TO_CHAR(ROUND(daily_expenses.price::numeric), 'FM999,999,999') as price"),
                 'daily_expenses.quantity',
                 'daily_expenses.unit',
-                DB::raw("TO_CHAR(daily_expenses.amount, 'FM999,999,999') as amount"),
+                DB::raw("TO_CHAR(ROUND(daily_expenses.amount::numeric), 'FM999,999,999') as amount"),
                 'daily_expenses.status',
                 'daily_expenses.payment_method'
             )
@@ -247,7 +250,7 @@ class DailyReportController extends Controller
             ->select(
                 'receivable_payments.id',
                 DB::raw("TO_CHAR(receivable_payments.payment_date, 'DD/MM/YYYY') as date"),
-                DB::raw("TO_CHAR(receivable_payments.amount, 'FM999,999,999') as amount"),
+                DB::raw("TO_CHAR(ROUND(receivable_payments.amount::numeric), 'FM999,999,999') as amount"),
                 'receivable_payments.payment_method',
                 'customers.name as customer_name',
                 'invoices.invoice_no as invoice_number'
@@ -289,14 +292,14 @@ class DailyReportController extends Controller
         $data = DB::table('pos_sessions as ps')
             ->leftJoin('cash_movements as cm', 'cm.pos_session_id', '=', 'ps.id')
             ->selectRaw("
-                ps.opening_cash,
-                COALESCE(SUM(
+                TO_CHAR(ROUND(ps.opening_cash::numeric), 'FM999,999,999') as opening_cash,
+                TO_CHAR(ROUND(COALESCE(SUM(
                     CASE
                         WHEN cm.direction = 'IN' THEN cm.amount
                         WHEN cm.direction = 'OUT' THEN -cm.amount
                         ELSE 0
                     END
-                ), 0) as total_cash_in_cashier
+                ), 0)::numeric), 'FM999,999,999') as total_cash_in_cashier
             ")
             ->where('ps.branch_id', $branchId)
             ->where('ps.status', 'OPEN')

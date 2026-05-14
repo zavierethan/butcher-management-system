@@ -62,10 +62,10 @@
                     </div>
                     <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export ke Excel</a>
                     <!--end::Secondary button-->
-                    <button type="button" class="btn btn-danger d-flex align-items-center gap-2" id="btn-close-trx">
+                    <!-- <button type="button" class="btn btn-danger d-flex align-items-center gap-2" id="btn-close-trx">
                         <i class="bi bi-cash-stack"></i>
                         Tutup Transaksi
-                    </button>
+                    </button> -->
                 </div>
                 <!--end::Actions-->
             </div>
@@ -136,7 +136,7 @@
                                 <div class="d-flex flex-column">
                                     <span class="text-gray-700 fs-7 fw-semibold mb-2">TOTAL OMZET</span>
                                     <span class="fw-bold fs-2 text-gray-900" id="total-revenue">Rp.0</span>
-                                    <span class="text-gray-600 fs-8" id="total-transactions"></span>
+                                    <small id="total-transactions"></small>
                                 </div>
                             </div>
                         </div>
@@ -149,7 +149,7 @@
                                 <div class="d-flex align-items-center gap-3 mb-3">
                                     <div class="bg-success rounded-1 p-3"
                                         style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="ki-duotone ki-money fs-2 text-white">
+                                        <i class="ki-duotone ki-wallet fs-2 text-white">
                                             <span class="path1"></span>
                                             <span class="path2"></span>
                                         </i>
@@ -158,6 +158,7 @@
                                 <div class="d-flex flex-column">
                                     <span class="text-gray-700 fs-7 fw-semibold mb-2">TOTAL UANG TUNAI</span>
                                     <span class="fw-bold fs-2 text-gray-900" id="total-cash">Rp.0</span>
+                                    <small>Total Transaksi Tunai + Cash Awal di Kasir</small>
                                 </div>
                             </div>
                         </div>
@@ -165,12 +166,12 @@
 
                     <!-- Uang di Kasir Card -->
                     <div class="col-sm-6 col-md-3">
-                        <div class="card bg-light-warning">
+                        <div class="card bg-light-success">
                             <div class="card-body p-4">
                                 <div class="d-flex align-items-center gap-3 mb-3">
-                                    <div class="bg-warning rounded-1 p-3"
+                                    <div class="bg-success rounded-1 p-3"
                                         style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="ki-duotone ki-home-2 fs-2 text-white">
+                                        <i class="ki-duotone ki-wallet fs-2 text-white">
                                             <span class="path1"></span>
                                             <span class="path2"></span>
                                         </i>
@@ -186,12 +187,12 @@
 
                     <!-- Total Diskon Card -->
                     <div class="col-sm-6 col-md-3">
-                        <div class="card bg-light-danger">
+                        <div class="card bg-light-success">
                             <div class="card-body p-4">
                                 <div class="d-flex align-items-center gap-3 mb-3">
-                                    <div class="bg-danger rounded-1 p-3"
+                                    <div class="bg-success rounded-1 p-3"
                                         style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="ki-duotone ki-percent fs-2 text-white">
+                                        <i class="ki-duotone ki-wallet fs-2 text-white">
                                             <span class="path1"></span>
                                             <span class="path2"></span>
                                         </i>
@@ -993,8 +994,8 @@ function fetchSummary(params) {
             $('#total-revenue').text(formatRupiah(response.total_revenue));
             $('#total-transactions').text('Total Transaksi: ' + response.total_transactions);
             $("#total-discount").text(formatRupiah(response.total_discount));
-            $('#total-cash').text(formatRupiah(totalCash));
-            $('#total-kasir').text(formatRupiah(response.total_cash_in_casheer));
+            $('#total-cash').text(formatRupiah(response.total_cash_in_casheer));
+            $('#total-kasir').text(formatRupiah(response.actual_cash_in_casheer));
         },
         error: function(xhr) {
             console.error('Error:', xhr.responseText);

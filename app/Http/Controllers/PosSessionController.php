@@ -67,7 +67,7 @@ class PosSessionController extends Controller
     public function openSession(Request $request)
     {
         $request->validate([
-            'opening_cash' => 'required|numeric|min:1'
+            'opening_cash' => 'required|numeric|min:0'
         ]);
 
         // idealnya dari auth
@@ -138,7 +138,7 @@ class PosSessionController extends Controller
             ->where('branch_id', $branchId)
             ->where('status', 'OPEN')
             ->update([
-                'status' => 'CLOSED',
+                'status' => 'CLOSE',
                 'closed_at' => now(),
                 'closing_cash' => $params['closing_cash'],
                 'expected_cash' => $params['actual_cash'],
@@ -159,12 +159,13 @@ class PosSessionController extends Controller
             ->where('cm.created_at', '>=', now()->startOfDay())
             ->where('cm.created_at', '<', now()->endOfDay())
             ->selectRaw("
-                COALESCE(SUM(
+                TO_CHAR(ROUND(COALESCE(SUM(
                     CASE
                         WHEN cm.direction = 'IN' THEN cm.amount
-                        ELSE -cm.amount
+                        WHEN cm.direction = 'OUT' THEN -cm.amount
+                        ELSE 0
                     END
-                ), 0) as total_cash
+                ), 0)::numeric), 'FM999,999,999') as total_cash
             ")
             ->value('total_cash');
 
