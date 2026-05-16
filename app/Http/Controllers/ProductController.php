@@ -149,70 +149,76 @@ class ProductController extends Controller
         return redirect()->route('products.index');
     }
 
-    public function getListProducts(Request $request)
-{
-    $params     = $request->q;
-    $branchId   = $request->branch_id;
-    $customerId = $request->customer_id;
+    public function getListProducts(Request $request) {
+        $params     = $request->q;
+        $branchId   = $request->branch_id;
+        $customerId = $request->customer_id;
 
-    $query = DB::table('product_details as pd')
-        ->join('products as p', 'p.id', '=', 'pd.product_id')
+        $query = DB::table('product_details as pd')
+            ->join('products as p', 'p.id', '=', 'pd.product_id')
+            ->when(!empty($customerId),
+                function ($q) use ($customerId) {
+                    $q->leftJoin('customer_product_discounts as cpd', function ($join) use ($customerId) {
+                        $join->on('cpd.product_id', '=', 'pd.product_id')
+                            ->where('cpd.customer_id', '=', $customerId);
+                    });
+                },
 
-        ->leftJoin('customer_product_discounts as cpd', function ($join) use ($customerId) {
-            $join->on('cpd.product_id', '=', 'pd.product_id');
+                function ($q) {
+                    $q->leftJoin(DB::raw("
+                        (
+                            SELECT
+                                NULL::bigint as product_id,
+                                0 as discount
+                        ) as cpd
+                    "), function ($join) {
+                        $join->on('cpd.product_id', '=', 'pd.product_id');
+                    });
+                }
+            )
 
-            if (!empty($customerId)) {
-                $join->where('cpd.customer_id', $customerId);
-            }
-        })
+            ->where('pd.branch_id', $branchId)
+            ->where('pd.is_active', 1)
+            ->whereNotIn('p.code', ['DLV', 'RW'])
 
-        ->where('pd.branch_id', $branchId)
-        ->where('pd.is_active', 1)
-        ->whereNotIn('p.code', ['DLV', 'RW'])
+            ->select(
+                'p.id',
+                'p.name',
+                'p.code',
+                'pd.cogs',
+                'pd.price',
+                DB::raw('COALESCE(pd.discount, 0) as store_discount'),
+                DB::raw('COALESCE(cpd.discount, 0) as customer_discount'),
+                DB::raw("
+                    CASE
+                        WHEN COALESCE(cpd.discount, 0) > 0
+                            THEN cpd.discount
+                        ELSE pd.discount
+                    END as discount
+                "),
+                'p.sort_order'
+            );
 
-        ->select(
-            'p.id',
-            'p.name',
-            'p.code',
-            'pd.cogs',
-            'pd.price',
+        if (!empty($params)) {
+            $query->where(function ($q) use ($params) {
+                $q->where('p.name', 'ILIKE', "%{$params}%")
+                ->orWhere('p.code', 'ILIKE', "%{$params}%");
+            });
+        }
 
-            DB::raw('COALESCE(pd.discount, 0) as store_discount'),
+        $totalRecords = (clone $query)->count();
 
-            DB::raw('COALESCE(cpd.discount, 0) as customer_discount'),
+        $data = $query
+            ->orderBy('p.sort_order')
+            ->get();
 
-            DB::raw("
-                CASE
-                    WHEN COALESCE(cpd.discount, 0) > 0
-                        THEN cpd.discount
-                    ELSE pd.discount
-                END as discount
-            "),
-
-            'p.sort_order'
-        );
-
-    // Search
-    if (!empty($params)) {
-        $query->where(function ($q) use ($params) {
-            $q->where('p.name', 'ILIKE', "%{$params}%")
-              ->orWhere('p.code', 'ILIKE', "%{$params}%");
-        });
+        return response()->json([
+            'draw' => $request->draw,
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $totalRecords,
+            'data' => $data
+        ]);
     }
-
-    $totalRecords = (clone $query)->count();
-
-    $data = $query
-        ->orderBy('p.sort_order')
-        ->get();
-
-    return response()->json([
-        'draw' => $request->draw,
-        'recordsTotal' => $totalRecords,
-        'recordsFiltered' => $totalRecords,
-        'data' => $data
-    ]);
-}
 
     public function getListProductsForCarcass(Request $request) {
         $params = $request->q;

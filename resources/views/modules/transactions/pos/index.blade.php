@@ -1282,9 +1282,7 @@ $(document).ready(function() {
     $("#form-ref-transfer").hide();
     getCustomers();
 
-    const paramSearch = $('#product-search').val();
-    const customer = $('#customer').val();
-    getProductList(paramSearch, customer);
+    getProductList(null, null);
 
     $("#payment-method-credit").hide();
 
