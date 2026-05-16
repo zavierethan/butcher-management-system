@@ -73,12 +73,10 @@
                                         <div class="separator my-5"></div>
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Periode Transaksi</label>
-                                                <div class="d-flex gap-3">
+                                                <label class="form-label fw-bold fs-6 mb-2">Tanggal Invoice</label>
+                                                <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="date" name="transaction_period_start" id="transaction-period-start" value="{{ date('Y-m-01') }}" />
-                                                    <input class="form-control form-control-md form-control-solid"
-                                                        type="date" name="transaction_period_end" id="transaction-period-end" value="{{ date('Y-m-d') }}" />
+                                                        type="date" name="invoice_date" id="invoice-date" value="<?php echo date('Y-m-d'); ?>" />
                                                 </div>
                                             </div>
                                         </div>
@@ -88,10 +86,12 @@
                                     <div class="col-md-6">
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Tanggal Invoice</label>
-                                                <div class="position-relative mb-3">
+                                                <label class="form-label fw-bold fs-6 mb-2">Periode Transaksi</label>
+                                                <div class="d-flex gap-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="date" name="invoice_date" id="invoice-date" value="<?php echo date('Y-m-d'); ?>" />
+                                                        type="date" name="transaction_period_start" id="transaction-period-start" value="{{ date('Y-m-01') }}" />
+                                                    <input class="form-control form-control-md form-control-solid"
+                                                        type="date" name="transaction_period_end" id="transaction-period-end" value="{{ date('Y-m-d') }}" />
                                                 </div>
                                             </div>
                                         </div>
@@ -212,6 +212,10 @@
 
 @section('script')
 <script>
+// Store previous date values
+let previousStartDate = $('#transaction-period-start').val();
+let previousEndDate = $('#transaction-period-end').val();
+
 $(document).on("change", "#customer, #transaction-period-start, #transaction-period-end", function() {
     let customerId = $('#customer').val();
 
@@ -222,6 +226,38 @@ $(document).on("change", "#customer, #transaction-period-start, #transaction-per
 
     let startDate = $('#transaction-period-start').val();
     let endDate = $('#transaction-period-end').val();
+
+    // Validasi start date tidak boleh lebih dari end date
+    if (startDate && endDate && startDate > endDate) {
+        Swal.fire({
+            title: 'Tanggal mulai tidak boleh lebih besar dari tanggal selesai',
+            icon: 'warning',
+            confirmButtonText: 'Ok'
+        });
+        // Reset ke nilai sebelumnya
+        $('#transaction-period-start').val(previousStartDate);
+        $('#transaction-period-end').val(previousEndDate);
+        $("#kt_receivable_items_modal tbody").empty();
+        return;
+    }
+
+    // Validasi end date tidak boleh kurang dari start date
+    if (startDate && endDate && endDate < startDate) {
+        Swal.fire({
+            title: 'Tanggal selesai tidak boleh kurang dari tanggal mulai',
+            icon: 'warning',
+            confirmButtonText: 'Ok'
+        });
+        // Reset ke nilai sebelumnya
+        $('#transaction-period-start').val(previousStartDate);
+        $('#transaction-period-end').val(previousEndDate);
+        $("#kt_receivable_items_modal tbody").empty();
+        return;
+    }
+
+    // Update previous values jika validasi berhasil
+    previousStartDate = startDate;
+    previousEndDate = endDate;
 
     getReceivable(customerId, startDate, endDate);
 });

@@ -156,6 +156,13 @@ class ReceivablePaymentController extends Controller
                 ->where('id', $detail->id)
                 ->update(['remaining_amount' => $newRemainingAmount]);
 
+            // Update transaction status to 1 (Lunas) if remaining_amount is 0
+            if ($newRemainingAmount <= 0) {
+                DB::table('transactions')
+                    ->where('id', $detail->transaction_id)
+                    ->update(['status' => 1]);
+            }
+
             $remainingPayment -= $payableAmount;
         }
 

@@ -110,7 +110,7 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Total Tagihan</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="text" name="total_billed" id="total-billed" value="{{$invoice->total_billed}}" readonly/>
+                                                        type="text" name="total_billed" id="total-billed" value="{{ number_format($invoice->total_billed, 0, '.', ',') }}" readonly/>
                                                 </div>
                                             </div>
                                         </div>
@@ -120,7 +120,7 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Sisa Tagihan</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="text" name="remaining_billed" id="remaining-billed" value="{{$invoice->remaining_billed}}" readonly/>
+                                                        type="text" name="remaining_billed" id="remaining-billed" value="{{ number_format($invoice->remaining_billed, 0, '.', ',') }}" readonly/>
                                                 </div>
                                             </div>
                                         </div>

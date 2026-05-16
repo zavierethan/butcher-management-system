@@ -158,8 +158,8 @@ class InvoiceController extends Controller
 
     public function getTransactions(Request $request) {
         $customerId = $request->customer;
-        $startDate = $request->start_date;
-        $endDate = $request->end_date;
+        $startDate = Carbon::parse($request->start_date)->startOfDay();
+        $endDate   = Carbon::parse($request->end_date)->endOfDay();
 
         $query = DB::table('transactions')
             ->select(
@@ -170,8 +170,16 @@ class InvoiceController extends Controller
             )
             ->where('transactions.customer_id', $customerId)
             ->where('transactions.status', 2)
-            ->where('transactions.transaction_date', '>=', $startDate)
-            ->where('transactions.transaction_date', '<=', $endDate);
+
+            ->whereBetween('transactions.transaction_date', [
+                $startDate,
+                $endDate
+            ])
+
+            ->whereNotIn('transactions.id', function ($q) {
+                $q->select('transaction_id')
+                    ->from('invoice_details');
+            });
 
         $data = $query->get();
 
