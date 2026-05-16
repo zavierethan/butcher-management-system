@@ -96,7 +96,7 @@ class ReceivablePaymentController extends Controller
             ]);
 
             // Implement FIFO payment allocation
-            $this->allocatePaymentFIFO($invoiceId, $paymentAmount);
+            $this->allocatePaymentFIFO($invoiceId, $paymentId, $paymentAmount);
 
             if ($request->payment_method == '1') {
 
@@ -130,7 +130,7 @@ class ReceivablePaymentController extends Controller
         ]);
     }
 
-    private function allocatePaymentFIFO($invoiceId, $paymentAmount)
+    private function allocatePaymentFIFO($invoiceId, $paymentId, $paymentAmount)
     {
         // Get invoice details ordered by transaction date (FIFO)
         $invoiceDetails = DB::table('invoice_details')
@@ -191,6 +191,25 @@ class ReceivablePaymentController extends Controller
             DB::table('invoices')
                 ->where('id', $invoiceId)
                 ->update(['status' => 'partial']);
+        }
+
+        // Handle overpayment
+        if ($remainingPayment > 0) {
+            // Get customer_id from invoices table
+            $invoice = DB::table('invoices')->find($invoiceId);
+
+            if ($invoice) {
+                // Insert overpayment record
+                DB::table('customer_overpayments')->insert([
+                    'customer_id' => $invoice->customer_id,
+                    'payment_id' => $paymentId,
+                    'invoice_id' => $invoiceId,
+                    'amount' => $remainingPayment,
+                    'notes' => 'Overpayment dari invoice #' . $invoice->invoice_no,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
         }
     }
 
