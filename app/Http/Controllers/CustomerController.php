@@ -159,18 +159,37 @@ class CustomerController extends Controller
             ->where('customers.id', $id)->first();
 
         $products = DB::table('products')->orderBy('sort_order', 'asc')->get();
+        $productDiscounts = DB::table('customer_product_discounts')
+            ->join('products', 'products.id', '=', 'customer_product_discounts.product_id')
+            ->where('customer_product_discounts.customer_id', $id)
+            ->select(
+                'customer_product_discounts.product_id',
+                'products.name as product_name',
+                DB::raw("
+                    TO_CHAR(
+                        customer_product_discounts.discount,
+                        'FM999,999,999'
+                    ) as discount
+                ")
+            )
+    ->get();
 
-        return view('modules.master.customer.product-discounts', compact('customer', 'products'));
+        return view('modules.master.customer.product-discounts', compact('customer', 'products', 'productDiscounts'));
     }
 
     public function productDiscountsSave(Request $request) {
-        DB::beginTransaction();
+        $products = $request->input('products', []);
 
+        DB::beginTransaction();
         try {
-            $products = $request->input('products', []);
+
+            DB::table('customer_product_discounts')
+                ->where('customer_id', $request->input('customer_id'))
+                ->delete();
+
             foreach ($products as $item) {
                 DB::table('customer_product_discounts')->insert([
-                    'customer_id' => $item['customer_id'],
+                    'customer_id' => $request->input('customer_id'),
                     'product_id' => $item['product_id'],
                     'discount' => $item['discount']
                 ]);

@@ -64,11 +64,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- <div class="separator my-5"></div>
+                            <div class="separator my-5"></div>
                             <div class="text-end">
-                                <a href="{{route('customers.index')}}" class="btn btn-danger">Cancel</a>
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </div> -->
+                                <a href="{{route('customers.index')}}" class="btn btn-danger">Kembali</a>
+                                <button type="button" class="btn btn-primary" id="submit-btn">Simpan</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -95,6 +95,7 @@
                                 <!--end::Table head-->
                                 <!--begin::Table body-->
                                 <tbody class="fw-bold text-gray-600" id="product-table">
+                                    @foreach($productDiscounts as $pd)
                                     <tr>
                                         <td>
                                             <div class="position-relative">
@@ -102,19 +103,20 @@
                                                     name="product_id">
                                                     <option value="">-</option>
                                                     @foreach($products as $p)
-                                                    <option value="{{$p->id}}">
+                                                    <option value="{{$p->id}}" {{$pd->product_id == $p->id ? 'selected' : ''}}>
                                                         {{$p->name}}
                                                     </option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                         </td>
-                                        <td><input class="form-control form-control-md me-2 discount" type="text"
-                                            name="discount" value="0" /></td>
+                                        <td><input class="form-control form-control-md me-2 discount format-number" type="text"
+                                            name="discount" value="{{$pd->discount}}" /></td>
                                         <td class="text-center">
                                             <a href="#"><i class="fa-solid fa-trash-can"></i></a>
                                         </td>
                                     </tr>
+                                    @endforeach
                                 </tbody>
                                 <!--end::Table body-->
                             </table>
@@ -151,7 +153,7 @@ $(document).ready(function() {
                             </select>
                         </div>
                     </td>
-                    <td><input class="form-control form-control-md me-2 discount" type="text"
+                    <td><input class="form-control form-control-md me-2 discount format-number" type="text"
                             name="discount" value="0" /></td>
                     <td class="text-center">
                         <a href="#"><i class="fa-solid fa-trash-can"></i></a>
@@ -175,12 +177,12 @@ $(document).on("keyup", "input[name='quantity']", function() {
     $(this).val(formattedVal);
 });
 
-$(document).on('click', '#btn-submit-mutasi', function(e) {
+$(document).on('click', '#submit-btn', function(e) {
     e.preventDefault();
 
     if (true) {
         Swal.fire({
-            title: 'Apakah anda yakin melakukan submit hasi Parting ?',
+            title: 'Apakah anda yakin melakukan submit ?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -190,14 +192,12 @@ $(document).on('click', '#btn-submit-mutasi', function(e) {
         }).then((result) => {
             if (result.isConfirmed) {
                 let products = [];
-
-                let date = $("#date").val();
-                let branch_id = $("#branch-id").val();
+                let customer_id = $("#customer-id").val();
 
                 $("#product-table tr").each(function() {
                     let product = {
                         product_id: $(this).find(".product-id").val(),
-                        discount: $(this).find(".discount").val()
+                        discount: $(this).find(".discount").val().replace(/,/g, '') || 0
                     };
                     products.push(product);
                 });
@@ -210,6 +210,7 @@ $(document).on('click', '#btn-submit-mutasi', function(e) {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     data: JSON.stringify({
+                        customer_id: customer_id,
                         products: products
                     }),
                     success: function(response) {
@@ -221,7 +222,7 @@ $(document).on('click', '#btn-submit-mutasi', function(e) {
                             allowOutsideClick: false
                         }).then((result) => {
                             // Redirect the current page to the transaction index
-                            location.href = `{{ route('customers.index') }}`;
+                            location.reload();
                         });
                     },
                     error: function(xhr, status, error) {
@@ -243,5 +244,12 @@ function formatNumber(numStr) {
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return parts.join('.');
 }
+
+$(document).on('keyup', '.format-number', function () {
+    let value = $(this).val().replace(/\D/g, '');
+    $(this).val(
+        new Intl.NumberFormat('en-US').format(value)
+    );
+});
 </script>
 @endsection

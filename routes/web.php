@@ -525,8 +525,12 @@ Route::group(['middleware' => ['auth']], function() {
         });
     });
 
-    Route::get('/pos-session/check', [App\Http\Controllers\PosSessionController::class, 'checkOpenSession']);
-    Route::post('/pos-session/open', [App\Http\Controllers\PosSessionController::class, 'openSession']);
-    Route::get('/pos-session/remaining-cash', [App\Http\Controllers\PosSessionController::class, 'getRemainingCashTodayByBranch']);
-    Route::post('/pos-session/close-transaction', [App\Http\Controllers\PosSessionController::class, 'closeSession'])->name('close-transaction');
+    Route::prefix('pos-session')->group(function () {
+        Route::name('pos-session.')->group(function () {
+            Route::get('/check', [App\Http\Controllers\PosSessionController::class, 'checkOpenSession']);
+            Route::post('/open', [App\Http\Controllers\PosSessionController::class, 'openSession']);
+            Route::get('/remaining-cash', [App\Http\Controllers\PosSessionController::class, 'getRemainingCashTodayByBranch']);
+            Route::post('/close-transaction', [App\Http\Controllers\PosSessionController::class, 'closeSession'])->name('close-transaction');
+        });
+    });
 });
