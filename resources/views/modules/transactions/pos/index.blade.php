@@ -1273,7 +1273,6 @@
 @section('script')
 <script>
 $(document).ready(function() {
-
     checkOpenSession();
     getRemainingCashToday();
 
@@ -1281,8 +1280,11 @@ $(document).ready(function() {
     $("#product-loader").show();
     $("#form-nominal").hide();
     $("#form-ref-transfer").hide();
-    getProductList();
     getCustomers();
+
+    const paramSearch = $('#product-search').val();
+    const customer = $('#customer').val();
+    getProductList(paramSearch, customer);
 
     $("#payment-method-credit").hide();
 
@@ -1444,8 +1446,9 @@ $(document).ready(function() {
     });
 
     $(document).on('keyup', '#product-search', function(e) {
-        var searchQuery = $(this).val();
-        getProductList(searchQuery);
+        var param = $(this).val();
+        var customer = $('#customer').val()
+        getProductList(param, customer);
     });
 
     $(document).on('click', '.remove-item', function(e) {
@@ -2093,14 +2096,15 @@ $(document).ready(function() {
         $(this).val(value);
     });
 
-    function getProductList(param) {
+    function getProductList(param, customer) {
         $("#product-loader").show();
         $.ajax({
             url: `/api/products`, // Laravel route to fetch products
             type: 'GET',
             data: {
                 q: param,
-                branch_id: `{{Auth::user()->branch_id}}`
+                branch_id: `{{Auth::user()->branch_id}}`,
+                customer_id: customer
             },
             dataType: 'json',
             success: function(response) {
@@ -2142,6 +2146,9 @@ $(document).ready(function() {
 
     $('#customer').on('change', function() {
         let customerId = $(this).val();
+
+        getProductList(null, customerId);
+
         $('#notes').text("");
         $.ajax({
             url: `/api/customer-notes/` + customerId,

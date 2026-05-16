@@ -149,77 +149,70 @@ class ProductController extends Controller
         return redirect()->route('products.index');
     }
 
-    public function getListProducts(Request $request){
-        $params = $request->q;
-        $branchId = $request->branch_id;
-        $customerId = $request->customer_id;
+    public function getListProducts(Request $request)
+{
+    $params     = $request->q;
+    $branchId   = $request->branch_id;
+    $customerId = $request->customer_id;
 
-        $query = DB::table('product_details as pd')
-            ->leftJoin('products as p', 'p.id', '=', 'pd.product_id')
-            ->leftJoin('customer_product_discounts as cpd', function ($join) {
-                $join->on('cpd.product_id', '=', 'p.id')
-                    ->where('cpd.customer_id', '=', 2);
-            })
-            ->where('pd.branch_id', $branchId)
-            ->where('pd.is_active', 1)
-            ->whereNotIn('p.code', ['DLV', 'RW'])
-            ->select(
-                'p.id',
-                'p.name',
-                'p.code',
-                'pd.cogs',
-                'pd.price',
-                'pd.discount as store_discount',
-                'cpd.discount as customer_discount',
-                DB::raw("
-                    CASE
-                        WHEN COALESCE(cpd.discount, 0) > 0
-                            THEN cpd.discount
-                        ELSE pd.discount
-                    END as discount
-                "),
-                'p.sort_order',
-            )
-            ->groupBy(
-                'p.id',
-                'p.name',
-                'p.code',
-                'pd.cogs',
-                'pd.price',
-                'pd.discount',
-                'cpd.discount',
-                'p.sort_order'
-            )
-            ->orderBy('p.sort_order');
+    $query = DB::table('product_details as pd')
+        ->join('products as p', 'p.id', '=', 'pd.product_id')
 
-        // Apply filtering for name or code
-        if (!empty($params)) {
-            $query->where(function ($q) use ($params) {
-                $q->where('p.name', 'like', '%' . strtoupper($params) . '%')
-                ->orWhere('p.code', 'like', '%' . strtoupper($params) . '%');
-            });
-        }
+        ->leftJoin('customer_product_discounts as cpd', function ($join) use ($customerId) {
+            $join->on('cpd.product_id', '=', 'pd.product_id');
 
-        // Ensure unique results
-        $query->distinct();
+            if (!empty($customerId)) {
+                $join->where('cpd.customer_id', $customerId);
+            }
+        })
 
-        // Count total records (before applying pagination)
-        $totalRecords = $query->count();
+        ->where('pd.branch_id', $branchId)
+        ->where('pd.is_active', 1)
+        ->whereNotIn('p.code', ['DLV', 'RW'])
 
-        // Fetch filtered results
-        $data = $query->get();
+        ->select(
+            'p.id',
+            'p.name',
+            'p.code',
+            'pd.cogs',
+            'pd.price',
 
-        // Build response
-        $response = [
-            'draw' => $request->input('draw'),
-            'recordsTotal' => $totalRecords,
-            'recordsFiltered' => $totalRecords, // Same as total for now
-            'data' => $data
-        ];
+            DB::raw('COALESCE(pd.discount, 0) as store_discount'),
 
-        return response()->json($response);
+            DB::raw('COALESCE(cpd.discount, 0) as customer_discount'),
+
+            DB::raw("
+                CASE
+                    WHEN COALESCE(cpd.discount, 0) > 0
+                        THEN cpd.discount
+                    ELSE pd.discount
+                END as discount
+            "),
+
+            'p.sort_order'
+        );
+
+    // Search
+    if (!empty($params)) {
+        $query->where(function ($q) use ($params) {
+            $q->where('p.name', 'ILIKE', "%{$params}%")
+              ->orWhere('p.code', 'ILIKE', "%{$params}%");
+        });
     }
 
+    $totalRecords = (clone $query)->count();
+
+    $data = $query
+        ->orderBy('p.sort_order')
+        ->get();
+
+    return response()->json([
+        'draw' => $request->draw,
+        'recordsTotal' => $totalRecords,
+        'recordsFiltered' => $totalRecords,
+        'data' => $data
+    ]);
+}
 
     public function getListProductsForCarcass(Request $request) {
         $params = $request->q;
