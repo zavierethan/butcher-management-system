@@ -604,7 +604,7 @@
                             </div>
                             <!--end::Header-->
                             <!--begin::Body-->
-                            <div class="card-body pt-0">
+                            <div class="card-body pt-0 overflow-y-auto" style="height: 707px;">
                                 <!--begin::Table container-->
                                 <div class="overflow-y-auto" style="height: 300px;" id="cart-item">
 
@@ -2109,13 +2109,6 @@ $(document).ready(function() {
                 var data = response.data;
                 $('.product-l').remove();
                 data.forEach(function(product) {
-
-                    console.log(product.url_path)
-
-                    let productImg = product.url_path ?
-                        "storage/" + product.url_path :
-                        "{{ asset('assets/media/products/product-default.png') }}";
-
                     // Construct HTML for each product
                     const discountHTML = product.discount !== 0 && !isNaN(parseFloat(product
                             .discount)) ?

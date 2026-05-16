@@ -162,25 +162,25 @@ class ProductController extends Controller
             })
             ->where('pd.branch_id', $branchId)
             ->where('pd.is_active', 1)
+            ->whereNotIn('p.code', ['DLV', 'RW'])
             ->select(
                 'p.id',
                 'p.name',
                 'p.code',
-                'p.url_path',
                 'pd.cogs',
                 'pd.price',
                 'pd.discount',
-                DB::raw('COALESCE(SUM(ti.quantity), 0) AS sold_qty')
+                'p.sort_order',
             )
             ->groupBy(
                 'p.id',
                 'p.name',
                 'p.code',
-                'p.url_path',
                 'pd.cogs',
                 'pd.price',
-                'pd.discount'
-            )->orderByRaw('COALESCE(SUM(ti.quantity), 0) DESC');
+                'pd.discount',
+                'p.sort_order'
+            )->orderBy('p.sort_order');
 
         // Apply filtering for name or code
         if (!empty($params)) {
