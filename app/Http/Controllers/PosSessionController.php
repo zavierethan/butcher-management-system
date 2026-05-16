@@ -29,8 +29,8 @@ class PosSessionController extends Controller
                 'success' => true,
                 'type' => 'PREVIOUS_OPEN_SESSION',
                 'data' => [
-                    'opened_at' => Carbon::parse($previousOpenSession->opened_at)
-                        ->format('d M Y H:i')
+                    'opened_at'  => Carbon::parse($previousOpenSession->opened_at)->format('Y-m-d'),
+                    'session_id' => $previousOpenSession->id
                 ]
             ]);
         }
@@ -133,20 +133,38 @@ class PosSessionController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        // Update pos_sessions untuk menutup transaksi
-        DB::table('pos_sessions')
-            ->where('branch_id', $branchId)
-            ->where('status', 'OPEN')
-            ->update([
-                'status' => 'CLOSE',
-                'closed_at' => now(),
-                'closing_cash' => $params['actual_cash'],
-                'expected_cash' => $params['closing_cash'],
-                'notes' => $params['notes'] ?? null,
-                'updated_at' => now()
+        if(!empty($params['session_id'])) {
+            $session = DB::table('pos_sessions')
+                ->where('id', $params['session_id'])
+                ->first();
+
+            DB::table('pos_sessions')
+                ->where('id', $params['session_id'])
+                ->update([
+                    'status' => 'CLOSE',
+                    'closed_at' => now(),
+                    'closing_cash' => $params['actual_cash'],
+                    'expected_cash' => $params['closing_cash'],
+                    'notes' => $params['notes'] ?? null,
+                    'updated_at' => now()
             ]);
 
-        return response()->json(['message' => 'Transaksi berhasil ditutup']);
+            return response()->json(['message' => 'Transaksi ' . $session->opened_at . ' berhasil ditutup']);
+        } else {
+            DB::table('pos_sessions')
+                ->where('branch_id', $branchId)
+                ->where('status', 'OPEN')
+                ->update([
+                    'status' => 'CLOSE',
+                    'closed_at' => now(),
+                    'closing_cash' => $params['actual_cash'],
+                    'expected_cash' => $params['closing_cash'],
+                    'notes' => $params['notes'] ?? null,
+                    'updated_at' => now()
+                ]);
+
+            return response()->json(['message' => 'Transaksi berhasil ditutup']);
+        }
     }
 
     public function getRemainingCashTodayByBranch(Request $request)
@@ -174,6 +192,43 @@ class PosSessionController extends Controller
             'data' => [
                 'remaining_cash' => $total
             ]
+        ]);
+    }
+
+    public function getSessionById($id)
+    {
+
+        $session = DB::table('pos_sessions')
+            ->where('id', $id)
+            ->first();
+
+        $data = DB::table('pos_sessions as ps')
+            ->leftJoin('cash_movements as cm', 'cm.pos_session_id', '=', 'ps.id')
+            ->selectRaw("
+                ps.id,
+                TO_CHAR(ROUND(ps.opening_cash::numeric), 'FM999,999,999') as opening_cash,
+                TO_CHAR(ROUND(COALESCE(SUM(
+                    CASE
+                        WHEN cm.direction = 'IN' THEN cm.amount
+                        WHEN cm.direction = 'OUT' THEN -cm.amount
+                        ELSE 0
+                    END
+                ), 0)::numeric), 'FM999,999,999') as total_cash_in_cashier
+            ")
+            ->where('ps.id', $session->id)
+            ->groupBy('ps.id', 'ps.opening_cash')
+            ->first();
+
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data session tidak ditemukan'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $data
         ]);
     }
 }

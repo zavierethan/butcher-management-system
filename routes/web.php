@@ -498,7 +498,6 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/lists/{stockId}', [App\Http\Controllers\StockLogController::class, 'getLists'])->name('get-lists');
             Route::get('/new-stock-log/create', [App\Http\Controllers\StockLogController::class, 'create'])->name('create');
             Route::post('/save', [App\Http\Controllers\StockLogController::class, 'save'])->name('save');
-            // Route::get('/edit/{id}', [App\Http\Controllers\StockController::class, 'edit'])->name('edit');
             Route::get('/export/new', [App\Http\Controllers\StockLogController::class, 'export'])->name('export');
         });
     });
@@ -509,8 +508,6 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/lists', [App\Http\Controllers\InventoryDetailController::class, 'getLists'])->name('get-lists');
             Route::get('/create', [App\Http\Controllers\InventoryDetailController::class, 'create'])->name('create');
             Route::post('/save', [App\Http\Controllers\InventoryDetailController::class, 'save'])->name('save');
-            // Route::get('/edit/{id}', [App\Http\Controllers\InventoryDetailController::class, 'edit'])->name('edit');
-            // Route::post('/update', [App\Http\Controllers\InventoryDetailController::class, 'update'])->name('update');
         });
     });
 
@@ -520,8 +517,6 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/lists/{inventoryDetailId}', [App\Http\Controllers\InventoryDetailLogController::class, 'getLists'])->name('get-lists');
             Route::get('/{inventoryDetailId}/create', [App\Http\Controllers\InventoryDetailLogController::class, 'create'])->name('create');
             Route::post('/save', [App\Http\Controllers\InventoryDetailLogController::class, 'save'])->name('save');
-            // Route::get('/edit/{id}', [App\Http\Controllers\InventoryDetailLogController::class, 'edit'])->name('edit');
-            // Route::post('/update', [App\Http\Controllers\InventoryDetailLogController::class, 'update'])->name('update');
         });
     });
 
@@ -531,6 +526,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::post('/open', [App\Http\Controllers\PosSessionController::class, 'openSession']);
             Route::get('/remaining-cash', [App\Http\Controllers\PosSessionController::class, 'getRemainingCashTodayByBranch']);
             Route::post('/close-transaction', [App\Http\Controllers\PosSessionController::class, 'closeSession'])->name('close-transaction');
+            Route::get('/{id}', [App\Http\Controllers\PosSessionController::class, 'getSessionById'])->name('get-by-id');
         });
     });
 });

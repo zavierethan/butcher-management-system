@@ -1224,6 +1224,7 @@
                         <div class="position-relative mb-3">
                             <input class="form-control form-control-md form-control-solid" type="text"
                                 name="opening_cash" id="modal-opening-cash" disabled />
+                            <input type="hidden" name="session_id" id="modal-session-id" />
                         </div>
                     </div>
                 </div>
@@ -1327,7 +1328,6 @@ $(document).ready(function() {
     });
 
     $('#btn-close-session').on('click', function() {
-
         const date = new Date().toISOString().split('T')[0]; // Get today's date
         const branchId = '{{ Auth::user()->branch_id }}';
 
@@ -1367,6 +1367,7 @@ $(document).ready(function() {
     });
 
     $('#btn-confirm-close-session').on('click', function() {
+        const sessionId = $('#modal-session-id').val();
         const closingCash = $('#modal-closing-cash').val().replace(/,/g, '') || 0;
         const actualCash = $('#modal-actual-cash').val().replace(/,/g, '') || 0;
         const notes = $('#modal-notes').val();
@@ -1388,6 +1389,7 @@ $(document).ready(function() {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             data: {
+                session_id: sessionId,
                 closing_cash: closingCash,
                 actual_cash: actualCash,
                 notes: notes
@@ -1400,6 +1402,10 @@ $(document).ready(function() {
                     confirmButtonText: 'OK'
                 }).then(() => {
                     $('#modal-close-session').modal('hide');
+                    if(sessionId != null && sessionId !== '') {
+                        window.location.reload(true);
+                    }
+                    // Redirect ke laporan harian dengan session_id sebagai parameter}
                     window.location.href = '/retails/daily-report';
                 });
             },
@@ -2204,6 +2210,8 @@ $(document).ready(function() {
                     return;
                 }
 
+                console.log('Session check result:', res);
+
                 switch (res.type) {
 
                     // 1. Masih ada session OPEN di hari sebelumnya
@@ -2226,7 +2234,47 @@ $(document).ready(function() {
                         }).then((result) => {
 
                             if (result.isConfirmed) {
-                                window.location.href = '/retails/daily-report';
+                                // Get session ID from response
+                                const sessionId = res.data.session_id;
+
+                                // Open the close session modal
+                                const closeSessionModalEl = document.getElementById('modal-close-session');
+                                const closeSessionModal = new bootstrap.Modal(closeSessionModalEl, {
+                                    backdrop: 'static',
+                                    keyboard: false
+                                });
+                                closeSessionModal.show();
+
+                                // Hide date container and separator (not needed for previous session)
+                                $('#session-date-container').hide();
+                                $('#session-date-separator').hide();
+
+                                // Fetch session data using the session ID
+                                $.ajax({
+                                    url: `/pos-session/${sessionId}`,
+                                    method: 'GET',
+                                    success: function(apiRes) {
+                                        if (apiRes.success && apiRes.data) {
+                                            // Auto-fill form fields
+                                            $('#modal-session-id').val(apiRes.data.id);
+                                            $('#modal-opening-cash').val(formatThausand(apiRes.data.opening_cash || 0));
+                                            $('#modal-closing-cash').val(formatThausand(apiRes.data.total_cash_in_cashier || 0));
+
+                                            // Clear previous values
+                                            $('#modal-actual-cash').val('');
+                                            $('#modal-notes').val(apiRes.data.notes || '');
+                                        }
+                                    },
+                                    error: function(err) {
+                                        console.error('Error fetching session data:', err);
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error!',
+                                            text: 'Gagal mengambil data session',
+                                            confirmButtonText: 'OK'
+                                        });
+                                    }
+                                });
                             }
 
                         });
