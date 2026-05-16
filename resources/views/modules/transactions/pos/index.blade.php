@@ -2172,6 +2172,8 @@ $(document).ready(function() {
 
             $('#payment-method-credit').show();
         }
+
+        $(".cart-item-lists").remove();
     });
 
     function getRemainingCashToday() {
