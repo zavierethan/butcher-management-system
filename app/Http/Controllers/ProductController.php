@@ -152,13 +152,13 @@ class ProductController extends Controller
     public function getListProducts(Request $request){
         $params = $request->q;
         $branchId = $request->branch_id;
+        $customerId = $request->customer_id;
 
         $query = DB::table('product_details as pd')
             ->leftJoin('products as p', 'p.id', '=', 'pd.product_id')
-            ->leftJoin('transaction_items as ti', 'ti.product_id', '=', 'p.id')
-            ->leftJoin('transactions as t', function ($join) {
-                $join->on('t.id', '=', 'ti.transaction_id')
-                    ->whereRaw('DATE_TRUNC(\'month\', t.transaction_date) = DATE_TRUNC(\'month\', CURRENT_DATE)');
+            ->leftJoin('customer_product_discounts as cpd', function ($join) {
+                $join->on('cpd.product_id', '=', 'p.id')
+                    ->where('cpd.customer_id', '=', 2);
             })
             ->where('pd.branch_id', $branchId)
             ->where('pd.is_active', 1)
@@ -169,7 +169,15 @@ class ProductController extends Controller
                 'p.code',
                 'pd.cogs',
                 'pd.price',
-                'pd.discount',
+                'pd.discount as store_discount',
+                'cpd.discount as customer_discount',
+                DB::raw("
+                    CASE
+                        WHEN COALESCE(cpd.discount, 0) > 0
+                            THEN cpd.discount
+                        ELSE pd.discount
+                    END as discount
+                "),
                 'p.sort_order',
             )
             ->groupBy(
@@ -179,8 +187,10 @@ class ProductController extends Controller
                 'pd.cogs',
                 'pd.price',
                 'pd.discount',
+                'cpd.discount',
                 'p.sort_order'
-            )->orderBy('p.sort_order');
+            )
+            ->orderBy('p.sort_order');
 
         // Apply filtering for name or code
         if (!empty($params)) {
