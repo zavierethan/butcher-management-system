@@ -514,6 +514,10 @@
                                         <input type="text" data-product-filter="search"
                                             class="form-control form-control-solid ps-15" placeholder="Cari Product"
                                             id="product-search" />
+
+                                        <button type="button" class="btn btn-sm btn-icon position-absolute end-0 me-2" id="btn-clear-search" style="display: none;">
+                                            <i class="fas fa-times fs-5"></i>
+                                        </button>
                                     </div>
 
                                     <!-- RIGHT: Remaining Cash & Shutdown Button -->
@@ -675,17 +679,6 @@
                                                 name="working_method">
                                             <label class="form-check-label">Processing Order</label>
                                         </div>
-                                    </div>
-
-                                    <h5 class="fw-bold text-gray-800 mb-5">Bucheries</h5>
-                                    <div class="d-flex flex-equal gap-2 gap-xxl-9 px-0 mb-3" id="working-method">
-                                        <select class="form-select form-select-solid" data-control="select2"
-                                            data-placeholder="Pilih Butcherees" id="butcher-name">
-                                            <option value="">Pilih Butcherees</option>
-                                            @foreach($butcherees as $butcher)
-                                            <option value="{{$butcher->name}}">{{$butcher->name}}</option>
-                                            @endforeach
-                                        </select>
                                     </div>
 
                                     <h5 class="fw-bold text-gray-800 mb-5">Catatan</h5>
@@ -910,6 +903,19 @@
                     </div>
                 </div>
                 <div class="separator my-5"></div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Butcherees</label>
+                        <select class="form-select form-select-solid" data-control="select2"
+                            data-placeholder="Pilih Butcherees" id="butcher-name">
+                            <option value="">Pilih Butcherees</option>
+                            @foreach($butcherees as $butcher)
+                            <option value="{{$butcher->id}}">{{$butcher->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
                 <div class="flex justify-content-center">
                     <button type="button" class="btn btn-primary" id="update-item">Update</button>
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="btn-close">Cancel</button>
@@ -987,6 +993,19 @@
                         <div class="position-relative mb-3">
                             <input class="form-control form-control-md form-control-solid" type="text" id="quantity" />
                         </div>
+                    </div>
+                </div>
+                <div class="separator my-5"></div>
+                <div class="fv-row mb-5">
+                    <div class="mb-1">
+                        <label class="form-label fw-bold fs-6 mb-2">Butcherees</label>
+                        <select class="form-select form-select-solid" data-control="select2"
+                            data-placeholder="Pilih Butcherees" id="butcher-name">
+                            <option value="">Pilih Butcherees</option>
+                            @foreach($butcherees as $butcher)
+                            <option value="{{$butcher->id}}">{{$butcher->name}}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="separator my-5"></div>
@@ -1452,7 +1471,29 @@ $(document).ready(function() {
     $(document).on('keyup', '#product-search', function(e) {
         var param = $(this).val();
         var customer = $('#customer').val()
+
+        // Show/hide clear button based on input value
+        if (param.length > 0) {
+            $('#btn-clear-search').show();
+        } else {
+            $('#btn-clear-search').hide();
+        }
+
         getProductList(param, customer);
+    });
+
+    $(document).on('click', '#btn-clear-search', function(e) {
+        e.preventDefault();
+
+        // Clear input
+        $('#product-search').val('');
+
+        // Hide clear button
+        $('#btn-clear-search').hide();
+
+        // Reload product list
+        var customer = $('#customer').val();
+        getProductList('', customer);
     });
 
     $(document).on('click', '.remove-item', function(e) {
@@ -1490,6 +1531,7 @@ $(document).ready(function() {
         const currentTotalDiscount = extractNumericValue(cartItem.find('.discount-per-unit'));
         // FIXED: Divide by floor(quantity) not actual quantity, since discount was calculated with floor
         const currentDiscountPerUnit = currentQuantity > 0 ? currentTotalDiscount / Math.floor(currentQuantity) : 0;
+        const currentButcherId = cartItem.find('.butcher-id').text().trim();
 
         const productName = $(this).data('product-name');
 
@@ -1498,6 +1540,7 @@ $(document).ready(function() {
         $("#kt_modal_edit_product_item #product_price").val(formatThausand(currentProductPrice));
         $("#kt_modal_edit_product_item #diskon").val(formatThausand(currentDiscountPerUnit));
         $("#kt_modal_edit_product_item #quantity").val(currentQuantity);
+        $("#kt_modal_edit_product_item #butcher-name").val(currentButcherId).trigger('change');
     });
 
     $(document).on('click', '#add-item', function(e) {
@@ -1510,6 +1553,7 @@ $(document).ready(function() {
         var productQuantity = parseFloat($("#kt_modal_add_product_item #quantity").val());
         var productPrice = parseFloat($("#kt_modal_add_product_item #product_price").val().replace(/,/g, '')) || 0;
         var productDiscount = parseFloat($("#kt_modal_add_product_item #diskon").val().replace(/,/g, '')) || 0;
+        var butcherId = $("#kt_modal_add_product_item #butcher-name").val();
         var productImgUrl = $(this).find('img').attr('src');
 
         // Validation for productPrice and quantity
@@ -1556,6 +1600,9 @@ $(document).ready(function() {
 
             // Update base price storage
             existingProduct.find('.base-price').text(productPrice);
+
+            // Update butcher ID
+            existingProduct.find('.butcher-id').text(butcherId);
 
             // Recalculate totals
             const grossTotal = mround(productPrice * newQuantity);
@@ -1606,6 +1653,7 @@ $(document).ready(function() {
                 <div class="d-none discount-per-unit">${totalDiscount}</div>
                 <div class="d-none quantity-value">${productQuantity}</div>
                 <div class="d-none gross-price">${grossPrice}</div>
+                <div class="d-none butcher-id">${butcherId}</div>
 
                 <!-- Row 1: Product Name + Edit & Delete Icons -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -1652,6 +1700,7 @@ $(document).ready(function() {
         $("#kt_modal_add_product_item #quantity").val("");
         $("#kt_modal_add_product_item #product_price").val("");
         $("#kt_modal_add_product_item #diskon").val("");
+        $("#kt_modal_add_product_item #butcher-name").val(null).trigger('change');
 
     });
 
@@ -1663,6 +1712,7 @@ $(document).ready(function() {
         const quantity = parseFloat($("#kt_modal_edit_product_item #quantity").val());
         const productPrice = parseFloat($("#kt_modal_edit_product_item #product_price").val().replace(/,/g, ''));
         const discountPerUnit = parseFloat($("#kt_modal_edit_product_item #diskon").val().replace(/,/g, '')) || 0;
+        const butcherId = $("#kt_modal_edit_product_item #butcher-name").val();
 
         // Validation for productPrice and quantity
         if (!productPrice || productPrice <= 0) {
@@ -1712,6 +1762,9 @@ $(document).ready(function() {
             // Update base price storage
             existingProduct.find('.base-price').text(basePrice);
 
+            // Update butcher ID
+            existingProduct.find('.butcher-id').text(butcherId);
+
             // Update hidden gross-price storage
             existingProduct.find('.gross-price').text(grossTotal);
 
@@ -1745,6 +1798,14 @@ $(document).ready(function() {
 
         calculateTotals();
         $('#kt_modal_edit_product_item').modal('hide');
+
+        // Reset edit modal
+        $("#kt_modal_edit_product_item #product_id").val("");
+        $("#kt_modal_edit_product_item #product_name").val("");
+        $("#kt_modal_edit_product_item #quantity").val("");
+        $("#kt_modal_edit_product_item #product_price").val("");
+        $("#kt_modal_edit_product_item #diskon").val("");
+        $("#kt_modal_edit_product_item #butcher-name").val(null).trigger('change');
 
     });
 
@@ -1807,6 +1868,7 @@ $(document).ready(function() {
                         const discountPerUnit = extractNumericValue($(this).find('.discount-per-unit'));
                         const discount = extractNumericValue($(this).find('.discount'));
                         const quantity = extractNumericValue($(this).find('.quantity-value'));
+                        const butcherId = $(this).find('.butcher-id').text().trim();
 
                         products.push({
                             product_id: productId,
@@ -1815,6 +1877,7 @@ $(document).ready(function() {
                             quantity: quantity,
                             price: price,
                             discount: discount,
+                            butcher_id: butcherId,
                         });
                     });
 
@@ -1825,7 +1888,7 @@ $(document).ready(function() {
                     const totalAmount = extractNumericValue($('#total-amount'));
                     const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
                     const customerId = $('#customer').val();
-                    const butcherName = $('#butcher-name').val();
+                    // const butcherName = $('#butcher-name').val();
                     const branchId = `{{Auth::user()->branch_id}}`;
                     const nominalCash = unformatNumber($('#nominal-cash').val()) || 0;
                     const nominalReturn = unformatNumber($('#nominal-return').val()) || 0;
@@ -1843,7 +1906,7 @@ $(document).ready(function() {
                     formData.append('customer_name', customerId);
                     formData.append('payment_method', paymentMethod);
                     formData.append('customer_id', customerId);
-                    formData.append('butcher_name', butcherName);
+                    // formData.append('butcher_name', butcherName);
                     formData.append('total_discount', totalDiscount);
                     formData.append('shipping_cost', shippingCost);
                     formData.append('sub_total', subTotal);
@@ -2069,6 +2132,9 @@ $(document).ready(function() {
         $("#kt_modal_edit_product_item #product_id").val("");
         $("#kt_modal_edit_product_item #product_name").val("");
         $("#kt_modal_edit_product_item #product_price").val("");
+        $("#kt_modal_edit_product_item #quantity").val("");
+        $("#kt_modal_edit_product_item #diskon").val("");
+        $("#kt_modal_edit_product_item #butcher-name").val(null).trigger('change');
         $('#kt_modal_edit_product_item').modal('hide');
     });
 
@@ -2500,8 +2566,6 @@ $(document).ready(function() {
 
         const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
         const customerId = $('#customer').val();
-        const butcherName = $('#butcher-name').val();
-        // const branchId = $('#branch-id').val();
         const transferRef = $('#transfer-ref').val();
         const cartItems = $('#cart-item .cart-item-lists');
 
@@ -2546,30 +2610,6 @@ $(document).ready(function() {
             });
             toReturn = false;
         }
-
-        // Butcher name must not be empty
-        if (!butcherName) {
-            Swal.fire({
-                title: 'Warning!',
-                text: 'Nama Butcherees tidak boleh kosong',
-                icon: 'warning',
-                confirmButtonText: 'OK',
-                allowOutsideClick: false
-            });
-            toReturn = false;
-        }
-
-        // Branch/store must be selected
-        // if (!branchId) {
-        //     Swal.fire({
-        //         title: 'Warning!',
-        //         text: 'Branch / Store harus dipilih',
-        //         icon: 'warning',
-        //         confirmButtonText: 'OK',
-        //         allowOutsideClick: false
-        //     });
-        //     toReturn = false;
-        // }
 
         // If payment method is transfer, reference number must be filled
         if (paymentMethod === '3' && transferRef.trim() === '') {

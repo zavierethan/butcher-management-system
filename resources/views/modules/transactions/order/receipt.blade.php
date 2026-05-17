@@ -225,7 +225,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td style="text-align: right;">- @php echo number_format($item->discount, 0, '.', ',') @endphp</td>
+                        <td style="text-align: right;">- @php echo number_format($productDiscount, 0, '.', ',') @endphp</td>
                         <td style="text-align: right;">@php echo number_format($totalPrice, 0, '.', ',') @endphp</td>
                     </tr>
                     @endif

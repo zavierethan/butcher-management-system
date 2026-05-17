@@ -132,6 +132,7 @@ class OrderController extends Controller
                         'products.id',
                         'products.code',
                         'products.name',
+                        'butcherees.name as butcher_name',
                         'products.url_path',
                         'transaction_items.quantity',
                         'transaction_items.base_price',
@@ -139,9 +140,14 @@ class OrderController extends Controller
                         'transaction_items.discount'
                     )
                     ->leftJoin('products', 'products.id', '=', 'transaction_items.product_id')
+                    ->leftJoin('butcherees', 'butcherees.id', '=', 'transaction_items.butcherees_id')
                     ->where('transaction_id', $detailTransaction->id)->get();
 
-        return view('modules.transactions.order.edit', compact('detailTransaction', 'detailItems'));
+        $customerComplaints = DB::table('customer_complaints')
+                    ->where('transaction_id', $detailTransaction->id)
+                    ->first();
+
+        return view('modules.transactions.order.edit', compact('detailTransaction', 'detailItems', 'customerComplaints'));
     }
 
     public function update(Request $request) {

@@ -23,6 +23,9 @@
             <div id="kt_app_content_container" class="app-container container-fluid">
                 <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
                     <div class="card">
+                        <div class="card-header pt-5">
+                            <h3 class="card-title fw-bold">Informasi Umum</h3>
+                        </div>
                         <div class="card-body pt-10">
                             <div class="row">
                                 <div class="col-md-6">
@@ -54,16 +57,6 @@
                                             <div class="position-relative mb-3">
                                                 <input class="form-control form-control-md form-control-solid"
                                                     value="{{$detailTransaction->customer_name}}" readonly />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="separator my-5"></div>
-                                    <div class="fv-row mb-5">
-                                        <div class="mb-1">
-                                            <label class="form-label fw-bold fs-6 mb-2">Nama Butcher</label>
-                                            <div class="position-relative mb-3">
-                                                <input class="form-control form-control-md form-control-solid"
-                                                    value="{{$detailTransaction->butcher_name}}" readonly />
                                             </div>
                                         </div>
                                     </div>
@@ -188,9 +181,69 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="card">
+                        <div class="card-header pt-5">
+                            <h3 class="card-title fw-bold">Customer Complains</h3>
+                        </div>
+                        <div class="card-body pt-10">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="fv-row mb-5">
+                                        <div class="form-check form-check-custom form-check-solid">
+                                            <input class="form-check-input" type="checkbox" id="is_quality_issue"
+                                                <?php echo ($customerComplaints && $customerComplaints->is_quality_issue == 1) ? "checked" : ""; ?> />
+                                            <label class="form-check-label" for="is_quality_issue">
+                                                Quality Issue
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="fv-row mb-5">
+                                        <div class="form-check form-check-custom form-check-solid">
+                                            <input class="form-check-input" type="checkbox" id="is_weight_mismatch"
+                                                <?php echo ($customerComplaints && $customerComplaints->is_weight_mismatch == 1) ? "checked" : ""; ?> />
+                                            <label class="form-check-label" for="is_weight_mismatch">
+                                                Ketidak Sesuaian Timbangan
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="fv-row mb-5">
+                                        <div class="form-check form-check-custom form-check-solid">
+                                            <input class="form-check-input" type="checkbox" id="is_delivery_delay"
+                                                <?php echo ($customerComplaints && $customerComplaints->is_delivery_delay == 1) ? "checked" : ""; ?> />
+                                            <label class="form-check-label" for="is_delivery_delay">
+                                                Ketidak Sesuaian Waktu Delivery
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="separator my-5"></div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Catatan Complain</label>
+                                            <textarea class="form-control form-control-md form-control-solid" id="complaint_notes" rows="4">{{ $customerComplaints ? $customerComplaints->notes : '' }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <a href="#" class="btn btn-primary" id="btn-save-customer-complaint">Simpan Complain</a>
+                            </div>
+                        </div>
+                    </div>
+
                     <!--begin::Product List-->
                     <div class="card card-flush py-4 flex-row-fluid overflow-hidden">
-                        <!--begin::Card body-->
+                        <div class="card-header pt-5">
+                            <h3 class="card-title fw-bold">Detail Transaksi</h3>
+                        </div>
                         <div class="card-body pt-0">
                             <div class="table-responsive">
                                 <!--begin::Table-->
@@ -199,6 +252,7 @@
                                         <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
                                             <th class="">No.</th>
                                             <th class="min-w-175px">Nama Produk</th>
+                                            <th class="min-w-175px">Nama Butcher</th>
                                             <th class="min-w-70px text-end">Quantity (Kg)</th>
                                             <th class="min-w-100px text-end">Harga (Per Kg)</th>
                                             <th class="min-w-100px text-end">Total Harga</th>
@@ -213,18 +267,20 @@
                                             $totalPay = 0;
 
                                             // Helper function to match POS mround() - rounds to nearest 1000
-                                            function phpMround($value) {
-                                                $number = (int)$value;
-                                                $base = floor($number / 1000) * 1000;
-                                                $remainder = $number % 1000;
+                                            if (!function_exists('phpMround')) {
+                                                function phpMround($value) {
+                                                    $number = (int)$value;
+                                                    $base = floor($number / 1000) * 1000;
+                                                    $remainder = $number % 1000;
 
-                                                if ($remainder > 500) {
-                                                    return $base + 1000;
-                                                } elseif ($remainder < 500) {
-                                                    return $base;
-                                                } else {
-                                                    // exactly 500
-                                                    return $base + 500;
+                                                    if ($remainder > 500) {
+                                                        return $base + 1000;
+                                                    } elseif ($remainder < 500) {
+                                                        return $base;
+                                                    } else {
+                                                        // exactly 500
+                                                        return $base + 500;
+                                                    }
                                                 }
                                             }
                                         @endphp
@@ -243,6 +299,7 @@
                                             <tr>
                                                 <td>{{$counter++}}.</td>
                                                 <td>{{$detail->name}}</td>
+                                                <td>{{$detail->butcher_name}}</td>
                                                 <td style="text-align: right;">{{$detail->quantity}}</td>
                                                 <td style="text-align: right;">@php echo number_format($detail->base_price, 0, '.', ',') @endphp</td>
                                                 <td style="text-align: right;">@php echo number_format($roundedTotalPrice, 0, '.', ',') @endphp</td>
@@ -252,7 +309,8 @@
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
-                                                <td style="text-align: right;">- @php echo number_format($detail->discount, 0, '.', ',') @endphp</td>
+                                                <td></td>
+                                                <td style="text-align: right;">- @php echo number_format($productDiscount, 0, '.', ',') @endphp</td>
                                                 <td style="text-align: right;">@php echo number_format($totalPrice, 0, '.', ',') @endphp</td>
                                             </tr>
                                             @endif
@@ -262,19 +320,19 @@
                                             $totalPay = $subTotal - $discountTotal + $deliveryFee;
                                         @endphp
                                         <tr>
-                                            <td colspan="4" class="text-end font-weight-bold">Subtotal</td>
+                                            <td colspan="5" class="text-end font-weight-bold">Subtotal</td>
                                             <td class="text-end">@php echo number_format($subTotal, 0, '.', ',') @endphp</td>
                                         </tr>
                                         <tr>
-                                            <td colspan="4" class="text-end font-weight-bold">Total Discount</td>
+                                            <td colspan="5" class="text-end font-weight-bold">Total Discount</td>
                                             <td class="text-end">@php echo number_format($discountTotal, 0, '.', ',') @endphp</td>
                                         </tr>
                                         <tr>
-                                            <td colspan="4" class="text-end font-weight-bold">Biaya Pengiriman</td>
+                                            <td colspan="5" class="text-end font-weight-bold">Biaya Pengiriman</td>
                                             <td class="text-end">@php echo number_format($deliveryFee, 0, '.', ',') @endphp</td>
                                         </tr>
                                         <tr>
-                                            <td colspan="4" class="fs-3 text-gray-900 text-end">Total Bayar</td>
+                                            <td colspan="5" class="fs-3 text-gray-900 text-end">Total Bayar</td>
                                             <td class="text-gray-900 fs-3 fw-bolder text-end">@php echo number_format($totalPay, 0, '.', ',') @endphp</td>
                                         </tr>
                                     </tbody>
@@ -363,7 +421,7 @@ $(document).ready(function() {
 
                 const payload = {
                     transaction_id: transaction_id,
-                    status: status
+                    status: status,
                 };
 
                 console.log(payload)

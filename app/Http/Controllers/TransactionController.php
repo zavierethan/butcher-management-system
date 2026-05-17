@@ -51,7 +51,7 @@ class TransactionController extends Controller
                     throw new \Exception('POS session tidak ditemukan / belum dibuka');
                 }
 
-                // 💰 insert cash movement (IN)
+                // insert cash movement (IN)
                 DB::table('cash_movements')->insert([
                     'pos_session_id' => $session->id,
                     'user_id'        => Auth::user()->id,
@@ -112,22 +112,6 @@ class TransactionController extends Controller
                 "notes"            => $request->notes,
             ]);
 
-            // Handle credit (payment method 2)
-            if ($paymentMethod == '2') {
-                $dueDate = now()->addDays(7)->format('Y-m-d');
-                DB::table('receivables')->insert([
-                    "transaction_id"     => $transactionId,
-                    "transaction_no"     => $transactionCode,
-                    "transaction_date"   => now()->format('Y-m-d'),
-                    "customer_id"        => $request->customer_id,
-                    "due_date"           => $dueDate,
-                    "total_receivable"   => $totalAmount,
-                    "remaining_balance"  => $totalAmount,
-                    "status"             => 'unpaid',
-                    "created_at"         => now(),
-                ]);
-            }
-
             // Parse and insert transaction items
             $details = json_decode($request->details, true);
             foreach ($details as $detail) {
@@ -136,7 +120,7 @@ class TransactionController extends Controller
                     "product_id"     => $detail["product_id"],
                     "quantity"       => $detail["quantity"],
                     "base_price"     => $detail["base_price"],
-                    //"unit_price"     => $detail["price"],
+                    "butcherees_id"  => $detail["butcher_id"],
                     "discount"       => $detail["discount"],
                 ]);
 

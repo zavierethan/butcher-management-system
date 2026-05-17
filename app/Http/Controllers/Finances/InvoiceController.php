@@ -207,6 +207,9 @@ class InvoiceController extends Controller
                 'invoices.id',
                 'invoices.invoice_no',
                 DB::raw("TO_CHAR(invoices.invoice_date, 'dd/mm/YYYY') as invoice_date"),
+                'invoices.total_billed',
+                'invoices.remaining_billed',
+                'invoices.status',
                 'customers.name as customer_name',
                 'customers.phone_number',
                 'customers.address',
@@ -227,6 +230,19 @@ class InvoiceController extends Controller
             ->orderBy('transactions.transaction_date', 'asc')
             ->get();
 
+        $paymentHistories = DB::table('receivable_payments')
+            ->select(
+                'receivable_payments.id',
+                DB::raw("TO_CHAR(receivable_payments.payment_date, 'DD/MM/YYYY') as date"),
+                'receivable_payments.amount',
+                DB::raw("CASE WHEN receivable_payments.payment_method = 1 THEN 'Tunai' ELSE 'Transfer' END as payment_method"),
+                'branches.name as branch_name'
+            )
+            ->leftJoin('invoices', 'invoices.id', '=', 'receivable_payments.invoice_id')
+            ->leftJoin('branches', 'branches.id', '=', 'receivable_payments.branch_id')
+            ->where('invoices.id', $id)
+            ->get();
+
         $totalSellPrice = DB::table('invoice_details')
             ->where('invoice_id', $invoice->id)
             ->sum('amount');
@@ -240,6 +256,7 @@ class InvoiceController extends Controller
         $pdf = PDF::loadView('modules.finances.invoices.print', [
             "invoice" => $invoice,
             "invoiceItems" => $invoiceItems,
+            "paymentHistories" => $paymentHistories,
             "totalSellPrice" => $totalFormatted,
             "base64Image" => $base64Image,
         ]);

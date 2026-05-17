@@ -12,6 +12,7 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
+        font-size: 12px;
     }
 
     h1,
@@ -139,82 +140,99 @@
             </tr>
         </table>
 
-        <!-- Purchase Order Details -->
-        <div class="content">
-            <!-- Table -->
+        <!-- Detail Transaksi -->
+        <div class="content" style="margin-top: 30px;">
+            <h2 style="margin-bottom: 15px;"><b>DETAIL TRANSAKSI</b></h2>
             <table>
                 <thead>
                     <tr style="background-color:rgb(168, 15, 15); color: black;">
-                        <th>NO.</th>
-                        <th>NO. TRANSAKSI</th>
-                        <th>TANGGAL</th>
-                        <th>DESKIPSI BARANG</th>
-                        <th>JUMLAH</th>
-                        <th>HARGA</th>
-                        <th>TOTAL</th>
+                        <th style="text-align: center;">NO.</th>
+                        <th style="text-align: center;">NO. TRANSAKSI</th>
+                        <th style="text-align: center;">TANGGAL</th>
+                        <th style="text-align: right;">TOTAL TAGIHAN</th>
+                        <th style="text-align: right;">SISA TAGIHAN</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $no = 1; ?>
-                    @php
-                    $subTotal = 0;
-                    $discountTotal = 0;
-                    $deliveryFee = 0;
-                    $totalPay = 0;
-                    @endphp
-                    @foreach($invoiceItems as $items)
-                    @php
-                    $roundedTotalPrice = round($items->quantity * $items->base_price / 100) * 100;
-                    $productDiscount = $items->discount * floor($items->quantity);
-                    $totalPrice = $roundedTotalPrice - $productDiscount;
-
-                    $subTotal += $roundedTotalPrice;
-                    $discountTotal += $productDiscount;
-                    @endphp
+                    @php $counting = 1; @endphp
+                    @foreach ($invoiceItems as $item)
                     <tr>
-                        <td style="text-align: center"><?php echo $no++; ?>.</td>
-                        <td>{{$items->transaction_no}}</td>
-                        <td>{{$items->date}}</td>
-                        <td>{{$items->name}}</td>
-                        <td>{{$items->quantity}}</td>
-                        <td style="text-align: right">{{number_format($items->base_price, 0, '.', ',')}}</td>
-                        <td style="text-align: right">{{number_format($totalPrice, 0, '.', ',')}}</td>
+                        <td style="text-align: center;">{{ $counting++ }}</td>
+                        <td style="text-align: center;">{{ $item->transaction_no }}</td>
+                        <td style="text-align: center;">{{ $item->date }}</td>
+                        <td style="text-align: right;">{{ number_format($item->amount, 0, '.', ',') }}</td>
+                        <td style="text-align: right;">{{ number_format($item->remaining_amount, 0, '.', ',') }}</td>
                     </tr>
                     @endforeach
                 </tbody>
                 <tfoot>
-                    <tr>
-                        <td colspan="6" style="text-align: right;"><strong>SUB TOTAL</strong></td>
-                        <td style="text-align: right"><strong>{{ number_format($subTotal, 0, '.', ',') }}</strong></td>
+                    <tr style="font-weight: bold;">
+                        <td colspan="3" style="text-align: right; padding-top: 10px;"><strong>TOTAL TAGIHAN</strong></td>
+                        <td style="text-align: right; padding-top: 10px;"><strong>{{ number_format($invoice->total_billed, 0, '.', ',') }}</strong></td>
+                        <td style="text-align: right; padding-top: 10px;"><strong>{{ number_format($invoice->remaining_billed, 0, '.', ',') }}</strong></td>
                     </tr>
                 </tfoot>
             </table>
         </div>
 
-        <table width="100%" style="border-collapse: collapse; border: none;">
+        <!-- Informasi Pembayaran Summary -->
+        <table width="100%" style="border-collapse: collapse; border: none; margin-top: 30px;">
             <tr style="border: none;">
-                <!-- Left-aligned content -->
-                <td style="text-align: left; border: none; padding: 0;">
+                <td style="text-align: left; border: none; padding: 0; width: 50%;">
                     <strong>
-                        <p>INFORMASI PEMBAYARAN :</p>
+                        <p>STATUS : {{$invoice->status}}</p>
                     </strong>
-                    <div>No. Rekening : 1480802205</div>
-                    <div>Atas Nama : Zia Hasan</div>
-                    <div>Bank : BCA</div>
                 </td>
-
-                <!-- Right-aligned logo -->
-                <td style="text-align: right; border: none; padding: 0;">
+                <td style="text-align: right; border: none; padding: 0; width: 50%;">
+                    <strong>
+                        <p>SISA TAGIHAN : Rp. {{ number_format($invoice->remaining_billed, 0, '.', ',') }}</p>
+                    </strong>
                 </td>
             </tr>
         </table>
 
         <div class="page-break"></div>
 
-        <div>
-            <h2><b>Detail Pengambilan Barang</b></h2>
+        <!-- History Pembayaran -->
+        <div style="margin-top: 30px;">
+            <h2 style="margin-bottom: 15px;"><b>HISTORY PEMBAYARAN</b></h2>
+            <table>
+                <thead>
+                    <tr style="background-color:rgb(168, 15, 15); color: black;">
+                        <th style="text-align: center;">NO.</th>
+                        <th style="text-align: center;">CABANG</th>
+                        <th style="text-align: center;">TANGGAL PEMBAYARAN</th>
+                        <th style="text-align: center;">METODE PEMBAYARAN</th>
+                        <th style="text-align: right;">TOTAL PEMBAYARAN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php $counting = 1; @endphp
+                    @if (isset($paymentHistories) && count($paymentHistories) > 0)
+                        @foreach ($paymentHistories as $history)
+                        <tr>
+                            <td style="text-align: center;">{{ $counting++ }}</td>
+                            <td style="text-align: center;">{{ $history->branch_name }}</td>
+                            <td style="text-align: center;">{{ $history->date }}</td>
+                            <td style="text-align: center;">{{ $history->payment_method }}</td>
+                            <td style="text-align: right;">{{ number_format($history->amount, 0, '.', ',') }}</td>
+                        </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 20px;">Belum ada riwayat pembayaran</td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
+        </div>
 
-            <table width="100%" style="border-collapse: collapse; border: none;">
+        <div class="page-break"></div>
+
+        <div style="margin-top: 30px;">
+            <h2><b>TANDA TERIMA PENGAMBILAN BARANG</b></h2>
+
+            <table width="100%" style="border-collapse: collapse; border: none; margin-top: 40px;">
                 <tr style="border: none;">
                     <!-- Left-aligned content -->
                     <td style="text-align: left; border: none; padding: 0;">
@@ -222,8 +240,9 @@
                             <p style="margin-left: 10px; margin-bottom: 60px;">{{$invoice->customer_name}}</p>
                         </strong>
                         <strong>
-                            <p>(---------------------------)</p>
+                            <p style="margin-left: 10px;">(---------------------------)</p>
                         </strong>
+                        <p style="margin-left: 10px; font-size: 12px;">Customer</p>
                     </td>
 
                     <!-- Right-aligned logo -->
@@ -232,8 +251,22 @@
                             <p style="margin-right: 10px; margin-bottom: 60px;">Priyadis Butchers</p>
                         </strong>
                         <strong>
-                            <p>(---------------------------)</p>
+                            <p style="margin-right: 10px;">(---------------------------)</p>
                         </strong>
+                        <p style="margin-right: 10px; font-size: 12px;">Admin</p>
+                    </td>
+                </tr>
+            </table>
+
+            <table width="100%" style="border-collapse: collapse; border: none; margin-top: 60px;">
+                <tr style="border: none;">
+                    <td style="text-align: left; border: none; padding: 0;">
+                        <strong>
+                            <p>INFORMASI PEMBAYARAN :</p>
+                        </strong>
+                        <div>No. Rekening : 1480802205</div>
+                        <div>Atas Nama : Zia Hasan</div>
+                        <div>Bank : BCA</div>
                     </td>
                 </tr>
             </table>
