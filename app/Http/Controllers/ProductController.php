@@ -179,7 +179,7 @@ class ProductController extends Controller
 
             ->where('pd.branch_id', $branchId)
             ->where('pd.is_active', 1)
-            ->whereNotIn('p.code', ['DLV', 'RW'])
+            ->whereNotIn('p.code', ['RW'])
 
             ->select(
                 'p.id',

@@ -171,4 +171,43 @@ class TransactionController extends Controller
         }
     }
 
+    public function getCustomerReceivable($customerId)
+    {
+        // 1. Calculate remaining balance from invoices
+        $invoicedReceivable = DB::table('invoices')
+            ->where('customer_id', $customerId)
+            ->where('status', '!=', 'paid')
+            ->sum('remaining_billed');
+
+        // 2. Calculate receivable from transactions not yet invoiced
+        $nonInvoicedReceivable = DB::table('transactions')
+            ->where('customer_id', $customerId)
+            ->where('status', '!=', 1) // status 1 = Lunas
+            ->where('type', '!=', 'return') // exclude returns
+            ->whereNotIn('id', function($query) {
+                $query->select('transaction_id')
+                    ->from('invoice_details')
+                    ->whereNotNull('transaction_id');
+            })
+            ->sum('amount');
+
+        // 3. Calculate available overpayment credit
+        $availableOverpayment = DB::table('customer_overpayments')
+            ->where('customer_id', $customerId)
+            ->sum('remaining_amount');
+
+        // 4. Calculate total receivable
+        $totalReceivable = ($invoicedReceivable ?? 0) + ($nonInvoicedReceivable ?? 0);
+        $netReceivable = $totalReceivable - ($availableOverpayment ?? 0);
+
+        return [
+            'customer_id' => $customerId,
+            'invoiced_receivable' => $invoicedReceivable ?? 0,
+            'non_invoiced_receivable' => $nonInvoicedReceivable ?? 0,
+            'total_receivable' => $totalReceivable,
+            'available_overpayment' => $availableOverpayment ?? 0,
+            'net_receivable' => max(0, $netReceivable) // tidak bisa minus
+        ];
+    }
+
 }
