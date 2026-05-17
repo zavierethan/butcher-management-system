@@ -83,7 +83,7 @@
                                     </div>
                                 </div>
                                 <div class="text-end">
-                                    <a href="{{route('mutasi.index')}}"
+                                    <a href="{{route('partings.index')}}"
                                         class="btn btn-sm btn-danger">Cancel</a>
                                     <button type="button" class="btn btn-sm btn-primary"
                                         id="btn-submit-mutasi">Submit</button>

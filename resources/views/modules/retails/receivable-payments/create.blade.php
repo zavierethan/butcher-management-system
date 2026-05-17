@@ -12,7 +12,7 @@
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
                     <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-                        Daily Expenses</h1>
+                        Receivable Payments</h1>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
@@ -27,7 +27,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Daily Expenses</li>
+                        <li class="breadcrumb-item text-muted">Receivable Payments</li>
                         <!--end::Item-->
                         <!--begin::Item-->
                         <li class="breadcrumb-item">
@@ -164,6 +164,38 @@ $(document).on('keyup', '.format-number', function () {
 
 $(document).on('click', '#btn-submit', function(e) {
     e.preventDefault();
+
+    // Validasi field wajib diisi
+    let invoiceId = $('#invoice-id').val();
+    let paymentMethod = $('#payment-method').val();
+    let totalAmount = $('#total-amount').val().replace(/,/g, '');
+
+    if (!invoiceId) {
+        Swal.fire({
+            title: 'Nomor Invoice wajib diisi',
+            icon: 'warning',
+            confirmButtonText: 'Ok'
+        });
+        return;
+    }
+
+    if (!paymentMethod) {
+        Swal.fire({
+            title: 'Jenis Pembayaran wajib diisi',
+            icon: 'warning',
+            confirmButtonText: 'Ok'
+        });
+        return;
+    }
+
+    if (!totalAmount || parseFloat(totalAmount) <= 0) {
+        Swal.fire({
+            title: 'Total Bayar wajib diisi dan harus lebih besar dari 0',
+            icon: 'warning',
+            confirmButtonText: 'Ok'
+        });
+        return;
+    }
 
     if (true) {
         Swal.fire({

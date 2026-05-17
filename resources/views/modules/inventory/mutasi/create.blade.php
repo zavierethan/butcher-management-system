@@ -142,6 +142,9 @@
                                                     <option value="IN">IN</option>
                                                     <option value="OUT">OUT</option>
                                                     <option value="PRIVE">PRIVE</option>
+                                                    <option value="RETURN">RETURN</option>
+                                                    <option value="SEDEKAH">SEDEKAH</option>
+                                                    <option value="BONUS">BONUS</option>
                                                 </select>
                                             </div>
                                         </td>

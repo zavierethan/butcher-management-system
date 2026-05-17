@@ -21,6 +21,8 @@ class PartingController extends Controller
             ->leftJoin('branches', 'branches.id', '=', 'parting_cut_results.branch_id')
             ->leftJoin('products', 'products.id', '=', 'parting_cut_results.product_id')
             ->select(
+                'parting_cut_results.id',
+                'branches.name as branch_name',
                 DB::raw("TO_CHAR(parting_cut_results.date, 'dd/mm/YYYY') as date"),
                 'parting_cut_results.product_id',
                 DB::raw('SUM(parting_cut_results.quantity) as total_quantity'),
@@ -32,7 +34,8 @@ class PartingController extends Controller
                 DB::raw("TO_CHAR(parting_cut_results.date, 'dd/mm/YYYY')"),
                 'parting_cut_results.product_id',
                 'products.name',
-                'branches.name'
+                'branches.name',
+                'parting_cut_results.id',
             );
 
         if (!empty($params['date'])) {
@@ -93,19 +96,7 @@ class PartingController extends Controller
                     'date' => $item['date'],
                     'branch_id' => $item['branch_id'],
                 ]);
-
-                // $stockLogs[] = [
-                //     'stock_id' => $stockId,
-                //     'in_quantity' => $totalQuantity,
-                //     'reference' => 'Hasil Parting',
-                //     'parting_id' => $partingId
-                // ];
             }
-
-            // if (!empty($stockLogs)) {
-            //     DB::table('stock_logs')->insert($stockLogs);
-            // }
-
             DB::commit();
             return response()->json(['message' => 'Success']);
         } catch (\Exception $e) {
@@ -118,27 +109,6 @@ class PartingController extends Controller
         }
     }
 
-    // public function edit($id) {
-    //     $branches = DB::table('branches')->orderBy('name', 'asc')->get();
-    //     $products = DB::table('products')->orderBy('name', 'asc')->get();
-    //     $butcherees = DB::table('butcherees')->orderBy('name', 'asc')->get();
-
-    //     $partingHeader = DB::table('partings')
-    //         ->where('partings.id', '=', $id)
-    //         ->first();
-
-    //     $rancungHeader = DB::table('fresh_chicken_cut_results')
-    //         ->where('fresh_chicken_cut_results.parting_id', '=', $id)
-    //         ->get();
-
-    //     $partingCutResultsHeader = DB::table('parting_cut_results')
-    //         ->where('parting_cut_results.parting_id', '=', $id)
-    //         ->get();
-
-    //     return view('modules.inventory.parting.edit', compact('branches', 'products', 'butcherees', 'partingHeader',
-    //         'rancungHeader', 'partingCutResultsHeader'));
-    // }
-
     public function edit($id) {
         $branches = DB::table('branches')->orderBy('name', 'asc')->get();
         $products = DB::table('products')->orderBy('name', 'asc')->get();
@@ -147,22 +117,9 @@ class PartingController extends Controller
         // Get the parting record
         $partingHeader = DB::table('partings')->where('id', $id)->first();
 
-        // Get the fresh chicken cut results
-        $rancungHeader = DB::table('fresh_chicken_cut_results')
-            ->where('parting_id', $id)
-            ->get();
-
-        // Get parting cut results details by joining tables
-        $partingCutResultsHeader = DB::table('parting_cut_results as pcr')
-            ->leftJoin('parting_cut_result_details as pcrd', 'pcr.id', '=', 'pcrd.parting_cut_result_id')
-            ->leftJoin('products as p', 'pcrd.product_id', '=', 'p.id')
-            ->where('pcr.parting_id', $id)
-            ->select('pcr.id as parting_cut_result_id', 'pcr.parting_id', 'pcrd.product_id', 'p.name as product_name', 'pcrd.quantity')
-            ->get();
 
         return view('modules.inventory.parting.edit', compact(
-            'branches', 'products', 'butcherees',
-            'partingHeader', 'rancungHeader', 'partingCutResultsHeader'
+            'branches', 'products', 'butcherees', 'partingHeader'
         ));
     }
 

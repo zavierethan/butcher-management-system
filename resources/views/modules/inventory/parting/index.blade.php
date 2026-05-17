@@ -152,7 +152,7 @@
                 render: function (data, type, row) {
                     let actionButtons = `
                         <div class="text-center">
-                            <a href="/partings/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Details</a>
+                            <a href="#" class="btn btn-sm btn-light btn-active-light-primary">Details</a>
                         </div>
                     `;
                     return actionButtons;
