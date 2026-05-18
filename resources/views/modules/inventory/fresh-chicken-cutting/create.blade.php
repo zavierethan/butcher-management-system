@@ -71,6 +71,8 @@
                                             </div>
                                         </div>
                                         <div class="separator my-5"></div>
+                                    </div>
+                                    <div class="col-md-6">
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Tanggal</label>
@@ -81,9 +83,6 @@
                                             </div>
                                         </div>
                                         <div class="separator my-5"></div>
-                                    </div>
-                                    <div class="col-md-6">
-
                                     </div>
                                 </div>
                                 <div class="text-end">

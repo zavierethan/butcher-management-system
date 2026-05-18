@@ -44,6 +44,9 @@
                                             </div>
                                         </div>
                                         <div class="separator my-5"></div>
+
+                                    </div>
+                                    <div class="col-md-6">
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Tanggal</label>
@@ -55,7 +58,6 @@
                                         </div>
                                         <div class="separator my-5"></div>
                                     </div>
-                                    <div class="col-md-6"></div>
                                 </div>
                                 <div class="text-end">
                                     <a href="{{route('fresh-chicken-cutting.index')}}" class="btn btn-sm btn-danger">Kembali</a>
@@ -65,38 +67,41 @@
                     </div>
                     <div class="card card-flush py-4 flex-row-fluid overflow-hidden">
                         <div class="card-body pt-10 overflow-x-auto">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="kt_items_table">
-                                    <thead style="background-color:rgb(221, 214, 214);">
-                                        <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
-                                            <th class="text-center" colspan="6">HASIL POTONG AYAM FRESH</th>
-                                        </tr>
-                                        <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
-                                            <th class="text-center">No.</th>
-                                            <th class="min-w-70px">Jumlah Ekor</th>
-                                            <th class="min-w-70px">Berat</th>
-                                            <th class="min-w-70px">Berat Wadah</th>
-                                            <th class="min-w-70px">Berat Bersih</th>
-                                            <th class="min-w-70px text-center">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="fw-semibold text-gray-600">
-                                        @foreach($freshChickenCutting['items'] as $i => $item)
-                                        <tr data-id="{{ $item->id }}">
-                                            <td class="text-center">{{ $i+1 }}</td>
-                                            <td><input type="number" class="form-control total-chicken" name="total_chicken[]" min="1" value="{{ $item->total_chickens }}" /></td>
-                                            <td><input type="number" class="form-control weight" name="weight[]" step="0.01" value="{{ $item->weight }}" /></td>
-                                            <td><input type="number" class="form-control container-weight" name="container_weight[]" step="0.01" value="{{ $item->container_weight }}" /></td>
-                                            <td><input type="number" class="form-control net-weight" name="net_weight[]" step="0.01" value="{{ $item->net_weight }}" readonly /></td>
-                                            <td class="text-center">
-                                                <button type="button" class="btn btn-sm btn-success btn-update-row"><i class="fa fa-save"></i> Update</button>
-                                                <button type="button" class="btn btn-sm btn-danger btn-delete-row"><i class="fa fa-trash"></i> Delete</button>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                            <div class="row mb-5">
+                                <div class="col-md-12 text-end"><a class="btn btn-sm btn-primary" id="add-row"><i
+                                            class="fa-solid fa-plus"></i></a></div>
                             </div>
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_items_table">
+                                <!--begin::Table head-->
+                                <thead>
+                                    <!--begin::Table row-->
+                                    <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                        <th class="min-w-125px text-center">Jumlah Ekor</th>
+                                        <th class="min-w-125px">Berat (Kg)</th>
+                                        <th class="min-w-125px">Berat Wadah (Kg)</th>
+                                        <th class="min-w-125px">Berat Bersih (Kg)</th>
+                                        <th class="min-w-125px text-center">ACTION</th>
+                                    </tr>
+                                    <!--end::Table row-->
+                                </thead>
+                                <!--end::Table body-->
+                                <tbody class="fw-bold text-gray-600" id="product-table">
+                                    @foreach($freshChickenCutting['items'] as $item)
+                                    <tr data-id="{{ $item->id }}">
+                                        <td><input type="number" class="form-control form-control-md total-chicken" name="total_chicken[]" min="1" value="{{ $item->total_chickens }}" /></td>
+                                        <td><input type="number" class="form-control form-control-md weight" name="weight[]" step="0.01" value="{{ $item->weight }}" /></td>
+                                        <td><input type="number" class="form-control form-control-md container-weight" name="container_weight[]" step="0.01" value="{{ $item->container_weight }}" /></td>
+                                        <td><input type="number" class="form-control form-control-md net-weight" name="net_weight[]" step="0.01" value="{{ $item->net_weight }}" readonly /></td>
+                                        <td class="text-center">
+                                            <a href="#" class="btn-update-row me-2" title="Update"><i class="fa-solid fa-save"></i></a>
+                                            <a href="#" class="btn-delete-row" title="Delete"><i class="fa-solid fa-trash-can"></i></a>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                                <!--end::Table body-->
+                            </table>
+                            <!--end::Table-->
                         </div>
                     </div>
                 </div>
@@ -118,8 +123,25 @@ $(document).ready(function() {
         tr.find('.net-weight').val(netWeight > 0 ? netWeight : 0);
     });
 
+    // Add row
+    $('#add-row').on('click', function(e) {
+        e.preventDefault();
+        var row = `<tr>
+            <td><input type="number" class="form-control form-control-md total-chicken" name="total_chicken[]" min="1" value="" /></td>
+            <td><input type="number" class="form-control form-control-md weight" name="weight[]" step="0.01" value="" /></td>
+            <td><input type="number" class="form-control form-control-md container-weight" name="container_weight[]" step="0.01" value="" /></td>
+            <td><input type="number" class="form-control form-control-md net-weight" name="net_weight[]" step="0.01" value="" readonly /></td>
+            <td class="text-center">
+                <a href="#" class="btn-update-row me-2" title="Update"><i class="fa-solid fa-save"></i></a>
+                <a href="#" class="btn-delete-row" title="Delete"><i class="fa-solid fa-trash-can"></i></a>
+            </td>
+        </tr>`;
+        $('#product-table').append(row);
+    });
+
     // Update row
-    $('#kt_items_table').on('click', '.btn-update-row', function() {
+    $('#kt_items_table').on('click', '.btn-update-row', function(e) {
+        e.preventDefault();
         var tr = $(this).closest('tr');
         var id = tr.data('id');
         var branch_id = $('#branch_id').val();
@@ -167,7 +189,8 @@ $(document).ready(function() {
     });
 
     // Delete row
-    $('#kt_items_table').on('click', '.btn-delete-row', function() {
+    $('#kt_items_table').on('click', '.btn-delete-row', function(e) {
+        e.preventDefault();
         var tr = $(this).closest('tr');
         var id = tr.data('id');
         Swal.fire({
@@ -192,10 +215,6 @@ $(document).ready(function() {
                                 icon: 'success',
                                 title: 'Berhasil',
                                 text: 'Row berhasil dihapus!'
-                            });
-                            // Update row numbers
-                            $('#kt_items_table tbody tr').each(function(index) {
-                                $(this).find('td:first').text(index+1);
                             });
                         } else {
                             Swal.fire({
