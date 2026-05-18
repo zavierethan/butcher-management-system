@@ -76,6 +76,7 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                        <th>NO.</th>
                                         <th class="min-w-125px text-center">Jumlah Ekor</th>
                                         <th class="min-w-125px">Berat (Kg)</th>
                                         <th class="min-w-125px">Berat Wadah (Kg)</th>
@@ -86,8 +87,10 @@
                                 </thead>
                                 <!--end::Table body-->
                                 <tbody class="fw-bold text-gray-600" id="product-table">
+                                    @php $counting = 1; @endphp
                                     @foreach($freshChickenCutting['items'] as $item)
                                     <tr data-id="{{ $item->id }}">
+                                        <td>{{$counting++}}</td>
                                         <td><input type="number" class="form-control form-control-md total-chicken" name="total_chicken[]" min="1" value="{{ $item->total_chickens }}" /></td>
                                         <td><input type="number" class="form-control form-control-md weight" name="weight[]" step="0.01" value="{{ $item->weight }}" /></td>
                                         <td><input type="number" class="form-control form-control-md container-weight" name="container_weight[]" step="0.01" value="{{ $item->container_weight }}" /></td>

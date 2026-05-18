@@ -103,6 +103,7 @@
                                     <thead>
                                         <!--begin::Table row-->
                                         <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                            <th class="">NO.</th>
                                             <th class="min-w-250px">NAMA PRODUK</th>
                                             <th class="min-w-125px">KUANTITAS (KG)</th>
                                             <th class="min-w-125px text-center">ACTION</th>
@@ -111,8 +112,10 @@
                                     </thead>
                                     <!--end::Table body-->
                                     <tbody class="fw-bold text-gray-600" id="product-table">
+                                        @php $counting = 1; @endphp
                                         @foreach($parting['items'] as $item)
                                         <tr>
+                                            <td>{{$counting++}}</td>
                                             <td>
                                                 <div class="position-relative">
                                                     <select class="form-select me-2 product-id" data-control="select2"
