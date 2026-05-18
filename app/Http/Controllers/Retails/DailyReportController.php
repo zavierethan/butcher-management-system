@@ -327,11 +327,11 @@ class DailyReportController extends Controller
             $date = now()->format('Y-m-d');
         }
 
-        // 1. Ambil semua butcher master
+        // 1. Ambil semua butcher master dengan id dan name
         $butchers = DB::table('butcherees')
             ->where('branch_id', $branchId)
             ->orderBy('name')
-            ->pluck('name');
+            ->get(['id', 'name']);
 
         // 2. Build dynamic pivot columns
         $columns = [];
@@ -339,13 +339,13 @@ class DailyReportController extends Controller
         foreach ($butchers as $b) {
 
             // escape alias postgres
-            $alias = str_replace('"', '""', $b);
+            $alias = str_replace('"', '""', $b->name);
 
             $columns[] = "
                 COALESCE(
                     SUM(
                         CASE
-                            WHEN t.butcher_name = ? THEN ti.quantity
+                            WHEN ti.butcherees_id = ? THEN ti.quantity
                             ELSE 0
                         END
                     ),
@@ -390,9 +390,9 @@ class DailyReportController extends Controller
         // 4. Bindings
         $bindings = [];
 
-        // binding butcher_name untuk CASE WHEN
+        // binding butcherees_id untuk CASE WHEN
         foreach ($butchers as $b) {
-            $bindings[] = $b;
+            $bindings[] = $b->id;
         }
 
         // branch_id

@@ -115,7 +115,7 @@ class TransactionController extends Controller
             // Parse and insert transaction items
             $details = json_decode($request->details, true);
             foreach ($details as $detail) {
-                DB::table('transaction_items')->insert([
+                $transactionItemId = DB::table('transaction_items')->insertGetId([
                     "transaction_id" => $transactionId,
                     "product_id"     => $detail["product_id"],
                     "quantity"       => $detail["quantity"],
@@ -134,6 +134,8 @@ class TransactionController extends Controller
                     "out_quantity" => $detail["quantity"],
                     "reference"    => 'Penjualan #' . $transactionCode,
                     "date"         => now(),
+                    "ref_type"     => 'SALE',
+                    "ref_id"       => $transactionItemId,
                 ]);
             }
 

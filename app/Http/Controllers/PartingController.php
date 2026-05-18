@@ -86,13 +86,28 @@ class PartingController extends Controller
         try {
             $products = $request->input('products', []);
             foreach ($products as $item) {
-                DB::table('parting_cut_results')->insert([
+                $partingId = DB::table('parting_cut_results')->insertGetId([
                     'product_id' => $item['product_id'],
                     'quantity' => $item['quantity'],
                     'date' => $item['date'],
                     'branch_id' => $item['branch_id'],
                 ]);
+
+                $stockId = DB::table('stocks')
+                    ->where('product_id', $item['product_id'])
+                    ->where('branch_id', $item['branch_id'])
+                    ->value('id');
+
+                DB::table('stock_logs')->insert([
+                    "stock_id"     => $stockId,
+                    "in_quantity"  => $item["quantity"],
+                    "reference"    => 'Parting #' . $partingId,
+                    "date"         => now(),
+                    "ref_type"     => 'PARTING',
+                    "ref_id"       => $partingId,
+                ]);
             }
+
             DB::commit();
             return response()->json(['message' => 'Success']);
         } catch (\Exception $e) {

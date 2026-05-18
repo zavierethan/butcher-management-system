@@ -71,6 +71,7 @@ class StockController extends Controller
                 $join->on('stocks.id', '=', 'today_opname.stock_id');
             })
             ->where('stocks.branch_id', Auth::user()->branch_id)
+            ->whereNotIn('products.code', ['DLV', 'RW'])
             ->orderBy('products.sort_order', 'asc')
             ->select(
                 'stocks.id',
@@ -122,7 +123,6 @@ class StockController extends Controller
             'data' => $data
         ]);
     }
-
 
     public function export(Request $request) {
 
@@ -214,15 +214,6 @@ class StockController extends Controller
             $stockId = $validated['stock_id'];
             $opnameQuantity = $validated['quantity'] ?? 0;
 
-            // // Calculate current stock balance from stock_logs
-            // $currentStock = DB::table('stock_logs')
-            //     ->where('stock_id', $stockId)
-            //     ->selectRaw('COALESCE(SUM(in_quantity), 0) - COALESCE(SUM(out_quantity), 0) AS stock_balance')
-            //     ->first()->stock_balance;
-
-            // // Determine stock adjustment amount
-            // $adjustment = $currentStock - $opnameQuantity;
-
             // Insert opname record
             DB::table('stock_opnames')->insert([
                 'stock_id' => $stockId,
@@ -231,17 +222,6 @@ class StockController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-
-            // Insert adjustment entry in stock_logs
-            // if ($adjustment != 0) {
-            //     DB::table('stock_logs')->insert([
-            //         'stock_id' => $stockId,
-            //         'in_quantity' => $adjustment < 0 ? abs($adjustment) : 0,
-            //         'out_quantity' => $adjustment > 0 ? abs($adjustment) : 0,
-            //         'date' => now(),
-            //         'reference' => 'Stock Opname',
-            //     ]);
-            // }
 
             DB::commit();
 
@@ -365,6 +345,7 @@ class StockController extends Controller
                 $join->on('stocks.id', '=', 'today_opname.stock_id');
             })
             ->where('stocks.branch_id', Auth::user()->branch_id)
+            ->whereNotIn('products.code', ['DLV', 'RW'])
             ->orderBy('products.sort_order', 'asc')
             ->select(
                 'stocks.id',
@@ -398,14 +379,6 @@ class StockController extends Controller
                 $opnameQuantity = $productData['quantity'] ?? 0;
                 $date = $productData['date'] ?? now();
 
-                // Get current stock balance
-                $currentStock = DB::table('stock_logs')
-                    ->where('stock_id', $stockId)
-                    ->selectRaw('COALESCE(SUM(in_quantity), 0) - COALESCE(SUM(out_quantity), 0) AS stock_balance')
-                    ->first()->stock_balance;
-
-                $adjustment = $currentStock - $opnameQuantity;
-
                 // Insert into stock_opnames
                 DB::table('stock_opnames')->insert([
                     "stock_id" => $stockId,
@@ -415,16 +388,10 @@ class StockController extends Controller
                     'updated_at' => now(),
                 ]);
 
-                // Insert into stock_logs if adjustment is needed
-                // if ($adjustment != 0) {
-                //     DB::table('stock_logs')->insert([
-                //         "stock_id" => $stockId,
-                //         "in_quantity" => $adjustment < 0 ? abs($adjustment) : 0,
-                //         "out_quantity" => $adjustment > 0 ? abs($adjustment) : 0,
-                //         "date" => $date,
-                //         "reference" => "Stock Opname #" . $productData['date'],
-                //     ]);
-                // }
+                DB::table('stocks')->where('id', $stockId)->update([
+                    "current_stock" => $opnameQuantity,
+                    "updated_at"    => now(),
+                ]);
             }
 
             DB::commit();
@@ -455,7 +422,8 @@ class StockController extends Controller
                 'stocks.id',
                 'products.id',
                 'products.code',
-                'products.name'
+                'products.name',
+                'products.sort_order'
             )->orderBy('products.sort_order', 'asc')->get();
         return view('modules.inventory.stock.mutasi.index', compact('stocks', 'branch', 'branches'));
     }

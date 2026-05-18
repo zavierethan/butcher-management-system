@@ -210,9 +210,12 @@ $(document).ready(function() {
                         <div class="position-relative">
                             <select class="form-select me-2 type" data-control="select2" name="type">
                                 <option value="">-</option>
-                                <option value="IN">IN</option>
-                                <option value="OUT">OUT</option>
-                                <option value="PRIVE">PRIVE</option>
+                                                    <option value="IN">IN</option>
+                                                    <option value="OUT">OUT</option>
+                                                    <option value="PRIVE">PRIVE</option>
+                                                    <option value="RETURN">RETURN</option>
+                                                    <option value="SEDEKAH">SEDEKAH</option>
+                                                    <option value="BONUS">BONUS</option>
                             </select>
                         </div>
                     </td>

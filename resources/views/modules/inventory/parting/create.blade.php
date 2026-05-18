@@ -108,6 +108,7 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                        <th class="min-w-50px text-center">NO</th>
                                         <th class="min-w-250px">NAMA PRODUK</th>
                                         <th class="min-w-125px">KUANTITAS (KG)</th>
                                         <th class="min-w-125px text-center">ACTION</th>
@@ -118,6 +119,7 @@
                                 <!--begin::Table body-->
                                 <tbody class="fw-bold text-gray-600" id="product-table">
                                     <tr>
+                                        <td class="text-center row-number">1</td>
                                         <td>
                                             <div class="position-relative">
                                                 <select class="form-select me-2 product-id" data-control="select2"
@@ -158,8 +160,16 @@
 <script>
 $(document).ready(function() {
 
+    function updateRowNumbers() {
+        $("#kt_items_table tbody tr").each(function(index) {
+            $(this).find(".row-number").text(index + 1);
+        });
+    }
+
     $("#add-row").on("click", function() {
+        var rowCount = $("#kt_items_table tbody tr").length + 1;
         var row = `<tr>
+                    <td class="text-center row-number">${rowCount}</td>
                     <td>
                         <div class="position-relative">
                             <select class="form-select me-2 product-id" data-control="select2"
@@ -189,6 +199,7 @@ $(document).ready(function() {
 $(document).on("click", "#kt_items_table tbody a", function(e) {
     e.preventDefault();
     $(this).closest("tr").remove();
+    updateRowNumbers();
 });
 
 $(document).on("keyup", "input[name='quantity']", function() {

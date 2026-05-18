@@ -105,6 +105,7 @@ class StockOpnameController extends Controller
                 $join->on('stocks.id', '=', 'today_opname.stock_id');
             })
             ->where('stocks.branch_id', Auth::user()->branch_id)
+            ->whereNotIn('products.code', ['DLV', 'RW'])
             ->orderBy('products.sort_order', 'asc')
             ->select(
                 'stocks.id',

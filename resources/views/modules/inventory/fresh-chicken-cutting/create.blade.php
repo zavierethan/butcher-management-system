@@ -58,7 +58,7 @@
                                     <div class="col-md-6">
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Cabang</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Store</label>
                                                 <div class="position-relative mb-3">
                                                     <select class="form-select form-select-solid" data-control="select2"
                                                         data-placeholder="-" name="branch_id" id="branch_id" disabled>
@@ -103,32 +103,30 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="col-md-12 text-end"><a class="btn btn-sm btn-primary" id="add-row"><i
-                                                class="fa-solid fa-plus"></i>Tambah Hasil Potong</a></div>
+                                                class="fa-solid fa-plus"></i></a></div>
                                 </div>
                             </div>
-                            <div class="table-responsive">
-                                <!--begin::Table-->
-                                <table class="table table-bordered" id="kt_items_table">
-                                    <thead style="background-color:rgb(221, 214, 214);">
-                                        <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
-                                            <th class="text-center" colspan="6">HASIL POTONG AYAM FRESH</th>
-                                        </tr>
-                                        <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
-                                            <th class="text-center">No.</th>
-                                            <th class="min-w-70px">Jumlah Ekor</th>
-                                            <th class="min-w-70px">Berat</th>
-                                            <th class="min-w-70px">Berat Wadah</th>
-                                            <th class="min-w-70px">Berat Bersih</th>
-                                            <th class="min-w-70px text-center">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="fw-semibold text-gray-600">
-                                    </tbody>
-                                </table>
-                                <!--end::Table-->
-                            </div>
+                            <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_items_table">
+                                <!--begin::Table head-->
+                                <thead>
+                                    <!--begin::Table row-->
+                                    <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                        <th>NO.</th>
+                                        <th class="min-w-125px text-center">Jumlah Ekor</th>
+                                        <th class="min-w-125px">Berat (Kg)</th>
+                                        <th class="min-w-125px">Berat Wadah (Kg)</th>
+                                        <th class="min-w-125px">Berat Bersih (Kg)</th>
+                                        <th class="min-w-125px text-center">ACTION</th>
+                                    </tr>
+                                    <!--end::Table row-->
+                                </thead>
+                                <!--end::Table body-->
+                                <tbody class="fw-bold text-gray-600" id="product-table">
+                                </tbody>
+                                <!--end::Table body-->
+                            </table>
+                            <!--end::Table-->
                         </div>
-                        <!--end::Card body-->
                     </div>
                 </div>
                 <!--end::Row-->
@@ -206,15 +204,24 @@ $(document).ready(function() {
             });
         });
     var rowCount = 0;
+
+    function updateRowNumbers() {
+        $('#kt_items_table tbody tr').each(function(index) {
+            $(this).find('td:first').text(index + 1);
+        });
+    }
+
     $('#add-row').on('click', function() {
         rowCount++;
         var row = `<tr>
-            <td class="text-center">${rowCount}</td>
-            <td><input type="number" class="form-control total-chicken" name="total_chicken[]" min="1" value="" /></td>
-            <td><input type="number" class="form-control weight" name="weight[]" step="0.01" value="" /></td>
-            <td><input type="number" class="form-control container-weight" name="container_weight[]" step="0.01" value="" /></td>
-            <td><input type="number" class="form-control net-weight" name="net_weight[]" step="0.01" value="" readonly /></td>
-            <td class="text-center"><button type="button" class="btn btn-sm btn-danger btn-delete-row"><i class="fa fa-trash"></i> Delete</button></td>
+            <td>${rowCount}</td>
+            <td><input type="number" class="form-control form-control-md total-chicken" name="total_chicken[]" min="1" value="" /></td>
+            <td><input type="number" class="form-control form-control-md weight" name="weight[]" step="0.01" value="" /></td>
+            <td><input type="number" class="form-control form-control-md container-weight" name="container_weight[]" step="0.01" value="" /></td>
+            <td><input type="number" class="form-control form-control-md net-weight" name="net_weight[]" step="0.01" value="" readonly /></td>
+            <td class="text-center">
+                <a href="#" class="btn-delete-row" title="Delete"><i class="fa-solid fa-trash-can"></i></a>
+            </td>
         </tr>`;
         $('#kt_items_table tbody').append(row);
     });
@@ -229,14 +236,11 @@ $(document).ready(function() {
     });
 
     // Delete row
-    $('#kt_items_table').on('click', '.btn-delete-row', function() {
+    $('#kt_items_table').on('click', '.btn-delete-row', function(e) {
+        e.preventDefault();
         $(this).closest('tr').remove();
-        // Update row numbers
-        rowCount = 0;
-        $('#kt_items_table tbody tr').each(function() {
-            rowCount++;
-            $(this).find('td:first').text(rowCount);
-        });
+        updateRowNumbers();
+        rowCount--;
     });
 });
 </script>
