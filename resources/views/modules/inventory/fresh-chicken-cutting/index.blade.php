@@ -15,7 +15,7 @@
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
                     <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-                        Fresh Chicken Cutting</h1>
+                        Hasil Potong Ayam Fresh</h1>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
@@ -30,7 +30,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Fresh Chicken Cutting</li>
+                        <li class="breadcrumb-item text-muted">Hasil Potong Ayam Fresh</li>
                         <!--end::Item-->
                     </ul>
                     <!--end::Breadcrumb-->
@@ -90,6 +90,7 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                        <th class="min-w-125px">STORE / BRANCH</th>
                                         <th class="min-w-125px">TANGGAL</th>
                                         <th class="min-w-125px">JUMLAH EKOR</th>
                                         <th class="min-w-125px">BERAT BERSIH (KG)</th>
@@ -168,6 +169,10 @@ $(document).ready(function() {
         },
         columns: [
             {
+                data: 'branch_name',
+                name: 'branch_name'
+            },
+            {
                 data: 'date_formated',
                 name: 'date_formated'
             },
@@ -177,8 +182,8 @@ $(document).ready(function() {
                 className: 'text-end'
             },
             {
-                data: 'total_weight',
-                name: 'total_weight',
+                data: 'total_net_weight',
+                name: 'total_net_weight',
                 className: 'text-end'
             },
             {
@@ -189,7 +194,7 @@ $(document).ready(function() {
                 render: function(data, type, row) {
                     return `
                         <div class="text-center">
-                            <a href="/fresh-chicken-cutting/edit/${row.date}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail Transaksi"><i class="fa-solid fa-edit"></i></a>
+                            <a href="/fresh-chicken-cutting/edit/${row.date}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail Transaksi">Details</a>
                         <div>
                     `;
                 }

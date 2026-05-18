@@ -11,7 +11,7 @@
                 <!--begin::Page title-->
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
-                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Product Parting</h1>
+                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Hasil Parting</h1>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
@@ -26,7 +26,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Product Parting</li>
+                        <li class="breadcrumb-item text-muted">Hasil Parting</li>
                         <!--end::Item-->
                     </ul>
                     <!--end::Breadcrumb-->
@@ -86,9 +86,11 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">Tanggal</th>
-                                        <th class="min-w-125px">Nama Product</th>
-                                        <th class="min-w-125px">Hasil Parting (Kg)</th>
+                                        <th class="min-w-125px">BRANCH / STORE</th>
+                                        <th class="min-w-125px">TANGGAL</th>
+                                        <th class="min-w-125px">ATI AMPELA (KG)</th>
+                                        <th class="min-w-125px">USUS (KG)</th>
+                                        <th class="min-w-125px">BOBOT (KG)</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -141,8 +143,10 @@
             }
         },
         columns: [
-            { data: 'date', name: 'date' },
-            { data: 'product_name', name: 'product_name' },
+            { data: 'branch_name', name: 'branch_name' },
+            { data: 'date_formated', name: 'date_formated' },
+            { data: 'ati_ampela', name: 'ati_ampela', className: 'text-end' },
+            { data: 'usus', name: 'usus', className: 'text-end' },
             { data: 'total_quantity', name: 'total_quantity', className: 'text-end' },
             {
                 data: null, // No direct field from the server
@@ -152,7 +156,7 @@
                 render: function (data, type, row) {
                     let actionButtons = `
                         <div class="text-center">
-                            <a href="#" class="btn btn-sm btn-light btn-active-light-primary">Details</a>
+                            <a href="/partings/edit/${row.date}/" class="btn btn-sm btn-light btn-active-light-primary">Details</a>
                         </div>
                     `;
                     return actionButtons;

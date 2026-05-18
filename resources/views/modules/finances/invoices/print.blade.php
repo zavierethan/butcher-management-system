@@ -191,6 +191,45 @@
             </tr>
         </table>
 
+        <div style="margin-top: 30px;">
+            <table width="100%" style="border-collapse: collapse; border: none; margin-top: 40px;">
+                <tr style="border: none;">
+                    <!-- Center-aligned content -->
+                    <td style="text-align: center; border: none; padding: 0;">
+                        <strong>
+                            <p style="margin-bottom: 60px;">{{$invoice->customer_name}}</p>
+                        </strong>
+                        <strong>
+                            <p>(---------------------------)</p>
+                        </strong>
+                    </td>
+
+                    <!-- Center-aligned logo -->
+                    <td style="text-align: center; border: none; padding: 0;">
+                        <strong>
+                            <p style="margin-bottom: 60px;">Priyadis Butchers</p>
+                        </strong>
+                        <strong>
+                            <p>(---------------------------)</p>
+                        </strong>
+                    </td>
+                </tr>
+            </table>
+
+            <table width="100%" style="border-collapse: collapse; border: none; margin-top: 60px;">
+                <tr style="border: none;">
+                    <td style="border: none; padding: 0;">
+                        <strong>
+                            <p>INFORMASI PEMBAYARAN :</p>
+                        </strong>
+                        <div>No. Rekening : 1480802205</div>
+                        <div>Atas Nama : Zia Hasan</div>
+                        <div>Bank : BCA</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
         <div class="page-break"></div>
 
         <!-- History Pembayaran -->
@@ -224,51 +263,6 @@
                         </tr>
                     @endif
                 </tbody>
-            </table>
-        </div>
-
-        <div class="page-break"></div>
-
-        <div style="margin-top: 30px;">
-            <h2><b>TANDA TERIMA PENGAMBILAN BARANG</b></h2>
-
-            <table width="100%" style="border-collapse: collapse; border: none; margin-top: 40px;">
-                <tr style="border: none;">
-                    <!-- Left-aligned content -->
-                    <td style="text-align: left; border: none; padding: 0;">
-                        <strong>
-                            <p style="margin-left: 10px; margin-bottom: 60px;">{{$invoice->customer_name}}</p>
-                        </strong>
-                        <strong>
-                            <p style="margin-left: 10px;">(---------------------------)</p>
-                        </strong>
-                        <p style="margin-left: 10px; font-size: 12px;">Customer</p>
-                    </td>
-
-                    <!-- Right-aligned logo -->
-                    <td style="text-align: right; border: none; padding: 0;">
-                        <strong>
-                            <p style="margin-right: 10px; margin-bottom: 60px;">Priyadis Butchers</p>
-                        </strong>
-                        <strong>
-                            <p style="margin-right: 10px;">(---------------------------)</p>
-                        </strong>
-                        <p style="margin-right: 10px; font-size: 12px;">Admin</p>
-                    </td>
-                </tr>
-            </table>
-
-            <table width="100%" style="border-collapse: collapse; border: none; margin-top: 60px;">
-                <tr style="border: none;">
-                    <td style="text-align: left; border: none; padding: 0;">
-                        <strong>
-                            <p>INFORMASI PEMBAYARAN :</p>
-                        </strong>
-                        <div>No. Rekening : 1480802205</div>
-                        <div>Atas Nama : Zia Hasan</div>
-                        <div>Bank : BCA</div>
-                    </td>
-                </tr>
             </table>
         </div>
     </div>

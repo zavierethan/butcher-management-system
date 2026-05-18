@@ -18,24 +18,20 @@ class PartingController extends Controller
         $params = $request->all();
 
         $query = DB::table('parting_cut_results')
-            ->leftJoin('branches', 'branches.id', '=', 'parting_cut_results.branch_id')
+            ->leftJoin('branches', 'parting_cut_results.branch_id', '=', 'branches.id')
             ->leftJoin('products', 'products.id', '=', 'parting_cut_results.product_id')
             ->select(
-                'parting_cut_results.id',
                 'branches.name as branch_name',
-                DB::raw("TO_CHAR(parting_cut_results.date, 'dd/mm/YYYY') as date"),
-                'parting_cut_results.product_id',
+                'parting_cut_results.date',
+                DB::raw("TO_CHAR(parting_cut_results.date, 'DD/MM/YYYY') as date_formated"),
                 DB::raw('SUM(parting_cut_results.quantity) as total_quantity'),
-                'products.name as product_name',
-                'branches.name as branch_name'
+                DB::raw("SUM(CASE WHEN products.code = 'AA' THEN parting_cut_results.quantity ELSE 0 END) as ati_ampela"),
+                DB::raw("SUM(CASE WHEN products.code = 'US' THEN parting_cut_results.quantity ELSE 0 END) as usus"),
             )
             ->where('parting_cut_results.branch_id', Auth::user()->branch_id)
             ->groupBy(
-                DB::raw("TO_CHAR(parting_cut_results.date, 'dd/mm/YYYY')"),
-                'parting_cut_results.product_id',
-                'products.name',
-                'branches.name',
-                'parting_cut_results.id',
+                'parting_cut_results.date',
+                'branches.name'
             );
 
         if (!empty($params['date'])) {
@@ -110,25 +106,42 @@ class PartingController extends Controller
     }
 
     public function edit($id) {
-        $branches = DB::table('branches')->orderBy('name', 'asc')->get();
-        $products = DB::table('products')->orderBy('name', 'asc')->get();
-        $butcherees = DB::table('butcherees')->orderBy('name', 'asc')->get();
 
-        // Get the parting record
-        $partingHeader = DB::table('partings')->where('id', $id)->first();
+        $products = DB::table('products')->orderBy('sort_order', 'asc')->get();
 
+        $partingRows = DB::table('parting_cut_results')
+            ->leftJoin('products', 'products.id', '=', 'parting_cut_results.product_id')
+            ->where('parting_cut_results.date', $id)
+            ->select(
+                'parting_cut_results.id',
+                'parting_cut_results.product_id',
+                'parting_cut_results.branch_id',
+                'parting_cut_results.date',
+                'products.name as product_name',
+                'parting_cut_results.quantity'
+            )
+            ->get();
 
-        return view('modules.inventory.parting.edit', compact(
-            'branches', 'products', 'butcherees', 'partingHeader'
-        ));
+        // Ambil info cabang dari salah satu row
+        $branch_id = optional($partingRows->first())->branch_id;
+        $branch_name = DB::table('branches')->where('id', $branch_id)->value('name');
+
+        $parting = [
+            'date' => $id,
+            'branch_id' => $branch_id,
+            'branch_name' => $branch_name,
+            'items' => $partingRows
+        ];
+
+        return view('modules.inventory.parting.edit', compact('parting', 'products'));
     }
 
 
     public function update(Request $request) {
-        if (!$request->parting_id || !is_array($request->rancung_data) || empty($request->rancung_data) ||
+        if (!$request->date || !is_array($request->rancung_data) || empty($request->rancung_data) ||
             !is_array($request->parting_data) || empty($request->parting_data)) {
             return response()->json([
-                'error' => 'Parting ID, Rancung data & Parting data are required.'
+                'error' => 'Parting date, Rancung data & Parting data are required.'
             ], 400);
         }
 

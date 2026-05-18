@@ -19,6 +19,7 @@ class FreshChickenCuttingController extends Controller
         $query = DB::table('fresh_chicken_cut_results')
             ->join('branches', 'fresh_chicken_cut_results.branch_id', '=', 'branches.id')
             ->select(
+                'branches.name as branch_name',
                 DB::raw("TO_CHAR(fresh_chicken_cut_results.date, 'DD/MM/YYYY') as date_formated"),
                 'fresh_chicken_cut_results.date',
                 'branches.name as branch_name',
