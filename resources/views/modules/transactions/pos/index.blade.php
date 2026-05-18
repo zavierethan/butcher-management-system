@@ -1550,7 +1550,8 @@ $(document).ready(function() {
         var productId = $("#kt_modal_add_product_item #product_id").val();
         var stockId = $("#kt_modal_add_product_item #stock_id").val();
         var productName = $("#kt_modal_add_product_item #product_name").val();
-        var productQuantity = parseFloat($("#kt_modal_add_product_item #quantity").val());
+        // FIXED: Ensure decimal quantities are properly parsed
+        var productQuantity = parseFloat($("#kt_modal_add_product_item #quantity").val().replace(/,/g, '')) || 0;
         var productPrice = parseFloat($("#kt_modal_add_product_item #product_price").val().replace(/,/g, '')) || 0;
         var productDiscount = parseFloat($("#kt_modal_add_product_item #diskon").val().replace(/,/g, '')) || 0;
         var butcherId = $("#kt_modal_add_product_item #butcher-name").val();
@@ -1709,8 +1710,9 @@ $(document).ready(function() {
         e.preventDefault();
 
         const productId = $("#kt_modal_edit_product_item #product_id").val();
-        const quantity = parseFloat($("#kt_modal_edit_product_item #quantity").val());
-        const productPrice = parseFloat($("#kt_modal_edit_product_item #product_price").val().replace(/,/g, ''));
+        // FIXED: Ensure decimal quantities are properly parsed
+        const quantity = parseFloat($("#kt_modal_edit_product_item #quantity").val().replace(/,/g, '')) || 0;
+        const productPrice = parseFloat($("#kt_modal_edit_product_item #product_price").val().replace(/,/g, '')) || 0;
         const discountPerUnit = parseFloat($("#kt_modal_edit_product_item #diskon").val().replace(/,/g, '')) || 0;
         const butcherId = $("#kt_modal_edit_product_item #butcher-name").val();
 
@@ -2540,8 +2542,10 @@ $(document).ready(function() {
     }
 
     function mround(value) {
-        let number = parseInt(value.toString().replace(/[^\d-]/g, ''), 10) || 0;
+        // Properly parse numeric value while preserving decimals
+        let number = parseFloat(value) || 0;
 
+        // Round to nearest 1000 based on remainder
         let base = Math.floor(number / 1000) * 1000;
         let remainder = number % 1000;
 
