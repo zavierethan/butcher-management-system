@@ -30,11 +30,8 @@ class FreshChickenCuttingController extends Controller
             ->where('fresh_chicken_cut_results.branch_id', Auth()->user()->branch_id)
             ->groupBy('fresh_chicken_cut_results.date', 'branches.name');
 
-        if (!empty($params['start_date']) && !empty($params['end_date'])) {
-            $query->whereBetween(DB::raw('DATE(fresh_chicken_cut_results.date)'), [
-                $params['start_date'],
-                $params['end_date']
-            ]);
+        if (!empty($params['date'])) {
+            $query->where('fresh_chicken_cut_results.date', $params['date']);
         }
 
         // Apply sorting

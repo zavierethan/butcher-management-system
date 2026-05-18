@@ -94,10 +94,10 @@
                                         <th class="min-w-125px">Kode Produk</th>
                                         <th class="min-w-125px">Nama Produk</th>
                                         <th class="min-w-125px">Tanggal Opname</th>
-                                        <th class="min-w-125px">Stock Awal</th>
-                                        <th class="min-w-125px">Stock Masuk</th>
-                                        <th class="min-w-125px">Stock Keluar</th>
-                                        <th class="min-w-125px">Stock Akhir</th>
+                                        <th class="min-w-125px">Stok Awal</th>
+                                        <th class="min-w-125px">Stok Masuk</th>
+                                        <th class="min-w-125px">Stok Keluar</th>
+                                        <th class="min-w-125px">Stok Akhir</th>
                                         <th class="min-w-125px">Hasil Opname</th>
                                         <th class="min-w-125px">Selisih</th>
                                         <th class="text-center min-w-70px">Actions</th>

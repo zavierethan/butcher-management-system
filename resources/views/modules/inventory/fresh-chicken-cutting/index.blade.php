@@ -72,8 +72,7 @@
                                         <div class="text-gray-500 fs-7 me-2">Tanggal</div>
                                         <!--end::Label-->
                                         <!--begin::Select-->
-                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="start-date"/> -
-                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="end-date"/>
+                                        <input type="date" class="form-control form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto" id="date"/>
                                         <!--end::Select-->
                                     </div>
                                 </div>
@@ -160,8 +159,7 @@ $(document).ready(function() {
             url: `{{route('fresh-chicken-cutting.lists')}}`, // Replace with your route
             type: 'GET',
             data: function (d) {
-                d.start_date = $('#start-date').val();
-                d.end_date = $('#end-date').val();
+                d.date = $('#date').val();
             },
             dataSrc: function(json) {
                 return json.data; // Map the 'data' field
@@ -195,14 +193,14 @@ $(document).ready(function() {
                     return `
                         <div class="text-center">
                             <a href="/fresh-chicken-cutting/edit/${row.date}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail Transaksi">Details</a>
-                        <div>
+                        </div>
                     `;
                 }
             }
         ]
     });
 
-    $('#start-date, #end-date').on('change', function () {
+    $('#date').on('change', function () {
         table.draw(); // Trigger DataTable redraw with updated filter values
     });
 });
