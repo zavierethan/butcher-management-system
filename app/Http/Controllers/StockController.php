@@ -25,6 +25,12 @@ class StockController extends Controller
     public function getLists(Request $request) {
         $branchId = Auth::user()->branch_id;
 
+        /*
+        |--------------------------------------------------------------------------
+        | Date Range Today
+        |--------------------------------------------------------------------------
+        */
+
         $startDate = now()->startOfDay();
         $endDate   = now()->endOfDay();
 
@@ -33,14 +39,32 @@ class StockController extends Controller
         | Logs Today
         |--------------------------------------------------------------------------
         */
+
         $logsToday = DB::table('stock_logs')
             ->select(
                 'stock_logs.stock_id',
-                DB::raw('DATE(stock_logs.date) as tanggal_logs_transaksi'),
-                DB::raw('SUM(stock_logs.in_quantity) as stok_masuk'),
-                DB::raw('SUM(stock_logs.out_quantity) as stok_keluar')
+
+                DB::raw("
+                    DATE(stock_logs.date)
+                    as tanggal_logs_transaksi
+                "),
+
+                DB::raw("
+                    SUM(stock_logs.in_quantity)
+                    as stok_masuk
+                "),
+
+                DB::raw("
+                    SUM(stock_logs.out_quantity)
+                    as stok_keluar
+                ")
             )
-            ->whereBetween('stock_logs.date', [$startDate, $endDate])
+
+            ->whereBetween('stock_logs.date', [
+                $startDate,
+                $endDate
+            ])
+
             ->groupBy(
                 'stock_logs.stock_id',
                 DB::raw('DATE(stock_logs.date)')
@@ -51,6 +75,7 @@ class StockController extends Controller
         | Latest Opname Before Today
         |--------------------------------------------------------------------------
         */
+
         $latestOpname = DB::table(DB::raw("
             (
                 SELECT DISTINCT ON (stock_id)
@@ -58,7 +83,7 @@ class StockController extends Controller
                     quantity,
                     date
                 FROM stock_opnames
-                WHERE date < CURRENT_DATE
+                WHERE date < '{$startDate}'
                 ORDER BY stock_id, date DESC
             ) as latest_opname
         "));
@@ -68,6 +93,7 @@ class StockController extends Controller
         | Today Opname
         |--------------------------------------------------------------------------
         */
+
         $todayOpname = DB::table(DB::raw("
             (
                 SELECT DISTINCT ON (stock_id)
@@ -75,8 +101,8 @@ class StockController extends Controller
                     quantity,
                     date
                 FROM stock_opnames
-                WHERE date >= CURRENT_DATE
-                AND date < CURRENT_DATE + INTERVAL '1 day'
+                WHERE date BETWEEN '{$startDate}'
+                AND '{$endDate}'
                 ORDER BY stock_id, date DESC
             ) as today_opname
         "));
@@ -86,71 +112,143 @@ class StockController extends Controller
         | Main Query
         |--------------------------------------------------------------------------
         */
+
         $query = DB::table('stocks')
-            ->leftJoin('products', 'products.id', '=', 'stocks.product_id')
+
+            ->leftJoin(
+                'products',
+                'products.id',
+                '=',
+                'stocks.product_id'
+            )
 
             ->leftJoinSub($logsToday, 'logs_today', function ($join) {
-                $join->on('stocks.id', '=', 'logs_today.stock_id');
+
+                $join->on(
+                    'stocks.id',
+                    '=',
+                    'logs_today.stock_id'
+                );
             })
 
             ->leftJoinSub($latestOpname, 'latest_opname', function ($join) {
-                $join->on('stocks.id', '=', 'latest_opname.stock_id');
+
+                $join->on(
+                    'stocks.id',
+                    '=',
+                    'latest_opname.stock_id'
+                );
             })
 
             ->leftJoinSub($todayOpname, 'today_opname', function ($join) {
-                $join->on('stocks.id', '=', 'today_opname.stock_id');
+
+                $join->on(
+                    'stocks.id',
+                    '=',
+                    'today_opname.stock_id'
+                );
             })
 
             ->where('stocks.branch_id', $branchId)
 
-            ->whereNotIn('products.code', ['DLV', 'RW'])
+            ->whereNotIn('products.code', [
+                'DLV',
+                'RW'
+            ])
 
             ->select(
+
+                /*
+                |--------------------------------------------------------------------------
+                | Basic Data
+                |--------------------------------------------------------------------------
+                */
+
                 'stocks.id',
 
                 'products.code',
+
                 'products.name',
+
+                /*
+                |--------------------------------------------------------------------------
+                | Dates
+                |--------------------------------------------------------------------------
+                */
 
                 DB::raw("
                     COALESCE(
                         logs_today.tanggal_logs_transaksi,
-                        CURRENT_DATE
+                        DATE('{$startDate}')
                     ) as tanggal_logs_transaksi
                 "),
 
                 DB::raw("
                     TO_CHAR(
                         latest_opname.date,
-                        'DD/MM/YYYY'
+                        'DD/MM/YYYY HH24:MI:SS'
                     ) as tanggal_stock_awal
                 "),
 
-                'today_opname.date as tanggal_stock_opname',
+                DB::raw("
+                    TO_CHAR(
+                        today_opname.date,
+                        'DD/MM/YYYY HH24:MI:SS'
+                    ) as tanggal_stock_opname
+                "),
 
-                DB::raw('COALESCE(latest_opname.quantity, 0) as stock_awal'),
+                /*
+                |--------------------------------------------------------------------------
+                | Stock Calculation
+                |--------------------------------------------------------------------------
+                */
 
-                DB::raw('COALESCE(logs_today.stok_masuk, 0) as stok_masuk'),
+                DB::raw("
+                    COALESCE(
+                        latest_opname.quantity,
+                        0
+                    ) as stock_awal
+                "),
 
-                DB::raw('COALESCE(logs_today.stok_keluar, 0) as stok_keluar'),
+                DB::raw("
+                    COALESCE(
+                        logs_today.stok_masuk,
+                        0
+                    ) as stok_masuk
+                "),
 
-                DB::raw('
-                    COALESCE(latest_opname.quantity, 0)
-                    + COALESCE(logs_today.stok_masuk, 0)
-                    - COALESCE(logs_today.stok_keluar, 0)
-                    as stock_akhir
-                '),
+                DB::raw("
+                    COALESCE(
+                        logs_today.stok_keluar,
+                        0
+                    ) as stok_keluar
+                "),
 
-                DB::raw('COALESCE(today_opname.quantity, 0) as hasil_stock_opname'),
-
-                DB::raw('
+                DB::raw("
                     (
                         COALESCE(latest_opname.quantity, 0)
                         + COALESCE(logs_today.stok_masuk, 0)
                         - COALESCE(logs_today.stok_keluar, 0)
-                    )
-                    - COALESCE(today_opname.quantity, 0)
-                    as selisih
-                ')
+                    ) as stock_akhir
+                "),
+
+                DB::raw("
+                    COALESCE(
+                        today_opname.quantity,
+                        0
+                    ) as hasil_stock_opname
+                "),
+
+                DB::raw("
+                    (
+                        (
+                            COALESCE(latest_opname.quantity, 0)
+                            + COALESCE(logs_today.stok_masuk, 0)
+                            - COALESCE(logs_today.stok_keluar, 0)
+                        )
+                        - COALESCE(today_opname.quantity, 0)
+                    ) as selisih
+                ")
             )
 
             ->orderBy('products.sort_order', 'asc');
@@ -160,15 +258,24 @@ class StockController extends Controller
         | Search
         |--------------------------------------------------------------------------
         */
+
         if ($request->filled('searchTerm')) {
 
             $search = $request->searchTerm;
 
             $query->where(function ($q) use ($search) {
 
-                $q->where('products.name', 'ILIKE', "%{$search}%")
-                ->orWhere('products.code', 'ILIKE', "%{$search}%");
+                $q->where(
+                    'products.name',
+                    'ILIKE',
+                    "%{$search}%"
+                )
 
+                ->orWhere(
+                    'products.code',
+                    'ILIKE',
+                    "%{$search}%"
+                );
             });
         }
 
@@ -177,6 +284,7 @@ class StockController extends Controller
         | Sorting
         |--------------------------------------------------------------------------
         */
+
         $sortableColumns = [
             'code' => 'products.code',
             'name' => 'products.name',
@@ -185,7 +293,8 @@ class StockController extends Controller
         if ($request->has('order')) {
 
             $columnIndex = $request->order[0]['column'];
-            $direction   = $request->order[0]['dir'];
+
+            $direction = $request->order[0]['dir'];
 
             $columnName = $request->columns[$columnIndex]['data'];
 
@@ -203,7 +312,9 @@ class StockController extends Controller
         | Pagination
         |--------------------------------------------------------------------------
         */
+
         $start  = (int) $request->input('start', 0);
+
         $length = (int) $request->input('length', 10);
 
         $filteredRecords = (clone $query)->count();
