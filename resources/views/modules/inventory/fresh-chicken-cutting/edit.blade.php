@@ -7,7 +7,7 @@
             <div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-                        Edit Fresh Chicken Cutting</h1>
+                        Hasil Potong Ayam Fresh</h1>
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
                         <li class="breadcrumb-item text-muted">
                             <a href="{{ route('fresh-chicken-cutting.index') }}" class="text-muted text-hover-primary">Inventory Management</a>
@@ -15,7 +15,7 @@
                         <li class="breadcrumb-item">
                             <span class="bullet bg-gray-500 w-5px h-2px"></span>
                         </li>
-                        <li class="breadcrumb-item text-muted">Fresh Chicken Cutting</li>
+                        <li class="breadcrumb-item text-muted">Hasil Potong Ayam Fresh</li>
                         <li class="breadcrumb-item">
                             <span class="bullet bg-gray-500 w-5px h-2px"></span>
                         </li>
@@ -34,7 +34,7 @@
                                     <div class="col-md-6">
                                         <div class="fv-row mb-5">
                                             <div class="mb-1">
-                                                <label class="form-label fw-bold fs-6 mb-2">Cabang</label>
+                                                <label class="form-label fw-bold fs-6 mb-2">Store</label>
                                                 <div class="position-relative mb-3">
                                                     <select class="form-select form-select-solid" name="branch_id" id="branch_id" disabled>
                                                         <option value="">-</option>
@@ -67,10 +67,6 @@
                     </div>
                     <div class="card card-flush py-4 flex-row-fluid overflow-hidden">
                         <div class="card-body pt-10 overflow-x-auto">
-                            <div class="row mb-5">
-                                <div class="col-md-12 text-end"><a class="btn btn-sm btn-primary" id="add-row"><i
-                                            class="fa-solid fa-plus"></i></a></div>
-                            </div>
                             <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_items_table">
                                 <!--begin::Table head-->
                                 <thead>
@@ -91,13 +87,16 @@
                                     @foreach($freshChickenCutting['items'] as $item)
                                     <tr data-id="{{ $item->id }}">
                                         <td>{{$counting++}}</td>
-                                        <td><input type="number" class="form-control form-control-md total-chicken" name="total_chicken[]" min="1" value="{{ $item->total_chickens }}" /></td>
-                                        <td><input type="number" class="form-control form-control-md weight" name="weight[]" step="0.01" value="{{ $item->weight }}" /></td>
-                                        <td><input type="number" class="form-control form-control-md container-weight" name="container_weight[]" step="0.01" value="{{ $item->container_weight }}" /></td>
-                                        <td><input type="number" class="form-control form-control-md net-weight" name="net_weight[]" step="0.01" value="{{ $item->net_weight }}" readonly /></td>
+                                        <td>
+                                            <input type="number" class="form-control form-control-md total-chicken" name="total_chicken" min="1" value="{{ $item->total_chickens }}" />
+                                            <input type="hidden" name="id" value="{{ $item->id }}" />
+                                        </td>
+                                        <td><input type="number" class="form-control form-control-md weight" name="weight" step="0.01" value="{{ $item->weight }}" /></td>
+                                        <td><input type="number" class="form-control form-control-md container-weight" name="container_weight" step="0.01" value="{{ $item->container_weight }}" /></td>
+                                        <td><input type="number" class="form-control form-control-md net-weight" name="net_weight" step="0.01" value="{{ $item->net_weight }}" readonly /></td>
                                         <td class="text-center">
-                                            <a href="#" class="btn-update-row me-2" title="Update"><i class="fa-solid fa-save"></i></a>
-                                            <a href="#" class="btn-delete-row" title="Delete"><i class="fa-solid fa-trash-can"></i></a>
+                                            <a href="#" class="btn-update-row me-6" title="Update"><i class="fa-solid fa-save text-primary"></i></a>
+                                            <a href="#" class="btn-delete-row" title="Delete"><i class="fa-solid fa-trash-can text-danger"></i></a>
                                         </td>
                                     </tr>
                                     @endforeach
@@ -114,7 +113,6 @@
 </div>
 @endsection
 @section('script')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 $(document).ready(function() {
     // Perhitungan otomatis net_weight
@@ -125,120 +123,131 @@ $(document).ready(function() {
         var netWeight = weight - containerWeight;
         tr.find('.net-weight').val(netWeight > 0 ? netWeight : 0);
     });
+});
 
-    // Add row
-    $('#add-row').on('click', function(e) {
-        e.preventDefault();
-        var row = `<tr>
-            <td><input type="number" class="form-control form-control-md total-chicken" name="total_chicken[]" min="1" value="" /></td>
-            <td><input type="number" class="form-control form-control-md weight" name="weight[]" step="0.01" value="" /></td>
-            <td><input type="number" class="form-control form-control-md container-weight" name="container_weight[]" step="0.01" value="" /></td>
-            <td><input type="number" class="form-control form-control-md net-weight" name="net_weight[]" step="0.01" value="" readonly /></td>
-            <td class="text-center">
-                <a href="#" class="btn-update-row me-2" title="Update"><i class="fa-solid fa-save"></i></a>
-                <a href="#" class="btn-delete-row" title="Delete"><i class="fa-solid fa-trash-can"></i></a>
-            </td>
-        </tr>`;
-        $('#product-table').append(row);
-    });
+$(document).on('click', '.btn-update-row', function(e) {
+    e.preventDefault();
 
-    // Update row
-    $('#kt_items_table').on('click', '.btn-update-row', function(e) {
-        e.preventDefault();
-        var tr = $(this).closest('tr');
-        var id = tr.data('id');
-        var branch_id = $('#branch_id').val();
-        var date = $('#date').val();
-        var total_chicken = tr.find('.total-chicken').val();
-        var weight = tr.find('.weight').val();
-        var container_weight = tr.find('.container-weight').val();
-        var net_weight = tr.find('.net-weight').val();
+    const row = $(this).closest('tr');
+    const itemId = row.find('input[name="id"]').val();
+    const totalChicken = row.find('input[name="total_chicken"]').val();
+    const weight = row.find('input[name="weight"]').val();
+    const containerWeight = row.find('input[name="container_weight"]').val();
+    const netWeight = row.find('input[name="net_weight"]').val();
 
-        $.ajax({
-            url: `/fresh-chicken-cutting/update-row/${id}`,
-            method: 'POST',
-            data: {
-                branch_id: branch_id,
-                date: date,
-                total_chicken: total_chicken,
-                weight: weight,
-                container_weight: container_weight,
-                net_weight: net_weight,
-                _token: '{{ csrf_token() }}'
-            },
-            success: function(res) {
-                if(res.status === 'success') {
+    if (!totalChicken || totalChicken <= 0) {
+        Swal.fire({
+            title: 'Perhatian!',
+            text: 'Jumlah ekor tidak boleh kosong atau 0',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    if (!weight || weight <= 0) {
+        Swal.fire({
+            title: 'Perhatian!',
+            text: 'Berat tidak boleh kosong atau 0',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: 'Konfirmasi Update',
+        html: `Apakah Anda yakin akan mengupdate data dengan:<br><br>
+                <b>Jumlah Ekor:</b> ${totalChicken}<br>
+                <b>Berat:</b> ${weight} Kg<br>
+                <b>Berat Wadah:</b> ${containerWeight} Kg<br>
+                <b>Berat Bersih:</b> ${netWeight} Kg`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, Update!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `{{ route('fresh-chicken-cutting.update') }}`,
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    id: itemId,
+                    total_chicken: totalChicken,
+                    weight: weight,
+                    container_weight: containerWeight,
+                    net_weight: netWeight
+                },
+                success: function(response) {
                     Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil',
-                        text: 'Row berhasil diupdate!'
+                        title: 'Berhasil!',
+                        text: response.message,
+                        icon: 'success'
                     });
-                } else {
+                },
+                error: function(xhr) {
+                    const errorMessage = xhr.responseJSON?.message || 'Terjadi kesalahan saat mengupdate data';
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal',
-                        text: 'Gagal mengupdate row!'
+                        title: 'Error!',
+                        text: errorMessage,
+                        icon: 'error'
                     });
                 }
-            },
-            error: function(xhr) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Terjadi kesalahan saat mengupdate row!'
-                });
-            }
-        });
+            });
+        }
     });
+});
 
-    // Delete row
-    $('#kt_items_table').on('click', '.btn-delete-row', function(e) {
-        e.preventDefault();
-        var tr = $(this).closest('tr');
-        var id = tr.data('id');
-        Swal.fire({
-            title: 'Hapus data?',
-            text: 'Data yang dihapus tidak dapat dikembalikan!',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if(result.isConfirmed) {
-                $.ajax({
-                    url: `/fresh-chicken-cutting/delete-row/${id}`,
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(res) {
-                        if(res.status === 'success') {
-                            tr.remove();
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil',
-                                text: 'Row berhasil dihapus!'
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Gagal',
-                                text: 'Gagal menghapus row!'
-                            });
-                        }
-                    },
-                    error: function(xhr) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Terjadi kesalahan saat menghapus row!'
-                        });
-                    }
-                });
-            }
-        });
+$(document).on('click', '.btn-delete-row', function(e) {
+    e.preventDefault();
+
+    const row = $(this).closest('tr');
+    const itemId = row.find('input[name="id"]').val();
+    const totalChicken = row.find('input[name="total_chicken"]').val();
+    const weight = row.find('input[name="weight"]').val();
+
+    Swal.fire({
+        title: 'Konfirmasi Hapus',
+        html: `Apakah Anda yakin akan menghapus data dengan jumlah ekor <b>${totalChicken}</b> dan berat <b>${weight} Kg</b>?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/fresh-chicken-cutting/${itemId}`,
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: response.message,
+                        icon: 'success'
+                    }).then(() => {
+                        row.remove();
+                    });
+                },
+                error: function(xhr) {
+                    const errorMessage = xhr.responseJSON?.message || 'Terjadi kesalahan saat menghapus data';
+                    Swal.fire({
+                        title: 'Error!',
+                        text: errorMessage,
+                        icon: 'error'
+                    });
+                }
+            });
+        }
     });
-
 });
 </script>
 @endsection

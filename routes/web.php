@@ -454,6 +454,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::post('/save', [App\Http\Controllers\PartingController::class, 'save'])->name('save');
             Route::get('/edit/{id}', [App\Http\Controllers\PartingController::class, 'edit'])->name('edit');
             Route::post('/update', [App\Http\Controllers\PartingController::class, 'update'])->name('update');
+            Route::delete('/{id}', [App\Http\Controllers\PartingController::class, 'delete'])->name('delete');
         });
     });
 
@@ -464,9 +465,8 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/create', [App\Http\Controllers\FreshChickenCuttingController::class, 'create'])->name('create');
             Route::post('/save', [App\Http\Controllers\FreshChickenCuttingController::class, 'save'])->name('save');
             Route::get('/edit/{id}', [App\Http\Controllers\FreshChickenCuttingController::class, 'edit'])->name('edit');
-            Route::post('/update/{id}', [App\Http\Controllers\FreshChickenCuttingController::class, 'update'])->name('update');
-            Route::post('/update-row/{id}', [App\Http\Controllers\FreshChickenCuttingController::class, 'updateRow']);
-            Route::post('/delete-row/{id}', [App\Http\Controllers\FreshChickenCuttingController::class, 'deleteRow']);
+            Route::post('/update', [App\Http\Controllers\FreshChickenCuttingController::class, 'update'])->name('update');
+            Route::delete('/{id}', [App\Http\Controllers\FreshChickenCuttingController::class, 'delete'])->name('delete');
         });
     });
 

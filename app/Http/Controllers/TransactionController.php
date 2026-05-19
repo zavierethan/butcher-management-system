@@ -134,7 +134,7 @@ class TransactionController extends Controller
                     "out_quantity" => $detail["quantity"],
                     "reference"    => 'Penjualan #' . $transactionCode,
                     "date"         => now(),
-                    "ref_type"     => 'SALE',
+                    "ref_type"     => 'SALES',
                     "ref_id"       => $transactionItemId,
                 ]);
             }

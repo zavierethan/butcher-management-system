@@ -78,7 +78,7 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Tanggal Stock Opname</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid" type="date"
-                                                        value="<?php echo date("Y-m-d"); ?>" id="date" readonly/>
+                                                        value="<?php echo date("Y-m-d"); ?>" id="date"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -86,10 +86,10 @@
                                     </div>
                                 </div>
                                 <div class="text-end">
-                                    <a href="{{route('stocks.index')}}"
-                                        class="btn btn-sm btn-danger">Cancel</a>
+                                    <a href="{{route('stock-opname.index')}}"
+                                        class="btn btn-sm btn-danger">Kembali</a>
                                     <button type="button" class="btn btn-sm btn-primary"
-                                        id="btn-submit-so">Submit</button>
+                                        id="btn-submit-so">Simpan</button>
                                 </div>
                             </form>
                         </div>
@@ -194,7 +194,7 @@ $(document).on('click', '#btn-submit-so', function(e) {
                 });
 
                 $.ajax({
-                    url: `{{route('stocks.stock-opname-save')}}`,
+                    url: `{{route('stock-opname.save')}}`,
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {
@@ -226,51 +226,6 @@ $(document).on('click', '#btn-submit-so', function(e) {
             }
         });
     }
-});
-
-$("#btn-form-export").on("click", function() {
-    const searchTerm = $('[data-kt-customer-table-filter="search"]').val();
-    const startDate = $('#start-date').val();
-    const endDate = $('#end-date').val();
-
-    $.ajax({
-        url: `{{url('/stocks/export')}}`,
-        type: 'GET',
-        data: {
-            search_term: searchTerm,
-            start_date: startDate,
-            end_date: endDate,
-        },
-        xhrFields: {
-            responseType: 'blob', // Treat response as binary
-        },
-        success: function(data, status, xhr) {
-            $("#kt_modal_export_filter").modal('hide');
-            // Create a Blob object from the response
-            const blob = new Blob([data], {
-                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            });
-
-            // Create a link element for downloading
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = 'stock-reports.xlsx'; // Set the filename
-            document.body.appendChild(link); // Append link to the body
-            link.click(); // Trigger the download
-            document.body.removeChild(link); // Clean up the DOM
-
-            Swal.fire({
-                title: 'Success!',
-                text: 'Stock report exported successfully.',
-                icon: 'success',
-                confirmButtonText: 'OK',
-            });
-        },
-        error: function(xhr, status, error) {
-            Swal.fire('Error!', 'Failed to export the stock report.', 'error');
-        },
-    });
-
 });
 </script>
 @endsection

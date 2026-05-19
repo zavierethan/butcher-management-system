@@ -56,35 +56,36 @@
                     <div class="card">
                         <div class="card-body pt-10">
                             <div class="row">
-                                <div class="fv-row mb-5">
-                                    <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Nama Produk</label>
-                                        <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid" type="text"
-                                                value="{{ $stockHeader->product_code }} - {{ $stockHeader->product_name }}"
-                                                readonly />
-                                            <input class="form-control form-control-md form-control-solid" type="hidden"
-                                                value="{{ $stockHeader->id }}" id="stock-id" />
+                                <div class="col-md-6">
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Nama Product</label>
+                                            <div class="position-relative mb-3">
+                                                <input class="form-control form-control-md form-control-solid" type="text"
+                                                    value="{{ $stockHeader->product_code }} - {{ $stockHeader->product_name }}"
+                                                    readonly />
+                                                <input class="form-control form-control-md form-control-solid" type="hidden"
+                                                    value="{{ $stockHeader->id }}" id="stock-id" />
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="separator my-5"></div>
                                 </div>
-                                <div class="separator my-5"></div>
-                                <div class="fv-row mb-5">
-                                    <div class="mb-1">
-                                        <label class="form-label fw-bold fs-6 mb-2">Cabang</label>
-                                        <div class="position-relative mb-3">
-                                            <input class="form-control form-control-md form-control-solid"
-                                                value="{{ $stockHeader->branch_code }} - {{ $stockHeader->branch_name }}"
-                                                readonly />
+                                <div class="col-md-6">
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Store</label>
+                                            <div class="position-relative mb-3">
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    value="{{ $stockHeader->branch_code }} - {{ $stockHeader->branch_name }}"
+                                                    readonly />
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="separator my-5"></div>
                                 </div>
-                                <div class="separator my-5"></div>
                                 <div class="text-end">
-                                    <a href="{{ route('stocks.index') }}" class="btn btn-danger">Back</a>
-                                    <a href="#" class="btn btn-primary" id="btn-update"
-                                        data-branch-id="{{ $stockHeader->branch_id }}"
-                                        data-product-id="{{ $stockHeader->product_id }}">Update</a>
+                                    <a href="{{ route('stocks.index') }}" class="btn btn-sm btn-danger">Kembali</a>
                                 </div>
                             </div>
                         </div>
@@ -96,14 +97,11 @@
                 <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
                     <div class="card">
                         <div class="card-body pt-10">
-                            <div class="row mb-5">
-                                <div class="col-md-12 text-end"><a href="{{route('stock-logs.create', ['stockId' => $stockId])}}" class="btn btn-sm btn-primary">Stock Adjustment</a></div>
-                            </div>
                             <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_products_table">
                                 <!--begin::Table head-->
                                 <thead>
                                     <!--begin::Table row-->
-                                    <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                    <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">Referensi</th>
                                         <th class="min-w-125px">Masuk</th>
                                         <th class="min-w-125px">Keluar</th>

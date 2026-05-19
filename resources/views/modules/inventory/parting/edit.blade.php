@@ -12,7 +12,7 @@
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
                     <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-                        Product Parting</h1>
+                        Hasil Parting</h1>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
@@ -27,7 +27,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Product Parting</li>
+                        <li class="breadcrumb-item text-muted">Hasil Parting</li>
                         <!--end::Item-->
                         <!--begin::Item-->
                         <li class="breadcrumb-item">
@@ -84,7 +84,7 @@
                                     </div>
                                 </div>
                                 <div class="text-end">
-                                    <a href="{{route('partings.index')}}" class="btn btn-sm btn-danger">Cancel</a>
+                                    <a href="{{route('partings.index')}}" class="btn btn-sm btn-danger">Kembali</a>
                                 </div>
                             </form>
                         </div>
@@ -128,12 +128,15 @@
                                                         </option>
                                                         @endforeach
                                                     </select>
+                                                    <input type="hidden" name="id" value="{{$item->id}}" />
                                                 </div>
                                             </td>
-                                            <td><input class="form-control form-control-md me-2 quantity" type="text"
-                                                    name="quantity" value="{{$item->quantity}}" /></td>
+                                            <td>
+                                                <input class="form-control form-control-md me-2 quantity" type="text" name="quantity" value="{{$item->quantity}}" />
+                                            </td>
                                             <td class="text-center">
-                                                <a href="#"><i class="fa-solid fa-edit"></i></a>
+                                                <a href="#" class="btn-update-row me-6" title="Update"><i class="fa-solid fa-save text-primary"></i></a>
+                                                <a href="#" class="btn-delete-row" title="Delete"><i class="fa-solid fa-trash-can text-danger"></i></a>
                                             </td>
                                         </tr>
                                         @endforeach
@@ -167,68 +170,121 @@ $(document).on("keyup", "input[name='quantity']", function() {
     $(this).val(formattedVal);
 });
 
-$(document).on('click', '#btn-submit-update', function(e) {
+$(document).on('click', '.btn-update-row', function(e) {
     e.preventDefault();
 
-    if (true) {
+    const row = $(this).closest('tr');
+    const itemId = row.find('input[name="id"]').val();
+    const productId = row.find('.product-id').val();
+    const productName = row.find('.product-id').find('option:selected').text();
+    const quantity = row.find('input[name="quantity"]').val();
+
+    if (!productId) {
         Swal.fire({
-            title: 'Apakah anda yakin update data Parting ?',
+            title: 'Perhatian!',
+            text: 'Silahkan pilih produk terlebih dahulu',
             icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            cancelButtonText: 'Batalkan',
-            confirmButtonText: 'Ya, Update Data'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                let partingData = [];
-
-                let partingDate = $("#parting-date").val();
-                let branchId = $("#branch-id-val").val();
-
-                $("#product-table tr").each(function() {
-                    let product = {
-                        product_id: $(this).find(".product-id").val(),
-                        quantity: $(this).find(".quantity").val(),
-                    };
-                    partingData.push(product);
-                });
-
-                $.ajax({
-                    url: `{{route('partings.update')}}`,
-                    type: 'POST',
-                    contentType: 'application/json',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: JSON.stringify({
-                        date: partingDate,
-                        branch_id: branchId,
-                        parting_data: partingData
-                    }),
-                    success: function(response) {
-                        Swal.fire({
-                            title: 'Success !',
-                            text: `Data Parting berhasil di update.`,
-                            icon: 'success',
-                            confirmButtonText: 'Ok',
-                            allowOutsideClick: false
-                        }).then((result) => {
-                            // Redirect the current page to the transaction index
-                            location.href = `{{ route('partings.index') }}`;
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        Swal.fire(
-                            'Error!',
-                            error,
-                            'error'
-                        )
-                    }
-                });
-            }
+            confirmButtonText: 'OK'
         });
+        return;
     }
+
+    if (!quantity || parseFloat(quantity.replace(/,/g, '')) <= 0) {
+        Swal.fire({
+            title: 'Perhatian!',
+            text: 'Kuantitas tidak boleh kosong atau 0',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: 'Konfirmasi Update',
+        html: `Apakah Anda yakin akan mengupdate produk <b>${productName}</b> dengan kuantitas <b>${quantity}</b>?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, Update!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `{{ route('partings.update') }}`,
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    id: itemId,
+                    product_id: productId,
+                    quantity: quantity.replace(/,/g, '')
+                },
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: response.message,
+                        icon: 'success'
+                    });
+                },
+                error: function(xhr) {
+                    const errorMessage = xhr.responseJSON?.message || 'Terjadi kesalahan saat mengupdate data';
+                    Swal.fire({
+                        title: 'Error!',
+                        text: errorMessage,
+                        icon: 'error'
+                    });
+                }
+            });
+        }
+    });
+});
+
+$(document).on('click', '.btn-delete-row', function(e) {
+    e.preventDefault();
+
+    const row = $(this).closest('tr');
+    const itemId = row.find('input[name="id"]').val();
+    const productName = row.find('.product-id').find('option:selected').text();
+
+    Swal.fire({
+        title: 'Konfirmasi Hapus',
+        html: `Apakah Anda yakin akan menghapus produk <b>${productName}</b>?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/partings/${itemId}`,
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: response.message,
+                        icon: 'success'
+                    }).then(() => {
+                        row.remove();
+                    });
+                },
+                error: function(xhr) {
+                    const errorMessage = xhr.responseJSON?.message || 'Terjadi kesalahan saat menghapus data';
+                    Swal.fire({
+                        title: 'Error!',
+                        text: errorMessage,
+                        icon: 'error'
+                    });
+                }
+            });
+        }
+    });
 });
 
 function formatNumber(numStr) {

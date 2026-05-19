@@ -70,8 +70,8 @@ class FreshChickenCuttingController extends Controller
 
     public function create()
     {
-        $branches = DB::table('branches')->get();
-        return view('modules.inventory.fresh-chicken-cutting.create', compact('branches'));
+        $branch = DB::table('branches')->where('id', Auth::user()->branch_id)->first();
+        return view('modules.inventory.fresh-chicken-cutting.create', compact('branch'));
     }
 
     public function save(Request $request)
@@ -121,31 +121,94 @@ class FreshChickenCuttingController extends Controller
         return view('modules.inventory.fresh-chicken-cutting.edit', compact('freshChickenCutting'));
     }
 
-    // Update satu row hasil potong ayam fresh
-    public function updateRow(Request $request, $id)
+    public function update(Request $request)
     {
-        $data = [
-            'total_chickens' => $request->input('total_chicken', 0),
-            'weight' => $request->input('weight', 0),
-            'container_weight' => $request->input('container_weight', 0),
-            'net_weight' => $request->input('net_weight', 0)
-        ];
-        $updated = DB::table('fresh_chicken_cut_results')->where('id', $id)->update($data);
-        if ($updated) {
-            return response()->json(['status' => 'success', 'message' => 'Row berhasil diupdate']);
-        } else {
-            return response()->json(['status' => 'error', 'message' => 'Gagal update row'], 400);
+        try {
+            $id = $request->input('id');
+            $total_chicken = $request->input('total_chicken');
+            $weight = $request->input('weight');
+            $container_weight = $request->input('container_weight');
+            $net_weight = $request->input('net_weight');
+
+            // Validate required fields
+            if (!$id || !$total_chicken || !$weight) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data tidak lengkap'
+                ], 400);
+            }
+
+            DB::beginTransaction();
+
+            // Check if record exists
+            $existing = DB::table('fresh_chicken_cut_results')->where('id', $id)->first();
+            if (!$existing) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data tidak ditemukan'
+                ], 404);
+            }
+
+            // Update the record
+            DB::table('fresh_chicken_cut_results')
+                ->where('id', $id)
+                ->update([
+                    'total_chickens' => $total_chicken,
+                    'weight' => $weight,
+                    'container_weight' => $container_weight,
+                    'net_weight' => $net_weight
+                ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data berhasil diperbarui'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui data',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
-    // Delete satu row hasil potong ayam fresh
-    public function deleteRow(Request $request, $id)
+    public function delete($id)
     {
-        $deleted = DB::table('fresh_chicken_cut_results')->where('id', $id)->delete();
-        if ($deleted) {
-            return response()->json(['status' => 'success', 'message' => 'Row berhasil dihapus']);
-        } else {
-            return response()->json(['status' => 'error', 'message' => 'Gagal hapus row'], 400);
+        try {
+            DB::beginTransaction();
+
+            // Check if record exists
+            $existing = DB::table('fresh_chicken_cut_results')->where('id', $id)->first();
+            if (!$existing) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data tidak ditemukan'
+                ], 404);
+            }
+
+            // Delete the record
+            DB::table('fresh_chicken_cut_results')
+                ->where('id', $id)
+                ->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus data',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 }

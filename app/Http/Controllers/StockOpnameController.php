@@ -126,4 +126,39 @@ class StockOpnameController extends Controller
         return view('modules.inventory.stock-opname.create', compact('branch', 'stocks'));
     }
 
+    public function save(Request $request) {
+        $products = $request->input('products');
+
+        DB::beginTransaction();
+
+        try {
+            foreach ($products as $productData) {
+                $stockId = $productData['stock_id'];
+                $opnameQuantity = $productData['quantity'] ?? 0;
+                $date = $productData['date'] ?? now();
+
+                // Insert into stock_opnames
+                DB::table('stock_opnames')->insert([
+                    "stock_id" => $stockId,
+                    "quantity" => $opnameQuantity,
+                    "date" => $date,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                DB::table('stocks')->where('id', $stockId)->update([
+                    "current_stock" => $opnameQuantity,
+                    "updated_at"    => now(),
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json(["message" => "Products updated successfully"]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(["error" => "An error occurred while processing stock opnames."], 500);
+        }
+    }
+
 }

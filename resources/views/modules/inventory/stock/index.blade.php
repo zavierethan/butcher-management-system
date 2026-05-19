@@ -38,8 +38,8 @@
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
                     <a href="{{route('fresh-chicken-cutting.create')}}" class="btn btn-sm fw-bold btn-primary">Hasil Potong Ayam Fresh</a>
                     <a href="{{route('partings.create')}}" class="btn btn-sm fw-bold btn-primary" id="btn-form-stock-opname">Product Parting</a>
-                    <a href="{{route('stocks.stock-opnames')}}" class="btn btn-sm fw-bold btn-primary" id="btn-form-stock-opname">Stock Opname</a>
                     <a href="{{route('mutasi.create')}}" class="btn btn-sm fw-bold btn-primary" id="btn-form-stock-opname">Mutasi</a>
+                    <a href="{{route('stocks.stock-opnames')}}" class="btn btn-sm fw-bold btn-primary" id="btn-form-stock-opname">Stock Opname</a>
                     <a href="javascript:void(0);" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export</a>
                 </div>
                 <!--end::Actions-->

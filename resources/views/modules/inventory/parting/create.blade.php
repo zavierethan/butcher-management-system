@@ -75,7 +75,7 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Tanggal</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="date" name="date" id="date" value="<?php echo date("Y-m-d"); ?>"/>
+                                                        type="date" name="date" id="date" value="<?php echo date("Y-m-d"); ?>" readonly/>
                                                 </div>
                                             </div>
                                         </div>

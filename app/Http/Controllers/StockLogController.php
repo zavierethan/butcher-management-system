@@ -48,7 +48,8 @@ class StockLogController extends Controller
             ->select(
                 'stock_logs.*',
             )
-            ->where('stock_logs.stock_id', '=', $stockId);
+            ->where('stock_logs.stock_id', '=', $stockId)
+            ->whereDate('stock_logs.date', now()->toDateString());
 
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
