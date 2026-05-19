@@ -523,7 +523,7 @@
                                     <!-- RIGHT: Remaining Cash & Shutdown Button -->
                                     <div class="d-flex align-items-center gap-3">
                                         <div class="text-end">
-                                            <div class="fw-bold text-gray-600">Total Uang Tunai</div>
+                                            <div class="fw-bold text-gray-600">Cash in Cashier</div>
                                             <div class="fs-4 fw-bold text-success" id="remaining-cash">
                                                  0
                                             </div>
@@ -2549,13 +2549,10 @@ $(document).ready(function() {
         let base = Math.floor(number / 1000) * 1000;
         let remainder = number % 1000;
 
-        if (remainder > 500) {
+        if (remainder >= 500) {
             return base + 1000;
-        } else if (remainder < 500) {
-            return base;
         } else {
-            // tepat 500
-            return base + 500;
+            return base;
         }
     }
 
