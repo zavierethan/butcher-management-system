@@ -109,8 +109,8 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-250px">NAMA PRODUK</th>
-                                        <th class="min-w-125px">JENIS MUTASI</th>
-                                        <!-- <th class="min-w-125px">MUTASI KE / DARI</th> -->
+                                        <th class="min-w-125px">TIPE</th>
+                                        <th class="min-w-125px">KATEGORI</th>
                                         <th class="min-w-125px">KUANTITAS (KG)</th>
                                         <th class="min-w-125px">KETERANGAN</th>
                                         <th class="min-w-125px text-center">ACTION</th>
@@ -141,26 +141,23 @@
                                                     <option value="">-</option>
                                                     <option value="IN">IN</option>
                                                     <option value="OUT">OUT</option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="position-relative">
+                                                <select class="form-select me-2 category" data-control="select2"
+                                                    name="category">
+                                                    <option value="">-</option>
+                                                    <option value="MUTASI">MUTASI</option>
                                                     <option value="PRIVE">PRIVE</option>
+                                                    <option value="MASUK">MASUK</option>
                                                     <option value="RETURN">RETURN</option>
                                                     <option value="SEDEKAH">SEDEKAH</option>
                                                     <option value="BONUS">BONUS</option>
                                                 </select>
                                             </div>
                                         </td>
-                                        <!-- <td>
-                                            <div class="position-relative">
-                                                <select class="form-select me-2 destination" data-control="select2"
-                                                    name="destination">
-                                                    <option value="">-</option>
-                                                    @foreach($branches as $b)
-                                                    <option value="{{$b->id}}">
-                                                        {{$b->name}}
-                                                    </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </td> -->
                                         <td><input class="form-control form-control-md me-2 quantity" type="text"
                                             name="quantity" value="0" /></td>
                                         <td>
@@ -219,6 +216,20 @@ $(document).ready(function() {
                             </select>
                         </div>
                     </td>
+                    <td>
+                                            <div class="position-relative">
+                                                <select class="form-select me-2 category" data-control="select2"
+                                                    name="category">
+                                                    <option value="">-</option>
+                                                    <option value="MUTASI">MUTASI</option>
+                                                    <option value="PRIVE">PRIVE</option>
+                                                    <option value="MASUK">MASUK</option>
+                                                    <option value="RETURN">RETURN</option>
+                                                    <option value="SEDEKAH">SEDEKAH</option>
+                                                    <option value="BONUS">BONUS</option>
+                                                </select>
+                                            </div>
+                                        </td>
                     <td><input class="form-control form-control-md me-2 quantity" type="text"
                             name="quantity" value="0" /></td>
                     <td>
@@ -268,6 +279,7 @@ $(document).on('click', '#btn-submit-mutasi', function(e) {
                     let product = {
                         stock_id: $(this).find(".stock-id").val(),
                         type: $(this).find(".type").val(),
+                        category: $(this).find(".category").val(),
                         quantity: $(this).find(".quantity").val(),
                         destination: $(this).find(".destination").val(),
                         remarks: $(this).find(".remarks").val(),
@@ -277,7 +289,7 @@ $(document).on('click', '#btn-submit-mutasi', function(e) {
                 });
 
                 $.ajax({
-                    url: `{{route('stocks.mutasi-save')}}`,
+                    url: `{{route('mutasi.save')}}`,
                     type: 'POST',
                     contentType: 'application/json',
                     headers: {

@@ -84,10 +84,7 @@
                                 </div>
                                 <div class="text-end">
                                     <a href="{{route('mutasi.index')}}"
-                                        class="btn btn-sm btn-danger">Cancel</a>
-                                    <!-- <button type="button" class="btn btn-sm btn-primary"
-                                        id="btn-submit-mutasi">Submit</button> -->
-                                </div>
+                                        class="btn btn-sm btn-danger">Kembali</a>
                             </form>
                         </div>
                     </div>
@@ -109,8 +106,8 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-250px">NAMA PRODUK</th>
-                                        <th class="min-w-125px">JENIS MUTASI</th>
-                                        <!-- <th class="min-w-125px">MUTASI KE / DARI</th> -->
+                                        <th class="min-w-125px">TIPE</th>
+                                        <th class="min-w-125px">KATEGORI</th>
                                         <th class="min-w-125px">KUANTITAS (KG)</th>
                                         <th class="min-w-125px">KETERANGAN</th>
                                         <th class="min-w-125px text-center">ACTION</th>
@@ -141,28 +138,31 @@
                                                         <option value="">-</option>
                                                         <option value="IN" {{ $row->mutation_type == 'IN' ? 'selected' : '' }}>IN</option>
                                                         <option value="OUT" {{ $row->mutation_type == 'OUT' ? 'selected' : '' }}>OUT</option>
-                                                        <option value="PRIVE" {{ $row->mutation_type == 'PRIVE' ? 'selected' : '' }}>PRIVE</option>
                                                     </select>
                                                 </div>
                                             </td>
-                                            <!-- <td>
-                                                <div class="position-relative">
-                                                    <select class="form-select me-2 destination" data-control="select2" name="destination">
-                                                        <option value="">-</option>
-                                                        @foreach($branches as $b)
-                                                        <option value="{{$b->id}}" {{ $b->id == $branch_id ? 'selected' : '' }}>
-                                                            {{$b->name}}
-                                                        </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </td> -->
+                                            <td>
+                                            <div class="position-relative">
+                                                <select class="form-select me-2 category" data-control="select2"
+                                                    name="category">
+                                                    <option value="">-</option>
+                                                    <option value="MUTASI" {{ $row->category == 'MUTASI' ? 'selected' : '' }}>MUTASI</option>
+                                                    <option value="PRIVE" {{ $row->category == 'PRIVE' ? 'selected' : '' }}>PRIVE</option>
+                                                    <option value="MASUK" {{ $row->category == 'MASUK' ? 'selected' : '' }}>MASUK</option>
+                                                    <option value="RETURN" {{ $row->category == 'RETURN' ? 'selected' : '' }}>RETURN</option>
+                                                    <option value="SEDEKAH" {{ $row->category == 'SEDEKAH' ? 'selected' : '' }}>SEDEKAH</option>
+                                                    <option value="BONUS" {{ $row->category == 'BONUS' ? 'selected' : '' }}>BONUS</option>
+                                                </select>
+                                            </div>
+                                        </td>
                                             <td><input class="form-control form-control-md me-2 quantity" type="text" name="quantity" value="{{ $row->quantity }}" /></td>
                                             <td>
                                                 <textarea type="text" class="form-control form-control-sm remarks">{{ $row->remarks }}</textarea>
                                             </td>
                                             <td class="text-center">
-                                                <a href="#"><i class="fa-solid fa-edit"></i></a>
+                                                <input type="hidden" name="id" value="{{ $row->id }}" />
+                                                <a href="#" class="btn-update-row me-6" title="Update"><i class="fa-solid fa-save text-primary"></i></a>
+                                                <a href="#" class="btn-delete-row" title="Delete"><i class="fa-solid fa-trash-can text-danger"></i></a>
                                             </td>
                                         </tr>
                                         @endforeach
@@ -190,51 +190,141 @@
 
 @section('script')
 <script>
-$(document).ready(function() {
+$(document).on('click', '.btn-update-row', function(e) {
+    e.preventDefault();
 
-    $("#add-row").on("click", function() {
-        var row = `<tr>
-                    <td>
-                        <div class="position-relative">
-                            <select class="form-select me-2 stock-id" data-control="select2"
-                                name="stock">
-                                <option value="">-</option>
-                                @foreach($stocks as $stock)
-                                <option value="{{$stock->stock_id}}">
-                                    {{$stock->product_name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="position-relative">
-                            <select class="form-select me-2 type" data-control="select2" name="type">
-                                <option value="">-</option>
-                                <option value="IN">IN</option>
-                                <option value="OUT">OUT</option>
-                                <option value="PRIVE">PRIVE</option>
-                            </select>
-                        </div>
-                    </td>
-                    <td><input class="form-control form-control-md me-2 quantity" type="text"
-                            name="quantity" value="0" /></td>
-                    <td>
-                        <textarea type="text" class="form-control form-control-sm remarks"></textarea>
-                    </td>
-                    <td class="text-center">
-                        <a href="#"><i class="fa-solid fa-trash-can"></i></a>
-                    </td>
-                </tr>`;
+    const row = $(this).closest('tr');
+    const mutationId = row.find('input[name="id"]').val();
+    const productName = row.find('.stock-id').find('option:selected').text();
+    const mutationType = row.find('.type').find('option:selected').text();
+    const quantity = row.find('.quantity').val();
 
-        $("#kt_items_table tbody").append(row);
+    if (!row.find('.stock-id').val()) {
+        Swal.fire({
+            title: 'Perhatian!',
+            text: 'Silahkan pilih produk terlebih dahulu',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
 
-        $("#kt_items_table tbody tr:last").find('select[data-control="select2"]').select2();
+    if (!row.find('.type').val()) {
+        Swal.fire({
+            title: 'Perhatian!',
+            text: 'Silahkan pilih tipe mutasi terlebih dahulu',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    if (!quantity || parseFloat(quantity.replace(/,/g, '')) <= 0) {
+        Swal.fire({
+            title: 'Perhatian!',
+            text: 'Kuantitas tidak boleh kosong atau 0',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: 'Konfirmasi Update',
+        html: `Apakah Anda yakin akan mengupdate data mutasi?<br><br>
+                <b>Produk:</b> ${productName}<br>
+                <b>Tipe Mutasi:</b> ${mutationType}<br>
+                <b>Kuantitas:</b> ${quantity}`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, Update!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `{{ route('mutasi.update', ['id' => 0]) }}`.replace('/0', '/' + mutationId),
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    id: mutationId,
+                    stock_id: row.find('.stock-id').val(),
+                    type: row.find('.type').val(),
+                    quantity: quantity.replace(/,/g, ''),
+                    remarks: row.find('.remarks').val()
+                },
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: response.message,
+                        icon: 'success'
+                    });
+                },
+                error: function(xhr) {
+                    const errorMessage = xhr.responseJSON?.message || 'Terjadi kesalahan saat mengupdate data';
+                    Swal.fire({
+                        title: 'Error!',
+                        text: errorMessage,
+                        icon: 'error'
+                    });
+                }
+            });
+        }
     });
 });
 
-$(document).on("click", "#kt_items_table tbody a", function(e) {
+$(document).on('click', '.btn-delete-row', function(e) {
     e.preventDefault();
-    $(this).closest("tr").remove();
+
+    const row = $(this).closest('tr');
+    const mutationId = row.find('input[name="id"]').val();
+    const productName = row.find('.stock-id').find('option:selected').text();
+    const mutationType = row.find('.type').find('option:selected').text();
+    const quantity = row.find('.quantity').val();
+
+    Swal.fire({
+        title: 'Konfirmasi Hapus',
+        html: `Apakah Anda yakin akan menghapus data mutasi?<br><br>
+                <b>Produk:</b> ${productName}<br>
+                <b>Tipe Mutasi:</b> ${mutationType}<br>
+                <b>Kuantitas:</b> ${quantity}`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/mutasi/${mutationId}`,
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: response.message,
+                        icon: 'success'
+                    }).then(() => {
+                        row.remove();
+                    });
+                },
+                error: function(xhr) {
+                    const errorMessage = xhr.responseJSON?.message || 'Terjadi kesalahan saat menghapus data';
+                    Swal.fire({
+                        title: 'Error!',
+                        text: errorMessage,
+                        icon: 'error'
+                    });
+                }
+            });
+        }
+    });
 });
 
 $(document).on("keyup", "input[name='quantity']", function() {

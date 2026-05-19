@@ -489,6 +489,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::post('/save', [App\Http\Controllers\MutasiController::class, 'save'])->name('save');
             Route::get('/edit/{id}', [App\Http\Controllers\MutasiController::class, 'edit'])->name('edit');
             Route::post('/update/{id}', [App\Http\Controllers\MutasiController::class, 'update'])->name('update');
+            Route::delete('/{id}', [App\Http\Controllers\MutasiController::class, 'delete'])->name('delete');
         });
     });
 

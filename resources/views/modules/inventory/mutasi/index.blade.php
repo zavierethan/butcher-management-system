@@ -91,9 +91,12 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">TANGGAL</th>
-                                        <th class="min-w-125px">TOTAL IN (KG)</th>
-                                        <th class="min-w-125px">TOTAL OUT (KG)</th>
-                                        <th class="min-w-125px">TOTAL PRIVE (KG)</th>
+                                        <th class="min-w-125px">MUTASI</th>
+                                        <th class="min-w-125px">PRIVE</th>
+                                        <th class="min-w-125px">MASUK</th>
+                                        <th class="min-w-125px">RETURN</th>
+                                        <th class="min-w-125px">SEDEKAH</th>
+                                        <th class="min-w-125px">BONUS</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -173,18 +176,33 @@ $(document).ready(function() {
                 name: 'date'
             },
             {
-                data: 'total_in',
-                name: 'total_in',
+                data: 'mutasi',
+                name: 'mutasi',
                 className: 'text-end'
             },
             {
-                data: 'total_out',
-                name: 'total_out',
+                data: 'prive',
+                name: 'prive',
                 className: 'text-end'
             },
             {
-                data: 'total_prive',
-                name: 'total_prive',
+                data: 'masuk',
+                name: 'masuk',
+                className: 'text-end'
+            },
+            {
+                data: 'return',
+                name: 'return',
+                className: 'text-end'
+            },
+            {
+                data: 'sedekah',
+                name: 'sedekah',
+                className: 'text-end'
+            },
+            {
+                data: 'bonus',
+                name: 'bonus',
                 className: 'text-end'
             },
             {
