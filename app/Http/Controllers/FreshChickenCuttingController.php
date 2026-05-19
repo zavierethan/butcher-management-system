@@ -58,7 +58,7 @@ class FreshChickenCuttingController extends Controller
 
         $totalRecords = $query->count();
         $filteredRecords = $query->count();
-        $data = $query->skip($start)->take($length)->get();
+        $data = $query->orderBy('date', 'desc')->skip($start)->take($length)->get();
 
         return response()->json([
             'draw' => $request->input('draw'),
