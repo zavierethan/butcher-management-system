@@ -118,6 +118,7 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                        <th class="min-w-125px">PAYMENT CODE</th>
                                         <th class="min-w-125px">CUSTOMER</th>
                                         <th class="min-w-125px">TANGGAL</th>
                                         <th class="min-w-125px">NOMOR INVOICE</th>
@@ -175,6 +176,10 @@ $(document).ready(function() {
         },
         columns: [
             {
+                data: 'payment_code',
+                name: 'payment_code'
+            },
+            {
                 data: 'customer_name',
                 name: 'customer_name'
             },
@@ -217,7 +222,7 @@ $(document).ready(function() {
                 render: function(data, type, row) {
                     return `
                         <div class="text-center">
-                            <a href="/retails/receivable-payments/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Edit"><i class="fa-solid fa-edit"></i>Edit</a>
+                            <a href="/retails/receivable-payments/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Edit"><i class="fa-solid fa-edit"></i>Detail</a>
                         </div>
                     `;
                 }

@@ -21,6 +21,7 @@ class ReceivablePaymentController extends Controller
         $query = DB::table('receivable_payments')
             ->select(
                 'receivable_payments.id',
+                'receivable_payments.payment_code',
                 DB::raw("TO_CHAR(receivable_payments.payment_date, 'DD/MM/YYYY') as date"),
                 DB::raw("TO_CHAR(receivable_payments.amount, 'FM999,999,999') as amount"),
                 'receivable_payments.payment_method',
@@ -214,7 +215,12 @@ class ReceivablePaymentController extends Controller
     }
 
     public function edit($id) {
-        return view('modules.retails.receivable-payments.edit');
+        $payment = DB::table('receivable_payments')
+            ->leftJoin('invoices', 'invoices.id', '=', 'receivable_payments.invoice_id')
+            ->select('receivable_payments.*', 'invoices.invoice_no')
+            ->where('receivable_payments.id', $id)->first();
+
+        return view('modules.retails.receivable-payments.edit', compact('payment'));
     }
 
     public function update(Request $request) {

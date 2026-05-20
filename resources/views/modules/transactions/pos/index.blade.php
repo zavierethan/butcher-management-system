@@ -2545,6 +2545,10 @@ $(document).ready(function() {
         // Properly parse numeric value while preserving decimals
         let number = parseFloat(value) || 0;
 
+        // FIXED: Round to nearest integer first to avoid floating point precision issues
+        // This ensures that 25000 * 0.58 = 14499.9999... becomes 14500 before rounding
+        number = Math.round(number);
+
         // Round to nearest 1000 based on remainder
         let base = Math.floor(number / 1000) * 1000;
         let remainder = number % 1000;

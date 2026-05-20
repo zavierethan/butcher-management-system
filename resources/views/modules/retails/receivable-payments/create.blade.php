@@ -61,7 +61,7 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Tanggal</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="date" name="date" value="<?php echo date('Y-m-d'); ?>" id="date"/>
+                                                        type="date" name="date" value="<?php echo date('Y-m-d'); ?>" id="date" value="{{$payment->invoice_date}}"/>
                                                 </div>
                                             </div>
                                         </div>
