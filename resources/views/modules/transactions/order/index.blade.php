@@ -180,6 +180,7 @@
                                         <th class="min-w-125px">METODE PEMESANAN</th>
                                         <th class="min-w-125px">METODE PENGERJAAN</th>
                                         <th class="min-w-125px">JENIS PEMBAYARAN</th>
+                                        <th class="min-w-125px">TOTAL</th>
                                         <th class="min-w-125px text-center">STATUS</th>
                                         <th class="min-w-125px">DIBUAT OLEH</th>
                                         <th class="text-center min-w-70px">Actions</th>
@@ -351,6 +352,11 @@ $(document).ready(function() {
 
                     return paymentMethod;
                 }
+            },
+            {
+                data: 'total_amount',
+                name: 'total_amount',
+                className: 'text-end',
             },
             {
                 data: 'status',

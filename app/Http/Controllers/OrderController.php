@@ -35,6 +35,7 @@ class OrderController extends Controller
                     DB::raw("CASE WHEN transactions.ordering_method = 1 THEN 'Online' ELSE 'Offline' END AS ordering_method_name"),
                     DB::raw("CASE WHEN transactions.working_method = 1 THEN 'Direct' ELSE 'Processing Order' END AS working_method_name"),
                     'customers.name as customer_name',
+                    DB::raw("TO_CHAR(transactions.total_amount, 'FM999,999,999') as total_amount"),
                     'users.name as created_by'
                 )
                 ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')

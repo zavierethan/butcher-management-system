@@ -149,12 +149,6 @@
 
 @section('script')
 <script>
-// $(document).on("keyup", "#total-amount", function() {
-//     var originalVal = $(this).val();
-//     var formattedVal = formatNumber(originalVal);
-//     $(this).val(formattedVal);
-// });
-
 $(document).on('keyup', '.format-number', function () {
 
     let value = $(this).val().replace(/\D/g, '');
