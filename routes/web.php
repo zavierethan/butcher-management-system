@@ -225,6 +225,13 @@ Route::group(['middleware' => ['auth']], function() {
         });
     });
 
+    // Customer Complaints
+    Route::prefix('customer-complaints')->group(function () {
+        Route::name('customer-complaints.')->group(function () {
+            Route::post('/store', [App\Http\Controllers\OrderController::class, 'storeCustomerComplaint'])->name('store');
+        });
+    });
+
     Route::prefix('retails')->group(function () {
         Route::name('retails.')->group(function () {
 

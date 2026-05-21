@@ -81,10 +81,10 @@
                                                     data-placeholder="-" name="ordering-method" id="ordering-method" disabled>
                                                     <option value="1"
                                                         <?php echo ($detailTransaction->ordering_method == 1) ? "selected" : ""; ?>>
-                                                        Offline</option>
+                                                        Online</option>
                                                     <option value="2"
                                                         <?php echo ($detailTransaction->ordering_method == 2) ? "selected" : ""; ?>>
-                                                        Online </option>
+                                                        Offline </option>
                                                 </select>
                                             </div>
                                         </div>
@@ -112,7 +112,7 @@
                                             <label class="form-label fw-bold fs-6 mb-2">Metode Pembayaran</label>
                                             <div class="position-relative mb-3">
                                                 <select class="form-select form-select-solid" data-control="select2"
-                                                    data-placeholder="-" name="payment-method" id="payment-method" disabled>
+                                                    data-placeholder="-" name="payment-method" id="payment-method"  <?php echo ($detailTransaction->working_method == 2) ? "" : "disabled"; ?>>
                                                     <option value="1"
                                                         <?php echo ($detailTransaction->payment_method == 1) ? "selected" : ""; ?>>
                                                         Tunai</option>
@@ -165,6 +165,9 @@
                                                     <option value="3"
                                                         <?php echo ($detailTransaction->status == 3) ? "selected" : ""; ?>>
                                                         Pending (Transfer)</option>
+                                                    <option value="5"
+                                                        <?php echo ($detailTransaction->status == 5) ? "selected" : ""; ?>>
+                                                        Pending (Processing Order)</option>
                                                     <option value="4"
                                                         <?php echo ($detailTransaction->status == 4) ? "selected" : ""; ?>>
                                                         Batal (Return)</option>
@@ -407,6 +410,7 @@ $(document).ready(function() {
         e.preventDefault();
 
         let transaction_id = $("#transaction-id").val();
+        let payment_method = $("#payment-method").val();
         let status = $("#status").val();
 
         Swal.fire({
@@ -421,6 +425,7 @@ $(document).ready(function() {
 
                 const payload = {
                     transaction_id: transaction_id,
+                    payment_method: payment_method,
                     status: status,
                 };
 
@@ -450,6 +455,68 @@ $(document).ready(function() {
                             error,
                             'error'
                         )
+                    }
+                });
+            }
+        });
+    });
+
+    // Handle Save Customer Complaint
+    $('#btn-save-customer-complaint').on('click', function(e) {
+        e.preventDefault();
+
+        let transaction_id = $("#transaction-id").val();
+        let is_quality_issue = $("#is_quality_issue").is(':checked') ? 1 : 0;
+        let is_weight_mismatch = $("#is_weight_mismatch").is(':checked') ? 1 : 0;
+        let is_delivery_delay = $("#is_delivery_delay").is(':checked') ? 1 : 0;
+        let complaint_notes = $("#complaint_notes").val();
+
+        Swal.fire({
+            title: 'Apakah anda yakin untuk menyimpan complain customer ?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Simpan Complain'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                const payload = {
+                    transaction_id: transaction_id,
+                    is_quality_issue: is_quality_issue,
+                    is_weight_mismatch: is_weight_mismatch,
+                    is_delivery_delay: is_delivery_delay,
+                    notes: complaint_notes,
+                };
+
+                console.log(payload)
+
+                $.ajax({
+                    url: `{{route('customer-complaints.store')}}`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: JSON.stringify(payload),
+                    success: function(response) {
+                        Swal.fire({
+                            title: 'Berhasil!',
+                            text: 'Complain customer berhasil disimpan',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        let errorMessage = 'Terjadi kesalahan saat menyimpan complain';
+                        if(xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        }
+                        Swal.fire({
+                            title: 'Error!',
+                            text: errorMessage,
+                            icon: 'error'
+                        });
                     }
                 });
             }

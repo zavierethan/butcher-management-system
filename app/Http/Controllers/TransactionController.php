@@ -22,6 +22,13 @@ class TransactionController extends Controller
     public function store(Request $request){
         $status = 0;
 
+        // Note Status Transaksi
+        // 1 = Lunas (Cash / Transfer yang sudah diterima)
+        // 2 = Pending Piutang (Credit)
+        // 3 = Pending Transfer (Transfer yang belum diterima)
+        // 4 = Return (Transaksi retur)
+        // 5 = Pending Online Order (Order dari online yang belum diproses)
+
         try {
             DB::beginTransaction();
 
@@ -39,7 +46,6 @@ class TransactionController extends Controller
                     'sales_cash', $transactionCode, 'Penjualan dengan pembayaran Cash', $totalAmount
                 ]);
 
-                // 🔎 ambil session aktif
                 $session = DB::table('pos_sessions')
                     ->where('branch_id', Auth::user()->branch_id)
                     ->where('status', 'OPEN')
@@ -87,6 +93,11 @@ class TransactionController extends Controller
                 $file = $request->file('transfer_attch');
                 $fileContents = file_get_contents($file->getRealPath());
                 $transferBase64 = base64_encode($fileContents);
+            }
+
+            if($request->working_method == 2) { // Online Order (Processing Order)
+                $status = 5; // Pending (Processing Order)
+                $paymentMethod = null; // Disable payment method for online orders
             }
 
             // Insert transaction header

@@ -94,6 +94,7 @@
                                         <th class="min-w-125px">No Handphone</th>
                                         <th class="min-w-125px">Jenis</th>
                                         <th class="min-w-125px">Alamat</th>
+                                        <th class="min-w-125px">Saldo</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -140,6 +141,7 @@
             { data: 'phone_number', name: 'phone_number' },
             { data: 'type', name: 'type' },
             { data: 'address', name: 'address' },
+            { data: 'total_saldo_overpayment', name: 'total_saldo_overpayment', className: 'text-end' },
             {
                 data: null, // No direct field from the server
                 name: 'action',

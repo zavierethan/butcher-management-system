@@ -126,6 +126,7 @@
                                             <option value="2">Pending (Piutang)</option>
                                             <option value="3">Pending (Transfer)</option>
                                             <option value="4">Batal (Return)</option>
+                                            <option value="5">Pending (Processing Order)</option>
                                         </select>
                                         <!--end::Select-->
                                     </div>
@@ -379,6 +380,14 @@ $(document).ready(function() {
 
                     if (row.status == 4) {
                         status = `<span class="badge bg-danger text-dark">Batal</span>`
+                    }
+
+                    if (row.status == 4) {
+                        status = `<span class="badge bg-danger text-dark">Batal</span>`
+                    }
+
+                    if (row.status == 5) {
+                        status = `<span class="badge bg-warning text-dark">Pending (Processing Order)</span>`
                     }
 
                     return status;

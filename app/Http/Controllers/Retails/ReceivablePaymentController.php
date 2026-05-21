@@ -206,6 +206,7 @@ class ReceivablePaymentController extends Controller
                     'payment_id' => $paymentId,
                     'invoice_id' => $invoiceId,
                     'amount' => $remainingPayment,
+                    'direction' => 'IN',
                     'notes' => 'Overpayment dari invoice #' . $invoice->invoice_no,
                     'created_at' => now(),
                     'updated_at' => now()

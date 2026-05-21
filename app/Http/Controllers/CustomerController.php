@@ -15,10 +15,39 @@ class CustomerController extends Controller
 
         $params = $request->all();
 
-        $query = DB::table('customers');
+        $query = DB::table('customers')
+            ->leftJoin('customer_overpayments', 'customer_overpayments.customer_id', '=', 'customers.id')
+            ->selectRaw("
+                customers.id,
+                customers.name,
+                customers.ktp_number,
+                customers.phone_number,
+                customers.type,
+                customers.address,
+                TO_CHAR(
+                    ROUND(
+                        COALESCE(SUM(
+                            CASE
+                                WHEN customer_overpayments.direction = 'IN' THEN customer_overpayments.amount
+                                WHEN customer_overpayments.direction = 'OUT' THEN -customer_overpayments.amount
+                                ELSE 0
+                            END
+                        ), 0)::numeric
+                    ),
+                    'FM999,999,999'
+                ) as total_saldo_overpayment
+            ")
+            ->groupBy(
+                'customers.id',
+                'customers.name',
+                'customers.ktp_number',
+                'customers.phone_number',
+                'customers.type',
+                'customers.address',
+                );
 
         // Apply global search if provided
-        $searchValue = $request->input('search.value'); // This is where DataTables sends the search input
+        $searchValue = $request->input('search.value');
         if (!empty($searchValue)) {
             $query->where(function ($q) use ($searchValue) {
                 $q->where('name', 'like', '%' . strtoupper($searchValue) . '%');
@@ -72,13 +101,6 @@ class CustomerController extends Controller
     }
 
     public function update(Request $request) {
-        // $request->validate([
-        //     'code' => 'required|string',
-        //     'name' => 'required|string',
-        //     'price' => 'required|numeric',
-        // ]);
-
-        //TODO add validation and updated_by based on user
 
         DB::table('customers')
             ->where('id', $request->id)
@@ -172,7 +194,7 @@ class CustomerController extends Controller
                     ) as discount
                 ")
             )
-    ->get();
+            ->get();
 
         return view('modules.master.customer.product-discounts', compact('customer', 'products', 'productDiscounts'));
     }

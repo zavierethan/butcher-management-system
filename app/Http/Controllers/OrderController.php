@@ -154,12 +154,72 @@ class OrderController extends Controller
     public function update(Request $request) {
 
         DB::table('transactions')->where('id', $request->transaction_id)->update([
+            "payment_method" => $request->payment_method,
             "status" => $request->status
         ]);
 
         return response()->json([
             'message' => 'Transaction successfully updated',
         ], 200);
+    }
+
+    public function storeCustomerComplaint(Request $request) {
+        try {
+            // Validate input
+            $request->validate([
+                'transaction_id' => 'required|integer|exists:transactions,id',
+                'is_quality_issue' => 'required|integer|in:0,1',
+                'is_weight_mismatch' => 'required|integer|in:0,1',
+                'is_delivery_delay' => 'required|integer|in:0,1',
+                'notes' => 'nullable|string',
+            ]);
+
+            // Check if complaint already exists
+            $existingComplaint = DB::table('customer_complaints')
+                ->where('transaction_id', $request->transaction_id)
+                ->first();
+
+            if ($existingComplaint) {
+                // Update existing complaint
+                DB::table('customer_complaints')
+                    ->where('transaction_id', $request->transaction_id)
+                    ->update([
+                        'is_quality_issue' => $request->is_quality_issue,
+                        'is_weight_mismatch' => $request->is_weight_mismatch,
+                        'is_delivery_delay' => $request->is_delivery_delay,
+                        'notes' => $request->notes ?? '',
+                        'updated_at' => now(),
+                    ]);
+            } else {
+                // Create new complaint
+                DB::table('customer_complaints')->insert([
+                    'transaction_id' => $request->transaction_id,
+                    'is_quality_issue' => $request->is_quality_issue,
+                    'is_weight_mismatch' => $request->is_weight_mismatch,
+                    'is_delivery_delay' => $request->is_delivery_delay,
+                    'notes' => $request->notes ?? '',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Customer complaint successfully saved',
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error saving customer complaint: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function export(Request $request) {

@@ -1,5 +1,57 @@
 @extends('layouts.main')
+@section('css')
+<style>
+    /* Loader Backdrop Styles */
+    .loader-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
 
+    .loader-backdrop.show {
+        display: flex;
+    }
+
+    .loader-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .loader-spinner {
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid #ffffff;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+    }
+
+    .loader-text {
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    /* Spinner Animation */
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+@endsection
 @section('main-content')
 <?php date_default_timezone_set("Asia/Jakarta"); ?>
 <!--begin::Main-->
@@ -53,7 +105,8 @@
                             {{ Auth::user()->group_id != 1 ? 'disabled' : '' }}>
                             <option value="" selected="selected">Show All</option>
                             @foreach($branches as $branch)
-                            <option value="{{$branch->id}}" {{ Auth::user()->branch_id == $branch->id ? 'selected' : '' }}>
+                            <option value="{{$branch->id}}"
+                                {{ Auth::user()->branch_id == $branch->id ? 'selected' : '' }}>
                                 {{$branch->name}}
                             </option>
                             @endforeach
@@ -74,47 +127,13 @@
         <!--begin::Content-->
         <div id="kt_app_content" class="app-content flex-column-fluid">
             <!--begin::Loader Backdrop-->
-            <div id="loader-backdrop" style="
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.5);
-                display: none;
-                z-index: 9999;
-                justify-content: center;
-                align-items: center;
-            ">
-                <div style="
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 15px;
-                ">
-                    <div style="
-                        border: 4px solid rgba(255, 255, 255, 0.3);
-                        border-top: 4px solid #ffffff;
-                        border-radius: 50%;
-                        width: 50px;
-                        height: 50px;
-                        animation: spin 1s linear infinite;
-                    "></div>
-                    <span style="color: #ffffff; font-size: 16px; font-weight: 500;">Loading...</span>
+            <div id="loader-backdrop" class="loader-backdrop">
+                <div class="loader-content">
+                    <div class="loader-spinner"></div>
+                    <span class="loader-text">Loading...</span>
                 </div>
             </div>
             <!--end::Loader Backdrop-->
-            <style>
-            @keyframes spin {
-                0% {
-                    transform: rotate(0deg);
-                }
-
-                100% {
-                    transform: rotate(360deg);
-                }
-            }
-            </style>
             <!--begin::Content container-->
             <div id="kt_app_content_container" class="app-container">
                 <!-- Stat Cards Row -->
@@ -260,7 +279,8 @@
                                         <tr>
                                             <td>7</td>
                                             <td>PEMBAYARAN PIUTANG TRANSFER</td>
-                                            <td class="text-end fw-bold" id="table-pembayaran-piutang-transfer">Rp 0</td>
+                                            <td class="text-end fw-bold" id="table-pembayaran-piutang-transfer">Rp 0
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -382,7 +402,8 @@
                                 </div>
                             </div>
                             <div class="card-body pt-0 overflow-x-auto">
-                                <table id="report-table" class="table table-hover align-middle table-row-dashed fs-6 gy-5"></table>
+                                <table id="report-table"
+                                    class="table table-hover align-middle table-row-dashed fs-6 gy-5"></table>
                             </div>
                         </div>
                     </div>
@@ -736,7 +757,7 @@ $("#btn-close-trx").on("click", function() {
         error: function(err) {
             console.error(err);
             let message = 'Gagal mengambl data. Silahkan coba lagi';
-            if(err.responseJSON && err.responseJSON.message) {
+            if (err.responseJSON && err.responseJSON.message) {
                 message = err.responseJSON.message;
             }
             Swal.fire({
@@ -994,7 +1015,8 @@ function fetchSummary(branchId, date) {
         success: function(response) {
             console.log('Response:', response);
 
-            let selisih = parseFloat(response.total_cash_in_casheer) - parseFloat(response.actual_cash_in_casheer);
+            let selisih = parseFloat(response.total_cash_in_casheer) - parseFloat(response
+                .actual_cash_in_casheer);
 
             // Example mapping (adjust based on your JSON structure)
             $('#total-revenue').text(formatRupiah(response.total_revenue));
@@ -1003,8 +1025,9 @@ function fetchSummary(branchId, date) {
             $('#total-cash').text(formatRupiah(response.total_cash_in_casheer));
             $('#total-kasir').text(formatRupiah(response.actual_cash_in_casheer));
 
-            if(response.actual_cash_in_casheer != 0) {
-                $('#difference-kasir').text('Selisih antara Total Uang Tunai dengan Uang di Kasir: ' + formatRupiah(selisih));
+            if (response.actual_cash_in_casheer != 0) {
+                $('#difference-kasir').text('Selisih antara Total Uang Tunai dengan Uang di Kasir: ' +
+                    formatRupiah(selisih));
             }
 
         },
@@ -1108,7 +1131,7 @@ function loadPivotReport(branchId, currentDate) {
                 title: key,
                 className: index === 0 ? 'text-start' : 'text-center',
                 defaultContent: 0,
-                render: function (data, type, row) {
+                render: function(data, type, row) {
                     if (!isNaN(data)) {
                         const value = parseFloat(data).toLocaleString('id-ID');
                         // Highlight row dan kolom TOTAL dengan warna hijau
@@ -1154,6 +1177,5 @@ function loadPivotReport(branchId, currentDate) {
         }
     });
 }
-
 </script>
 @endsection
