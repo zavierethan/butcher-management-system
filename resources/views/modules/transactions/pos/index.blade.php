@@ -1580,6 +1580,17 @@ $(document).ready(function() {
             return;
         }
 
+        if (!butcherId || butcherId === '') {
+            Swal.fire({
+                title: 'Warning!',
+                text: 'Butcherees harus dipilih',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            });
+            return;
+        }
+
         // Check if the product already exists in the cart
         var existingProduct = $(`#product-id-${productId}`);
 
@@ -1732,6 +1743,17 @@ $(document).ready(function() {
             Swal.fire({
                 title: 'Warning!',
                 text: 'Quantity tidak boleh kosong atau 0',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            });
+            return;
+        }
+
+        if (!butcherId || butcherId === '') {
+            Swal.fire({
+                title: 'Warning!',
+                text: 'Butcherees harus dipilih',
                 icon: 'warning',
                 confirmButtonText: 'OK',
                 allowOutsideClick: false
@@ -1931,16 +1953,28 @@ $(document).ready(function() {
 
                     console.log(formData)
 
+                    // Show loader dan disable tombol
+                    const $processBtn = $('#process-transaction');
+                    const originalBtnText = $processBtn.html();
+                    $processBtn.prop('disabled', true).html(`
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        Sedang memproses...
+                    `);
+
                     $.ajax({
                         url: `{{route('transactions.store')}}`,
                         type: 'POST',
                         processData: false,
                         contentType: false,
+                        timeout: 30000, // 30 detik timeout
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         data: formData,
                         success: function(response) {
+                            // Hide loader dan enable tombol
+                            $processBtn.prop('disabled', false).html(originalBtnText);
+
                             Swal.fire({
                                 title: 'Success!',
                                 text: `Transaksi berhasil di simpan dengan Nomor ${response.transaction_code}`,
@@ -2027,15 +2061,41 @@ $(document).ready(function() {
                             });
                         },
                         error: function(xhr, status, error) {
-                            if (xhr.status === 400) {
+                            // Hide loader dan enable tombol
+                            $processBtn.prop('disabled', false).html(originalBtnText);
+
+                            // Handle timeout error
+                            if (status === 'timeout') {
+                                Swal.fire({
+                                    title: 'Timeout!',
+                                    text: 'Koneksi timeout. Harap periksa koneksi jaringan Anda dan coba lagi.',
+                                    icon: 'warning',
+                                    confirmButtonText: 'Coba Lagi',
+                                    allowOutsideClick: false
+                                });
+                            } else if (xhr.status === 400) {
                                 Swal.fire({
                                     title: 'Warning !',
                                     text: xhr.responseJSON.message,
                                     icon: 'warning',
                                     allowOutsideClick: false
                                 });
+                            } else if (xhr.status === 0) {
+                                // Network error
+                                Swal.fire({
+                                    title: 'Kesalahan Jaringan',
+                                    text: 'Ada masalah dengan koneksi jaringan. Harap coba lagi.',
+                                    icon: 'error',
+                                    confirmButtonText: 'Coba Lagi',
+                                    allowOutsideClick: false
+                                });
                             } else {
-                                Swal.fire('Error!', error, 'error');
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: error || 'Terjadi kesalahan saat memproses transaksi',
+                                    icon: 'error',
+                                    allowOutsideClick: false
+                                });
                             }
                         }
                     });
