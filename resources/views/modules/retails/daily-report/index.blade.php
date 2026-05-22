@@ -408,6 +408,42 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="row gy-5 g-xl-10 mb-5">
+                    <div class="col-lg-12">
+                        <div class="card card-flush">
+                            <div class="card-header border-0 pt-6">
+                                <div class="card-title">
+                                    <h3 class="card-title fw-bold">Stock Opname</h3>
+                                </div>
+                                <div class="card-toolbar">
+                                </div>
+                            </div>
+                            <div class="card-body pt-0 overflow-x-auto">
+                                <table id="stock-report"
+                                    class="table table-hover align-middle table-row-dashed fs-6 gy-5">
+                                    <thead>
+                                        <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                            <th class="min-w-125px">Nama Produk</th>
+                                            <th class="min-w-125px text-center">Tgl Stock Awal</th>
+                                            <th class="min-w-125px text-center">Stock Awal</th>
+                                            <th class="min-w-125px text-center">Stok Parting</th>
+                                            <th class="min-w-125px text-center">Stok Masuk</th>
+                                            <th class="min-w-125px text-center">Stok Sales</th>
+                                            <th class="min-w-125px text-center">Stok Keluar</th>
+                                            <th class="min-w-125px text-center">Stock Akhir</th>
+                                            <th class="min-w-125px text-center">Hasil SO</th>
+                                            <th class="min-w-125px text-center">Selisih</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
         <!--end::Content container-->
@@ -664,6 +700,75 @@ $(document).ready(function() {
         ]
     });
 
+    const stockOpnameReport = $("#stock-report").DataTable({
+        processing: true,
+        serverSide: true,
+        paging: true, // Enable pagination
+        pageLength: 50, // Number of rows per page
+        ajax: {
+            url: `{{route('retails.daily-report.stock-opname-report')}}`, // Replace with your route
+            type: 'GET',
+            data: function(d) {
+                d.date = $('#date').val();
+                d.branch_id = $('#branch').val();
+            },
+            dataSrc: function(json) {
+                return json.data; // Map the 'data' field
+            }
+        },
+        columns: [
+            {
+                data: 'name',
+                name: 'name'
+            },
+            {
+                data: 'tanggal_stock_awal',
+                name: 'tanggal_stock_awal',
+                className: 'text-center'
+            },
+            {
+                data: 'stock_awal',
+                name: 'stock_awal',
+                className: 'text-center'
+            },
+            {
+                data: 'stok_parting',
+                name: 'stok_parting',
+                className: 'text-center'
+            },
+            {
+                data: 'stok_masuk',
+                name: 'stok_masuk',
+                className: 'text-center'
+            },
+            {
+                data: 'stok_sales',
+                name: 'stok_sales',
+                className: 'text-center'
+            },
+            {
+                data: 'stok_keluar',
+                name: 'stok_keluar',
+                className: 'text-center'
+            },
+            {
+                data: 'stock_akhir',
+                name: 'stock_akhir',
+                className: 'text-center'
+            },
+            {
+                data: 'hasil_stock_opname',
+                name: 'hasil_stock_opname',
+                className: 'text-center'
+            },
+            {
+                data: 'selisih',
+                name: 'selisih',
+                className: 'text-center'
+            }
+        ]
+    });
+
     $(document).on('change', '#date, #branch', function() {
         var date = $('#date').val();
         var branch = $('#branch').val();
@@ -675,7 +780,7 @@ $(document).ready(function() {
         table.draw();
         expenesTable.draw();
         receivableTable.draw();
-
+        stockOpnameReport.draw();
 
     });
 });
@@ -1177,5 +1282,6 @@ function loadPivotReport(branchId, currentDate) {
         }
     });
 }
+
 </script>
 @endsection

@@ -267,6 +267,7 @@ Route::group(['middleware' => ['auth']], function() {
                     Route::get('/get-daily-expenses', [App\Http\Controllers\Retails\DailyReportController::class, 'getDailyExpenses'])->name('get-daily-expenses');
                     Route::get('/get-receivable-payments', [App\Http\Controllers\Retails\DailyReportController::class, 'getReceivablePayments'])->name('get-receivable-payments');
                     Route::get('/get-data-from-pos-sessions', [App\Http\Controllers\Retails\DailyReportController::class, 'getDataFromPosSessions'])->name('get-data-from-pos-sessions');
+                    Route::get('/stock-opname-report', [App\Http\Controllers\Retails\DailyReportController::class, 'getStockOpnameReport'])->name('stock-opname-report');
 
                     Route::get('/get-product-qty-pivot-today', [App\Http\Controllers\Retails\DailyReportController::class, 'getProductQtyPivotToday'])->name('get-product-qty-pivot-today');
                 });

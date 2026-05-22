@@ -279,6 +279,7 @@ $(document).ready(function() {
                 // Add filter data to the request
                 d.branch_id = $('#branch-id').val();
                 d.working_method = 2; // Processing Order
+                d.status = 5;
             },
             dataSrc: function(json) {
                 return json.data; // Map the 'data' field
