@@ -426,12 +426,12 @@
                                         <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                             <th class="min-w-125px">Nama Produk</th>
                                             <th class="min-w-125px text-center">Tgl Stock Awal</th>
-                                            <th class="min-w-125px text-center">Stock Awal</th>
+                                            <th class="min-w-125px text-center">Stok Awal</th>
                                             <th class="min-w-125px text-center">Stok Parting</th>
                                             <th class="min-w-125px text-center">Stok Masuk</th>
-                                            <th class="min-w-125px text-center">Stok Sales</th>
                                             <th class="min-w-125px text-center">Stok Keluar</th>
-                                            <th class="min-w-125px text-center">Stock Akhir</th>
+                                            <th class="min-w-125px text-center">Terjual</th>
+                                            <th class="min-w-125px text-center">Stok Akhir</th>
                                             <th class="min-w-125px text-center">Hasil SO</th>
                                             <th class="min-w-125px text-center">Selisih</th>
                                         </tr>
@@ -678,13 +678,13 @@ $(document).ready(function() {
                 className: 'text-center'
             },
             {
-                data: 'stok_sales',
-                name: 'stok_sales',
+                data: 'stok_out',
+                name: 'stok_out',
                 className: 'text-center'
             },
             {
-                data: 'stok_out',
-                name: 'stok_out',
+                data: 'stok_sales',
+                name: 'stok_sales',
                 className: 'text-center'
             },
             {

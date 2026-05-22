@@ -99,7 +99,7 @@ class MutasiController extends Controller
                         "in_quantity" => $productData['quantity'],
                         "date" => $productData['date'],
                         "reference" => "Mutasi #" . $mutasiId,
-                        "ref_type" => "IN",
+                        "ref_type" => $productData['type'],
                         "ref_id" => $mutasiId,
                     ]);
             } else {
@@ -109,7 +109,7 @@ class MutasiController extends Controller
                         "out_quantity" => $productData['quantity'],
                         "date" => $productData['date'],
                         "reference" => "Mutasi #" . $mutasiId,
-                        "ref_type" => "OUT",
+                        "ref_type" => $productData['type'],
                         "ref_id" => $mutasiId,
                     ]);
             }

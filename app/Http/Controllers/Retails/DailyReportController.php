@@ -495,8 +495,10 @@ class DailyReportController extends Controller
                 DB::raw("
                     (
                         COALESCE(latest_opname.quantity,    0)
+                        + COALESCE(logs_today.stok_parting, 0)
                         + COALESCE(logs_today.stok_in,   0)
                         - COALESCE(logs_today.stok_out,  0)
+                        - COALESCE(logs_today.stok_sales, 0)
                     ) as stock_akhir
                 "),
 
@@ -508,8 +510,10 @@ class DailyReportController extends Controller
                     (
                         (
                             COALESCE(latest_opname.quantity,   0)
-                            + COALESCE(logs_today.stok_in,  0)
-                            - COALESCE(logs_today.stok_out, 0)
+                            + COALESCE(logs_today.stok_parting, 0)
+                            + COALESCE(logs_today.stok_in,   0)
+                            - COALESCE(logs_today.stok_out,  0)
+                            - COALESCE(logs_today.stok_sales, 0)
                         )
                         - COALESCE(today_opname.quantity, 0)
                     ) as selisih
