@@ -96,7 +96,7 @@
                         <!--end::Label-->
                         <input type="date"
                             class="form-control form-control-solid text-gray-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
-                            id="date" value="{{ date('Y-m-d') }}" {{ Auth::user()->group_id != 1 ? 'readonly' : '' }}>
+                            id="date" value="{{ date('Y-m-d') }}">
                         <div class="text-gray-500 fs-7 me-2">Store</div>
                         <select
                             class="form-select form-select-transparent text-gray-900 fs-7 lh-1 fw-bold py-0 ps-3 w-auto"
