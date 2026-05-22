@@ -431,6 +431,23 @@ class DailyReportController extends Controller
                 DB::raw('DATE(stock_logs.date)')
             );
 
+        $salesLogs = DB::table('transaction_items')
+            ->select(
+                'stocks.id as stock_id',
+                DB::raw("SUM(transaction_items.quantity) as stok_sales")
+            )
+            ->join(
+                'transactions',
+                'transactions.id', '=', 'transaction_items.transaction_id'
+            )
+            ->join('stocks', function ($join) {
+                $join->on('stocks.product_id', '=', 'transaction_items.product_id')
+                    ->on('stocks.branch_id',  '=', 'transactions.branch_id');  // <- penting!
+            })
+            ->whereDate('transactions.transaction_date', $dateStr)
+            ->where('transactions.branch_id', $branchId)
+            ->groupBy('stocks.id');
+
         $latestOpname = DB::table(DB::raw("
             (
                 SELECT DISTINCT ON (stock_id)
@@ -459,6 +476,9 @@ class DailyReportController extends Controller
             ->leftJoin('products', 'products.id', '=', 'stocks.product_id')
             ->leftJoinSub($logsToday, 'logs_today', function ($join) {
                 $join->on('stocks.id', '=', 'logs_today.stock_id');
+            })
+            ->leftJoinSub($salesLogs, 'sales_logs', function ($join) {  // <- tambah join ini
+                $join->on('stocks.id', '=', 'sales_logs.stock_id');
             })
             ->leftJoinSub($latestOpname, 'latest_opname', function ($join) {
                 $join->on('stocks.id', '=', 'latest_opname.stock_id');
@@ -489,7 +509,8 @@ class DailyReportController extends Controller
                 DB::raw("COALESCE(logs_today.stok_parting, 0) as stok_parting"),
                 DB::raw("COALESCE(logs_today.stok_in,      0) as stok_in"),
                 DB::raw("COALESCE(logs_today.stok_out,     0) as stok_out"),
-                DB::raw("COALESCE(logs_today.stok_sales,   0) as stok_sales"),
+                // DB::raw("COALESCE(logs_today.stok_sales,   0) as stok_sales"),
+                DB::raw("COALESCE(sales_logs.stok_sales,       0) as stok_sales"),
 
                 // Stock Akhir = awal + in - out
                 DB::raw("
