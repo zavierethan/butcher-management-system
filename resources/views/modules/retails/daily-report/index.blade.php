@@ -578,13 +578,13 @@ $(document).ready(function() {
                 className: 'text-center'
             },
             {
-                data: 'stok_masuk',
-                name: 'stok_masuk',
+                data: 'stok_in',
+                name: 'stok_in',
                 className: 'text-center'
             },
             {
-                data: 'stok_keluar',
-                name: 'stok_keluar',
+                data: 'stok_out',
+                name: 'stok_out',
                 className: 'text-center'
             },
             {
