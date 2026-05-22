@@ -541,70 +541,6 @@ $(document).ready(function() {
 
     loadPivotReport(branch, initialDate);
 
-    const table = $("#kt_products_table").DataTable({
-        processing: true,
-        serverSide: true,
-        paging: true, // Enable pagination
-        pageLength: 10, // Number of rows per page
-        ajax: {
-            url: `{{ route('stocks.get-lists') }}`, // Replace with your route
-            type: 'GET',
-            data: function(d) {
-                // Send filter values to the server along with the pagination params
-                d.searchTerm = $('[data-kt-customer-table-filter="search"]').val();
-                d.startDate = $('#date').val();
-                d.endDate = $('#date').val();
-            },
-            dataSrc: function(json) {
-                return json.data; // Map the 'data' field
-            }
-        },
-        columns: [{
-                data: 'code',
-                name: 'code'
-            },
-            {
-                data: 'name',
-                name: 'name'
-            },
-            {
-                data: 'tanggal_stock_awal',
-                name: 'tanggal_stock_awal',
-                className: 'text-center'
-            },
-            {
-                data: 'stock_awal',
-                name: 'stock_awal',
-                className: 'text-center'
-            },
-            {
-                data: 'stok_in',
-                name: 'stok_in',
-                className: 'text-center'
-            },
-            {
-                data: 'stok_out',
-                name: 'stok_out',
-                className: 'text-center'
-            },
-            {
-                data: 'stock_akhir',
-                name: 'stock_akhir',
-                className: 'text-center'
-            },
-            {
-                data: 'hasil_stock_opname',
-                name: 'hasil_stock_opname',
-                className: 'text-center'
-            },
-            {
-                data: 'selisih',
-                name: 'selisih',
-                className: 'text-center'
-            }
-        ]
-    });
-
     const expenesTable = $("#kt_expenses_table").DataTable({
         processing: true,
         serverSide: true,
@@ -737,8 +673,8 @@ $(document).ready(function() {
                 className: 'text-center'
             },
             {
-                data: 'stok_masuk',
-                name: 'stok_masuk',
+                data: 'stok_in',
+                name: 'stok_in',
                 className: 'text-center'
             },
             {
@@ -747,8 +683,8 @@ $(document).ready(function() {
                 className: 'text-center'
             },
             {
-                data: 'stok_keluar',
-                name: 'stok_keluar',
+                data: 'stok_out',
+                name: 'stok_out',
                 className: 'text-center'
             },
             {
@@ -777,7 +713,6 @@ $(document).ready(function() {
         fetchIncomeComposition(branch, date);
         loadPivotReport(branch, date);
 
-        table.draw();
         expenesTable.draw();
         receivableTable.draw();
         stockOpnameReport.draw();
