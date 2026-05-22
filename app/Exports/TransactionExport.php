@@ -11,6 +11,8 @@ use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 use DB;
 use Auth;
@@ -114,42 +116,72 @@ class TransactionExport implements FromCollection, WithHeadings, WithCustomStart
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $sheet = $event->sheet;
+                $sheet = $event->sheet->getDelegate();
 
-                // Add additional information above the table
+                // Add header information
                 $sheet->setCellValue('A1', 'TANGGAL');
                 $sheet->setCellValue('B1', date("d M Y", strtotime($this->filters['start_date'])).' - '.date("d M Y", strtotime($this->filters['end_date'])));
                 $sheet->setCellValue('A2', 'CABANG');
                 $sheet->setCellValue('B2', $this->filters['branch_name'].' ('.$this->filters['branch_code'].')');
 
-                // Apply bold styling to the labels
+                // Apply bold styling to labels
                 $sheet->getStyle('A1:A2')->applyFromArray([
-                    'font' => ['bold' => true],
+                    'font' => ['bold' => true, 'size' => 11],
                 ]);
 
+                // Header row styling
                 $sheet->getStyle('A5:L5')->applyFromArray([
-                    'font' => ['bold' => true],
-                ]);
-
-                // Apply borders to the table
-                $rowCount = $sheet->getDelegate()->getHighestRow(); // Get last row with data
-                $columnCount = $sheet->getDelegate()->getHighestColumn(); // Get last column with data
-
-                $tableRange = "A5:{$columnCount}{$rowCount}";
-
-                $sheet->getStyle($tableRange)->applyFromArray([
+                    'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF'], 'size' => 11],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => '366092']
+                    ],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => Border::BORDER_THIN,
-                            'color' => ['argb' => '000000'], // Black color
+                            'color' => ['rgb' => '000000'],
                         ],
                     ],
                 ]);
 
-                // Auto-fit the content in all columns
-                foreach (range('A', $columnCount) as $column) {
-                    $sheet->getColumnDimension($column)->setAutoSize(true);
+                // Get last row with data
+                $rowCount = $sheet->getHighestRow();
+
+                // Data row styling
+                for ($row = 6; $row <= $rowCount; $row++) {
+                    $sheet->getStyle('A' . $row . ':L' . $row)->applyFromArray([
+                        'borders' => [
+                            'allBorders' => [
+                                'borderStyle' => Border::BORDER_THIN,
+                                'color' => ['rgb' => 'CCCCCC'],
+                            ],
+                        ],
+                    ]);
+
+                    // Format numbers (right align)
+                    $sheet->getStyle('E' . $row . ':H' . $row)->applyFromArray([
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_RIGHT],
+                        'numberFormat' => ['formatCode' => '#,##0.00'],
+                    ]);
                 }
+
+                // Column widths
+                $sheet->getColumnDimension('A')->setWidth(16);
+                $sheet->getColumnDimension('B')->setWidth(16);
+                $sheet->getColumnDimension('C')->setWidth(12);
+                $sheet->getColumnDimension('D')->setWidth(20);
+                $sheet->getColumnDimension('E')->setWidth(12);
+                $sheet->getColumnDimension('F')->setWidth(14);
+                $sheet->getColumnDimension('G')->setWidth(12);
+                $sheet->getColumnDimension('H')->setWidth(14);
+                $sheet->getColumnDimension('I')->setWidth(16);
+                $sheet->getColumnDimension('J')->setWidth(16);
+                $sheet->getColumnDimension('K')->setWidth(20);
+                $sheet->getColumnDimension('L')->setWidth(16);
+
+                // Freeze panes
+                $sheet->freezePane('A6');
             },
         ];
     }

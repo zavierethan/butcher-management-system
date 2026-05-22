@@ -11,11 +11,13 @@ use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 use DB;
 use Auth;
 
-class DailyExpensesExport implements FromCollection, WithHeadings, WithCustomStartCell, WithEvents, WithTitle, WithColumnFormatting
+class ReceivablePaymentsExport implements FromCollection, WithHeadings, WithCustomStartCell, WithEvents, WithTitle, WithColumnFormatting
 {
     protected $filters;
 
@@ -26,42 +28,47 @@ class DailyExpensesExport implements FromCollection, WithHeadings, WithCustomSta
 
     public function collection()
     {
-        $query = DB::table('daily_expenses')
+        $query = DB::table('receivable_payments')
             ->select(
-                'description',
-                'quantity',
-                'price',
-                DB::raw("
-                    CASE
-                        WHEN payment_method = 1 THEN 'TUNAI' ELSE 'TRANSFER'
-                    END AS payment_method
-                "),
-                'amount',
+                'customers.name as customer_name',
+                'invoices.invoice_no as invoice_number',
+                DB::raw("TO_CHAR(invoices.invoice_date, 'DD/MM/YYYY') as invoice_date"),
+                'receivable_payments.amount'
             )
-            ->where('branch_id', $this->filters['branch_id']);
+            ->leftJoin('invoices', 'invoices.id', '=', 'receivable_payments.invoice_id')
+            ->leftJoin('customers', 'customers.id', '=', 'invoices.customer_id')
+            ->where('receivable_payments.branch_id', $this->filters['branch_id'])
+            ->whereDate('receivable_payments.payment_date', '>=', $this->filters['start_date'])
+            ->whereDate('receivable_payments.payment_date', '<=', $this->filters['end_date']);
 
-        if (!empty($this->filters['start_date']) && !empty($this->filters['end_date'])) {
-            $query->whereDate('date', '>=', $this->filters['start_date'])
-                ->whereDate('date', '<=', $this->filters['end_date']);
-        }
-
-        return $query->orderBy('id', 'desc')->get();
+        return $query->orderBy('receivable_payments.id', 'desc')->get();
     }
 
     public function headings(): array
     {
         return [
-            'DESKRIPSI',
-            'QTY',
-            'HARGA / PCS',
-            'TUNAI / TRANSFER',
-            'TOTAL',
+            'CUSTOMER',
+            'NOMOR INVOICE',
+            'TANGGAL INVOICE',
+            'NOMINAL',
         ];
     }
 
     public function startCell(): string
     {
-        return 'A5'; // Data starts at A5
+        return 'A5';
+    }
+
+    public function title(): string
+    {
+        return 'Pembayaran Piutang';
+    }
+
+    public function columnFormats(): array
+    {
+        return [
+            'D' => '#,##0',
+        ];
     }
 
     public function registerEvents(): array
@@ -76,19 +83,19 @@ class DailyExpensesExport implements FromCollection, WithHeadings, WithCustomSta
                 $sheet->setCellValue('A2', 'CABANG');
                 $sheet->setCellValue('B2', $this->filters['branch_name'].' ('.$this->filters['branch_code'].')');
 
-                // Apply bold styling to the labels
+                // Apply bold styling to labels
                 $sheet->getStyle('A1:A2')->applyFromArray([
                     'font' => ['bold' => true, 'size' => 11],
                 ]);
 
                 // Header row styling
-                $sheet->getStyle('A5:E5')->applyFromArray([
+                $sheet->getStyle('A5:D5')->applyFromArray([
                     'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF'], 'size' => 11],
                     'fill' => [
-                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'fillType' => Fill::FILL_SOLID,
                         'startColor' => ['rgb' => '366092']
                     ],
-                    'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => Border::BORDER_THIN,
@@ -102,7 +109,7 @@ class DailyExpensesExport implements FromCollection, WithHeadings, WithCustomSta
 
                 // Data row styling
                 for ($row = 6; $row <= $rowCount; $row++) {
-                    $sheet->getStyle('A' . $row . ':E' . $row)->applyFromArray([
+                    $sheet->getStyle('A' . $row . ':D' . $row)->applyFromArray([
                         'borders' => [
                             'allBorders' => [
                                 'borderStyle' => Border::BORDER_THIN,
@@ -111,37 +118,22 @@ class DailyExpensesExport implements FromCollection, WithHeadings, WithCustomSta
                         ],
                     ]);
 
-                    // Format numbers in columns
-                    $sheet->getStyle('C' . $row . ':E' . $row)->applyFromArray([
-                        'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT],
+                    // Format numbers
+                    $sheet->getStyle('D' . $row)->applyFromArray([
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_RIGHT],
                         'numberFormat' => ['formatCode' => '#,##0'],
                     ]);
                 }
 
                 // Column widths
-                $sheet->getColumnDimension('A')->setWidth(30);
-                $sheet->getColumnDimension('B')->setWidth(15);
+                $sheet->getColumnDimension('A')->setWidth(25);
+                $sheet->getColumnDimension('B')->setWidth(18);
                 $sheet->getColumnDimension('C')->setWidth(18);
                 $sheet->getColumnDimension('D')->setWidth(18);
-                $sheet->getColumnDimension('E')->setWidth(18);
 
                 // Freeze panes
                 $sheet->freezePane('A6');
-            },
+            }
         ];
-    }
-
-    public function columnFormats(): array
-    {
-        return [
-            'B' => '#,##0',
-            'C' => '#,##0',
-            'E' => '#,##0'
-        ];
-    }
-
-    public function title(): string
-    {
-        return 'Data Pengeluaran';
     }
 }

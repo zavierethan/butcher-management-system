@@ -11,11 +11,13 @@ use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Carbon\Carbon;
 use DB;
 use Auth;
 
-class DailyStockExport implements FromCollection, WithHeadings, 
+class DailyStockExport implements FromCollection, WithHeadings,
     WithCustomStartCell, WithEvents, WithTitle, WithColumnFormatting {
 
     protected $filters;
@@ -133,7 +135,7 @@ class DailyStockExport implements FromCollection, WithHeadings,
                     ), 0)
                 ) AS \"Selisih\""),
 
-                DB::raw("pd.price * 
+                DB::raw("pd.price *
                     COALESCE((
                         SELECT SUM(sl.out_quantity)
                         FROM stock_logs sl
@@ -172,26 +174,64 @@ class DailyStockExport implements FromCollection, WithHeadings,
     public function registerEvents(): array {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $sheet = $event->sheet;
-                $sheet->setCellValue('A1', 'Tanggal');
+                $sheet = $event->sheet->getDelegate();
+
+                // Add header information
+                $sheet->setCellValue('A1', 'TANGGAL');
                 $sheet->setCellValue('B1', date("d M Y", strtotime($this->filters['start_date'])).' - '.date("d M Y", strtotime($this->filters['end_date'])));
                 $sheet->setCellValue('A2', 'CABANG');
                 $sheet->setCellValue('B2', $this->filters['branch_name'].' ('.$this->filters['branch_code'].')');
                 $sheet->setCellValue('A3', 'LAPORAN DI-GENERATE PER TANGGAL');
                 $sheet->setCellValue('B3', Carbon::now('Asia/Jakarta')->format('d M Y H:i:s'));
-                $sheet->getStyle('A1:A3')->applyFromArray(['font' => ['bold' => true]]);
-                $sheet->getStyle('A5:L5')->applyFromArray(['font' => ['bold' => true]]);
-                
-                $rowCount = $sheet->getDelegate()->getHighestRow();
-                $tableRange = "A5:L{$rowCount}";
-                $sheet->getStyle($tableRange)->applyFromArray([
+
+                // Apply bold styling to labels
+                $sheet->getStyle('A1:A3')->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 11],
+                ]);
+
+                // Header row styling
+                $sheet->getStyle('A5:L5')->applyFromArray([
+                    'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF'], 'size' => 11],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => '366092']
+                    ],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => [
-                        'allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
+                        'allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => '000000']],
                     ],
                 ]);
-                foreach (range('A', 'J') as $column) {
-                    $sheet->getColumnDimension($column)->setAutoSize(true);
+
+                // Get last row with data
+                $rowCount = $sheet->getHighestRow();
+
+                // Data row styling
+                for ($row = 6; $row <= $rowCount; $row++) {
+                    $sheet->getStyle('A' . $row . ':L' . $row)->applyFromArray([
+                        'borders' => [
+                            'allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'CCCCCC']],
+                        ],
+                    ]);
+
+                    // Format numbers (right align)
+                    for ($col = 'D'; ord($col) <= ord('L'); $col++) {
+                        $sheet->getStyle($col . $row)->applyFromArray([
+                            'alignment' => ['horizontal' => Alignment::HORIZONTAL_RIGHT],
+                            'numberFormat' => ['formatCode' => '#,##0'],
+                        ]);
+                    }
                 }
+
+                // Column widths
+                $sheet->getColumnDimension('A')->setWidth(14);
+                $sheet->getColumnDimension('B')->setWidth(14);
+                $sheet->getColumnDimension('C')->setWidth(20);
+                for ($col = 'D'; ord($col) <= ord('L'); $col++) {
+                    $sheet->getColumnDimension($col)->setWidth(14);
+                }
+
+                // Freeze panes
+                $sheet->freezePane('A6');
             }
         ];
     }
