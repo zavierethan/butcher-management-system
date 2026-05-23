@@ -36,6 +36,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/sales-trend', [App\Http\Controllers\Dashboards\GeneralDashboardController::class, 'getWeeklySales'])->name('sales-trend');
             Route::get('/top-selling-products', [App\Http\Controllers\Dashboards\GeneralDashboardController::class, 'topSellingProducts'])->name('top-selling-products');
             Route::get('/transactions/processing-order/lists', [App\Http\Controllers\OrderController::class, 'getProcessingOrderLists'])->name('get-processing-order-lists');
+            Route::get('/session-monitoring', [App\Http\Controllers\Dashboards\GeneralDashboardController::class, 'sessionMonitoring'])->name('session-monitoring');
         });
     });
 
@@ -536,6 +537,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/remaining-cash', [App\Http\Controllers\PosSessionController::class, 'getRemainingCashTodayByBranch']);
             Route::post('/close-transaction', [App\Http\Controllers\PosSessionController::class, 'closeSession'])->name('close-transaction');
             Route::get('/{id}', [App\Http\Controllers\PosSessionController::class, 'getSessionById'])->name('get-by-id');
+            Route::put('/{id}', [App\Http\Controllers\PosSessionController::class, 'updateSession'])->name('update');
         });
     });
 });

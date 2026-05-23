@@ -67,7 +67,7 @@
                     <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
                         <!--begin::Item-->
                         <li class="breadcrumb-item text-muted">
-                            <a href="index.html" class="text-muted text-hover-primary">Ritels</a>
+                            <a href="index.html" class="text-muted text-hover-primary">Dashboards</a>
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
@@ -76,7 +76,7 @@
                         </li>
                         <!--end::Item-->
                         <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Daily Reports</li>
+                        <li class="breadcrumb-item text-muted">Managements</li>
                         <!--end::Item-->
                     </ul>
                     <!--end::Breadcrumb-->
@@ -111,206 +111,93 @@
             <!--begin::Content container-->
             <div id="kt_app_content_container" class="app-container">
                 <!--begin::Row-->
-                <div class="row gy-5 g-xl-10">
-                    <!--begin::Col-->
-                    <div class="col-sm-6 col-xl-2 mb-5 mb-xl-10">
-                        <!--begin::Card widget 2-->
-                        <div class="card h-lg-100">
-                            <!--begin::Body-->
-                            <div class="card-body d-flex justify-content-between align-items-start flex-column">
-                                <!--begin::Icon-->
-                                <div class="m-0">
-                                    <i class="ki-duotone ki-chart-simple fs-2hx text-gray-600">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                        <span class="path3"></span>
-                                        <span class="path4"></span>
-                                    </i>
+                <!-- Stat Cards Row -->
+                <div class="row gy-5 g-xl-10 mb-5">
+                    <!-- Total Omzet Card -->
+                    <div class="col-sm-6 col-md-3">
+                        <div class="card bg-light-success">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <div class="bg-success rounded-1 p-3"
+                                        style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="ki-duotone ki-wallet fs-2 text-white">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                    </div>
                                 </div>
-                                <!--end::Icon-->
-                                <div class="d-flex flex-column my-7">
-                                    <!--begin::Number-->
-                                    <span class="fw-semibold fs-2x text-gray-800 lh-1 ls-n2"
-                                        id="total-transactions">0</span>
-                                    <!--end::Number-->
-                                </div>
-                                <!--begin::Badge-->
-                                <span class="badge badge-light-success fs-base">Total Transaksi</span>
-                                <!--end::Badge-->
-                            </div>
-                            <!--end::Body-->
-                        </div>
-                        <!--end::Card widget 2-->
-                    </div>
-                    <!--end::Col-->
-                    <!--begin::Col-->
-                    <div class="col-sm-6 col-xl-2 mb-xl-10">
-                        <!--begin::Card widget 2-->
-                        <div class="card h-lg-100">
-                            <!--begin::Body-->
-                            <div class="card-body d-flex justify-content-between align-items-start flex-column">
-                                <!--begin::Icon-->
-                                <div class="m-0">
-                                    <i class="ki-duotone ki-chart-simple fs-2hx text-gray-600">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                        <span class="path3"></span>
-                                        <span class="path4"></span>
-                                    </i>
-                                </div>
-                                <!--end::Icon-->
-                                <!--begin::Section-->
-                                <div class="d-flex flex-column my-7">
-                                    <!--begin::Number-->
-                                    <span class="fw-semibold fs-2x text-gray-800 lh-1 ls-n2" id="total-omzet">0</span>
-                                    <!--end::Number-->
-                                </div>
-                                <!--end::Section-->
-                                <!--begin::Badge-->
-                                <span class="badge badge-light-success fs-base">Total Omset</span>
-                                <!--end::Badge-->
-                            </div>
-                            <!--end::Body-->
-                        </div>
-                        <!--end::Card widget 2-->
-                    </div>
-                    <!--end::Col-->
-                    <!--begin::Col-->
-                    <div class="col-sm-6 col-xl-2 mb-xl-10">
-                        <!--begin::Card widget 2-->
-                        <div class="card h-lg-100">
-                            <!--begin::Body-->
-                            <div class="card-body d-flex justify-content-between align-items-start flex-column">
-                                <!--begin::Icon-->
-                                <div class="m-0">
-                                    <i class="ki-duotone ki-chart-simple fs-2hx text-gray-600">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                        <span class="path3"></span>
-                                        <span class="path4"></span>
-                                    </i>
-                                </div>
-                                <!--end::Icon-->
-                                <!--begin::Section-->
-                                <div class="d-flex flex-column my-7">
-                                    <!--begin::Number-->
-                                    <span class="fw-semibold fs-2x text-gray-800 lh-1 ls-n2" id="total-cash">0</span>
-                                    <!--end::Number-->
-                                </div>
-                                <!--end::Section-->
-                                <!--begin::Badge-->
-                                <div class="m-0">
-                                    <span class="badge badge-light-success fs-base">Total Laba Kotor</span>
-                                </div>
-                                <!--end::Badge-->
-                            </div>
-                            <!--end::Body-->
-                        </div>
-                        <!--end::Card widget 2-->
-                    </div>
-                    <!--end::Col-->
-                    <!--begin::Col-->
-                    <div class="col-sm-6 col-xl-2 mb-xl-10">
-                        <!--begin::Card widget 2-->
-                        <div class="card h-lg-100">
-                            <!--begin::Body-->
-                            <div class="card-body d-flex justify-content-between align-items-start flex-column">
-                                <!--begin::Icon-->
-                                <div class="m-0">
-                                    <i class="ki-duotone ki-chart-simple fs-2hx text-gray-600">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                        <span class="path3"></span>
-                                        <span class="path4"></span>
-                                    </i>
-                                </div>
-                                <!--end::Icon-->
-                                <!--begin::Section-->
-                                <div class="d-flex flex-column my-7">
-                                    <!--begin::Number-->
-                                    <span class="fw-semibold fs-2x text-gray-800 lh-1 ls-n2"
-                                        id="total-receivable">0</span>
-                                    <!--end::Number-->
-                                </div>
-                                <!--end::Section-->
-                                <!--begin::Badge-->
-                                <div class="m-0">
-                                    <span class="badge badge-light-success fs-base">Total Laba Bersih</span>
-                                </div>
-                                <!--end::Badge-->
-                            </div>
-                            <!--end::Body-->
-                        </div>
-                        <!--end::Card widget 2-->
-                    </div>
-                    <!--end::Col-->
-                    <!--begin::Col-->
-                    <div class="col-sm-6 col-xl-2 mb-xl-10">
-                        <!--begin::Card widget 2-->
-                        <div class="card h-lg-100">
-                            <!--begin::Body-->
-                            <div class="card-body d-flex justify-content-between align-items-start flex-column">
-                                <!--begin::Icon-->
-                                <div class="m-0">
-                                    <i class="ki-duotone ki-chart-simple fs-2hx text-gray-600">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                        <span class="path3"></span>
-                                        <span class="path4"></span>
-                                    </i>
-                                </div>
-                                <!--end::Icon-->
-                                <!--begin::Section-->
-                                <div class="d-flex flex-column my-7">
-                                    <!--begin::Number-->
-                                    <span class="fw-semibold fs-2x text-gray-800 lh-1 ls-n2"
-                                        id="total-transfer">0</span>
-                                    <!--end::Number-->
-                                </div>
-                                <!--end::Section-->
-                                <div class="m-0">
-                                    <span class="badge badge-light-success fs-base">Pengeluaran Operasional</span>
+                                <div class="d-flex flex-column">
+                                    <span class="text-gray-700 fs-7 fw-semibold mb-2">TOTAL OMZET</span>
+                                    <span class="fw-bold fs-2 text-gray-900" id="total-omzet">Rp.0</span>
                                 </div>
                             </div>
-                            <!--end::Body-->
                         </div>
-                        <!--end::Card widget 2-->
                     </div>
-                    <!--end::Col-->
-                    <!--begin::Col-->
-                    <div class="col-sm-6 col-xl-2 mb-5 mb-xl-10">
-                        <!--begin::Card widget 2-->
-                        <div class="card h-lg-100">
-                            <!--begin::Body-->
-                            <div class="card-body d-flex justify-content-between align-items-start flex-column">
-                                <!--begin::Icon-->
-                                <div class="m-0">
-                                    <i class="ki-duotone ki-chart-simple fs-2hx text-gray-600">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                        <span class="path3"></span>
-                                        <span class="path4"></span>
-                                    </i>
+
+                    <!-- Total Uang Tunai Card -->
+                    <div class="col-sm-6 col-md-3">
+                        <div class="card bg-light-success">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <div class="bg-success rounded-1 p-3"
+                                        style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="ki-duotone ki-wallet fs-2 text-white">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                    </div>
                                 </div>
-                                <!--end::Icon-->
-                                <!--begin::Section-->
-                                <div class="d-flex flex-column my-7">
-                                    <!--begin::Number-->
-                                    <span class="fw-semibold fs-2x text-gray-800 lh-1 ls-n2"
-                                        id="total-expenses">0</span>
-                                    <!--end::Number-->
+                                <div class="d-flex flex-column">
+                                    <span class="text-gray-700 fs-7 fw-semibold mb-2">TOTAL PRODUK TERJUAL</span>
+                                    <span class="fw-bold fs-2 text-gray-900" id="total-cash">Rp.0</span>
                                 </div>
-                                <!--end::Section-->
-                                <!--begin::Badge-->
-                                <span class="badge badge-light-success fs-base">Pengeluaran Operasional</span>
-                                <!--end::Badge-->
                             </div>
-                            <!--end::Body-->
                         </div>
-                        <!--end::Card widget 2-->
                     </div>
-                    <!--end::Col-->
+
+                    <!-- Uang di Kasir Card -->
+                    <div class="col-sm-6 col-md-3">
+                        <div class="card bg-light-success">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <div class="bg-success rounded-1 p-3"
+                                        style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="ki-duotone ki-wallet fs-2 text-white">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <span class="text-gray-700 fs-7 fw-semibold mb-2">TOTAL PENGELUARAN</span>
+                                    <span class="fw-bold fs-2 text-gray-900" id="total-expenses">Rp.0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Diskon Card -->
+                    <div class="col-sm-6 col-md-3">
+                        <div class="card bg-light-success">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <div class="bg-success rounded-1 p-3"
+                                        style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="ki-duotone ki-wallet fs-2 text-white">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <span class="text-gray-700 fs-7 fw-semibold mb-2">TOTAL PIUTANG CUSTOMER</span>
+                                    <span class="fw-bold fs-2 text-gray-900" id="total-discount">Rp.0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                <!-- End Stat Cards Row -->
 
                 <div class="row g-5 g-xl-10 mb-xl-10">
                     <!--begin::Col-->
@@ -351,22 +238,35 @@
                 <div class="row mt-10">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Transaksi Processing Order</h3>
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h3 class="card-title">Monitoring Session Store</h3>
+                                <div class="d-flex align-items-center fw-bold gap-2">
+                                    <div class="text-gray-500 fs-7">Periode</div>
+                                    <input type="date"
+                                        class="form-control form-control-sm form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
+                                        id="session-start-date" value="<?php echo date('Y-m-d'); ?>" /> -
+                                    <input type="date"
+                                        class="form-control form-control-sm form-control-solid text-graY-800 fs-base lh-1 fw-bold py-0 ps-3 w-auto"
+                                        id="session-end-date" value="<?php echo date('Y-m-d'); ?>" />
+                                </div>
                             </div>
                             <div class="card-body">
-                                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_transactions_table">
+                                <table class="table table-hover align-middle table-row-dashed fs-6 gy-5"
+                                    id="kt_sessions_table">
                                     <thead>
-                                        <tr>
-                                            <th>Nomor Transaksi</th>
-                                            <th>Tanggal Transaksi</th>
-                                            <th>Customer</th>
-                                            <th>Status</th>
-                                            <th class="text-center">Action</th>
+                                        <tr class="fw-bolder fs-7 text-uppercase gs-0">
+                                            <th class="min-w-125px">Store</th>
+                                            <th class="min-w-125px">User</th>
+                                            <th class="min-w-125px">Jam Buka</th>
+                                            <th class="min-w-125px">Jam Tutup</th>
+                                            <th class="min-w-125px">Opening Cash</th>
+                                            <th class="min-w-125px">Closing Cash</th>
+                                            <th class="min-w-125px">Actual Cash</th>
+                                            <th class="min-w-125px text-center">Status</th>
+                                            <th class="min-w-125px text-center">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- Data akan diisi via AJAX -->
                                     </tbody>
                                 </table>
                             </div>
@@ -382,6 +282,82 @@
     <!--end::Content wrapper-->
 </div>
 <!--end:::Main-->
+
+<!-- Edit Session Modal -->
+<div class="modal fade" id="editSessionModal" tabindex="-1" aria-labelledby="editSessionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editSessionModalLabel">Edit Session</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editSessionForm">
+                <div class="modal-body">
+                    <input type="hidden" id="sessionId" name="session_id">
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Store</label>
+                            <input type="text" class="form-control" id="sessionBranch" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">User</label>
+                            <input type="text" class="form-control" id="sessionUser" readonly>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Jam Buka</label>
+                            <input type="datetime-local" class="form-control" id="sessionOpenedAt" name="opened_at">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Jam Tutup</label>
+                            <input type="datetime-local" class="form-control" id="sessionClosedAt" name="closed_at">
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Opening Cash</label>
+                            <input type="number" class="form-control" id="sessionOpeningCash" name="opening_cash" step="0.01">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Closing Cash</label>
+                            <input type="number" class="form-control" id="sessionClosingCash" name="closing_cash" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Expected Cash</label>
+                            <input type="number" class="form-control" id="sessionExpectedCash" name="expected_cash" step="0.01">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Status</label>
+                            <select class="form-control" id="sessionStatus" name="status">
+                                <option value="OPEN">OPEN</option>
+                                <option value="CLOSE">CLOSE</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-control" id="sessionNotes" name="notes" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('script')
@@ -394,63 +370,80 @@ $(document).ready(function() {
     // AJAX untuk tabel Processing Order
     $('.loader').hide();
 
-    const table = $("#kt_transactions_table").DataTable({
+    $('[data-kt-customer-table-filter="search"]').on('keyup', function() {
+        const searchTerm = $(this).val(); // Get the value from the search input
+        sessionsTable.search(searchTerm).draw(); // Trigger the search and refresh the DataTable
+    });
+
+    const sessionsTable = $("#kt_sessions_table").DataTable({
         processing: true,
-        order: [
-            [0, 'desc']
-        ],
         serverSide: true,
         paging: true, // Enable pagination
-        pageLength: 10, // Number of rows per page
+        pageLength: 5, // Number of rows per page
         ajax: {
-            url: `{{route('orders.get-lists')}}`, // Replace with your route
+            url: `{{route('dashboards.session-monitoring')}}`, // Replace with your route
             type: 'GET',
-            data: function (d) {
-                // Add filter data to the request
-                d.branch_id = $('#branch-id').val();
-                d.working_method = 2; // Processing Order
+            data: function(d) {
+                // Add filter data to the request - use session filter dates if available, otherwise use main filters
+                d.start_date = $('#session-start-date').val();
+                d.end_date = $('#session-end-date').val();
             },
             dataSrc: function(json) {
                 return json.data; // Map the 'data' field
             }
         },
-        columns: [
-            {
-                data: 'code',
-                name: 'code'
+        columns: [{
+                data: 'branch_name',
+                name: 'branch_name',
             },
             {
-                data: 'transaction_date',
-                name: 'transaction_date',
+                data: 'username',
+                name: 'username',
             },
             {
-                data: 'customer_name',
-                name: 'customer_name'
+                data: 'opened_at',
+                name: 'opened_at',
+            },
+            {
+                data: 'closed_at',
+                name: 'closed_at',
+            },
+            {
+                data: 'opening_cash',
+                name: 'opening_cash',
+                className: 'text-end',
+                render: function(data) {
+                    return formatCurrency(data);
+                }
+            },
+            {
+                data: 'closing_cash',
+                name: 'closing_cash',
+                className: 'text-end',
+                render: function(data) {
+                    return formatCurrency(data);
+                }
+            },
+            {
+                data: 'expected_cash',
+                name: 'expected_cash',
+                className: 'text-end',
+                render: function(data) {
+                    return formatCurrency(data);
+                }
             },
             {
                 data: 'status',
                 name: 'status',
                 className: 'text-center',
                 render: function(data, type, row) {
-                    var status = "";
-
-                    if (row.status == 1) {
-                        status = `<span class="badge bg-success text-dark">Lunas</span>`
+                    if (data === 'OPEN') {
+                        return '<span class="badge badge-light-success">Open</span>';
+                    } else if (data === 'CLOSE') {
+                        return '<span class="badge badge-light-danger">Closed</span>';
+                    } else {
+                        return data; // Return the raw status if it doesn't match known values
                     }
-
-                    if (row.status == 2) {
-                        status = `<span class="badge bg-warning text-dark">Piutang</span>`
-                    }
-
-                    if (row.status == 3) {
-                        status = `<span class="badge bg-warning text-dark">Pending (Transfer)</span>`
-                    }
-
-                    if (row.status == 4) {
-                        status = `<span class="badge bg-danger text-dark">Batal</span>`
-                    }
-
-                    return status;
                 }
             },
             {
@@ -461,22 +454,137 @@ $(document).ready(function() {
                 render: function(data, type, row) {
                     return `
                         <div class="text-center">
-                            <a href="/orders/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail Transaksi"><i class="fa-solid fa-magnifying-glass"></i></a>
-                        <div>
+                            <button class="btn btn-sm btn-light btn-active-light-primary btn-edit-session" data-session-id="${row.id}" title="Edit"><i class="fa-solid fa-edit"></i>Edit</button>
+                        </div>
                     `;
                 }
             }
         ]
     });
 
-    $('[data-kt-customer-table-filter="search"]').on('keyup', function() {
-        const searchTerm = $(this).val(); // Get the value from the search input
-        table.search(searchTerm).draw(); // Trigger the search and refresh the DataTable
+    $('#session-start-date, #session-end-date').on('change', function() {
+        sessionsTable.draw(); // Trigger DataTable redraw with updated filter values
     });
 
-    $('#start-date, #end-date, #customer, #payment-method, #status, #branch-id').on('change', function () {
-        table.draw(); // Trigger DataTable redraw with updated filter values
+    // Handle edit session button click
+    $(document).on('click', '.btn-edit-session', function(e) {
+        e.preventDefault();
+        const sessionId = $(this).data('session-id');
+
+        // Fetch session data
+        $.ajax({
+            url: `/pos-session/${sessionId}`, // Get session by id endpoint
+            method: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    const sessionData = response.data;
+
+                    // Find the full row data from DataTable
+                    const rowData = sessionsTable.row((idx, data) => data.id === sessionId).data();
+
+                    // Populate modal
+                    $('#sessionId').val(sessionId);
+                    $('#sessionBranch').val(rowData.branch_name || '');
+                    $('#sessionUser').val(rowData.username || '');
+                    $('#sessionOpenedAt').val(formatDateTimeForInput(rowData.opened_at));
+                    $('#sessionClosedAt').val(formatDateTimeForInput(rowData.closed_at));
+                    $('#sessionOpeningCash').val(rowData.opening_cash || 0);
+                    $('#sessionClosingCash').val(rowData.closing_cash || 0);
+                    $('#sessionExpectedCash').val(rowData.expected_cash || 0);
+                    $('#sessionStatus').val(rowData.status || 'OPEN');
+                    $('#sessionNotes').val(rowData.notes || '');
+
+                    // Show modal
+                    const modal = new bootstrap.Modal(document.getElementById('editSessionModal'));
+                    modal.show();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching session data:", error);
+                alert('Failed to load session data');
+            }
+        });
     });
+
+    // Handle edit session form submit
+    $('#editSessionForm').on('submit', function(e) {
+        e.preventDefault();
+
+        const sessionId = $('#sessionId').val();
+        const formData = {
+            session_id: sessionId,
+            opened_at: $('#sessionOpenedAt').val(),
+            closed_at: $('#sessionClosedAt').val(),
+            opening_cash: $('#sessionOpeningCash').val(),
+            closing_cash: $('#sessionClosingCash').val(),
+            expected_cash: $('#sessionExpectedCash').val(),
+            status: $('#sessionStatus').val(),
+            notes: $('#sessionNotes').val()
+        };
+
+        $.ajax({
+            url: `/pos-session/${sessionId}`,
+            method: 'PUT',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(formData),
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    alert('Session updated successfully');
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editSessionModal'));
+                    modal.hide();
+                    // Refresh table
+                    sessionsTable.draw();
+                } else {
+                    alert('Failed to update session: ' + (response.message || 'Unknown error'));
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error updating session:", error);
+                alert('Failed to update session');
+            }
+        });
+    });
+
+    // Helper function to format datetime for input field
+    function formatDateTimeForInput(dateString) {
+        if (!dateString) return '';
+
+        // If it's already in the right format, return it
+        if (dateString && dateString.includes('T')) {
+            return dateString.split('.')[0]; // Remove milliseconds if present
+        }
+
+        // Parse and format
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '';
+
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+
+    // Helper function to format currency as Rupiah
+    function formatCurrency(value) {
+        if (!value || value === null || value === '') return 'Rp. 0';
+
+        const numValue = parseFloat(value);
+        if (isNaN(numValue)) return 'Rp. 0';
+
+        return numValue.toLocaleString('US', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
+    }
 
     $.ajax({
         url: '/dashboards/transaction-summary', // API Laravel
@@ -484,8 +592,8 @@ $(document).ready(function() {
         dataType: 'json',
         success: function(response) {
             console.log(response);
-            $('#total-transactions').text(response.total_transactions);
-            $('#total-omzet').text(response.total_omzet);
+            $('#total-transactions').text('Rp. ' + response.total_transactions);
+            $('#total-omzet').text('Rp. ' + response.total_omzet);
         },
         error: function(xhr, status, error) {
             console.error("Error fetching data:", error);

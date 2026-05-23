@@ -100,4 +100,41 @@ class GeneralDashboardController extends Controller
 
         return response()->json([$chartData]);
     }
+
+    public function sessionMonitoring(Request $request) {
+        $query = DB::table('pos_sessions')
+            ->leftJoin('branches', 'pos_sessions.branch_id', '=', 'branches.id')
+            ->leftJoin('users', 'pos_sessions.user_id', '=', 'users.id')
+            ->select(
+                'pos_sessions.*',
+                'branches.name as branch_name',
+                'users.name as username'
+            );
+
+        // Get date filters
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        // Apply date filter if provided
+        if ($startDate) {
+            $query->whereDate('pos_sessions.created_at', '>=', $startDate);
+        }
+        if ($endDate) {
+            $query->whereDate('pos_sessions.created_at', '<=', $endDate);
+        }
+
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 10);
+
+        $totalRecords = DB::table('pos_sessions')->count();
+        $filteredRecords = $query->count();
+        $data = $query->orderBy('pos_sessions.id', 'desc')->skip($start)->take($length)->get();
+
+        return response()->json([
+            'draw' => $request->input('draw'),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $data
+        ]);
+    }
 }

@@ -231,4 +231,68 @@ class PosSessionController extends Controller
             'data' => $data
         ]);
     }
+
+    public function updateSession(Request $request, $id)
+    {
+        $request->validate([
+            'opened_at' => 'nullable|date_format:Y-m-d\TH:i',
+            'closed_at' => 'nullable|date_format:Y-m-d\TH:i',
+            'opening_cash' => 'nullable|numeric|min:0',
+            'closing_cash' => 'nullable|numeric|min:0',
+            'expected_cash' => 'nullable|numeric|min:0',
+            'status' => 'nullable|in:OPEN,CLOSE',
+            'notes' => 'nullable|string'
+        ]);
+
+        $session = DB::table('pos_sessions')->where('id', $id)->first();
+
+        if (!$session) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session not found'
+            ], 404);
+        }
+
+        $updateData = [];
+
+        if ($request->has('opened_at') && $request->opened_at) {
+            $updateData['opened_at'] = Carbon::createFromFormat('Y-m-d\TH:i', $request->opened_at);
+        }
+        if ($request->has('closed_at') && $request->closed_at) {
+            $updateData['closed_at'] = Carbon::createFromFormat('Y-m-d\TH:i', $request->closed_at);
+        }
+        if ($request->has('opening_cash')) {
+            $updateData['opening_cash'] = $request->opening_cash;
+        }
+        if ($request->has('closing_cash')) {
+            $updateData['closing_cash'] = $request->closing_cash;
+        }
+        if ($request->has('expected_cash')) {
+            $updateData['expected_cash'] = $request->expected_cash;
+        }
+        if ($request->has('status')) {
+            $updateData['status'] = $request->status;
+        }
+        if ($request->has('notes')) {
+            $updateData['notes'] = $request->notes;
+        }
+
+        $updateData['updated_at'] = now();
+
+        try {
+            DB::table('pos_sessions')
+                ->where('id', $id)
+                ->update($updateData);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Session updated successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update session: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
