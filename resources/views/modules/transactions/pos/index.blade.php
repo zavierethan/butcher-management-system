@@ -2074,12 +2074,65 @@ $(document).ready(function() {
                                     allowOutsideClick: false
                                 });
                             } else if (xhr.status === 400) {
-                                Swal.fire({
-                                    title: 'Warning !',
-                                    text: xhr.responseJSON.message,
-                                    icon: 'warning',
-                                    allowOutsideClick: false
-                                });
+                                // Check if it's a credit limit exceeded error
+                                if (xhr.responseJSON && xhr.responseJSON.message === 'Customer credit limit exceeded') {
+                                    const creditLimit = xhr.responseJSON.customer_credit_limit || 0;
+                                    const totalDebt = xhr.responseJSON.customer_total_debt || 0;
+                                    const newDebt = totalDebt + totalAmount;
+                                    const exceededAmount = newDebt - creditLimit;
+
+                                    Swal.fire({
+                                        title: 'Credit Limit Exceeded!',
+                                        icon: 'warning',
+                                        html: `
+                                            <div class="text-start">
+                                                <p><strong>Customer:</strong> ${$('#customer option:selected').text()}</p>
+                                                <hr>
+                                                <p class="mb-2"><strong>Credit Limit:</strong> <span class="text-primary">Rp. ${formatThausand(creditLimit)}</span></p>
+                                                <p class="mb-2"><strong>Current Debt:</strong> <span class="text-warning">Rp. ${formatThausand(totalDebt)}</span></p>
+                                                <p class="mb-2"><strong>Transaction Amount:</strong> <span class="text-info">Rp. ${formatThausand(totalAmount)}</span></p>
+                                                <hr>
+                                                <p class="mb-0"><strong>Total Debt After:</strong> <span class="text-danger">Rp. ${formatThausand(newDebt)}</span></p>
+                                                <p class="mb-0"><strong>Exceeded by:</strong> <span class="text-danger">Rp. ${formatThausand(exceededAmount)}</span></p>
+                                            </div>
+                                        `,
+                                        showDenyButton: true,
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Ubah Metode Pembayaran',
+                                        denyButtonText: 'Kurangi Jumlah',
+                                        cancelButtonText: 'Batal',
+                                        allowOutsideClick: false
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            // Scroll to payment method section
+                                            $('html, body').animate({
+                                                scrollTop: $('#payment-method').offset().top - 100
+                                            }, 500);
+
+                                            Swal.fire({
+                                                title: 'Info',
+                                                text: 'Silahkan pilih metode pembayaran yang berbeda (CASH atau TRANSFER)',
+                                                icon: 'info',
+                                                confirmButtonText: 'Mengerti'
+                                            });
+                                        } else if (result.isDenied) {
+                                            Swal.fire({
+                                                title: 'Info',
+                                                text: 'Silahkan kurangi jumlah produk untuk mengurangi total transaksi',
+                                                icon: 'info',
+                                                confirmButtonText: 'Mengerti'
+                                            });
+                                        }
+                                    });
+                                } else {
+                                    // Generic 400 error handling
+                                    Swal.fire({
+                                        title: 'Warning !',
+                                        text: xhr.responseJSON.message || 'Terjadi kesalahan',
+                                        icon: 'warning',
+                                        allowOutsideClick: false
+                                    });
+                                }
                             } else if (xhr.status === 0) {
                                 // Network error
                                 Swal.fire({

@@ -39,6 +39,17 @@ class TransactionController extends Controller
             $paymentMethod = $request->payment_method;
             $totalAmount = $request->total_amount;
 
+            $customerCreditLimit = $this->getCustomerCreditLimit($request->customer_id);
+            $customerTotalDebt = $this->getCustomerTotalDebt($request->customer_id);
+
+            if($paymentMethod == '2' && ($customerTotalDebt + $totalAmount) > $customerCreditLimit) {
+                return response()->json([
+                    'message' => 'Customer credit limit exceeded',
+                    'customer_credit_limit' => $customerCreditLimit,
+                    'customer_total_debt' => $customerTotalDebt
+                ], 400);
+            }
+
             // Journal entries based on payment method
             if ($paymentMethod == '1') {
                 $status = 1;
@@ -205,6 +216,26 @@ class TransactionController extends Controller
             'available_overpayment' => $availableOverpayment ?? 0,
             'net_receivable' => max(0, $netReceivable) // tidak bisa minus
         ];
+    }
+
+    private function getCustomerCreditLimit($customerId)
+    {
+        $creditLimit = DB::table('customer_credit_policies')
+            ->where('customer_id', $customerId)
+            ->value('credit_limit');
+
+        return $creditLimit;
+    }
+
+    private function getCustomerTotalDebt($customerId)
+    {
+        $totalDebt = DB::table('transactions')
+            ->where('customer_id', $customerId)
+            ->where('payment_method', '=', 2) // payament_method 2 = Credit (Piutang)
+            ->where('status', '!=', 1) // status 1 = Lunas
+            ->sum('total_amount');
+
+        return $totalDebt ?? 0;
     }
 
 }
