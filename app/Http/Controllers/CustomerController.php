@@ -57,7 +57,7 @@ class CustomerController extends Controller
 
         $totalRecords = $query->count();
         $filteredRecords = $query->count();
-        $data = $query->orderBy('customers.id', 'desc')->skip($start)->take($length)->get();
+        $data = $query->orderBy('customers.name', 'asc')->skip($start)->take($length)->get();
 
         $response = [
             'draw' => $request->input('draw'),
