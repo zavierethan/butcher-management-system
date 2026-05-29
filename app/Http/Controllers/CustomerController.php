@@ -164,11 +164,14 @@ class CustomerController extends Controller
     }
 
     public function creditPoliciesSave(Request $request) {
-        DB::table('customer_credit_policies')->insert([
-            "customer_id" => $request->customer_id,
-            "credit_limit" => $request->credit_limit,
-            "due_date_interval" => $request->due_date_interval,
-        ]);
+
+        DB::table('customer_credit_policies')->updateOrInsert(
+            ['customer_id' => $request->customer_id],
+            [
+                "credit_limit" => $request->credit_limit,
+                "due_date_interval" => $request->due_date_interval,
+            ]
+        );
 
         return redirect()->route('customers.index');
     }
