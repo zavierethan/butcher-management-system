@@ -50,7 +50,7 @@ class CustomerController extends Controller
         $searchValue = $request->input('search.value');
         if (!empty($searchValue)) {
             $query->where(function ($q) use ($searchValue) {
-                $q->where('name', 'like', '%' . strtoupper($searchValue) . '%');
+                $q->where('customers.name', 'like', '%' . strtoupper($searchValue) . '%');
             });
         }
 
@@ -59,7 +59,7 @@ class CustomerController extends Controller
 
         $totalRecords = $query->count();
         $filteredRecords = $query->count();
-        $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get();
+        $data = $query->orderBy('customers.id', 'desc')->skip($start)->take($length)->get();
 
         $response = [
             'draw' => $request->input('draw'),
@@ -126,12 +126,12 @@ class CustomerController extends Controller
             $query->where('name', 'like', $params.'%');
         }
 
-        $data = $query->orderBy('id', 'desc')->get();
+        $data = $query->orderBy('customers.id', 'desc')->get();
 
         $totalRecords = $query->count();
         $filteredRecords = $query->count();
 
-        $data = $query->orderBy('id', 'desc')->get();
+        $data = $query->orderBy('customers.id', 'desc')->get();
 
         $response = [
             'draw' => $request->input('draw'),
