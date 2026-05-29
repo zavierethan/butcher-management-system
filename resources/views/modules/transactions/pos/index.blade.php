@@ -2092,8 +2092,6 @@ $(document).ready(function() {
                                                 <p class="mb-2"><strong>Current Debt:</strong> <span class="text-warning">Rp. ${formatThausand(totalDebt)}</span></p>
                                                 <p class="mb-2"><strong>Transaction Amount:</strong> <span class="text-info">Rp. ${formatThausand(totalAmount)}</span></p>
                                                 <hr>
-                                                <p class="mb-0"><strong>Total Debt After:</strong> <span class="text-danger">Rp. ${formatThausand(newDebt)}</span></p>
-                                                <p class="mb-0"><strong>Exceeded by:</strong> <span class="text-danger">Rp. ${formatThausand(exceededAmount)}</span></p>
                                             </div>
                                         `,
                                         showDenyButton: true,
