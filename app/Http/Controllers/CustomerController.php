@@ -49,9 +49,7 @@ class CustomerController extends Controller
         // Apply global search if provided
         $searchValue = $request->input('search.value');
         if (!empty($searchValue)) {
-            $query->where(function ($q) use ($searchValue) {
-                $q->where('customers.name', 'like', '%' . strtoupper($searchValue) . '%');
-            });
+            $query->whereRaw('customers.name ILIKE ?', ['%' . $searchValue . '%']);
         }
 
         $start = $request->input('start', 0);
