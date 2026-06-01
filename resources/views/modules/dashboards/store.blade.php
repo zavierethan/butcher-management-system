@@ -321,6 +321,10 @@ $(document).ready(function() {
                         status = `<span class="badge bg-danger text-dark">Batal</span>`
                     }
 
+                    if (row.status == 5) {
+                        status = `<span class="badge bg-warning text-dark">Pending (Processing Order)</span>`
+                    }
+
                     return status;
                 }
             },

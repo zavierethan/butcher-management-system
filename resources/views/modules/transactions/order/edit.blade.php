@@ -122,9 +122,6 @@
                                                     <option value="3"
                                                         <?php echo ($detailTransaction->payment_method == 3) ? "selected" : ""; ?>>
                                                         Transfer</option>
-                                                    <option value="4"
-                                                        <?php echo ($detailTransaction->payment_method == 4) ? "selected" : ""; ?>>
-                                                        COD</option>
                                                 </select>
                                             </div>
                                         </div>

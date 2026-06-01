@@ -140,7 +140,7 @@
         processing: true,
         serverSide: true,
         paging: true, // Enable pagination
-        pageLength: 10, // Number of rows per page
+        pageLength: 50, // Number of rows per page
         ajax: {
             url: `{{ route('stocks.get-lists') }}`, // Replace with your route
             type: 'GET',
