@@ -870,6 +870,8 @@
                             <input class="form-control form-control-md form-control-solid" type="text" id="product_name"
                                 readonly />
                             <input class="form-control form-control-md form-control-solid" type="hidden"
+                                id="item_id" />
+                            <input class="form-control form-control-md form-control-solid" type="hidden"
                                 id="product_id" />
                         </div>
                     </div>
@@ -1292,6 +1294,9 @@
 
 @section('script')
 <script>
+// Counter untuk generate unique ID setiap kali item ditambahkan ke cart
+let cartItemCounter = 0;
+
 $(document).ready(function() {
     checkOpenSession();
     getRemainingCashToday();
@@ -1499,8 +1504,8 @@ $(document).ready(function() {
     $(document).on('click', '.remove-item', function(e) {
 
         e.preventDefault();
-        // Get the product ID from the button's data attribute
-        const productId = $(this).data('product-id');
+        // Get the unique item ID from the button's data attribute
+        const itemId = $(this).data('item-id');
 
         Swal.fire({
             title: 'Apakah anda yakin ?',
@@ -1512,7 +1517,7 @@ $(document).ready(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 // Remove the product item from the cart
-                $(`#product-id-${productId}`).remove();
+                $(`#${itemId}`).remove();
                 calculateTotals();
             }
         });
@@ -1522,8 +1527,9 @@ $(document).ready(function() {
 
         e.preventDefault();
 
+        const itemId = $(this).data('item-id');
         const productId = $(this).data('product-id');
-        const cartItem = $(`#product-id-${productId}`);
+        const cartItem = $(`#${itemId}`);
 
         // IMPROVED: Use safe extraction for all values
         const currentProductPrice = extractNumericValue(cartItem.find('.base-price'));
@@ -1535,6 +1541,7 @@ $(document).ready(function() {
 
         const productName = $(this).data('product-name');
 
+        $("#kt_modal_edit_product_item #item_id").val(itemId);
         $("#kt_modal_edit_product_item #product_id").val(productId);
         $("#kt_modal_edit_product_item #product_name").val(productName);
         $("#kt_modal_edit_product_item #product_price").val(formatThausand(currentProductPrice));
@@ -1591,116 +1598,60 @@ $(document).ready(function() {
             return;
         }
 
-        // Check if the product already exists in the cart
-        var existingProduct = $(`#product-id-${productId}`);
+        // CHANGED: Always add as new item, even if product already exists in cart
+        var grossPrice = mround(productPrice * productQuantity);
+        // FIXED: Discount applies only for whole kg (floor of quantity)
+        var totalDiscount = productDiscount * Math.floor(productQuantity);
+        var nettPrice = grossPrice - totalDiscount;
 
-        if (existingProduct.length > 0) {
-            // Update quantity and subtotal for existing product
-            const quantityElement = existingProduct.find('.qty');
-            const currentQuantity = parseFloat($(existingProduct).find('.quantity-value').text()) ||
-                parseFloat(productQuantity) || 1;
-            const newQuantity = currentQuantity + parseFloat(productQuantity);
-            quantityElement.text(`${newQuantity}`);
+        // Generate unique ID untuk setiap item di cart
+        cartItemCounter++;
+        var uniqueItemId = `product-item-${cartItemCounter}`;
 
-            // Update stored quantity value
-            existingProduct.find('.quantity-value').text(newQuantity);
+        var productItem = `<div class="cart-item-lists p-3 mb-2" id="${uniqueItemId}" style="border: 1px solid #e9ecef; border-radius: 0.375rem; background-color: #f8f9fa;">
+            <!-- Hidden data fields -->
+            <div class="d-none product-id">${productId}</div>
+            <div class="d-none stock-id">${stockId}</div>
+            <div class="d-none base-price">${productPrice}</div>
+            <div class="d-none discount">${productDiscount}</div>
+            <div class="d-none discount-per-unit">${totalDiscount}</div>
+            <div class="d-none quantity-value">${productQuantity}</div>
+            <div class="d-none gross-price">${grossPrice}</div>
+            <div class="d-none butcher-id">${butcherId}</div>
 
-            // Calculate and update discount per unit storage (total discount for this item)
-            // FIXED: Discount applies only for whole kg (floor of quantity)
-            const totalDiscount = productDiscount * Math.floor(newQuantity);
-            existingProduct.find('.discount-per-unit').text(totalDiscount);
-
-            // Update base price storage
-            existingProduct.find('.base-price').text(productPrice);
-
-            // Update butcher ID
-            existingProduct.find('.butcher-id').text(butcherId);
-
-            // Recalculate totals
-            const grossTotal = mround(productPrice * newQuantity);
-            const netTotal = grossTotal - totalDiscount;
-
-            // Update hidden gross-price storage (IMPORTANT: must update this)
-            existingProduct.find('.gross-price').text(grossTotal);
-
-            // Update the gross total display
-            const quantityDisplay = existingProduct.find('.d-flex.justify-content-between.mb-2.pb-2');
-            quantityDisplay.find('small:last-child').text(formatThausand(grossTotal));
-
-            // Update or recreate discount section
-            const discountSection = existingProduct.find('.discount-section');
-
-            if (productDiscount > 0) {
-                // Always recreate discount section to ensure all values are updated correctly
-                if (discountSection.length > 0) {
-                    discountSection.remove();
-                }
-
-                const discountHTML = `<div class="mb-2 pb-2 discount-section" style="border-bottom: 1px solid #dee2e6;">
-                    <small class="text-muted">Discount: <span class="discount-total">${Math.floor(newQuantity)}</span> kg x ${formatThausand(productDiscount)} = </small>
-                    <small class="fw-bold text-danger">${formatThausand(totalDiscount)}</small>
-                </div>`;
-                quantityDisplay.after(discountHTML);
-            } else {
-                // Remove discount section if discount is 0
-                discountSection.remove();
-            }
-
-            const priceElement = existingProduct.find('.price');
-            priceElement.text(formatThausand(mround(netTotal)));
-        } else {
-            // Add new product to the cart
-
-            var grossPrice = mround(productPrice * productQuantity);
-            // FIXED: Discount applies only for whole kg (floor of quantity)
-            var totalDiscount = productDiscount * Math.floor(productQuantity);
-            var nettPrice = grossPrice - totalDiscount;
-
-            var productItem = `<div class="cart-item-lists p-3 mb-2" id="product-id-${productId}" style="border: 1px solid #e9ecef; border-radius: 0.375rem; background-color: #f8f9fa;">
-                <!-- Hidden data fields -->
-                <div class="d-none product-id">${productId}</div>
-                <div class="d-none stock-id">${stockId}</div>
-                <div class="d-none base-price">${productPrice}</div>
-                <div class="d-none discount">${productDiscount}</div>
-                <div class="d-none discount-per-unit">${totalDiscount}</div>
-                <div class="d-none quantity-value">${productQuantity}</div>
-                <div class="d-none gross-price">${grossPrice}</div>
-                <div class="d-none butcher-id">${butcherId}</div>
-
-                <!-- Row 1: Product Name + Edit & Delete Icons -->
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="mb-0 fw-bold text-gray-800">${productName}</h6>
-                    <div class="d-flex gap-1">
-                        <a href="#" class="btn btn-sm btn-link edit-item p-1 me-1" data-bs-toggle="modal" data-bs-target="#kt_modal_edit_product_item" data-product-id="${productId}" data-product-name="${productName}" data-product-price="${productPrice}" data-product-discount="${productDiscount}" data-product-quantity="${productQuantity}">
-                            <i class="fas fa-edit text-success" style="font-size: 14px;"></i>
-                        </a>
-                        <a href="#" class="btn btn-sm btn-link remove-item p-1" data-product-id="${productId}">
-                            <i class="fas fa-trash text-danger" style="font-size: 14px;"></i>
-                        </a>
-                    </div>
+            <!-- Row 1: Product Name + Edit & Delete Icons -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0 fw-bold text-gray-800">${productName}</h6>
+                <div class="d-flex gap-1">
+                    <a href="#" class="btn btn-sm btn-link edit-item p-1 me-1" data-bs-toggle="modal" data-bs-target="#kt_modal_edit_product_item" data-item-id="${uniqueItemId}" data-product-id="${productId}" data-product-name="${productName}" data-product-price="${productPrice}" data-product-discount="${productDiscount}" data-product-quantity="${productQuantity}">
+                        <i class="fas fa-edit text-success" style="font-size: 14px;"></i>
+                    </a>
+                    <a href="#" class="btn btn-sm btn-link remove-item p-1" data-item-id="${uniqueItemId}">
+                        <i class="fas fa-trash text-danger" style="font-size: 14px;"></i>
+                    </a>
                 </div>
+            </div>
 
-                <!-- Row 2: Price Calculation (Quantity × Base Price) - ALWAYS SHOWN -->
-                <div class="d-flex justify-content-between align-items-center mb-2 pb-2" style="border-bottom: 1px dotted #dee2e6;">
-                    <small class="text-muted"><span class="qty">${productQuantity}</span> x ${formatThausand(productPrice)}</small>
-                    <small class="fw-bold text-dark">Gross: ${formatThausand(grossPrice)}</small>
-                </div>
+            <!-- Row 2: Price Calculation (Quantity × Base Price) - ALWAYS SHOWN -->
+            <div class="d-flex justify-content-between align-items-center mb-2 pb-2" style="border-bottom: 1px dotted #dee2e6;">
+                <small class="text-muted"><span class="qty">${productQuantity}</span> x ${formatThausand(productPrice)}</small>
+                <small class="fw-bold text-dark">Gross: ${formatThausand(grossPrice)}</small>
+            </div>
 
-                <!-- Row 3: Discount Badge (CONDITIONAL - Only if discount > 0) -->
-                ${productDiscount > 0 ? `<div class="mb-2 pb-2 discount-section" style="border-bottom: 1px solid #dee2e6;">
-                    <small class="text-muted">Discount: <span class="discount-total">${Math.floor(productQuantity)}</span> kg x ${formatThausand(productDiscount)} = </small>
-                    <small class="fw-bold text-danger">${formatThausand(totalDiscount)}</small>
-                </div>` : ''}
+            <!-- Row 3: Discount Badge (CONDITIONAL - Only if discount > 0) -->
+            ${productDiscount > 0 ? `<div class="mb-2 pb-2 discount-section" style="border-bottom: 1px solid #dee2e6;">
+                <small class="text-muted">Discount: <span class="discount-total">${Math.floor(productQuantity)}</span> kg x ${formatThausand(productDiscount)} = </small>
+                <small class="fw-bold text-danger">${formatThausand(totalDiscount)}</small>
+            </div>` : ''}
 
-                <!-- Row 4: Final Total Price -->
-                <div class="d-flex justify-content-between align-items-center pt-2">
-                    <span class="fw-bold text-dark">Net Total:</span>
-                    <span class="fw-bold price" style="color: #198754; font-size: 1.05rem;">${formatThausand(nettPrice)}</span>
-                </div>
-            </div>`;
+            <!-- Row 4: Final Total Price -->
+            <div class="d-flex justify-content-between align-items-center pt-2">
+                <span class="fw-bold text-dark">Net Total:</span>
+                <span class="fw-bold price" style="color: #198754; font-size: 1.05rem;">${formatThausand(nettPrice)}</span>
+            </div>
+        </div>`;
 
-            $('#cart-item').append(productItem);
-        }
+        $('#cart-item').append(productItem);
 
         // Recalculate totals
         calculateTotals();
@@ -1720,6 +1671,7 @@ $(document).ready(function() {
 
         e.preventDefault();
 
+        const itemId = $("#kt_modal_edit_product_item #item_id").val();
         const productId = $("#kt_modal_edit_product_item #product_id").val();
         // FIXED: Ensure decimal quantities are properly parsed
         const quantity = parseFloat($("#kt_modal_edit_product_item #quantity").val().replace(/,/g, '')) || 0;
@@ -1761,10 +1713,10 @@ $(document).ready(function() {
             return;
         }
 
-        // Check if the product already exists in the cart
-        var existingProduct = $(`#product-id-${productId}`);
+        // Update the specific item in the cart
+        var cartItem = $(`#${itemId}`);
 
-        if (existingProduct.length > 0) {
+        if (cartItem.length > 0) {
             const newQuantity = parseFloat(quantity);
             const newDiscountPerUnit = parseFloat(discountPerUnit) || 0;
             const basePrice = parseFloat(productPrice);
@@ -1776,28 +1728,28 @@ $(document).ready(function() {
             const netTotal = grossTotal - totalDiscount;
 
             // Update quantity display and storage
-            const quantityElement = existingProduct.find('.qty');
+            const quantityElement = cartItem.find('.qty');
             quantityElement.text(`${newQuantity}`);
-            existingProduct.find('.quantity-value').text(newQuantity);
+            cartItem.find('.quantity-value').text(newQuantity);
 
             // Update discount per unit storage (total discount for this item)
-            existingProduct.find('.discount-per-unit').text(totalDiscount);
+            cartItem.find('.discount-per-unit').text(totalDiscount);
 
             // Update base price storage
-            existingProduct.find('.base-price').text(basePrice);
+            cartItem.find('.base-price').text(basePrice);
 
             // Update butcher ID
-            existingProduct.find('.butcher-id').text(butcherId);
+            cartItem.find('.butcher-id').text(butcherId);
 
             // Update hidden gross-price storage
-            existingProduct.find('.gross-price').text(grossTotal);
+            cartItem.find('.gross-price').text(grossTotal);
 
             // Update the gross total display (Quantity x Price)
-            const quantityDisplay = existingProduct.find('.d-flex.justify-content-between.mb-2.pb-2');
+            const quantityDisplay = cartItem.find('.d-flex.justify-content-between.mb-2.pb-2');
             quantityDisplay.find('small:last-child').text(formatThausand(grossTotal));
 
             // Update or recreate discount section
-            const discountSection = existingProduct.find('.discount-section');
+            const discountSection = cartItem.find('.discount-section');
 
             if (newDiscountPerUnit > 0) {
                 // Always recreate discount section to ensure all values are updated correctly
@@ -1816,7 +1768,7 @@ $(document).ready(function() {
             }
 
             // Update the final price display
-            const priceElement = existingProduct.find('.price');
+            const priceElement = cartItem.find('.price');
             priceElement.text(formatThausand(mround(netTotal)));
         }
 
@@ -1824,6 +1776,7 @@ $(document).ready(function() {
         $('#kt_modal_edit_product_item').modal('hide');
 
         // Reset edit modal
+        $("#kt_modal_edit_product_item #item_id").val("");
         $("#kt_modal_edit_product_item #product_id").val("");
         $("#kt_modal_edit_product_item #product_name").val("");
         $("#kt_modal_edit_product_item #quantity").val("");
