@@ -77,45 +77,62 @@ class MutasiController extends Controller
         return view('modules.inventory.mutasi.create', compact('stocks', 'branch', 'branches'));
     }
 
-    public function save(Request $request)
-    {
+    public function save(Request $request) {
         $products = $request->input('products');
 
-        foreach ($products as $productData) {
-            $mutasiId = DB::table('stock_mutations')
-                ->insert([
-                    "stock_id" => $productData['stock_id'],
-                    "mutation_type" => $productData['type'],
-                    "mutation_category" => $productData['category'],
-                    "quantity" => $productData['quantity'],
-                    "mutation_date" => $productData['date'],
-                    "remarks" => $productData['remarks'] ?? null,
-                ]);
+        DB::beginTransaction();
 
-            if($productData['type'] == 'IN') {
-                DB::table('stock_logs')
-                    ->insert([
-                        "stock_id" => $productData['stock_id'],
-                        "in_quantity" => $productData['quantity'],
-                        "date" => $productData['date'],
-                        "reference" => "Mutasi #" . $mutasiId,
-                        "ref_type" => $productData['type'],
-                        "ref_id" => $mutasiId,
+        try {
+
+            foreach ($products as $productData) {
+
+                $mutasiType = ($productData['category'] === 'MASUK')
+                    ? 'IN'
+                    : 'OUT';
+
+                $mutasiId = DB::table('stock_mutations')
+                    ->insertGetId([
+                        'stock_id'          => $productData['stock_id'],
+                        'mutation_type'     => $mutasiType,
+                        'mutation_category' => $productData['category'],
+                        'quantity'          => $productData['quantity'],
+                        'mutation_date'     => $productData['date'],
+                        'remarks'           => $productData['remarks'] ?? null,
                     ]);
-            } else {
-                DB::table('stock_logs')
-                    ->insert([
-                        "stock_id" => $productData['stock_id'],
-                        "out_quantity" => $productData['quantity'],
-                        "date" => $productData['date'],
-                        "reference" => "Mutasi #" . $mutasiId,
-                        "ref_type" => $productData['type'],
-                        "ref_id" => $mutasiId,
-                    ]);
+
+                $logData = [
+                    'stock_id'   => $productData['stock_id'],
+                    'date'       => $productData['date'],
+                    'reference'  => "Mutasi #{$mutasiId}",
+                    'ref_type'   => $mutasiType,
+                    'ref_id'     => $mutasiId,
+                ];
+
+                if ($mutasiType === 'IN') {
+                    $logData['in_quantity'] = $productData['quantity'];
+                } else {
+                    $logData['out_quantity'] = $productData['quantity'];
+                }
+
+                DB::table('stock_logs')->insert($logData);
             }
-        }
 
-        return response()->json(["message" => "Products updated successfully"]);
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Products updated successfully'
+            ]);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function edit($id)
@@ -166,44 +183,74 @@ class MutasiController extends Controller
         return view('modules.inventory.mutasi.edit', compact('mutasi', 'branch_id', 'mutation_date', 'stocks', 'branches', 'branch'));
     }
 
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id) {
         try {
-            $mutation_id = $request->input('id');
-            $stock_id = $request->input('stock_id');
-            $type = $request->input('type');
-            $category = $request->input('category');
-            $quantity = $request->input('quantity');
-            $remarks = $request->input('remarks');
 
             DB::beginTransaction();
 
-            // Check if record exists
-            $existing = DB::table('stock_mutations')->where('id', $mutation_id)->first();
+            $mutationId = $id;
+
+            $stockId = $request->input('stock_id');
+            $category = $request->input('category');
+            $quantity = $request->input('quantity');
+            $remarks = $request->input('remarks');
+            $date = $request->input('date');
+
+            $existing = DB::table('stock_mutations')
+                ->where('id', $mutationId)
+                ->first();
+
             if (!$existing) {
+
+                DB::rollBack();
+
                 return response()->json([
                     'success' => false,
                     'message' => 'Data tidak ditemukan'
                 ], 404);
             }
 
-            // Get stock info for product name
-            $stock = DB::table('stocks')
-                ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
-                ->where('stocks.id', $stock_id)
-                ->select('products.name')
-                ->first();
+            $mutationType = ($category === 'MASUK')
+                ? 'IN'
+                : 'OUT';
 
-            // Update the mutation record
+            /**
+             * Update stock mutation
+             */
             DB::table('stock_mutations')
-                ->where('id', $mutation_id)
+                ->where('id', $mutationId)
                 ->update([
-                    'stock_id' => $stock_id,
-                    'mutation_type' => $type,
+                    'stock_id'          => $stockId,
+                    'mutation_type'     => $mutationType,
                     'mutation_category' => $category,
-                    'quantity' => $quantity,
-                    'remarks' => $remarks
+                    'quantity'          => $quantity,
+                    'mutation_date'     => $date,
+                    'remarks'           => $remarks,
                 ]);
+
+            /**
+             * Update stock log
+             */
+            $logData = [
+                'stock_id'   => $stockId,
+                'date'       => $date,
+                'reference'  => "Mutasi #{$mutationId}",
+                'ref_type'   => $mutationType,
+                'ref_id'     => $mutationId,
+                'in_quantity'  => null,
+                'out_quantity' => null,
+            ];
+
+            if ($mutationType === 'IN') {
+                $logData['in_quantity'] = $quantity;
+            } else {
+                $logData['out_quantity'] = $quantity;
+            }
+
+            DB::table('stock_logs')
+                ->where('ref_type', $existing->mutation_type)
+                ->where('ref_id', $mutationId)
+                ->update($logData);
 
             DB::commit();
 
@@ -211,7 +258,9 @@ class MutasiController extends Controller
                 'success' => true,
                 'message' => 'Data berhasil diperbarui'
             ]);
-        } catch (\Exception $e) {
+
+        } catch (\Throwable $e) {
+
             DB::rollBack();
 
             return response()->json([

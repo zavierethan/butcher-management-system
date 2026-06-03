@@ -700,7 +700,12 @@ $(document).ready(function() {
             {
                 data: 'selisih',
                 name: 'selisih',
-                className: 'text-center'
+                className: 'text-center',
+                createdCell: function (td, cellData) {
+                    if (parseFloat(cellData) < 0) {
+                        $(td).addClass('bg-danger text-white');
+                    }
+                }
             }
         ]
     });

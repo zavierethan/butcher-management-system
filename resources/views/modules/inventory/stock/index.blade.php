@@ -91,7 +91,6 @@
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">Kode Produk</th>
                                         <th class="min-w-125px">Nama Produk</th>
                                         <th class="min-w-125px">Tanggal Opname</th>
                                         <th class="min-w-125px">Stok Awal</th>
@@ -155,7 +154,6 @@
             }
         },
         columns: [
-            {data: 'code', name: 'code'},
             {data: 'name', name: 'name'},
             { data: 'tanggal_stock_awal', name: 'tanggal_stock_awal', className: 'text-center' },
             { data: 'stock_awal', name: 'stock_awal', className: 'text-center' },

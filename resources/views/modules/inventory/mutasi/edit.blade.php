@@ -106,7 +106,6 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-250px">NAMA PRODUK</th>
-                                        <th class="min-w-125px">TIPE</th>
                                         <th class="min-w-125px">KATEGORI</th>
                                         <th class="min-w-125px">KUANTITAS (KG)</th>
                                         <th class="min-w-125px">KETERANGAN</th>
@@ -134,27 +133,18 @@
                                             </td>
                                             <td>
                                                 <div class="position-relative">
-                                                    <select class="form-select me-2 type" data-control="select2" name="type">
+                                                    <select class="form-select me-2 category" data-control="select2"
+                                                        name="category">
                                                         <option value="">-</option>
-                                                        <option value="IN" {{ $row->mutation_type == 'IN' ? 'selected' : '' }}>IN</option>
-                                                        <option value="OUT" {{ $row->mutation_type == 'OUT' ? 'selected' : '' }}>OUT</option>
+                                                        <option value="MUTASI" {{ $row->category == 'MUTASI' ? 'selected' : '' }}>MUTASI</option>
+                                                        <option value="PRIVE" {{ $row->category == 'PRIVE' ? 'selected' : '' }}>PRIVE</option>
+                                                        <option value="MASUK" {{ $row->category == 'MASUK' ? 'selected' : '' }}>MASUK</option>
+                                                        <option value="RETURN" {{ $row->category == 'RETURN' ? 'selected' : '' }}>RETURN</option>
+                                                        <option value="SEDEKAH" {{ $row->category == 'SEDEKAH' ? 'selected' : '' }}>SEDEKAH</option>
+                                                        <option value="BONUS" {{ $row->category == 'BONUS' ? 'selected' : '' }}>BONUS</option>
                                                     </select>
                                                 </div>
                                             </td>
-                                            <td>
-                                            <div class="position-relative">
-                                                <select class="form-select me-2 category" data-control="select2"
-                                                    name="category">
-                                                    <option value="">-</option>
-                                                    <option value="MUTASI" {{ $row->category == 'MUTASI' ? 'selected' : '' }}>MUTASI</option>
-                                                    <option value="PRIVE" {{ $row->category == 'PRIVE' ? 'selected' : '' }}>PRIVE</option>
-                                                    <option value="MASUK" {{ $row->category == 'MASUK' ? 'selected' : '' }}>MASUK</option>
-                                                    <option value="RETURN" {{ $row->category == 'RETURN' ? 'selected' : '' }}>RETURN</option>
-                                                    <option value="SEDEKAH" {{ $row->category == 'SEDEKAH' ? 'selected' : '' }}>SEDEKAH</option>
-                                                    <option value="BONUS" {{ $row->category == 'BONUS' ? 'selected' : '' }}>BONUS</option>
-                                                </select>
-                                            </div>
-                                        </td>
                                             <td><input class="form-control form-control-md me-2 quantity" type="text" name="quantity" value="{{ $row->quantity }}" /></td>
                                             <td>
                                                 <textarea type="text" class="form-control form-control-sm remarks">{{ $row->remarks }}</textarea>
@@ -196,23 +186,13 @@ $(document).on('click', '.btn-update-row', function(e) {
     const row = $(this).closest('tr');
     const mutationId = row.find('input[name="id"]').val();
     const productName = row.find('.stock-id').find('option:selected').text();
-    const mutationType = row.find('.type').find('option:selected').text();
+    const mutationType = row.find('.category').find('option:selected').text();
     const quantity = row.find('.quantity').val();
 
     if (!row.find('.stock-id').val()) {
         Swal.fire({
             title: 'Perhatian!',
             text: 'Silahkan pilih produk terlebih dahulu',
-            icon: 'warning',
-            confirmButtonText: 'OK'
-        });
-        return;
-    }
-
-    if (!row.find('.type').val()) {
-        Swal.fire({
-            title: 'Perhatian!',
-            text: 'Silahkan pilih tipe mutasi terlebih dahulu',
             icon: 'warning',
             confirmButtonText: 'OK'
         });
@@ -233,7 +213,7 @@ $(document).on('click', '.btn-update-row', function(e) {
         title: 'Konfirmasi Update',
         html: `Apakah Anda yakin akan mengupdate data mutasi?<br><br>
                 <b>Produk:</b> ${productName}<br>
-                <b>Tipe Mutasi:</b> ${mutationType}<br>
+                <b>Kategori Mutasi:</b> ${mutationType}<br>
                 <b>Kuantitas:</b> ${quantity}`,
         icon: 'warning',
         showCancelButton: true,
@@ -252,7 +232,7 @@ $(document).on('click', '.btn-update-row', function(e) {
                 data: {
                     id: mutationId,
                     stock_id: row.find('.stock-id').val(),
-                    type: row.find('.type').val(),
+                    category: row.find('.category').val(),
                     quantity: quantity.replace(/,/g, ''),
                     remarks: row.find('.remarks').val()
                 },
@@ -282,14 +262,14 @@ $(document).on('click', '.btn-delete-row', function(e) {
     const row = $(this).closest('tr');
     const mutationId = row.find('input[name="id"]').val();
     const productName = row.find('.stock-id').find('option:selected').text();
-    const mutationType = row.find('.type').find('option:selected').text();
+    const mutationType = row.find('.category').find('option:selected').text();
     const quantity = row.find('.quantity').val();
 
     Swal.fire({
         title: 'Konfirmasi Hapus',
         html: `Apakah Anda yakin akan menghapus data mutasi?<br><br>
                 <b>Produk:</b> ${productName}<br>
-                <b>Tipe Mutasi:</b> ${mutationType}<br>
+                <b>Kategori Mutasi:</b> ${mutationType}<br>
                 <b>Kuantitas:</b> ${quantity}`,
         icon: 'warning',
         showCancelButton: true,
@@ -354,7 +334,7 @@ $(document).on('click', '#btn-submit-mutasi', function(e) {
                 $("#product-table tr").each(function() {
                     let product = {
                         stock_id: $(this).find(".stock-id").val(),
-                        type: $(this).find(".type").val(),
+                        category: $(this).find(".category").val(),
                         quantity: $(this).find(".quantity").val(),
                         destination: $(this).find(".destination").val(),
                         remarks: $(this).find(".remarks").val(),

@@ -91,8 +91,10 @@
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">STORE / BRANCH</th>
                                         <th class="min-w-125px">TANGGAL</th>
-                                        <th class="min-w-125px">JUMLAH EKOR</th>
-                                        <th class="min-w-125px">BERAT BERSIH (KG)</th>
+                                        <th class="min-w-125px">JUMLAH EKOR (AYAM HIDUP)</th>
+                                        <th class="min-w-125px">BOBOT (AYAM HIDUP)</th>
+                                        <th class="min-w-125px">JUMLAH EKOR (RANCUNG)</th>
+                                        <th class="min-w-125px">BERAT BERSIH (RANCUNG)</th>
                                         <th class="text-center min-w-70px">Actions</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -175,6 +177,16 @@ $(document).ready(function() {
                 name: 'date_formated'
             },
             {
+                data: 'total_live_chicken',
+                name: 'total_live_chicken',
+                className: 'text-end'
+            },
+            {
+                data: 'receipt_total_weight',
+                name: 'receipt_total_weight',
+                className: 'text-end'
+            },
+            {
                 data: 'total_chickens',
                 name: 'total_chickens',
                 className: 'text-end'
@@ -192,7 +204,7 @@ $(document).ready(function() {
                 render: function(data, type, row) {
                     return `
                         <div class="text-center">
-                            <a href="/fresh-chicken-cutting/edit/${row.date}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail Transaksi">Details</a>
+                            <a href="/fresh-chicken-cutting/edit/${row.id}" class="btn btn-sm btn-light btn-active-light-primary" title="Detail Transaksi">Details</a>
                         </div>
                     `;
                 }

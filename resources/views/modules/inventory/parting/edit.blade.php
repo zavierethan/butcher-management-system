@@ -54,8 +54,6 @@
                     <div class="card">
                         <div class="card-body pt-10">
                             <form class="w-[60%]">
-                                <input type="hidden" id="parting-date" value="{{$parting['date']}}" />
-                                <input type="hidden" id="branch-id-val" value="{{$parting['branch_id']}}" />
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="fv-row mb-5">
@@ -63,7 +61,7 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Store</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="text" value="{{$parting['branch_name']}}" readonly />
+                                                        type="text" value="{{$parting->branch_name}}" readonly />
                                                 </div>
                                             </div>
                                         </div>
@@ -76,7 +74,55 @@
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
                                                         type="date" name="parting_date" id="parting_date"
-                                                        value="{{$parting['date']}}" readonly />
+                                                        value="{{$parting->date}}" readonly />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Air Susut Parting</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid" type="number" id="air-susut-parting" value="{{$parting->air_susut_parting}}" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Air Susut Display</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid" type="number" id="air-susut-display" value="{{$parting->air_susut_display}}" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Air Susut Usus</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid" type="number" id="air-susut-usus" value="{{$parting->air_susut_usus}}" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Air Susut Ati Ampela</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid" type="number" id="air-susut-ati-ampela" value="{{$parting->air_susut_ati_ampela}}" />
                                                 </div>
                                             </div>
                                         </div>
@@ -85,6 +131,8 @@
                                 </div>
                                 <div class="text-end">
                                     <a href="{{route('partings.index')}}" class="btn btn-sm btn-danger">Kembali</a>
+                                    <button type="button" class="btn btn-sm btn-primary"
+                                        id="btn-submit-mutasi">Simpan</button>
                                 </div>
                             </form>
                         </div>
@@ -113,7 +161,7 @@
                                     <!--end::Table body-->
                                     <tbody class="fw-bold text-gray-600" id="product-table">
                                         @php $counting = 1; @endphp
-                                        @foreach($parting['items'] as $item)
+                                        @foreach($partingCutResults as $item)
                                         <tr>
                                             <td>{{$counting++}}</td>
                                             <td>

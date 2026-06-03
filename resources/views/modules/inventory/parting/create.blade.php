@@ -82,11 +82,59 @@
                                         <div class="separator my-5"></div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Air Susut Parting</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid" type="number" id="air-susut-parting"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Air Susut Display</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid" type="number" id="air-susut-display"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Air Susut Usus</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid" type="number" id="air-susut-usus"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Air Susut Ati Ampela</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid" type="number" id="air-susut-ati-ampela"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                    </div>
+                                </div>
                                 <div class="text-end">
                                     <a href="{{route('partings.index')}}"
-                                        class="btn btn-sm btn-danger">Cancel</a>
+                                        class="btn btn-sm btn-danger">Kembali</a>
                                     <button type="button" class="btn btn-sm btn-primary"
-                                        id="btn-submit-mutasi">Submit</button>
+                                        id="btn-submit">Simpan</button>
                                 </div>
                             </form>
                         </div>
@@ -208,7 +256,7 @@ $(document).on("keyup", "input[name='quantity']", function() {
     $(this).val(formattedVal);
 });
 
-$(document).on('click', '#btn-submit-mutasi', function(e) {
+$(document).on('click', '#btn-submit', function(e) {
     e.preventDefault();
 
     if (true) {
@@ -226,6 +274,10 @@ $(document).on('click', '#btn-submit-mutasi', function(e) {
 
                 let date = $("#date").val();
                 let branch_id = $("#branch-id").val();
+                let air_susut_parting = $("#air-susut-parting").val();
+                let air_susut_display = $("#air-susut-display").val();
+                let air_susut_usus = $("#air-susut-usus").val();
+                let air_susut_ati_ampela = $("#air-susut-ati-ampela").val();
 
                 $("#product-table tr").each(function() {
                     let product = {
@@ -245,7 +297,13 @@ $(document).on('click', '#btn-submit-mutasi', function(e) {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     data: JSON.stringify({
-                        products: products
+                        products: products,
+                        date: date,
+                        branch_id: branch_id,
+                        air_susut_parting: air_susut_parting,
+                        air_susut_display: air_susut_display,
+                        air_susut_usus: air_susut_usus,
+                        air_susut_ati_ampela: air_susut_ati_ampela
                     }),
                     success: function(response) {
                         Swal.fire({
@@ -270,6 +328,12 @@ $(document).on('click', '#btn-submit-mutasi', function(e) {
             }
         });
     }
+});
+
+$(document).on('keyup', '.format-number', function () {
+    let value = $(this).val().replace(/\D/g, '');
+
+    $(this).val(new Intl.NumberFormat('en-US').format(value));
 });
 
 function formatNumber(numStr) {

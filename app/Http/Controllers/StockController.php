@@ -180,12 +180,12 @@ class StockController extends Controller
                 "),
                 DB::raw("
                     (
+                        COALESCE(today_opname.quantity, 0) -
                         (
                             COALESCE(latest_opname.quantity, 0)
                             + COALESCE(logs_today.stok_masuk, 0)
                             - COALESCE(logs_today.stok_keluar, 0)
                         )
-                        - COALESCE(today_opname.quantity, 0)
                     ) as selisih
                 ")
             )

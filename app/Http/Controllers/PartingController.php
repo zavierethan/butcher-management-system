@@ -17,25 +17,55 @@ class PartingController extends Controller
 
         $params = $request->all();
 
-        $query = DB::table('parting_cut_results')
-            ->leftJoin('branches', 'parting_cut_results.branch_id', '=', 'branches.id')
-            ->leftJoin('products', 'products.id', '=', 'parting_cut_results.product_id')
-            ->select(
-                'branches.name as branch_name',
-                'parting_cut_results.date',
-                DB::raw("TO_CHAR(parting_cut_results.date, 'DD/MM/YYYY') as date_formated"),
-                DB::raw('SUM(parting_cut_results.quantity) as total_quantity'),
-                DB::raw("SUM(CASE WHEN products.code = 'AA' THEN parting_cut_results.quantity ELSE 0 END) as ati_ampela"),
-                DB::raw("SUM(CASE WHEN products.code = 'US' THEN parting_cut_results.quantity ELSE 0 END) as usus"),
-            )
-            ->where('parting_cut_results.branch_id', Auth::user()->branch_id)
-            ->groupBy(
-                'parting_cut_results.date',
-                'branches.name'
-            );
+        $query = DB::table('partings')
+        ->leftJoin('branches', 'partings.branch_id', '=', 'branches.id')
+        ->leftJoin('parting_cut_results', 'partings.id', '=', 'parting_cut_results.parting_id')
+        ->leftJoin('products', 'products.id', '=', 'parting_cut_results.product_id')
+        ->select(
+            'partings.id',
+            'partings.air_susut_parting',
+            'partings.air_susut_display',
+            'partings.air_susut_usus',
+            'partings.air_susut_ati_ampela',
+            'branches.name as branch_name',
+            DB::raw("TO_CHAR(partings.date, 'DD/MM/YYYY') as date_formated"),
+            DB::raw('COALESCE(SUM(parting_cut_results.quantity), 0) as total_quantity'),
+            DB::raw("
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN products.code = 'AA'
+                            THEN parting_cut_results.quantity
+                            ELSE 0
+                        END
+                    ),
+                0) as ati_ampela
+            "),
+            DB::raw("
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN products.code = 'US'
+                            THEN parting_cut_results.quantity
+                            ELSE 0
+                        END
+                    ),
+                0) as usus
+            ")
+        )
+        ->where('partings.branch_id', Auth::user()->branch_id)
+        ->groupBy(
+            'partings.id',
+            'partings.date',
+            'branches.name',
+            'partings.air_susut_parting',
+            'partings.air_susut_display',
+            'partings.air_susut_usus',
+            'partings.air_susut_ati_ampela',
+        );
 
         if (!empty($params['date'])) {
-            $query->where(DB::raw('DATE(parting_cut_results.date)'), $params['date']);
+            $query->where(DB::raw('DATE(partings.date)'), $params['date']);
         }
 
         $start = $request->input('start', 0);
@@ -45,7 +75,7 @@ class PartingController extends Controller
         $totalRecords = $query->count();
         $filteredRecords = $query->count();
 
-        $data = $query->orderBy('date', 'desc')->skip($start)->take($length)->get();
+        $data = $query->orderBy('partings.date', 'desc')->skip($start)->take($length)->get();
 
         $response = [
             'draw' => $request->input('draw'),
@@ -71,13 +101,36 @@ class PartingController extends Controller
         DB::beginTransaction();
 
         try {
+
+            // Check if parting already exists for this date and branch
+            $existingParting = DB::table('partings')
+                ->where('date', $request->input('date'))
+                ->where('branch_id', $request->input('branch_id'))
+                ->first();
+
+            if ($existingParting) {
+                $partingId = $existingParting->id;
+            } else {
+                $partingId = DB::table('partings')->insertGetId([
+                    'date' => $request->input('date'),
+                    'branch_id' => $request->input('branch_id'),
+                    'butcher_id' => $request->input('butcher_id'),
+                    'air_susut_parting' => $request->input('air_susut_parting'),
+                    'air_susut_display' => $request->input('air_susut_display'),
+                    'air_susut_usus' => $request->input('air_susut_usus'),
+                    'air_susut_ati_ampela' => $request->input('air_susut_ati_ampela'),
+                ]);
+            }
+
             $products = $request->input('products', []);
+
             foreach ($products as $item) {
-                $partingId = DB::table('parting_cut_results')->insertGetId([
+                $partingCutResultId = DB::table('parting_cut_results')->insertGetId([
                     'product_id' => $item['product_id'],
                     'quantity' => $item['quantity'],
                     'date' => $item['date'],
                     'branch_id' => $item['branch_id'],
+                    'parting_id' => $partingId,
                 ]);
 
                 $stockId = DB::table('stocks')
@@ -88,10 +141,10 @@ class PartingController extends Controller
                 DB::table('stock_logs')->insert([
                     "stock_id"     => $stockId,
                     "in_quantity"  => $item["quantity"],
-                    "reference"    => 'Parting #' . $partingId,
+                    "reference"    => 'Parting #' . $partingCutResultId,
                     "date"         => now(),
                     "ref_type"     => 'PARTING',
-                    "ref_id"       => $partingId,
+                    "ref_id"       => $partingCutResultId,
                 ]);
             }
 
@@ -111,31 +164,27 @@ class PartingController extends Controller
 
         $products = DB::table('products')->orderBy('sort_order', 'asc')->get();
 
-        $partingRows = DB::table('parting_cut_results')
+        $parting = DB::table('partings')
+            ->select(
+                'partings.*',
+                'branches.name as branch_name'
+            )
+            ->leftJoin('branches', 'partings.branch_id', '=', 'branches.id')
+            ->where('partings.id', $id)
+            ->first();
+
+        $partingCutResults = DB::table('parting_cut_results')
             ->leftJoin('products', 'products.id', '=', 'parting_cut_results.product_id')
-            ->where('parting_cut_results.date', $id)
+            ->where('parting_cut_results.parting_id', $id)
             ->select(
                 'parting_cut_results.id',
                 'parting_cut_results.product_id',
-                'parting_cut_results.branch_id',
-                'parting_cut_results.date',
                 'products.name as product_name',
                 'parting_cut_results.quantity'
             )
             ->get();
 
-        // Ambil info cabang dari salah satu row
-        $branch_id = optional($partingRows->first())->branch_id;
-        $branch_name = DB::table('branches')->where('id', $branch_id)->value('name');
-
-        $parting = [
-            'date' => $id,
-            'branch_id' => $branch_id,
-            'branch_name' => $branch_name,
-            'items' => $partingRows
-        ];
-
-        return view('modules.inventory.parting.edit', compact('parting', 'products'));
+        return view('modules.inventory.parting.edit', compact('parting', 'partingCutResults', 'products'));
     }
 
 

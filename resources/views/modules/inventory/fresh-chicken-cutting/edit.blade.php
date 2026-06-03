@@ -29,7 +29,8 @@
                 <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
                     <div class="card">
                         <div class="card-body pt-10">
-                            <form class="w-[60%]">
+                            <form class="w-[60%]" id="header-form">
+                                <input type="hidden" id="receipt-id" value="{{ $freshChickenCutting['id'] }}">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="fv-row mb-5">
@@ -44,7 +45,6 @@
                                             </div>
                                         </div>
                                         <div class="separator my-5"></div>
-
                                     </div>
                                     <div class="col-md-6">
                                         <div class="fv-row mb-5">
@@ -59,7 +59,32 @@
                                         <div class="separator my-5"></div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Jumlah Ekor Ayam hidup</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid" type="number" id="total-live-chicken" name="total_live_chicken" value="{{ $freshChickenCutting['total_live_chicken'] }}" min="1"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Jumlah Bobot (Kg)</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid" type="number" id="total-weight" name="total_weight" value="{{ $freshChickenCutting['total_weight'] }}" step="0.01"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                    </div>
+                                </div>
                                 <div class="text-end">
+                                    <button type="button" class="btn btn-sm btn-primary me-3" id="btn-update-header">Update Header</button>
                                     <a href="{{route('fresh-chicken-cutting.index')}}" class="btn btn-sm btn-danger">Kembali</a>
                                 </div>
                             </form>
@@ -122,6 +147,79 @@ $(document).ready(function() {
         var containerWeight = parseFloat(tr.find('.container-weight').val()) || 0;
         var netWeight = weight - containerWeight;
         tr.find('.net-weight').val(netWeight > 0 ? netWeight : 0);
+    });
+
+    // Update header (total_live_chicken dan total_weight)
+    $('#btn-update-header').on('click', function(e) {
+        e.preventDefault();
+
+        const receiptId = $('#receipt-id').val();
+        const totalLiveChicken = $('#total-live-chicken').val();
+        const totalWeight = $('#total-weight').val();
+
+        if (!totalLiveChicken || totalLiveChicken <= 0) {
+            Swal.fire({
+                title: 'Perhatian!',
+                text: 'Jumlah ekor ayam hidup tidak boleh kosong atau 0',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        if (!totalWeight || totalWeight <= 0) {
+            Swal.fire({
+                title: 'Perhatian!',
+                text: 'Jumlah bobot tidak boleh kosong atau 0',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Konfirmasi Update',
+            html: `Apakah Anda yakin akan mengupdate header dengan:<br><br>
+                    <b>Jumlah Ekor Ayam Hidup:</b> ${totalLiveChicken}<br>
+                    <b>Jumlah Bobot:</b> ${totalWeight} Kg`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Update!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `{{ route('fresh-chicken-cutting.update') }}`,
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: {
+                        id: receiptId,
+                        is_header: 1,
+                        total_live_chicken: totalLiveChicken,
+                        total_weight: totalWeight
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            title: 'Berhasil!',
+                            text: response.message || 'Header berhasil diperbarui',
+                            icon: 'success'
+                        });
+                    },
+                    error: function(xhr) {
+                        const errorMessage = xhr.responseJSON?.message || 'Terjadi kesalahan saat mengupdate header';
+                        Swal.fire({
+                            title: 'Error!',
+                            text: errorMessage,
+                            icon: 'error'
+                        });
+                    }
+                });
+            }
+        });
     });
 });
 

@@ -34,9 +34,6 @@
                 <!--end::Page title-->
                 <!--begin::Actions-->
                 <div class="d-flex align-items-center gap-2 gap-lg-3">
-                    <!--begin::Secondary button-->
-                    <a href="#" class="btn btn-sm fw-bold btn-secondary" id="btn-form-export">Export</a>
-                    <!--end::Secondary button-->
                     <!--begin::Primary button-->
                     <a href="{{route('partings.create')}}" class="btn btn-sm fw-bold btn-primary">New</a>
                     <!--end::Primary button-->
@@ -88,6 +85,10 @@
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-125px">BRANCH / STORE</th>
                                         <th class="min-w-125px">TANGGAL</th>
+                                        <th class="min-w-125px">AIR SUSUT PARTING</th>
+                                        <th class="min-w-125px">AIR SUSUT DISPLAY</th>
+                                        <th class="min-w-125px">AIR SUSUT USUS</th>
+                                        <th class="min-w-125px">AIR SUSUT ATI AMPELA</th>
                                         <th class="min-w-125px">ATI AMPELA (KG)</th>
                                         <th class="min-w-125px">USUS (KG)</th>
                                         <th class="min-w-125px">BOBOT (KG)</th>
@@ -145,6 +146,10 @@
         columns: [
             { data: 'branch_name', name: 'branch_name' },
             { data: 'date_formated', name: 'date_formated' },
+            { data: 'air_susut_parting', name: 'air_susut_parting', className: 'text-end' },
+            { data: 'air_susut_display', name: 'air_susut_display', className: 'text-end' },
+            { data: 'air_susut_usus', name: 'air_susut_usus', className: 'text-end' },
+            { data: 'air_susut_ati_ampela', name: 'air_susut_ati_ampela', className: 'text-end' },
             { data: 'ati_ampela', name: 'ati_ampela', className: 'text-end' },
             { data: 'usus', name: 'usus', className: 'text-end' },
             { data: 'total_quantity', name: 'total_quantity', className: 'text-end' },
@@ -156,7 +161,7 @@
                 render: function (data, type, row) {
                     let actionButtons = `
                         <div class="text-center">
-                            <a href="/partings/edit/${row.date}/" class="btn btn-sm btn-light btn-active-light-primary">Details</a>
+                            <a href="/partings/edit/${row.id}/" class="btn btn-sm btn-light btn-active-light-primary">Details</a>
                         </div>
                     `;
                     return actionButtons;

@@ -109,7 +109,6 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
                                         <th class="min-w-250px">NAMA PRODUK</th>
-                                        <th class="min-w-125px">TIPE</th>
                                         <th class="min-w-125px">KATEGORI</th>
                                         <th class="min-w-125px">KUANTITAS (KG)</th>
                                         <th class="min-w-125px">KETERANGAN</th>
@@ -131,16 +130,6 @@
                                                         {{$stock->product_name}}
                                                     </option>
                                                     @endforeach
-                                                </select>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="position-relative">
-                                                <select class="form-select me-2 type" data-control="select2"
-                                                    name="type">
-                                                    <option value="">-</option>
-                                                    <option value="IN">IN</option>
-                                                    <option value="OUT">OUT</option>
                                                 </select>
                                             </div>
                                         </td>
@@ -205,27 +194,18 @@ $(document).ready(function() {
                     </td>
                     <td>
                         <div class="position-relative">
-                            <select class="form-select me-2 type" data-control="select2" name="type">
+                            <select class="form-select me-2 category" data-control="select2"
+                                name="category">
                                 <option value="">-</option>
-                                                    <option value="IN">IN</option>
-                                                    <option value="OUT">OUT</option>
+                                <option value="MUTASI">MUTASI</option>
+                                <option value="PRIVE">PRIVE</option>
+                                <option value="MASUK">MASUK</option>
+                                <option value="RETURN">RETURN</option>
+                                <option value="SEDEKAH">SEDEKAH</option>
+                                <option value="BONUS">BONUS</option>
                             </select>
                         </div>
                     </td>
-                    <td>
-                                            <div class="position-relative">
-                                                <select class="form-select me-2 category" data-control="select2"
-                                                    name="category">
-                                                    <option value="">-</option>
-                                                    <option value="MUTASI">MUTASI</option>
-                                                    <option value="PRIVE">PRIVE</option>
-                                                    <option value="MASUK">MASUK</option>
-                                                    <option value="RETURN">RETURN</option>
-                                                    <option value="SEDEKAH">SEDEKAH</option>
-                                                    <option value="BONUS">BONUS</option>
-                                                </select>
-                                            </div>
-                                        </td>
                     <td><input class="form-control form-control-md me-2 quantity" type="text"
                             name="quantity" value="0" /></td>
                     <td>
@@ -274,7 +254,6 @@ $(document).on('click', '#btn-submit-mutasi', function(e) {
                 $("#product-table tr").each(function() {
                     let product = {
                         stock_id: $(this).find(".stock-id").val(),
-                        type: $(this).find(".type").val(),
                         category: $(this).find(".category").val(),
                         quantity: $(this).find(".quantity").val(),
                         destination: $(this).find(".destination").val(),
