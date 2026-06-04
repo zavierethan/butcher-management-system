@@ -210,7 +210,6 @@ class MutasiController extends Controller
             $category = $request->input('category');
             $quantity = $request->input('quantity');
             $remarks = $request->input('remarks');
-            $date = $request->input('date');
 
             $existing = DB::table('stock_mutations')
                 ->where('id', $mutationId)
@@ -240,7 +239,6 @@ class MutasiController extends Controller
                     'mutation_type'     => $mutationType,
                     'mutation_category' => $category,
                     'quantity'          => $quantity,
-                    'mutation_date'     => $date,
                     'remarks'           => $remarks,
                 ]);
 
@@ -249,7 +247,6 @@ class MutasiController extends Controller
              */
             $logData = [
                 'stock_id'   => $stockId,
-                'date'       => $date,
                 'reference'  => "Mutasi #{$mutationId}",
                 'ref_type'   => $mutationType,
                 'ref_id'     => $mutationId,
@@ -304,6 +301,11 @@ class MutasiController extends Controller
             // Delete the mutation record
             DB::table('stock_mutations')
                 ->where('id', $id)
+                ->delete();
+
+            DB::table('stock_logs')
+                ->where('ref_type', $existing->mutation_type)
+                ->where('ref_id', $id)
                 ->delete();
 
             DB::commit();
