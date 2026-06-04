@@ -29,17 +29,33 @@ class MutasiController extends Controller
                 DB::raw("SUM(CASE WHEN stock_mutations.mutation_category = 'SEDEKAH' THEN stock_mutations.quantity ELSE 0 END) as sedekah"),
                 DB::raw("SUM(CASE WHEN stock_mutations.mutation_category = 'BONUS' THEN stock_mutations.quantity ELSE 0 END) as bonus")
             )
-            ->where('stocks.branch_id', Auth::user()->branch_id)
-            ->groupBy(DB::raw("TO_CHAR(stock_mutations.mutation_date, 'dd/mm/YYYY')"), 'stock_mutations.mutation_date');
+            ->where('stocks.branch_id', Auth::user()->branch_id);
+
+        if (!empty($params['start_date'])) {
+            $query->whereDate('stock_mutations.mutation_date', '>=', $params['start_date']);
+        }
+
+        if (!empty($params['end_date'])) {
+            $query->whereDate('stock_mutations.mutation_date', '<=', $params['end_date']);
+        }
+
+        $query->groupBy(
+            'stock_mutations.mutation_date',
+            DB::raw("TO_CHAR(stock_mutations.mutation_date, 'dd/mm/YYYY')")
+        );
 
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
 
-        // Count total and filtered records
-        $totalRecords = $query->count();
-        $filteredRecords = $query->count();
+        // Count grouped rows
+        $totalRecords = (clone $query)->get()->count();
+        $filteredRecords = $totalRecords;
 
-        $data = $query->orderBy('date', 'desc')->skip($start)->take($length)->get();
+        $data = $query
+            ->orderBy('stock_mutations.mutation_date', 'desc')
+            ->offset($start)
+            ->limit($length)
+            ->get();
 
         $response = [
             'draw' => $request->input('draw'),
