@@ -29,7 +29,15 @@ class PartingController extends Controller
             'partings.air_susut_ati_ampela',
             'branches.name as branch_name',
             DB::raw("TO_CHAR(partings.date, 'DD/MM/YYYY') as date_formated"),
-            DB::raw('COALESCE(SUM(parting_cut_results.quantity), 0) as total_quantity'),
+            DB::raw("
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN products.code NOT IN ('AA', 'US')
+                            THEN parting_cut_results.quantity
+                            ELSE 0
+                        END
+                    ), 0) as total_quantity"),
             DB::raw("
                 COALESCE(
                     SUM(
