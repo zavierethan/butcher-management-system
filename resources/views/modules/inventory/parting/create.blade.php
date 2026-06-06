@@ -130,6 +130,27 @@
                                         <div class="separator my-5"></div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Bubututan</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid" type="number" id="bubututan"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                    </div>
+                                </div>
                                 <div class="text-end">
                                     <a href="{{route('partings.index')}}"
                                         class="btn btn-sm btn-danger">Kembali</a>
@@ -278,6 +299,7 @@ $(document).on('click', '#btn-submit', function(e) {
                 let air_susut_display = $("#air-susut-display").val();
                 let air_susut_usus = $("#air-susut-usus").val();
                 let air_susut_ati_ampela = $("#air-susut-ati-ampela").val();
+                let bubututan = $("#bubututan").val();
 
                 $("#product-table tr").each(function() {
                     let product = {
@@ -303,7 +325,8 @@ $(document).on('click', '#btn-submit', function(e) {
                         air_susut_parting: air_susut_parting,
                         air_susut_display: air_susut_display,
                         air_susut_usus: air_susut_usus,
-                        air_susut_ati_ampela: air_susut_ati_ampela
+                        air_susut_ati_ampela: air_susut_ati_ampela,
+                        bubututan: bubututan
                     }),
                     success: function(response) {
                         Swal.fire({

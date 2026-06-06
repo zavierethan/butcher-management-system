@@ -107,8 +107,38 @@ class TransactionController extends Controller
             }
 
             if($request->working_method == 2) { // Online Order (Processing Order)
-                $status = 5; // Pending (Processing Order)
-                $paymentMethod = null; // Disable payment method for online orders
+                $code = Carbon::now()->format('YmdHis') . mt_rand(1000, 9999);
+                $transactionStagingId = DB::table('transaction_staging')->insertGetId([
+                    "code"             => $code,
+                    "date"             => now(),
+                    "customer_id"      => $request->customer_id,
+                    "total_amount"     => $totalAmount,
+                    "status"           => 1, // Status 1 = Pending Processing
+                    "branch_id"        => $request->branch_id,
+                    "notes"            => $request->notes,
+                    "created_at"       => now(),
+                    "created_by"       => Auth::id(),
+                ]);
+
+                $details = json_decode($request->details, true);
+
+                foreach ($details as $detail) {
+                    DB::table('transaction_staging_items')->insert([
+                        "transaction_staging_id" => $transactionStagingId,
+                        "product_id"             => $detail["product_id"],
+                        "quantity"               => $detail["quantity"],
+                        "price"                  => $detail["base_price"],
+                        "discount"               => $detail["discount"]
+                    ]);
+                }
+
+                DB::commit();
+
+                return response()->json([
+                    'message'          => 'Transaction successfully created',
+                    'transaction_code' => $code,
+                    'transaction_id'   => $transactionStagingId,
+                ], 201);
             }
 
             // Insert transaction header

@@ -573,4 +573,36 @@ class DailyReportController extends Controller
             'data'            => $data,
         ]);
     }
+
+    public function getProcessingOrders(Request $request) {
+        $params = $request->all();
+
+        $query = DB::table('transaction_staging')->where('branch_id', $params['branch_id']);
+
+        if (!empty($params['customer'])) {
+            $query->where('transaction_staging.customer_id', $params['customer']);
+        }
+
+        // Apply global search if provided
+        $searchValue = $request->input('search.value'); // This is where DataTables sends the search input
+        if (!empty($searchValue)) {
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('transaction_staging.code', 'like', '%' . strtoupper($searchValue) . '%');
+            });
+        }
+
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 10);
+
+        $totalRecords = $query->count();
+        $filteredRecords = $query->count();
+        $data = $query->orderBy('transaction_staging.id', 'desc')->skip($start)->take($length)->get();
+
+        return response()->json([
+            'draw' => $request->input('draw'),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $data
+        ]);
+    }
 }

@@ -129,6 +129,27 @@
                                         <div class="separator my-5"></div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+                                                <label class="form-label fw-bold fs-6 mb-2">Bubututan</label>
+                                                <div class="position-relative mb-3">
+                                                    <input class="form-control form-control-md form-control-solid" type="number" id="bubututan" value="{{$parting->bubututan}}"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="fv-row mb-5">
+                                            <div class="mb-1">
+
+                                            </div>
+                                        </div>
+                                        <div class="separator my-5"></div>
+                                    </div>
+                                </div>
                                 <div class="text-end">
                                     <a href="{{route('partings.index')}}" class="btn btn-sm btn-danger">Kembali</a>
                                     <button type="button" class="btn btn-sm btn-primary"

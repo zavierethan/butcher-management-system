@@ -1,0 +1,521 @@
+@extends('layouts.main')
+
+@section('main-content')
+<div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+    <div class="d-flex flex-column flex-column-fluid">
+        <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
+            <div id="kt_app_toolbar_container" class="app-container container-fluid d-flex flex-stack">
+                <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Processing Order</h1>
+                    <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
+                        <li class="breadcrumb-item text-muted">
+                            <a href="index.html" class="text-muted text-hover-primary">Processing Order</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <span class="bullet bg-gray-500 w-5px h-2px"></span>
+                        </li>
+                        <li class="breadcrumb-item text-muted">Create</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="kt_app_content" class="app-content flex-column-fluid">
+            <div id="kt_app_content_container" class="app-container container-fluid">
+                <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
+                    <div class="card">
+                        <div class="card-header pt-5">
+                            <h3 class="card-title fw-bold">Informasi Umum</h3>
+                        </div>
+                        <div class="card-body pt-10">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Kode Transaksi</label>
+                                            <div class="position-relative mb-3">
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    type="text" readonly />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5"></div>
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Tanggal</label>
+                                            <div class="position-relative mb-3">
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    type="text"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5"></div>
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Customer</label>
+                                            <div class="position-relative mb-3">
+                                                <input class="form-control form-control-md form-control-solid" type="text"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5"></div>
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Kasir</label>
+                                            <div class="position-relative mb-3">
+                                                <input class="form-control form-control-md form-control-solid" type="text"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Metode Pemesanan</label>
+                                            <div class="position-relative mb-3">
+                                                <select class="form-select form-select-solid" data-control="select2"
+                                                    data-placeholder="-" name="ordering-method" id="ordering-method" disabled>
+                                                    <option value="1"
+                                                        <?php echo ($detailTransaction->ordering_method == 1) ? "selected" : ""; ?>>
+                                                        Online</option>
+                                                    <option value="2"
+                                                        <?php echo ($detailTransaction->ordering_method == 2) ? "selected" : ""; ?>>
+                                                        Offline </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5"></div>
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Metode Pengerjaan</label>
+                                            <div class="position-relative mb-3">
+                                                <select class="form-select form-select-solid" data-control="select2"
+                                                    data-placeholder="-" name="working-method" id="working-method" disabled>
+                                                    <option value="1"
+                                                        <?php echo ($detailTransaction->working_method == 1) ? "selected" : ""; ?>>
+                                                        Direct</option>
+                                                    <option value="2"
+                                                        <?php echo ($detailTransaction->working_method == 2) ? "selected" : ""; ?>>
+                                                        Processing Order </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5"></div>
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Metode Pembayaran</label>
+                                            <div class="position-relative mb-3">
+                                                <select class="form-select form-select-solid" data-control="select2"
+                                                    data-placeholder="-" name="payment-method" id="payment-method"  <?php echo ($detailTransaction->working_method == 2) ? "" : "disabled"; ?>>
+                                                    <option value="1"
+                                                        <?php echo ($detailTransaction->payment_method == 1) ? "selected" : ""; ?>>
+                                                        Tunai</option>
+                                                    <option value="2"
+                                                        <?php echo ($detailTransaction->payment_method == 2) ? "selected" : ""; ?>>
+                                                        Piutang</option>
+                                                    <option value="3"
+                                                        <?php echo ($detailTransaction->payment_method == 3) ? "selected" : ""; ?>>
+                                                        Transfer</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5 payment-method-form"></div>
+                                    <div class="fv-row mb-5 payment-method-form">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Ref. Bukti Transfer</label>
+                                            <div class="position-relative mb-3">
+                                                <input class="form-control form-control-md form-control-solid"
+                                                    value="{{$detailTransaction->transfer_ref}}" readonly />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5 payment-method-form"></div>
+                                    <div class="fv-row mb-5 payment-method-form">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Lampiran</label>
+                                            <a href="javascript(0);" data-bs-toggle="modal" data-bs-target="#kt_img_viewer" class="previewImageBtn" data-file="data:image/png;base64,{{$detailTransaction->transfer_attch}}"><i class="fa-solid fa-eye"></i></a>
+                                            <div class="position-relative mb-3">
+                                                <input class="form-control form-control-md form-control-solid" type="file" value=""/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5"></div>
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Status</label>
+                                            <div class="position-relative mb-3">
+                                                <select class="form-select form-select-solid" data-control="select2"
+                                                    data-placeholder="-" name="status" id="status">
+                                                    <option value="1"
+                                                        <?php echo ($detailTransaction->status == 1) ? "selected" : ""; ?>>
+                                                        Lunas</option>
+                                                    <option value="2"
+                                                        <?php echo ($detailTransaction->status == 2) ? "selected" : ""; ?>>
+                                                        Pending (Piutang)</option>
+                                                    <option value="3"
+                                                        <?php echo ($detailTransaction->status == 3) ? "selected" : ""; ?>>
+                                                        Pending (Transfer)</option>
+                                                    <option value="5"
+                                                        <?php echo ($detailTransaction->status == 5) ? "selected" : ""; ?>>
+                                                        Pending (Processing Order)</option>
+                                                    <option value="4"
+                                                        <?php echo ($detailTransaction->status == 4) ? "selected" : ""; ?>>
+                                                        Batal (Return)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator my-5"></div>
+                                </div>
+                                <div class="text-end">
+                                    <a href="{{route('orders.index')}}" class="btn btn-danger">Kembali</a>
+                                    <a href="#" class="btn btn-primary" id="btn-update">Update</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header pt-5">
+                            <h3 class="card-title fw-bold">Customer Complains</h3>
+                        </div>
+                        <div class="card-body pt-10">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="fv-row mb-5">
+                                        <div class="form-check form-check-custom form-check-solid">
+                                            <input class="form-check-input" type="checkbox" id="is_quality_issue"
+                                                <?php echo ($customerComplaints && $customerComplaints->is_quality_issue == 1) ? "checked" : ""; ?> />
+                                            <label class="form-check-label" for="is_quality_issue">
+                                                Quality Issue
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="fv-row mb-5">
+                                        <div class="form-check form-check-custom form-check-solid">
+                                            <input class="form-check-input" type="checkbox" id="is_weight_mismatch"
+                                                <?php echo ($customerComplaints && $customerComplaints->is_weight_mismatch == 1) ? "checked" : ""; ?> />
+                                            <label class="form-check-label" for="is_weight_mismatch">
+                                                Ketidak Sesuaian Timbangan
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="fv-row mb-5">
+                                        <div class="form-check form-check-custom form-check-solid">
+                                            <input class="form-check-input" type="checkbox" id="is_delivery_delay"
+                                                <?php echo ($customerComplaints && $customerComplaints->is_delivery_delay == 1) ? "checked" : ""; ?> />
+                                            <label class="form-check-label" for="is_delivery_delay">
+                                                Ketidak Sesuaian Waktu Delivery
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="separator my-5"></div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="fv-row mb-5">
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold fs-6 mb-2">Catatan Complain</label>
+                                            <textarea class="form-control form-control-md form-control-solid" id="complaint_notes" rows="4">{{ $customerComplaints ? $customerComplaints->notes : '' }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <a href="#" class="btn btn-primary" id="btn-save-customer-complaint">Simpan Complain</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--begin::Product List-->
+                    <div class="card card-flush py-4 flex-row-fluid overflow-hidden">
+                        <div class="card-header pt-5">
+                            <h3 class="card-title fw-bold">Detail Transaksi</h3>
+                        </div>
+                        <div class="card-body pt-0">
+                            <div class="table-responsive">
+                                <!--begin::Table-->
+                                <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0">
+                                    <thead>
+                                        <tr class="text-start fw-bold fs-7 text-uppercase gs-0">
+                                            <th class="">No.</th>
+                                            <th class="min-w-175px">Nama Produk</th>
+                                            <th class="min-w-175px">Nama Butcher</th>
+                                            <th class="min-w-70px text-end">Quantity (Kg)</th>
+                                            <th class="min-w-100px text-end">Harga (Per Kg)</th>
+                                            <th class="min-w-100px text-end">Total Harga</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="fw-semibold text-gray-600">
+                                        @php
+                                            $counter = 1;
+                                            $subTotal = 0;
+                                            $discountTotal = 0;
+                                            $deliveryFee = 0;
+                                            $totalPay = 0;
+
+                                            // Helper function to match POS mround() - rounds to nearest 1000
+                                            if (!function_exists('phpMround')) {
+                                                function phpMround($value) {
+                                                    $number = (int)$value;
+                                                    $base = floor($number / 1000) * 1000;
+                                                    $remainder = $number % 1000;
+
+                                                    if ($remainder > 500) {
+                                                        return $base + 1000;
+                                                    } elseif ($remainder < 500) {
+                                                        return $base;
+                                                    } else {
+                                                        // exactly 500
+                                                        return $base + 500;
+                                                    }
+                                                }
+                                            }
+                                        @endphp
+
+                                        @foreach($detailItems as $detail)
+                                            @php
+                                                // FIXED: Use same rounding as POS (mround to nearest 1000)
+                                                $roundedTotalPrice = phpMround($detail->quantity * $detail->base_price);
+                                                // FIXED: Discount applies only for whole kg (floor of quantity)
+                                                $productDiscount = $detail->discount * floor($detail->quantity);
+                                                $totalPrice = $roundedTotalPrice - $productDiscount;
+
+                                                $subTotal += $roundedTotalPrice;
+                                                $discountTotal += $productDiscount;
+                                            @endphp
+                                            <tr>
+                                                <td>{{$counter++}}.</td>
+                                                <td>{{$detail->name}}</td>
+                                                <td>{{$detail->butcher_name}}</td>
+                                                <td style="text-align: right;">{{$detail->quantity}}</td>
+                                                <td style="text-align: right;">@php echo number_format($detail->base_price, 0, '.', ',') @endphp</td>
+                                                <td style="text-align: right;">@php echo number_format($roundedTotalPrice, 0, '.', ',') @endphp</td>
+                                            </tr>
+                                            @if($detail->discount > 0)
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td style="text-align: right;">- @php echo number_format($productDiscount, 0, '.', ',') @endphp</td>
+                                                <td style="text-align: right;">@php echo number_format($totalPrice, 0, '.', ',') @endphp</td>
+                                            </tr>
+                                            @endif
+                                        @endforeach
+                                        @php
+                                            $deliveryFee = $detailTransaction->shipping_cost;
+                                            $totalPay = $subTotal - $discountTotal + $deliveryFee;
+                                        @endphp
+                                        <tr>
+                                            <td colspan="5" class="text-end font-weight-bold">Subtotal</td>
+                                            <td class="text-end">@php echo number_format($subTotal, 0, '.', ',') @endphp</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5" class="text-end font-weight-bold">Total Discount</td>
+                                            <td class="text-end">@php echo number_format($discountTotal, 0, '.', ',') @endphp</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5" class="text-end font-weight-bold">Biaya Pengiriman</td>
+                                            <td class="text-end">@php echo number_format($deliveryFee, 0, '.', ',') @endphp</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5" class="fs-3 text-gray-900 text-end">Total Bayar</td>
+                                            <td class="text-gray-900 fs-3 fw-bolder text-end">@php echo number_format($totalPay, 0, '.', ',') @endphp</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <!--end::Table-->
+                            </div>
+                        </div>
+                        <!--end::Card body-->
+                    </div>
+                    <!--end::Product List-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="kt_img_viewer" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog mw-650px">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div class="modal-header pb-0 border-0 justify-content-end">
+                <!--begin::Close-->
+                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                    <i class="ki-duotone ki-cross fs-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </div>
+                <!--end::Close-->
+            </div>
+            <!--begin::Modal header-->
+            <!--begin::Modal body-->
+            <div class="modal-body scroll-y mx-5 mx-xl-18 pt-0 pb-15">
+                <img id="previewImage" src="" alt="Preview" class="max-h-96 mx-auto" />
+            </div>
+            <!--end::Modal body-->
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div>
+@endsection
+
+@section('script')
+<script>
+$(document).ready(function() {
+
+    var paymentMethod = $("#payment-method").val();
+
+    if(paymentMethod != 3) {
+        $(".payment-method-form").hide();
+    }
+
+    $('.previewImageBtn').on('click', function(e) {
+        e.preventDefault();
+
+        var base64Image = $(this).data('file');
+
+        console.log(base64Image)
+
+        if (!base64Image) {
+            alert('No image available.');
+            return;
+        }
+
+        $('#previewImage').attr('src', base64Image);
+    });
+
+    $('#btn-update').on('click', function(e) {
+        e.preventDefault();
+
+        let transaction_id = $("#transaction-id").val();
+        let payment_method = $("#payment-method").val();
+        let status = $("#status").val();
+
+        Swal.fire({
+            title: 'Apakah anda yakin untuk memperbaharui status transaksi ?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Update Transaksi'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                const payload = {
+                    transaction_id: transaction_id,
+                    payment_method: payment_method,
+                    status: status,
+                };
+
+                console.log(payload)
+
+                $.ajax({
+                    url: `{{route('orders.update')}}`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: JSON.stringify(payload),
+                    success: function(response) {
+                        Swal.fire({
+                            title: 'Suceess !',
+                            text: 'Transaksi berhasil di perbaharui',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            location.href = `{{route('orders.index')}}`;
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire(
+                            'Error!',
+                            error,
+                            'error'
+                        )
+                    }
+                });
+            }
+        });
+    });
+
+    // Handle Save Customer Complaint
+    $('#btn-save-customer-complaint').on('click', function(e) {
+        e.preventDefault();
+
+        let transaction_id = $("#transaction-id").val();
+        let is_quality_issue = $("#is_quality_issue").is(':checked') ? 1 : 0;
+        let is_weight_mismatch = $("#is_weight_mismatch").is(':checked') ? 1 : 0;
+        let is_delivery_delay = $("#is_delivery_delay").is(':checked') ? 1 : 0;
+        let complaint_notes = $("#complaint_notes").val();
+
+        Swal.fire({
+            title: 'Apakah anda yakin untuk menyimpan complain customer ?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Simpan Complain'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                const payload = {
+                    transaction_id: transaction_id,
+                    is_quality_issue: is_quality_issue,
+                    is_weight_mismatch: is_weight_mismatch,
+                    is_delivery_delay: is_delivery_delay,
+                    notes: complaint_notes,
+                };
+
+                console.log(payload)
+
+                $.ajax({
+                    url: `{{route('customer-complaints.store')}}`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: JSON.stringify(payload),
+                    success: function(response) {
+                        Swal.fire({
+                            title: 'Berhasil!',
+                            text: 'Complain customer berhasil disimpan',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        let errorMessage = 'Terjadi kesalahan saat menyimpan complain';
+                        if(xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        }
+                        Swal.fire({
+                            title: 'Error!',
+                            text: errorMessage,
+                            icon: 'error'
+                        });
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
+
+@endsection

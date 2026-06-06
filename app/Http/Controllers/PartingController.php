@@ -27,6 +27,7 @@ class PartingController extends Controller
             'partings.air_susut_display',
             'partings.air_susut_usus',
             'partings.air_susut_ati_ampela',
+            'partings.bubututan',
             'branches.name as branch_name',
             DB::raw("TO_CHAR(partings.date, 'DD/MM/YYYY') as date_formated"),
             DB::raw("
@@ -70,6 +71,7 @@ class PartingController extends Controller
             'partings.air_susut_display',
             'partings.air_susut_usus',
             'partings.air_susut_ati_ampela',
+            'partings.bubututan'
         );
 
         if (!empty($params['date'])) {
@@ -127,6 +129,7 @@ class PartingController extends Controller
                     'air_susut_display' => $request->input('air_susut_display'),
                     'air_susut_usus' => $request->input('air_susut_usus'),
                     'air_susut_ati_ampela' => $request->input('air_susut_ati_ampela'),
+                    'bubututan' => $request->input('bubututan'),
                 ]);
             }
 

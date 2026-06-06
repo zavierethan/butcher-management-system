@@ -271,6 +271,8 @@ Route::group(['middleware' => ['auth']], function() {
                     Route::get('/stock-opname-report', [App\Http\Controllers\Retails\DailyReportController::class, 'getStockOpnameReport'])->name('stock-opname-report');
 
                     Route::get('/get-product-qty-pivot-today', [App\Http\Controllers\Retails\DailyReportController::class, 'getProductQtyPivotToday'])->name('get-product-qty-pivot-today');
+
+                    Route::get('/get-processing-orders', [App\Http\Controllers\Retails\DailyReportController::class, 'getProcessingOrders'])->name('get-processing-orders');
                 });
             });
 
@@ -281,6 +283,17 @@ Route::group(['middleware' => ['auth']], function() {
     Route::prefix('productions')->group(function () {
         Route::name('productions.')->group(function () {
             Route::get('/', [App\Http\Controllers\ProductionController::class, 'index'])->name('index');
+        });
+    });
+
+    Route::prefix('processing-orders')->group(function () {
+        Route::name('processing-orders.')->group(function () {
+            Route::get('/', [App\Http\Controllers\ProcessingOrderController::class, 'index'])->name('index');
+            Route::get('/lists', [App\Http\Controllers\ProcessingOrderController::class, 'getLists'])->name('get-lists');
+            Route::get('/create', [App\Http\Controllers\ProcessingOrderController::class, 'create'])->name('create');
+            Route::post('/save', [App\Http\Controllers\ProcessingOrderController::class, 'save'])->name('save');
+            Route::get('/edit/{id}', [App\Http\Controllers\ProcessingOrderController::class, 'edit'])->name('edit');
+            Route::post('/update', [App\Http\Controllers\ProcessingOrderController::class, 'update'])->name('update');
         });
     });
 
