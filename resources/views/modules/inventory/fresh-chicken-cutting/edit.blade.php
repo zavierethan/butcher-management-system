@@ -84,8 +84,8 @@
                                     </div>
                                 </div>
                                 <div class="text-end">
-                                    <button type="button" class="btn btn-sm btn-primary me-3" id="btn-update-header">Update Header</button>
                                     <a href="{{route('fresh-chicken-cutting.index')}}" class="btn btn-sm btn-danger">Kembali</a>
+                                    <button type="button" class="btn btn-sm btn-primary me-3" id="btn-update-header">Update</button>
                                 </div>
                             </form>
                         </div>

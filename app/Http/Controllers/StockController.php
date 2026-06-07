@@ -24,38 +24,41 @@ class StockController extends Controller
 
     public function getLists(Request $request) {
         $branchId = Auth::user()->branch_id;
-        $startDate = now()->startOfDay();
-        $endDate   = now()->endOfDay();
+        $dateStr = $request->date ?? now()->format('Y-m-d');
 
         $logsToday = DB::table('stock_logs')
             ->select(
                 'stock_logs.stock_id',
-
-                DB::raw("
-                    DATE(stock_logs.date)
-                    as tanggal_logs_transaksi
-                "),
-
-                DB::raw("
-                    SUM(stock_logs.in_quantity)
-                    as stok_masuk
-                "),
-
-                DB::raw("
-                    SUM(stock_logs.out_quantity)
-                    as stok_keluar
-                ")
+                DB::raw("DATE(stock_logs.date) as tanggal_logs_transaksi"),
+                DB::raw("SUM(CASE WHEN ref_type = 'PARTING' THEN in_quantity ELSE 0 END) as stok_parting"),
+                DB::raw("SUM(CASE WHEN ref_type = 'IN'      THEN in_quantity ELSE 0 END) as stok_in"),
+                DB::raw("SUM(CASE WHEN ref_type = 'OUT'     THEN out_quantity ELSE 0 END) as stok_out"),
+                DB::raw("SUM(CASE WHEN ref_type = 'SALES'   THEN out_quantity ELSE 0 END) as stok_sales"),
+                DB::raw("SUM(in_quantity)  as stok_masuk"),
+                DB::raw("SUM(out_quantity) as stok_keluar")
             )
-
-            ->whereBetween('stock_logs.date', [
-                $startDate,
-                $endDate
-            ])
-
+            ->where(DB::raw("DATE(stock_logs.date)"), $dateStr)
             ->groupBy(
                 'stock_logs.stock_id',
                 DB::raw('DATE(stock_logs.date)')
             );
+
+        $salesLogs = DB::table('transaction_items')
+            ->select(
+                'stocks.id as stock_id',
+                DB::raw("SUM(transaction_items.quantity) as stok_sales")
+            )
+            ->join(
+                'transactions',
+                'transactions.id', '=', 'transaction_items.transaction_id'
+            )
+            ->join('stocks', function ($join) {
+                $join->on('stocks.product_id', '=', 'transaction_items.product_id')
+                    ->on('stocks.branch_id',  '=', 'transactions.branch_id');  // <- penting!
+            })
+            ->whereDate('transactions.transaction_date', $dateStr)
+            ->where('transactions.branch_id', $branchId)
+            ->groupBy('stocks.id');
 
         $latestOpname = DB::table(DB::raw("
             (
@@ -64,7 +67,7 @@ class StockController extends Controller
                     quantity,
                     date
                 FROM stock_opnames
-                WHERE date < '{$startDate}'
+                WHERE DATE(date) < '{$dateStr}'
                 ORDER BY stock_id, date DESC
             ) as latest_opname
         "));
@@ -76,175 +79,110 @@ class StockController extends Controller
                     quantity,
                     date
                 FROM stock_opnames
-                WHERE date BETWEEN '{$startDate}'
-                AND '{$endDate}'
+                WHERE DATE(date) = '{$dateStr}'
                 ORDER BY stock_id, date DESC
             ) as today_opname
         "));
 
         $query = DB::table('stocks')
-
-            ->leftJoin(
-                'products',
-                'products.id',
-                '=',
-                'stocks.product_id'
-            )
-
+            ->leftJoin('products', 'products.id', '=', 'stocks.product_id')
             ->leftJoinSub($logsToday, 'logs_today', function ($join) {
-
-                $join->on(
-                    'stocks.id',
-                    '=',
-                    'logs_today.stock_id'
-                );
+                $join->on('stocks.id', '=', 'logs_today.stock_id');
             })
-
             ->leftJoinSub($latestOpname, 'latest_opname', function ($join) {
-
-                $join->on(
-                    'stocks.id',
-                    '=',
-                    'latest_opname.stock_id'
-                );
+                $join->on('stocks.id', '=', 'latest_opname.stock_id');
             })
-
             ->leftJoinSub($todayOpname, 'today_opname', function ($join) {
-
-                $join->on(
-                    'stocks.id',
-                    '=',
-                    'today_opname.stock_id'
-                );
+                $join->on('stocks.id', '=', 'today_opname.stock_id');
             })
-
             ->where('stocks.branch_id', $branchId)
-
-            ->whereNotIn('products.code', [
-                'DLV',
-                'RW'
-            ])
-
+            ->whereNotIn('products.code', ['DLV', 'RW'])
             ->select(
                 'stocks.id',
                 'products.code',
                 'products.name',
-                DB::raw("
-                    COALESCE(
-                        logs_today.tanggal_logs_transaksi,
-                        DATE('{$startDate}')
-                    ) as tanggal_logs_transaksi
-                "),
-                DB::raw("
-                    TO_CHAR(
-                        latest_opname.date,
-                        'DD/MM/YYYY'
-                    ) as tanggal_stock_awal
-                "),
-                DB::raw("
-                    TO_CHAR(
-                        today_opname.date,
-                        'DD/MM/YYYY'
-                    ) as tanggal_stock_opname
-                "),
-                DB::raw("
-                    COALESCE(
-                        latest_opname.quantity,
-                        0
-                    ) as stock_awal
-                "),
-                DB::raw("
-                    COALESCE(
-                        logs_today.stok_masuk,
-                        0
-                    ) as stok_masuk
-                "),
-                DB::raw("
-                    COALESCE(
-                        logs_today.stok_keluar,
-                        0
-                    ) as stok_keluar
-                "),
+
+                // Tanggal
+                DB::raw("COALESCE(logs_today.tanggal_logs_transaksi, '{$dateStr}'::date) as tanggal_logs_transaksi"),
+                DB::raw("TO_CHAR(latest_opname.date, 'DD/MM/YYYY') as tanggal_stock_awal"),
+                DB::raw("TO_CHAR(today_opname.date,  'DD/MM/YYYY') as tanggal_stock_opname"),
+
+                // Stock Awal (dari opname terakhir sebelum hari ini)
+                DB::raw("COALESCE(latest_opname.quantity, 0) as stock_awal"),
+
+                // Stock Masuk dan Keluar
+                DB::raw("COALESCE(logs_today.stok_masuk,   0) as stok_masuk"),
+                DB::raw("COALESCE(logs_today.stok_keluar,  0) as stok_keluar"),
+
+                // Breakdown per ref_type
+                DB::raw("COALESCE(logs_today.stok_parting, 0) as stok_parting"),
+                DB::raw("COALESCE(logs_today.stok_in,      0) as stok_in"),
+                DB::raw("COALESCE(logs_today.stok_out,     0) as stok_out"),
+                DB::raw("COALESCE(logs_today.stok_sales,   0) as stok_sales"),
+
+                // Stock Akhir = awal + in - out
                 DB::raw("
                     (
-                        COALESCE(latest_opname.quantity, 0)
-                        + COALESCE(logs_today.stok_masuk, 0)
-                        - COALESCE(logs_today.stok_keluar, 0)
+                        COALESCE(latest_opname.quantity,    0)
+                        + COALESCE(logs_today.stok_parting, 0)
+                        + COALESCE(logs_today.stok_in,   0)
+                        - COALESCE(logs_today.stok_out,  0)
+                        - COALESCE(logs_today.stok_sales, 0)
                     ) as stock_akhir
                 "),
+
+                // Hasil Stock Opname hari ini
+                DB::raw("COALESCE(today_opname.quantity, 0) as hasil_stock_opname"),
+
+                // Selisih = stock_akhir - hasil_so
                 DB::raw("
-                    COALESCE(
-                        today_opname.quantity,
-                        0
-                    ) as hasil_stock_opname
-                "),
-                DB::raw("
-                    (
-                        COALESCE(today_opname.quantity, 0) -
+                    (   COALESCE(today_opname.quantity, 0) -
                         (
-                            COALESCE(latest_opname.quantity, 0)
-                            + COALESCE(logs_today.stok_masuk, 0)
-                            - COALESCE(logs_today.stok_keluar, 0)
+                            COALESCE(latest_opname.quantity,   0)
+                            + COALESCE(logs_today.stok_parting, 0)
+                            + COALESCE(logs_today.stok_in,   0)
+                            - COALESCE(logs_today.stok_out,  0)
+                            - COALESCE(logs_today.stok_sales, 0)
                         )
                     ) as selisih
                 ")
             )
             ->orderBy('products.sort_order', 'asc');
+
+        // Search
         if ($request->filled('searchTerm')) {
-
             $search = $request->searchTerm;
-
             $query->where(function ($q) use ($search) {
-
-                $q->where(
-                    'products.name',
-                    'ILIKE',
-                    "%{$search}%"
-                )
-
-                ->orWhere(
-                    'products.code',
-                    'ILIKE',
-                    "%{$search}%"
-                );
+                $q->where('products.name', 'ILIKE', "%{$search}%")
+                ->orWhere('products.code', 'ILIKE', "%{$search}%");
             });
         }
 
+        // Sorting
         $sortableColumns = [
             'code' => 'products.code',
             'name' => 'products.name',
         ];
 
         if ($request->has('order')) {
-
             $columnIndex = $request->order[0]['column'];
-
-            $direction = $request->order[0]['dir'];
-
-            $columnName = $request->columns[$columnIndex]['data'];
-
+            $direction   = $request->order[0]['dir'];
+            $columnName  = $request->columns[$columnIndex]['data'];
             if (isset($sortableColumns[$columnName])) {
-
-                $query->orderBy(
-                    $sortableColumns[$columnName],
-                    $direction
-                );
+                $query->orderBy($sortableColumns[$columnName], $direction);
             }
         }
 
-        $start  = (int) $request->input('start', 0);
-        $length = (int) $request->input('length', 10);
+        $start          = (int) $request->input('start', 0);
+        $length         = (int) $request->input('length', 10);
         $filteredRecords = (clone $query)->count();
-        $data = $query
-            ->skip($start)
-            ->take($length)
-            ->get();
+        $data           = $query->skip($start)->take($length)->get();
 
         return response()->json([
             'draw'            => $request->input('draw'),
             'recordsTotal'    => $filteredRecords,
             'recordsFiltered' => $filteredRecords,
-            'data'            => $data
+            'data'            => $data,
         ]);
     }
 

@@ -85,31 +85,26 @@
                         </div>
                         <!--begin::Card body-->
                         <div class="card-body pt-0 overflow-x-auto">
-                            <!--begin::Table-->
-                            <table class="table table-hover align-middle table-row-dashed fs-6 gy-5" id="kt_products_table">
-                                <!--begin::Table head-->
-                                <thead>
-                                    <!--begin::Table row-->
-                                    <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                        <th class="min-w-125px">Nama Produk</th>
-                                        <th class="min-w-125px">Tanggal Opname</th>
-                                        <th class="min-w-125px">Stok Awal</th>
-                                        <th class="min-w-125px">Stok Masuk</th>
-                                        <th class="min-w-125px">Stok Keluar</th>
-                                        <th class="min-w-125px">Stok Akhir</th>
-                                        <th class="min-w-125px">Hasil Opname</th>
-                                        <th class="min-w-125px">Selisih</th>
-                                        <th class="text-center min-w-70px">Actions</th>
-                                    </tr>
-                                    <!--end::Table row-->
-                                </thead>
-                                <!--end::Table head-->
-                                <!--begin::Table body-->
-                                <tbody class="fw-bold text-gray-600">
-                                </tbody>
-                                <!--end::Table body-->
-                            </table>
-                            <!--end::Table-->
+                                <table id="stock-report"
+                                    class="table table-hover align-middle table-row-dashed fs-6 gy-5">
+                                    <thead>
+                                        <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                            <th class="min-w-125px">Nama Produk</th>
+                                            <th class="min-w-125px text-center">Tgl Stock Awal</th>
+                                            <th class="min-w-125px text-center">Stok Awal</th>
+                                            <th class="min-w-125px text-center">Stok Parting</th>
+                                            <th class="min-w-125px text-center">Stok Masuk</th>
+                                            <th class="min-w-125px text-center">Stok Keluar</th>
+                                            <th class="min-w-125px text-center">Terjual</th>
+                                            <th class="min-w-125px text-center">Stok Akhir</th>
+                                            <th class="min-w-125px text-center">Hasil SO</th>
+                                            <th class="min-w-125px text-center">Selisih</th>
+                                            <th class="min-w-125px text-center">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
                         </div>
                         <!--end::Card body-->
                     </div>
@@ -134,8 +129,7 @@
         return value === '-' || value === '' ? null : value;
     };
 
-    // Initialize DataTable
-    const table = $("#kt_products_table").DataTable({
+    const table = $("#stock-report").DataTable({
         processing: true,
         serverSide: true,
         paging: true, // Enable pagination
@@ -143,25 +137,69 @@
         ajax: {
             url: `{{ route('stocks.get-lists') }}`, // Replace with your route
             type: 'GET',
-            data: function (d) {
-                // Send filter values to the server along with the pagination params
-                d.searchTerm = $('[data-kt-customer-table-filter="search"]').val();
-                d.startDate = $('#start-date').val();
-                d.endDate = $('#end-date').val();
+            data: function(d) {
+                d.date = $('#date').val();
+                d.branch_id = $('#branch').val();
             },
-            dataSrc: function (json) {
+            dataSrc: function(json) {
                 return json.data; // Map the 'data' field
             }
         },
         columns: [
-            {data: 'name', name: 'name'},
-            { data: 'tanggal_stock_awal', name: 'tanggal_stock_awal', className: 'text-center' },
-            { data: 'stock_awal', name: 'stock_awal', className: 'text-center' },
-            { data: 'stok_masuk', name: 'stok_masuk', className: 'text-center' },
-            { data: 'stok_keluar', name: 'stok_keluar', className: 'text-center' },
-            { data: 'stock_akhir', name: 'stock_akhir', className: 'text-center' },
-            { data: 'hasil_stock_opname', name: 'hasil_stock_opname', className: 'text-center' },
-            { data: 'selisih', name: 'selisih', className: 'text-center' },
+            {
+                data: 'name',
+                name: 'name'
+            },
+            {
+                data: 'tanggal_stock_awal',
+                name: 'tanggal_stock_awal',
+                className: 'text-center'
+            },
+            {
+                data: 'stock_awal',
+                name: 'stock_awal',
+                className: 'text-center'
+            },
+            {
+                data: 'stok_parting',
+                name: 'stok_parting',
+                className: 'text-center'
+            },
+            {
+                data: 'stok_in',
+                name: 'stok_in',
+                className: 'text-center'
+            },
+            {
+                data: 'stok_out',
+                name: 'stok_out',
+                className: 'text-center'
+            },
+            {
+                data: 'stok_sales',
+                name: 'stok_sales',
+                className: 'text-center'
+            },
+            {
+                data: 'stock_akhir',
+                name: 'stock_akhir',
+                className: 'text-center'
+            },
+            {
+                data: 'hasil_stock_opname',
+                name: 'hasil_stock_opname',
+                className: 'text-center'
+            },
+            {
+                data: 'selisih',
+                name: 'selisih',
+                className: 'text-center',
+                createdCell: function (td, cellData) {
+                    if (parseFloat(cellData) < 0) {
+                        $(td).addClass('bg-danger text-white');
+                    }
+                }
+            },
             {
                 data: null, // No direct field from the server
                 name: 'action',
@@ -170,13 +208,57 @@
                 render: function (data, type, row) {
                     return `
                         <div class="text-center">
-                            <a href="/stock-logs/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Log Transaksi</a>
+                            <a href="/stock-logs/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Lihat Logs</a>
                         <div>
                     `;
                 }
             }
         ]
     });
+
+    // Initialize DataTable
+    // const table = $("#kt_products_table").DataTable({
+    //     processing: true,
+    //     serverSide: true,
+    //     paging: true, // Enable pagination
+    //     pageLength: 50, // Number of rows per page
+    //     ajax: {
+    //         url: `{{ route('stocks.get-lists') }}`, // Replace with your route
+    //         type: 'GET',
+    //         data: function (d) {
+    //             // Send filter values to the server along with the pagination params
+    //             d.searchTerm = $('[data-kt-customer-table-filter="search"]').val();
+    //             d.startDate = $('#start-date').val();
+    //             d.endDate = $('#end-date').val();
+    //         },
+    //         dataSrc: function (json) {
+    //             return json.data; // Map the 'data' field
+    //         }
+    //     },
+    //     columns: [
+    //         {data: 'name', name: 'name'},
+    //         { data: 'tanggal_stock_awal', name: 'tanggal_stock_awal', className: 'text-center' },
+    //         { data: 'stock_awal', name: 'stock_awal', className: 'text-center' },
+    //         { data: 'stok_masuk', name: 'stok_masuk', className: 'text-center' },
+    //         { data: 'stok_keluar', name: 'stok_keluar', className: 'text-center' },
+    //         { data: 'stock_akhir', name: 'stock_akhir', className: 'text-center' },
+    //         { data: 'hasil_stock_opname', name: 'hasil_stock_opname', className: 'text-center' },
+    //         { data: 'selisih', name: 'selisih', className: 'text-center' },
+    //         {
+    //             data: null, // No direct field from the server
+    //             name: 'action',
+    //             orderable: false, // Disable ordering for this column
+    //             searchable: false, // Disable searching for this column
+    //             render: function (data, type, row) {
+    //                 return `
+    //                     <div class="text-center">
+    //                         <a href="/stock-logs/${row.id}" class="btn btn-sm btn-light btn-active-light-primary">Log Transaksi</a>
+    //                     <div>
+    //                 `;
+    //             }
+    //         }
+    //     ]
+    // });
 
     // Search input filter
     $('[data-kt-customer-table-filter="search"]').on('keyup', function () {
