@@ -88,7 +88,7 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Air Susut Parting</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid" type="number" id="air-susut-parting"/>
+                                                    <input class="form-control form-control-md form-control-solid format-number" value="0" type="text" id="air-susut-parting"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -99,7 +99,7 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Air Susut Display</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid" type="number" id="air-susut-display"/>
+                                                    <input class="form-control form-control-md form-control-solid format-number" value="0" type="text" id="air-susut-display"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -112,7 +112,7 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Air Susut Usus</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid" type="number" id="air-susut-usus"/>
+                                                    <input class="form-control form-control-md form-control-solid format-number" value="0" type="text" id="air-susut-usus"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -123,7 +123,7 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Air Susut Ati Ampela</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid" type="number" id="air-susut-ati-ampela"/>
+                                                    <input class="form-control form-control-md form-control-solid format-number" value="0" type="text" id="air-susut-ati-ampela"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -136,7 +136,7 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Bubututan</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid" type="number" id="bubututan"/>
+                                                    <input class="form-control form-control-md form-control-solid format-number" value="0" type="text" id="bubututan"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -277,6 +277,12 @@ $(document).on("keyup", "input[name='quantity']", function() {
     $(this).val(formattedVal);
 });
 
+$(document).on("keyup", ".format-number", function() {
+    var originalVal = $(this).val();
+    var formattedVal = formatNumber(originalVal);
+    $(this).val(formattedVal);
+});
+
 $(document).on('click', '#btn-submit', function(e) {
     e.preventDefault();
 
@@ -351,12 +357,6 @@ $(document).on('click', '#btn-submit', function(e) {
             }
         });
     }
-});
-
-$(document).on('keyup', '.format-number', function () {
-    let value = $(this).val().replace(/\D/g, '');
-
-    $(this).val(new Intl.NumberFormat('en-US').format(value));
 });
 
 function formatNumber(numStr) {

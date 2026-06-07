@@ -477,6 +477,8 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/edit/{id}', [App\Http\Controllers\PartingController::class, 'edit'])->name('edit');
             Route::post('/update', [App\Http\Controllers\PartingController::class, 'update'])->name('update');
             Route::delete('/{id}', [App\Http\Controllers\PartingController::class, 'delete'])->name('delete');
+
+            Route::post('update-header', [App\Http\Controllers\PartingController::class, 'updateHeader'])->name('update-header');
         });
     });
 

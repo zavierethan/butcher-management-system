@@ -87,7 +87,7 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Air Susut Parting</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid" type="number" id="air-susut-parting" value="{{$parting->air_susut_parting}}" />
+                                                    <input class="form-control form-control-md form-control-solid format-number" type="text" id="air-susut-parting" value="{{$parting->air_susut_parting}}" />
                                                 </div>
                                             </div>
                                         </div>
@@ -98,7 +98,7 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Air Susut Display</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid" type="number" id="air-susut-display" value="{{$parting->air_susut_display}}" />
+                                                    <input class="form-control form-control-md form-control-solid format-number" type="text" id="air-susut-display" value="{{$parting->air_susut_display}}" />
                                                 </div>
                                             </div>
                                         </div>
@@ -111,7 +111,7 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Air Susut Usus</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid" type="number" id="air-susut-usus" value="{{$parting->air_susut_usus}}" />
+                                                    <input class="form-control form-control-md form-control-solid format-number" type="text" id="air-susut-usus" value="{{$parting->air_susut_usus}}" />
                                                 </div>
                                             </div>
                                         </div>
@@ -122,7 +122,7 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Air Susut Ati Ampela</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid" type="number" id="air-susut-ati-ampela" value="{{$parting->air_susut_ati_ampela}}" />
+                                                    <input class="form-control form-control-md form-control-solid format-number" type="text" id="air-susut-ati-ampela" value="{{$parting->air_susut_ati_ampela}}" />
                                                 </div>
                                             </div>
                                         </div>
@@ -135,7 +135,7 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Bubututan</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid" type="number" id="bubututan" value="{{$parting->bubututan}}"/>
+                                                    <input class="form-control form-control-md form-control-solid format-number" type="text" id="bubututan" value="{{$parting->bubututan}}"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -153,7 +153,7 @@
                                 <div class="text-end">
                                     <a href="{{route('partings.index')}}" class="btn btn-sm btn-danger">Kembali</a>
                                     <button type="button" class="btn btn-sm btn-primary"
-                                        id="btn-submit-mutasi">Simpan</button>
+                                        id="btn-update">Update</button>
                                 </div>
                             </form>
                         </div>
@@ -237,6 +237,48 @@ $(document).on("keyup", "input[name='quantity']", function() {
     var originalVal = $(this).val();
     var formattedVal = formatNumber(originalVal);
     $(this).val(formattedVal);
+});
+
+$(document).on('click', '#btn-update', function(e) {
+    e.preventDefault();
+
+    const partingId = {{$parting->id}};
+    const airSusutParting = $('#air-susut-parting').val();
+    const airSusutDisplay = $('#air-susut-display').val();
+    const airSusutUsus = $('#air-susut-usus').val();
+    const airSusutAtiAmpela = $('#air-susut-ati-ampela').val();
+    const bubututan = $('#bubututan').val();
+
+    $.ajax({
+        url: `{{ route('partings.update-header') }}`,
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: {
+            id: partingId,
+            air_susut_parting: airSusutParting,
+            air_susut_display: airSusutDisplay,
+            air_susut_usus: airSusutUsus,
+            air_susut_ati_ampela: airSusutAtiAmpela,
+            bubututan: bubututan
+        },
+        success: function(response) {
+            Swal.fire({
+                title: 'Berhasil!',
+                text: response.message,
+                icon: 'success'
+            });
+        },
+        error: function(xhr) {
+            const errorMessage = xhr.responseJSON?.message || 'Terjadi kesalahan saat mengupdate data';
+            Swal.fire({
+                title: 'Error!',
+                text: errorMessage,
+                icon: 'error'
+            });
+        }
+    });
 });
 
 $(document).on('click', '.btn-update-row', function(e) {
@@ -354,6 +396,12 @@ $(document).on('click', '.btn-delete-row', function(e) {
             });
         }
     });
+});
+
+$(document).on("keyup", ".format-number", function() {
+    var originalVal = $(this).val();
+    var formattedVal = formatNumber(originalVal);
+    $(this).val(formattedVal);
 });
 
 function formatNumber(numStr) {

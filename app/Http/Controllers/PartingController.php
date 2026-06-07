@@ -198,6 +198,37 @@ class PartingController extends Controller
         return view('modules.inventory.parting.edit', compact('parting', 'partingCutResults', 'products'));
     }
 
+    public function updateHeader() {
+        try {
+            $id = request()->input('id');
+            $air_susut_parting = request()->input('air_susut_parting');
+            $air_susut_display = request()->input('air_susut_display');
+            $air_susut_usus = request()->input('air_susut_usus');
+            $air_susut_ati_ampela = request()->input('air_susut_ati_ampela');
+            $bubututan = request()->input('bubututan');
+
+            DB::table('partings')
+                ->where('id', $id)
+                ->update([
+                    'air_susut_parting' => $air_susut_parting,
+                    'air_susut_display' => $air_susut_display,
+                    'air_susut_usus' => $air_susut_usus,
+                    'air_susut_ati_ampela' => $air_susut_ati_ampela,
+                    'bubututan' => $bubututan
+                ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data berhasil diperbarui'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui data',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function update(Request $request) {
         try {
