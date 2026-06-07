@@ -88,7 +88,7 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Jumlah Ekor Ayam hidup</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid" type="text" id="total-live-chicken"/>
+                                                    <input class="form-control form-control-md form-control-solid format-number" type="text" id="total-live-chicken"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -99,7 +99,7 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Jumlah Bobot (Kg)</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid" type="text" id="total-weight"/>
+                                                    <input class="form-control form-control-md form-control-solid format-number" type="text" id="total-weight"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -267,6 +267,19 @@ $(document).ready(function() {
         rowCount--;
     });
 });
+
+$(document).on("keyup", ".format-number", function() {
+    var originalVal = $(this).val();
+    var formattedVal = formatNumber(originalVal);
+    $(this).val(formattedVal);
+});
+
+function formatNumber(numStr) {
+    let cleaned = numStr.replace(/[^\d.]/g, '');
+    const parts = cleaned.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join('.');
+}
 </script>
 @endsection
 

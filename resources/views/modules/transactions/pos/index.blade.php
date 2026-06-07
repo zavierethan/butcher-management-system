@@ -2632,93 +2632,66 @@ $(document).ready(function() {
     }
 
     function validate() {
+        const paymentMethod = $('#payment-method')
+            .find('input[type="radio"]:checked')
+            .val();
 
-        const paymentMethod = $('#payment-method').find('input[type="radio"]:checked').val();
         const customerId = $('#customer').val();
-        const transferRef = $('#transfer-ref').val();
+        const transferRef = $('#transfer-ref').val() || '';
+
         const cartItems = $('#cart-item .cart-item-lists');
 
-        const nominalReturn = unformatThausand($("#nominal-return").val());
-        const nominalCash = unformatThausand($("#nominal-cash").val());
+        const nominalReturn = Number(unformatThausand($("#nominal-return").val()) || 0);
+        const nominalCash = Number(unformatThausand($("#nominal-cash").val()) || 0);
 
-        let toReturn = true;
+        const showWarning = (message) => {
+            Swal.fire({
+                title: 'Warning!',
+                text: message,
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            });
 
-        console.log("Cart Item Length:", cartItems.length);
+            return false;
+        };
 
-        // === Validation rules ===
-
-        // Cart must not be empty
+        // Cart harus ada item
         if (cartItems.length === 0) {
-            Swal.fire({
-                title: 'Warning!',
-                text: 'Cart tidak boleh kosong',
-                icon: 'warning',
-                confirmButtonText: 'OK',
-                allowOutsideClick: false
-            });
-            toReturn = false;
+            return showWarning('Cart tidak boleh kosong');
         }
 
-        // Payment method must be selected
+        // Metode pembayaran wajib dipilih
         if (!paymentMethod) {
-            Swal.fire({
-                title: 'Warning!',
-                text: 'Metode Pembayaran tidak boleh kosong',
-                icon: 'warning',
-                confirmButtonText: 'OK',
-                allowOutsideClick: false
-            });
-            toReturn = false;
+            return showWarning('Metode Pembayaran tidak boleh kosong');
         }
 
-        // Customer must be selected
+        // Customer wajib dipilih
         if (!customerId) {
-            Swal.fire({
-                title: 'Warning!',
-                text: 'Nama customer harus dipilih',
-                icon: 'warning',
-                confirmButtonText: 'OK',
-                allowOutsideClick: false
-            });
-            toReturn = false;
+            return showWarning('Nama customer harus dipilih');
         }
 
-        // If payment method is transfer, reference number must be filled #tag
-        if (paymentMethod === '1' && nominalReturn < 0) {
-            Swal.fire({
-                title: 'Warning!',
-                text: 'Nominal Kembali tidak boleh kurang dari 0 untuk pembayaran CASH',
-                icon: 'warning',
-                confirmButtonText: 'OK',
-                allowOutsideClick: false
-            });
-            toReturn = false;
+        // CASH
+        if (paymentMethod === '1') {
+
+            if (nominalCash <= 0) {
+                return showWarning('Nominal Cash harus diisi untuk pembayaran CASH');
+            }
+
+            if (nominalReturn < 0) {
+                return showWarning('Nominal Kembali tidak boleh kurang dari 0 untuk pembayaran CASH');
+            }
         }
 
-        if (paymentMethod === '1' && nominalCash === "" || nominalCash === 0) {
-            Swal.fire({
-                title: 'Warning!',
-                text: 'Nominal Cash harus diisi untuk pembayaran CASH',
-                icon: 'warning',
-                confirmButtonText: 'OK',
-                allowOutsideClick: false
-            });
-            toReturn = false;
+        // TRANSFER
+        if (paymentMethod === '3') {
+
+            if (transferRef.trim() === '') {
+                return showWarning('Nomor Bukti Transfer harus diisi');
+            }
         }
 
-        // If payment method is transfer, reference number must be filled
-        if (paymentMethod === '3' && transferRef.trim() === '') {
-            Swal.fire({
-                title: 'Warning!',
-                text: 'Nomor Bukti Transfer harus diisi',
-                icon: 'warning',
-                confirmButtonText: 'OK',
-                allowOutsideClick: false
-            });
-            toReturn = false;
-        }
-
-        return toReturn;
+        return true;
     }
 
     function listPrinters() {
