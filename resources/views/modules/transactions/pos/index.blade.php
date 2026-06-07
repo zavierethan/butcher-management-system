@@ -2638,6 +2638,9 @@ $(document).ready(function() {
         const transferRef = $('#transfer-ref').val();
         const cartItems = $('#cart-item .cart-item-lists');
 
+        const nominalReturn = unformatThausand($("#nominal-return").val());
+        const nominalCash = unformatThausand($("#nominal-cash").val());
+
         let toReturn = true;
 
         console.log("Cart Item Length:", cartItems.length);
@@ -2673,6 +2676,29 @@ $(document).ready(function() {
             Swal.fire({
                 title: 'Warning!',
                 text: 'Nama customer harus dipilih',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            });
+            toReturn = false;
+        }
+
+        // If payment method is transfer, reference number must be filled #tag
+        if (paymentMethod === '1' && nominalReturn < 0) {
+            Swal.fire({
+                title: 'Warning!',
+                text: 'Nominal Kembali tidak boleh kurang dari 0 untuk pembayaran CASH',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            });
+            toReturn = false;
+        }
+
+        if (paymentMethod === '1' && nominalCash === "" || nominalCash === 0) {
+            Swal.fire({
+                title: 'Warning!',
+                text: 'Nominal Cash harus diisi untuk pembayaran CASH',
                 icon: 'warning',
                 confirmButtonText: 'OK',
                 allowOutsideClick: false
