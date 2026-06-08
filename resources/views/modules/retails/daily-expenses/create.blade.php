@@ -61,7 +61,7 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Tanggal</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="date" name="date" value="<?php echo date('Y-m-d'); ?>" id="date"/>
+                                                        type="date" name="date" value="<?php echo date('Y-m-d'); ?>" id="date" required/>
                                                 </div>
                                             </div>
                                         </div>
@@ -70,7 +70,7 @@
                                             <div class="mb-1">
                                                 <label class="form-label fw-bold fs-6 mb-2">Deskripsi</label>
                                                 <div class="position-relative mb-3">
-                                                    <input class="form-control form-control-md form-control-solid" type="text" name="description" id="description"/>
+                                                    <input class="form-control form-control-md form-control-solid" type="text" name="description" id="description" required/>
                                                 </div>
                                             </div>
                                         </div>
@@ -80,7 +80,7 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Diambil Dari</label>
                                                 <div class="position-relative mb-3">
                                                     <select class="form-select form-select-solid" data-control="select2"
-                                                        data-placeholder="Pilih Akun Rekening" name="credit" id="credit">
+                                                        data-placeholder="Pilih Akun Rekening" name="credit" id="credit" required>
                                                         <option value="">-</option>
                                                         @foreach($creditAccounts as $dAcc)
                                                         <option value="{{$dAcc->id}}">{{$dAcc->account_code}} - {{$dAcc->account_name}}</option>
@@ -95,7 +95,7 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Pengeluaran Untuk</label>
                                                 <div class="position-relative mb-3">
                                                     <select class="form-select form-select-solid" data-control="select2"
-                                                        data-placeholder="Pilih Akun Rekening" name="debit" id="debit">
+                                                        data-placeholder="Pilih Akun Rekening" name="debit" id="debit" required>
                                                         <option value="">-</option>
                                                         @foreach($debitAccounts as $dAcc)
                                                         <option value="{{$dAcc->id}}">{{$dAcc->account_code}} - {{$dAcc->account_name}}</option>
@@ -110,7 +110,7 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Jenis Pembayaran</label>
                                                 <div class="position-relative mb-3">
                                                     <select class="form-select form-select-solid" data-control="select2"
-                                                        data-placeholder="-" name="payment_method" id="payment-method">
+                                                        data-placeholder="-" name="payment_method" id="payment-method" required>
                                                         <option value="">-</option>
                                                         <option value="1">TUNAI</option>
                                                         <option value="2">TRANSFER</option>
@@ -146,7 +146,7 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Harga</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid format-number"
-                                                        type="text" name="price" id="price"/>
+                                                        type="text" name="price" id="price" required/>
                                                 </div>
                                             </div>
                                         </div>
@@ -156,7 +156,7 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Quantity</label>
                                                 <div class="position-relative mb-3">
                                                     <input class="form-control form-control-md form-control-solid"
-                                                        type="number" name="quantity" id="quantity"/>
+                                                        type="number" name="quantity" id="quantity" required/>
                                                 </div>
                                             </div>
                                         </div>
@@ -166,7 +166,7 @@
                                                 <label class="form-label fw-bold fs-6 mb-2">Satuan</label>
                                                 <div class="position-relative mb-3">
                                                     <select class="form-select form-select-solid" data-control="select2"
-                                                        data-placeholder="-" name="unit" id="unit">
+                                                        data-placeholder="-" name="unit" id="unit" required>
                                                         <option value="">-</option>
                                                         <option value="UNIT">UNIT</option>
                                                         <option value="KG">KG</option>
@@ -230,6 +230,11 @@ $(document).on('keyup', '#price, #quantity', function() {
 
 $(document).on('click', '#btn-submit', function(e) {
     e.preventDefault();
+
+    // Validasi semua field yang required
+    if (!validateForm()) {
+        return;
+    }
 
     if (true) {
         Swal.fire({
@@ -317,6 +322,35 @@ function formatNumber(numStr) {
     const parts = cleaned.split('.');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return parts.join('.');
+}
+
+function validateForm() {
+    const requiredFields = ['date', 'description', 'credit', 'debit', 'payment-method', 'price', 'quantity', 'unit'];
+    let isValid = true;
+    let errorMessage = 'Mohon isi field yang wajib diisi:\n';
+    let missingFields = [];
+
+    requiredFields.forEach(fieldId => {
+        const field = $(`#${fieldId}`);
+        const value = field.val();
+
+        if (!value || value.trim() === '') {
+            isValid = false;
+            const label = field.closest('.fv-row').find('.form-label').text();
+            missingFields.push(label);
+            field.addClass('is-invalid');
+        } else {
+            field.removeClass('is-invalid');
+        }
+    });
+
+    if (!isValid) {
+        errorMessage += missingFields.join(', ');
+        Swal.fire('Validasi Gagal', errorMessage, 'warning');
+        return false;
+    }
+
+    return true;
 }
 </script>
 @endsection
