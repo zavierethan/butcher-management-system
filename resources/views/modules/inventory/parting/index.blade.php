@@ -89,6 +89,7 @@
                                         <th class="min-w-125px">AIR SUSUT DISPLAY</th>
                                         <th class="min-w-125px">AIR SUSUT USUS</th>
                                         <th class="min-w-125px">AIR SUSUT ATI AMPELA</th>
+                                        <th class="min-w-125px">BUBUTUTAN</th>
                                         <th class="min-w-125px">ATI AMPELA (KG)</th>
                                         <th class="min-w-125px">USUS (KG)</th>
                                         <th class="min-w-125px">BOBOT (KG)</th>
@@ -150,6 +151,7 @@
             { data: 'air_susut_display', name: 'air_susut_display', className: 'text-end' },
             { data: 'air_susut_usus', name: 'air_susut_usus', className: 'text-end' },
             { data: 'air_susut_ati_ampela', name: 'air_susut_ati_ampela', className: 'text-end' },
+            { data: 'bubututan', name: 'bubututan', className: 'text-end' },
             { data: 'ati_ampela', name: 'ati_ampela', className: 'text-end' },
             { data: 'usus', name: 'usus', className: 'text-end' },
             { data: 'total_quantity', name: 'total_quantity', className: 'text-end' },
