@@ -92,6 +92,7 @@
                                         <th class="min-w-125px">TANGGAL</th>
                                         <th class="min-w-125px">NAMA PRODUK</th>
                                         <th class="min-w-125px">HASIL SO (KG)</th>
+                                        <th class="min-w-100px text-center">ACTIONS</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -141,6 +142,7 @@
 @endsection
 
 @section('script')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 $(document).ready(function() {
     $('.loader').hide();
@@ -176,8 +178,144 @@ $(document).ready(function() {
                 data: 'quantity',
                 name: 'quantity',
                 className: 'text-end'
+            },
+            {
+                data: 'id',
+                name: 'id',
+                orderable: false,
+                searchable: false,
+                className: 'text-center',
+                render: function(data, type, row) {
+                    return `
+                        <div class="d-flex justify-content-center gap-2">
+                            <button class="btn btn-sm btn-icon btn-light-primary btn-edit"
+                                data-id="${data}"
+                                title="Edit">
+                                <i class="ki-duotone ki-pencil fs-5">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                </i>
+                            </button>
+                        </div>
+                    `;
+                }
             }
         ]
+    });
+
+    // Event listener untuk tombol Edit
+    $(document).on('click', '.btn-edit', function() {
+        const id = $(this).data('id');
+
+        // Fetch data untuk menampilkan di modal
+        $.ajax({
+            url: `{{route('stock-opname.edit', '')}}/${id}`,
+            type: 'GET',
+            success: function(data) {
+                // Tampilkan SweetAlert dengan form edit
+                Swal.fire({
+                    title: 'Edit Stock Opname',
+                    html: `
+                        <div class="text-start">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Produk</label>
+                                <div class="form-control bg-light" disabled>
+                                    ${data.product_name} (${data.product_code})
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Tanggal</label>
+                                <input type="date" id="edit_date" class="form-control" value="${data.date}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Hasil SO (KG)</label>
+                                <input type="number" id="edit_quantity" class="form-control" value="${data.quantity}" step="0.01" min="0">
+                            </div>
+                        </div>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonText: 'Update',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#009EF7',
+                    cancelButtonColor: '#d33',
+                    preConfirm: () => {
+                        const date = document.getElementById('edit_date').value;
+                        const quantity = document.getElementById('edit_quantity').value;
+
+                        if (!date) {
+                            Swal.showValidationMessage('Tanggal harus diisi');
+                            return false;
+                        }
+                        if (!quantity) {
+                            Swal.showValidationMessage('Hasil SO harus diisi');
+                            return false;
+                        }
+
+                        return { date, quantity };
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Tampilkan konfirmasi sebelum update
+                        Swal.fire({
+                            title: 'Konfirmasi Update',
+                            text: 'Apakah anda yakin ingin mengupdate data ini?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Ya, Update!',
+                            cancelButtonText: 'Batal'
+                        }).then((confirmResult) => {
+                            if (confirmResult.isConfirmed) {
+                                // Proses update
+                                $.ajax({
+                                    url: `{{route('stock-opname.update', '')}}/${id}`,
+                                    type: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                    },
+                                    data: {
+                                        date: result.value.date,
+                                        quantity: result.value.quantity,
+                                        _method: 'POST'
+                                    },
+                                    success: function(response) {
+                                        Swal.fire({
+                                            title: 'Berhasil!',
+                                            text: response.message,
+                                            icon: 'success',
+                                            confirmButtonText: 'OK'
+                                        }).then(() => {
+                                            table.draw(); // Refresh table
+                                        });
+                                    },
+                                    error: function(xhr) {
+                                        let errorMsg = 'Terjadi kesalahan';
+                                        if (xhr.responseJSON && xhr.responseJSON.error) {
+                                            errorMsg = xhr.responseJSON.error;
+                                        }
+                                        Swal.fire({
+                                            title: 'Error!',
+                                            text: errorMsg,
+                                            icon: 'error',
+                                            confirmButtonText: 'OK'
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Gagal mengambil data',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
     });
 
     $('#date').on('change', function () {

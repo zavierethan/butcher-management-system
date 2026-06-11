@@ -21,6 +21,7 @@ class StockOpnameController extends Controller
             ->leftJoin('stocks', 'stock_opnames.stock_id', '=', 'stocks.id')
             ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
             ->select(
+                'stock_opnames.id',
                 DB::raw("TO_CHAR(stock_opnames.date, 'dd/mm/YYYY') as date"),
                 'products.name as product_name',
                 'stock_opnames.quantity',
@@ -261,6 +262,72 @@ class StockOpnameController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(["error" => "An error occurred while processing stock opnames."], 500);
+        }
+    }
+
+    public function edit($id)
+    {
+        $stockOpname = DB::table('stock_opnames')
+            ->leftJoin('stocks', 'stock_opnames.stock_id', '=', 'stocks.id')
+            ->leftJoin('products', 'stocks.product_id', '=', 'products.id')
+            ->select(
+                'stock_opnames.id',
+                'stock_opnames.stock_id',
+                'stock_opnames.quantity',
+                DB::raw("TO_CHAR(stock_opnames.date, 'YYYY-MM-DD') as date"),
+                'products.name as product_name',
+                'products.code as product_code'
+            )
+            ->where('stock_opnames.id', $id)
+            ->where('stocks.branch_id', Auth::user()->branch_id)
+            ->first();
+
+        if (!$stockOpname) {
+            return response()->json(['error' => 'Stock opname not found'], 404);
+        }
+
+        return response()->json($stockOpname);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $stockOpname = DB::table('stock_opnames')
+            ->leftJoin('stocks', 'stock_opnames.stock_id', '=', 'stocks.id')
+            ->select('stock_opnames.id', 'stock_opnames.stock_id', 'stocks.branch_id')
+            ->where('stock_opnames.id', $id)
+            ->first();
+
+        if (!$stockOpname) {
+            return response()->json(['error' => 'Stock opname not found'], 404);
+        }
+
+        if ($stockOpname->branch_id !== Auth::user()->branch_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $quantity = $request->input('quantity');
+            $date = $request->input('date');
+
+            DB::table('stock_opnames')->where('id', $id)->update([
+                'quantity' => $quantity,
+                'date' => $date,
+                'updated_at' => now(),
+            ]);
+
+            DB::table('stocks')->where('id', $stockOpname->stock_id)->update([
+                'current_stock' => $quantity,
+                'updated_at' => now(),
+            ]);
+
+            DB::commit();
+
+            return response()->json(['message' => 'Stock opname updated successfully']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'An error occurred while updating stock opname: ' . $e->getMessage()], 500);
         }
     }
 

@@ -209,6 +209,9 @@ Route::group(['middleware' => ['auth']], function() {
         Route::name('transactions.')->group(function () {
             Route::get('/', [App\Http\Controllers\TransactionController::class, 'index'])->name('index');
             Route::post('/store', [App\Http\Controllers\TransactionController::class, 'store'])->name('store');
+
+            Route::get('/processing-orders', [App\Http\Controllers\TransactionController::class, 'getProcessingOrders'])->name('get-processing-orders');
+            Route::get('/processing-orders/{id}/items', [App\Http\Controllers\TransactionController::class, 'getProcessingOrderItems'])->name('get-processing-orders-items');
         });
     });
 

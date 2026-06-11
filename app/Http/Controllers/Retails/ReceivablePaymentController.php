@@ -114,11 +114,11 @@ class ReceivablePaymentController extends Controller
                 DB::table('cash_movements')->insert([
                     'pos_session_id' => $session->id,
                     'user_id'        => Auth::user()->id,
-                    'type'           => 'SALE',
+                    'type'           => 'RECEIVABLE_PAYMENT',
                     'direction'      => 'IN',
                     'amount'         => $paymentAmount,
-                    'reference_type' => $paymentId,
-                    'reference_id'   => $session->id,
+                    'reference_type' => 'RECEIVABLE_PAYMENT',
+                    'reference_id'   => $paymentId,
                     'description'    => 'Penerimaan cash (Piutang)',
                     'created_at'     => now()
                 ]);

@@ -2,6 +2,15 @@
 
 @section('css')
 <style>
+/* Prevent horizontal overflow */
+#kt_app_content_container {
+    overflow-x: hidden;
+}
+
+.card-body {
+    overflow-x: hidden;
+}
+
 /* From Uiverse.io by SouravBandyopadhyay */
 .hourglassBackground {
     position: relative;
@@ -492,6 +501,62 @@
                     <!--begin::Content-->
                     <div class="col-md-8">
                         <!--begin::Pos food-->
+                        <div class="card card-p-0 border-0 mb-5">
+                            <!--begin::Body-->
+                            <div class="card-body p-5">
+                                <!-- Order Methods: Metode Pemesanan & Metode Pengerjaan (Inline) -->
+                                <div class="d-flex align-items-center gap-3 flex-wrap">
+                                    <!-- Metode Pemesanan -->
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="fw-bold text-gray-800">Metode Pemesanan</div>
+                                        <div class="flex gap-4 flex-wrap" id="ordering-method">
+                                            <label class="flex items-center gap-2 cursor-pointer group">
+                                                <input class="form-check-input" type="radio" value="2" name="ordering_method" checked>
+                                                <span class="text-sm font-medium text-gray-700 group-hover:text-gray-900">Offline</span>
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer group">
+                                                <input class="form-check-input" type="radio" value="1" name="ordering_method">
+                                                <span class="text-sm font-medium text-gray-700 group-hover:text-gray-900">Online</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    |
+                                    <!-- Metode Pengerjaan -->
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="fw-bold text-gray-800">Metode Pengerjaan</div>
+                                        <div class="flex gap-4 flex-wrap" id="working-method">
+                                            <label class="flex items-center gap-2 cursor-pointer group">
+                                                <input class="form-check-input" type="radio" value="1" name="working_method" checked>
+                                                <span class="text-sm font-medium text-gray-700 group-hover:text-gray-900">Direct</span>
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer group">
+                                                <input class="form-check-input" type="radio" value="2" name="working_method">
+                                                <span class="text-sm font-medium text-gray-700 group-hover:text-gray-900">Processing Order</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    |
+                                    <!-- Branch Id -->
+                                    @php
+                                        $isSpecialGroup = Auth::user()->group_id == 1 || Auth::user()->group_id == 13;
+                                    @endphp
+                                    <div class="d-flex align-items-center gap-3 flex-grow-1">
+                                        <div class="fw-bold text-gray-800">Store</div>
+                                        <div class="flex-grow-1" id="branch-container">
+                                            <select class="form-select form-select-solid w-100" data-control="select2" data-placeholder="Pilih Store" name="branch-id" id="branch-id" style="height: 38px;" {{ !$isSpecialGroup ? 'disabled' : '' }}>
+                                                <option value=""></option>
+                                                @foreach($branches as $branch)
+                                                    <option value="{{ $branch->id }}" {{ $branch->id == Auth::user()->branch_id ? 'selected' : '' }}>
+                                                        {{ $branch->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end: Card Body-->
+                        </div>
                         <div class="card card-p-0 border-0">
                             <!--begin::Body-->
                             <div class="card-body p-3">
@@ -512,7 +577,7 @@
                                         </span>
 
                                         <input type="text" data-product-filter="search"
-                                            class="form-control form-control-solid ps-15" placeholder="Cari Product"
+                                            class="form-control form-control-sm form-control-solid ps-15" placeholder="Cari Product"
                                             id="product-search" />
 
                                         <button type="button" class="btn btn-sm btn-icon position-absolute end-0 me-2" id="btn-clear-search" style="display: none;">
@@ -545,7 +610,7 @@
                         <!--begin::Pos order-->
                         <div class="card card-p-0 border-0" id="kt_pos_form">
                             <!--begin::Body-->
-                            <div class="card-body p-3">
+                            <div class="card-body p-5">
                                 <div class="row">
                                     <div class="col-md-1">
                                         <button class="btn btn-md" data-bs-toggle="modal"
@@ -557,7 +622,6 @@
                                             data-placeholder="Pilih Customer" name="customer" id="customer">
                                             <option value=""></option>
                                         </select>
-                                        <input type="hidden" id="branch-id" value="{{ Auth::user()->branch_id }}" readonly/>
                                     </div>
                                 </div>
                             </div>
@@ -568,8 +632,31 @@
                     <!--end::Sidebar-->
                 </div>
                 <div class="row">
+                    <div class="col-md-2">
+                        <!--begin::Category-->
+                        <div class="card card-p-0 border-0 mb-5">
+                            <!--begin::Body-->
+                            <div class="card-body p-5">
+                                <!-- Search Input -->
+                                <div class="mb-3">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control form-control-sm form-control-solid" placeholder="Cari Order..." id="order-search">
+                                        <button class="btn btn-sm btn-outline-secondary" type="button" id="btn-clear-order-search" style="display: none;">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- Processing Order List -->
+                                <div class="d-flex flex-column gap-3 overflow-y-auto" id="processing-order-list" style="height: 700px;">
+
+                                </div>
+                            </div>
+                            <!--end: Card Body-->
+                        </div>
+                        <!--end::Category-->
+                    </div>
                     <!--begin::Content-->
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                         <!--begin::Pos food-->
                         <div class="card card-p-0 border-0">
                             <!--begin::Body-->
@@ -597,7 +684,7 @@
                     <!--begin::Sidebar-->
                     <div class="col-md-4">
                         <!--begin::Pos order-->
-                        <div class="card card-flush bg-body" id="kt_pos_form">
+                        <div class="card card-flush bg-body border-0" id="kt_pos_form">
                             <!--begin::Header-->
                             <div class="card-header pt-5">
                                 <div class="d-flex mb-3">
@@ -653,100 +740,74 @@
                                 <!--end::Summary-->
                                 <!--begin::Payment Method-->
                                 <div class="m-0">
-                                    <h5 class="fw-bold text-gray-800 mb-5">Metode Pemesanan</h5>
-                                    <div class="d-flex flex-equal gap-2 gap-xxl-9 px-0 mb-3" id="ordering-method">
-                                        <div class="form-check form-check-custom form-check-solid mb-2">
-                                            <input class="form-check-input" type="radio" value="2"
-                                                name="ordering_method" checked>
-                                            <label class="form-check-label">Offline</label>
+                                    <div class="processing-order-hide">
+                                        <h5 class="fw-bold text-gray-800 mb-5">Catatan</h5>
+                                        <div class="d-flex flex-equal gap-2 gap-xxl-9 px-0 mb-3" id="customer-notes">
+                                            <textarea class="form-control" id="notes"></textarea>
                                         </div>
-                                        <div class="form-check form-check-custom form-check-solid mb-2">
-                                            <input class="form-check-input" type="radio" value="1"
-                                                name="ordering_method">
-                                            <label class="form-check-label">Online</label>
+                                        <!--begin::Title-->
+                                        <h5 class="fw-bold text-gray-800 mb-5">Metode Pembayaran</h5>
+                                        <!--end::Title-->
+                                        <!--begin::Radio group-->
+                                        <div class="d-flex flex-equal gap-5 gap-xxl-9 px-0 mb-12" data-kt-buttons="true"
+                                            data-kt-buttons-target="[data-kt-button]" id="payment-method">
+                                            <!--begin::Radio-->
+                                            <label
+                                                class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4"
+                                                data-kt-button="true">
+                                                <!--begin::Input-->
+                                                <input class="btn-check" type="radio" name="payment_method" value="1"
+                                                    id="payment-method-cash" />
+                                                <!--end::Input-->
+                                                <!--begin::Icon-->
+                                                <i class="ki-duotone ki-dollar fs-2hx mb-2 pe-0">
+                                                    <span class="path1"></span>
+                                                    <span class="path2"></span>
+                                                    <span class="path3"></span>
+                                                </i>
+                                                <!--end::Icon-->
+                                                <!--begin::Title-->
+                                                <span class="fs-7 fw-bold d-block">Tunai</span>
+                                                <!--end::Title-->
+                                            </label>
+                                            <!--end::Radio-->
+                                            <!--begin::Radio-->
+                                            <label
+                                                class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4"
+                                                data-kt-button="true" id="payment-method-credit" >
+                                                <!--begin::Input-->
+                                                <input class="btn-check" type="radio" name="payment_method" value="2"/>
+                                                <!--end::Input-->
+                                                <!--begin::Icon-->
+                                                <i class="ki-duotone ki-credit-cart fs-2hx mb-2 pe-0">
+                                                    <span class="path1"></span>
+                                                    <span class="path2"></span>
+                                                </i>
+                                                <!--end::Icon-->
+                                                <!--begin::Title-->
+                                                <span class="fs-7 fw-bold d-block">Piutang</span>
+                                                <!--end::Title-->
+                                            </label>
+                                            <!--end::Radio-->
+                                            <!--begin::Radio-->
+                                            <label
+                                                class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4"
+                                                data-kt-button="true">
+                                                <!--begin::Input-->
+                                                <input class="btn-check" type="radio" name="payment_method" value="3" id="payment-method-transfer" />
+                                                <!--end::Input-->
+                                                <!--begin::Icon-->
+                                                <i class="ki-duotone ki-delivery fs-2hx mb-2 pe-0">
+                                                    <span class="path1"></span>
+                                                    <span class="path2"></span>
+                                                </i>
+                                                <!--end::Icon-->
+                                                <!--begin::Title-->
+                                                <span class="fs-7 fw-bold d-block">Transfer</span>
+                                                <!--end::Title-->
+                                            </label>
+                                            <!--end::Radio-->
                                         </div>
-                                    </div>
-
-                                    <h5 class="fw-bold text-gray-800 mb-5">Methode Pengerjaan</h5>
-                                    <div class="d-flex flex-equal gap-2 gap-xxl-9 px-0 mb-3" id="working-method">
-                                        <div class="form-check form-check-custom form-check-solid mb-2">
-                                            <input class="form-check-input" type="radio" value="1" name="working_method"
-                                                checked>
-                                            <label class="form-check-label">Direct</label>
-                                        </div>
-                                        <div class="form-check form-check-custom form-check-solid mb-2">
-                                            <input class="form-check-input" type="radio" value="2"
-                                                name="working_method">
-                                            <label class="form-check-label">Processing Order</label>
-                                        </div>
-                                    </div>
-
-                                    <h5 class="fw-bold text-gray-800 mb-5">Catatan</h5>
-                                    <div class="d-flex flex-equal gap-2 gap-xxl-9 px-0 mb-3" id="customer-notes">
-                                        <textarea class="form-control" id="notes"></textarea>
-                                    </div>
-                                    <!--begin::Title-->
-                                    <h5 class="fw-bold text-gray-800 mb-5">Metode Pembayaran</h5>
-                                    <!--end::Title-->
-                                    <!--begin::Radio group-->
-                                    <div class="d-flex flex-equal gap-5 gap-xxl-9 px-0 mb-12" data-kt-buttons="true"
-                                        data-kt-buttons-target="[data-kt-button]" id="payment-method">
-                                        <!--begin::Radio-->
-                                        <label
-                                            class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4"
-                                            data-kt-button="true">
-                                            <!--begin::Input-->
-                                            <input class="btn-check" type="radio" name="payment_method" value="1"
-                                                id="payment-method-cash" />
-                                            <!--end::Input-->
-                                            <!--begin::Icon-->
-                                            <i class="ki-duotone ki-dollar fs-2hx mb-2 pe-0">
-                                                <span class="path1"></span>
-                                                <span class="path2"></span>
-                                                <span class="path3"></span>
-                                            </i>
-                                            <!--end::Icon-->
-                                            <!--begin::Title-->
-                                            <span class="fs-7 fw-bold d-block">Tunai</span>
-                                            <!--end::Title-->
-                                        </label>
-                                        <!--end::Radio-->
-                                        <!--begin::Radio-->
-                                        <label
-                                            class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4"
-                                            data-kt-button="true" id="payment-method-credit" >
-                                            <!--begin::Input-->
-                                            <input class="btn-check" type="radio" name="payment_method" value="2"/>
-                                            <!--end::Input-->
-                                            <!--begin::Icon-->
-                                            <i class="ki-duotone ki-credit-cart fs-2hx mb-2 pe-0">
-                                                <span class="path1"></span>
-                                                <span class="path2"></span>
-                                            </i>
-                                            <!--end::Icon-->
-                                            <!--begin::Title-->
-                                            <span class="fs-7 fw-bold d-block">Piutang</span>
-                                            <!--end::Title-->
-                                        </label>
-                                        <!--end::Radio-->
-                                        <!--begin::Radio-->
-                                        <label
-                                            class="btn bg-light btn-color-gray-600 btn-active-text-gray-800 border border-3 border-gray-100 border-active-primary btn-active-light-primary w-100 px-4"
-                                            data-kt-button="true">
-                                            <!--begin::Input-->
-                                            <input class="btn-check" type="radio" name="payment_method" value="3" id="payment-method-transfer" />
-                                            <!--end::Input-->
-                                            <!--begin::Icon-->
-                                            <i class="ki-duotone ki-delivery fs-2hx mb-2 pe-0">
-                                                <span class="path1"></span>
-                                                <span class="path2"></span>
-                                            </i>
-                                            <!--end::Icon-->
-                                            <!--begin::Title-->
-                                            <span class="fs-7 fw-bold d-block">Transfer</span>
-                                            <!--end::Title-->
-                                        </label>
-                                        <!--end::Radio-->
                                     </div>
                                     <!--end::Radio group-->
                                     <div id="form-nominal">
@@ -998,7 +1059,7 @@
                     </div>
                 </div>
                 <div class="separator my-5"></div>
-                <div class="fv-row mb-5">
+                <div class="fv-row mb-5 butcherees-element">
                     <div class="mb-1">
                         <label class="form-label fw-bold fs-6 mb-2">Butcherees</label>
                         <select class="form-select form-select-solid" data-control="select2"
@@ -1010,7 +1071,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="separator my-5"></div>
+                <div class="separator my-5 butcherees-element"></div>
                 <div class="flex justify-content-center">
                     <button type="button" class="btn btn-primary" id="add-item">Tambahkan</button>
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="btn-close">Cancel</button>
@@ -1309,6 +1370,8 @@ $(document).ready(function() {
 
     getProductList(null, null);
 
+    getProcessingOrders(null);
+
     $("#payment-method-credit").hide();
 
     $('#btn-save-nominal-cash-value').on('click', function() {
@@ -1487,6 +1550,164 @@ $(document).ready(function() {
         getProductList(param, customer);
     });
 
+    $(document).on('keyup', '#order-search', function(e) {
+        var param = $(this).val();
+
+        // Show/hide clear button based on input value
+        if (param.length > 0) {
+            $('#btn-clear-order-search').show();
+        } else {
+            $('#btn-clear-order-search').hide();
+        }
+
+        getProcessingOrders(param);
+    });
+
+    $(document).on('click', '#btn-clear-order-search', function(e) {
+        e.preventDefault();
+
+        // Clear input
+        $('#order-search').val('');
+
+        // Hide clear button
+        $('#btn-clear-order-search').hide();
+
+        // Reload processing orders list
+        getProcessingOrders(null);
+    });
+
+    // Event handler untuk click processing order card
+    $(document).on('click', '.processing-order-card', function(e) {
+        e.preventDefault();
+
+        const transactionId = $(this).data('transaction-id');
+        const customerId = $(this).data('customer-id');
+        const cardElement = $(this);
+
+        // Visual feedback
+        cardElement.css({
+            'border-color': '#198754',
+            'box-shadow': '0 0 10px rgba(25, 135, 84, 0.3)',
+            'transform': 'scale(1.02)'
+        });
+
+        // Store transaction_staging id untuk digunakan saat proses transaksi
+        $(document).data('transaction_staging_id', transactionId);
+
+        // Set customer
+        $('#customer').val(customerId).trigger('change');
+
+        // Fetch dan load items dari processing order
+        loadProcessingOrderItems(transactionId);
+    });
+
+    // Fungsi untuk fetch detail items dari processing order
+    function loadProcessingOrderItems(transactionStagingId) {
+        $.ajax({
+            url: `/transactions/processing-orders/${transactionStagingId}/items`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                var items = response.data;
+
+                if (!items || items.length === 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Tidak Ada Item',
+                        text: 'Processing order tidak memiliki item',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+
+                // Clear cart terlebih dahulu
+                $('.cart-item-lists').remove();
+                calculateTotals();
+
+                // Tambahkan setiap item ke cart
+                items.forEach(function(item) {
+                    const grossPrice = mround(item.price * item.quantity);
+                    const totalDiscount = item.discount * Math.floor(item.quantity);
+                    const nettPrice = grossPrice - totalDiscount;
+
+                    // Generate unique ID
+                    cartItemCounter++;
+                    var uniqueItemId = `product-item-${cartItemCounter}`;
+
+                    var productItem = `<div class="cart-item-lists p-3 mb-2" id="${uniqueItemId}" style="border: 1px solid #e9ecef; border-radius: 0.375rem; background-color: #f8f9fa;">
+                        <!-- Hidden data fields -->
+                        <div class="d-none product-id">${item.product_id}</div>
+                        <div class="d-none stock-id">${item.stock_id}</div>
+                        <div class="d-none base-price">${item.price}</div>
+                        <div class="d-none discount">${item.discount}</div>
+                        <div class="d-none discount-per-unit">${totalDiscount}</div>
+                        <div class="d-none quantity-value">${item.quantity}</div>
+                        <div class="d-none gross-price">${grossPrice}</div>
+                        <div class="d-none butcher-id"></div>
+
+                        <!-- Row 1: Product Name + Edit & Delete Icons -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0 fw-bold text-gray-800">${item.name}</h6>
+                            <div class="d-flex gap-1">
+                                <a href="#" class="btn btn-sm btn-link edit-item p-1 me-1" data-bs-toggle="modal" data-bs-target="#kt_modal_edit_product_item" data-item-id="${uniqueItemId}" data-product-id="${item.product_id}" data-product-name="${item.name}" data-product-price="${item.price}" data-product-discount="${item.discount}" data-product-quantity="${item.quantity}">
+                                    <i class="fas fa-edit text-success" style="font-size: 14px;"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm btn-link remove-item p-1" data-item-id="${uniqueItemId}">
+                                    <i class="fas fa-trash text-danger" style="font-size: 14px;"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Price Calculation -->
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2" style="border-bottom: 1px dotted #dee2e6;">
+                            <small class="text-muted"><span class="qty">${item.quantity}</span> x ${formatThausand(item.price)}</small>
+                            <small class="fw-bold text-dark">Gross: ${formatThausand(grossPrice)}</small>
+                        </div>
+
+                        <!-- Row 3: Discount Badge -->
+                        ${item.discount > 0 ? `<div class="mb-2 pb-2 discount-section" style="border-bottom: 1px solid #dee2e6;">
+                            <small class="text-muted">Discount: <span class="discount-total">${Math.floor(item.quantity)}</span> kg x ${formatThausand(item.discount)} = </small>
+                            <small class="fw-bold text-danger">${formatThausand(totalDiscount)}</small>
+                        </div>` : ''}
+
+                        <!-- Row 4: Final Total Price -->
+                        <div class="d-flex justify-content-between align-items-center pt-2">
+                            <span class="fw-bold text-dark">Net Total:</span>
+                            <span class="fw-bold price" style="color: #198754; font-size: 1.05rem;">${formatThausand(nettPrice)}</span>
+                        </div>
+                    </div>`;
+
+                    $('#cart-item').append(productItem);
+                });
+
+                // Hitung totals
+                calculateTotals();
+
+                // Scroll ke cart
+                $('html, body').animate({
+                    scrollTop: $('#kt_pos_form').offset().top - 100
+                }, 500);
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: `${items.length} item berhasil dimuat ke cart`,
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading items:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Gagal memuat item dari processing order',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    }
+
     $(document).on('click', '#btn-clear-search', function(e) {
         e.preventDefault();
 
@@ -1564,6 +1785,8 @@ $(document).ready(function() {
         var butcherId = $("#kt_modal_add_product_item #butcher-name").val();
         var productImgUrl = $(this).find('img').attr('src');
 
+        var workingMethod = $('#working-method').find('input[type="radio"]:checked').val();
+
         // Validation for productPrice and quantity
         if (!productPrice || productPrice <= 0) {
             Swal.fire({
@@ -1587,15 +1810,18 @@ $(document).ready(function() {
             return;
         }
 
-        if (!butcherId || butcherId === '') {
-            Swal.fire({
-                title: 'Warning!',
-                text: 'Butcherees harus dipilih',
-                icon: 'warning',
-                confirmButtonText: 'OK',
-                allowOutsideClick: false
-            });
-            return;
+        if (workingMethod !== '2') {
+            if (!butcherId || butcherId === '') {
+                Swal.fire({
+                    title: 'Warning!',
+                    text: 'Butcherees harus dipilih',
+                    icon: 'warning',
+                    confirmButtonText: 'OK',
+                    allowOutsideClick: false
+                });
+
+                return;
+            }
         }
 
         // CHANGED: Always add as new item, even if product already exists in cart
@@ -1897,6 +2123,12 @@ $(document).ready(function() {
                     formData.append('working_method', workingMethod);
                     formData.append('notes', notes);
 
+                    // Append transaction_staging_id jika ada (dari processing order)
+                    const transactionStagingId = $(document).data('transaction_staging_id');
+                    if (transactionStagingId) {
+                        formData.append('transaction_staging_id', transactionStagingId);
+                    }
+
                     if (transferAttch) {
                         formData.append('transfer_attch', transferAttch);
                     }
@@ -1927,6 +2159,9 @@ $(document).ready(function() {
                         success: function(response) {
                             // Hide loader dan enable tombol
                             $processBtn.prop('disabled', false).html(originalBtnText);
+
+                            // Clear transaction_staging_id setelah transaksi berhasil
+                            $(document).removeData('transaction_staging_id');
 
                             Swal.fire({
                                 title: 'Success!',
@@ -2280,6 +2515,84 @@ $(document).ready(function() {
         });
     }
 
+    function getProcessingOrders(param) {
+        $.ajax({
+            url: `/transactions/processing-orders`, // Laravel route to fetch processing orders
+            type: 'GET',
+            data: {
+                q: param
+            },
+            dataType: 'json',
+            success: function(response) {
+                var data = response.data;
+
+                console.log('Processing orders data:', data);
+                $('#processing-order-list').html('');
+
+                // Check if data is empty
+                // Clear previous items
+                $(".processing-order-card").remove();
+
+                if (!data || data.length === 0) {
+                    const emptyCard = `<div class="border border-1 rounded p-4 bg-light text-center">
+                                            <div class="fs-8 text-gray-600 mb-2">
+                                                <i class="fas fa-inbox" style="font-size: 24px; color: #ccc;"></i>
+                                            </div>
+                                            <div class="fs-8 text-gray-600">
+                                                <strong>Tidak Ada Processing Order</strong>
+                                            </div>
+                                            <div class="fs-9 text-gray-500 mt-1">
+                                                Tidak ada pesanan yang sedang diproses saat ini
+                                            </div>
+                                        </div>`;
+                    $('#processing-order-list').html(emptyCard);
+                    return;
+                }
+
+                // Append each order item
+                data.forEach(function(order) {
+                    const orderItem = `<div class="border border-1 rounded p-3 bg-light cursor-pointer processing-order-card" data-transaction-id="${order.id}" data-customer-id="${order.customer_id}" style="transition: all 0.3s ease; cursor: pointer;">
+                                            <div class="fs-7 fw-bold text-dark mb-2">#${order.code}</div>
+                                            <div class="fs-8 text-gray-600 mb-2">${order.date}</div>
+                                            <div class="fs-8 text-gray-700 mb-1"><strong>Customer:</strong> ${order.customer_name}</div>
+                                            <div class="fs-8 text-gray-700 mb-1">
+                                                <span class="badge bg-success">Online</span>
+                                            </div>
+                                            <div class="fs-8 text-gray-700 mb-1"><strong>Qty:</strong> ${order.quantity} kg</div>
+                                            <div class="fs-8 fw-bold text-primary">Rp ${formatThausand(order.total_amount)}</div>
+                                        </div>`;
+
+                    $('#processing-order-list').append(orderItem);
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching processing orders:', error);
+
+                // Display error card with appropriate message
+                let errorMessage = 'Gagal memuat data processing order';
+                if (xhr.status === 0) {
+                    errorMessage = 'Gagal terhubung ke server';
+                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+
+                const errorCard = `<div class="border border-1 rounded p-4 bg-light text-center border-danger">
+                                        <div class="fs-8 text-danger mb-2">
+                                            <i class="fas fa-exclamation-circle" style="font-size: 24px;"></i>
+                                        </div>
+                                        <div class="fs-8 text-danger">
+                                            <strong>Error</strong>
+                                        </div>
+                                        <div class="fs-9 text-gray-600 mt-1">
+                                            ${errorMessage}
+                                        </div>
+                                    </div>`;
+
+                $('#processing-order-list').html(errorCard);
+            }
+        });
+    }
+
     $('#customer').on('change', function() {
         let customerId = $(this).val();
 
@@ -2310,6 +2623,20 @@ $(document).ready(function() {
         }
 
         $(".cart-item-lists").remove();
+    });
+
+    $(document).on('change', 'input[name="working_method"]', function() {
+        var value = $(this).val();
+
+        $('.butcherees-element').hide();
+
+        if (value == '2') {
+            $('.butcherees-element').hide();
+            $(".processing-order-hide").hide();
+        } else if (value == '1') {
+            $('.butcherees-element').show();
+            $(".processing-order-hide").show();
+        }
     });
 
     function getRemainingCashToday() {
@@ -2644,6 +2971,8 @@ $(document).ready(function() {
         const nominalReturn = Number(unformatThausand($("#nominal-return").val()) || 0);
         const nominalCash = Number(unformatThausand($("#nominal-cash").val()) || 0);
 
+        const workingMethod = $('#working-method').find('input[type="radio"]:checked').val();
+
         const showWarning = (message) => {
             Swal.fire({
                 title: 'Warning!',
@@ -2661,33 +2990,35 @@ $(document).ready(function() {
             return showWarning('Cart tidak boleh kosong');
         }
 
-        // Metode pembayaran wajib dipilih
-        if (!paymentMethod) {
-            return showWarning('Metode Pembayaran tidak boleh kosong');
-        }
-
         // Customer wajib dipilih
         if (!customerId) {
             return showWarning('Nama customer harus dipilih');
         }
 
-        // CASH
-        if (paymentMethod === '1') {
-
-            if (nominalCash <= 0) {
-                return showWarning('Nominal Cash harus diisi untuk pembayaran CASH');
+        if(workingMethod !== '2') {
+            // Metode pembayaran wajib dipilih
+            if (!paymentMethod) {
+                return showWarning('Metode Pembayaran tidak boleh kosong');
             }
 
-            if (nominalReturn < 0) {
-                return showWarning('Nominal Kembali tidak boleh kurang dari 0 untuk pembayaran CASH');
+            // CASH
+            if (paymentMethod === '1') {
+
+                if (nominalCash <= 0) {
+                    return showWarning('Nominal Cash harus diisi untuk pembayaran CASH');
+                }
+
+                if (nominalReturn < 0) {
+                    return showWarning('Nominal Kembali tidak boleh kurang dari 0 untuk pembayaran CASH');
+                }
             }
-        }
 
-        // TRANSFER
-        if (paymentMethod === '3') {
+            // TRANSFER
+            if (paymentMethod === '3') {
 
-            if (transferRef.trim() === '') {
-                return showWarning('Nomor Bukti Transfer harus diisi');
+                if (transferRef.trim() === '') {
+                    return showWarning('Nomor Bukti Transfer harus diisi');
+                }
             }
         }
 

@@ -97,7 +97,7 @@ class DailyExpensesController extends Controller
                 $base64File = base64_encode($fileContents);
             }
 
-            DB::table('daily_expenses')->insert([
+            $dailyExpenseId = DB::table('daily_expenses')->insertGetId([
                 'date' => $request->date,
                 'description' => $request->description,
                 'reference' => $request->reference,
@@ -141,8 +141,8 @@ class DailyExpensesController extends Controller
                     'type'           => 'SALE',
                     'direction'      => 'OUT',
                     'amount'         => $request->amount,
-                    'reference_type' => 'ORDER',
-                    'reference_id'   => $session->id,
+                    'reference_type' => 'EXPENSES',
+                    'reference_id'   => $dailyExpenseId,
                     'description'    => 'Pengeluaran cash',
                     'created_at'     => now()
                 ]);

@@ -56,31 +56,6 @@ class TransactionController extends Controller
                 DB::statement("CALL create_journal_proc(?, ?, ?, ?)", [
                     'sales_cash', $transactionCode, 'Penjualan dengan pembayaran Cash', $totalAmount
                 ]);
-
-                $session = DB::table('pos_sessions')
-                    ->where('branch_id', Auth::user()->branch_id)
-                    ->where('status', 'OPEN')
-                    ->where('created_at', '>=', now()->startOfDay())
-                    ->where('created_at', '<', now()->endOfDay())
-                    ->first();
-
-                if (!$session) {
-                    throw new \Exception('POS session tidak ditemukan / belum dibuka');
-                }
-
-                // insert cash movement (IN)
-                DB::table('cash_movements')->insert([
-                    'pos_session_id' => $session->id,
-                    'user_id'        => Auth::user()->id,
-                    'type'           => 'SALE',
-                    'direction'      => 'IN',
-                    'amount'         => $totalAmount,
-                    'reference_type' => 'ORDER',
-                    'reference_id'   => $session->id,
-                    'description'    => 'Penjualan cash',
-                    'created_at'     => now()
-                ]);
-
             } elseif ($paymentMethod == '2') {
                 $status = 2; // Pending Piutang
                 DB::statement("CALL create_journal_proc(?, ?, ?, ?)", [
@@ -107,7 +82,7 @@ class TransactionController extends Controller
             }
 
             if($request->working_method == 2) { // Online Order (Processing Order)
-                $code = Carbon::now()->format('YmdHis') . mt_rand(1000, 9999);
+                $code = 'PO-'.Carbon::now()->format('YmdHis') . mt_rand(1000, 9999);
                 $transactionStagingId = DB::table('transaction_staging')->insertGetId([
                     "code"             => $code,
                     "date"             => now(),
@@ -164,6 +139,33 @@ class TransactionController extends Controller
                 "notes"            => $request->notes,
             ]);
 
+            if ($paymentMethod == '1') {
+
+                $session = DB::table('pos_sessions')
+                    ->where('branch_id', Auth::user()->branch_id)
+                    ->where('status', 'OPEN')
+                    ->where('created_at', '>=', now()->startOfDay())
+                    ->where('created_at', '<', now()->endOfDay())
+                    ->first();
+
+                if (!$session) {
+                    throw new \Exception('POS session tidak ditemukan / belum dibuka');
+                }
+
+                // insert cash movement (IN)
+                DB::table('cash_movements')->insert([
+                    'pos_session_id' => $session->id,
+                    'user_id'        => Auth::user()->id,
+                    'type'           => 'SALE',
+                    'direction'      => 'IN',
+                    'amount'         => $totalAmount,
+                    'reference_type' => 'ORDER',
+                    'reference_id'   => $transactionId,
+                    'description'    => 'Penjualan cash',
+                    'created_at'     => now()
+                ]);
+            }
+
             // Parse and insert transaction items
             $details = json_decode($request->details, true);
             foreach ($details as $detail) {
@@ -189,6 +191,11 @@ class TransactionController extends Controller
                     "ref_type"     => 'SALES',
                     "ref_id"       => $transactionItemId,
                 ]);
+            }
+
+            if ($request->has('transaction_staging_id') && $request->transaction_staging_id) {
+                DB::table('transaction_staging')->where('id', $request->transaction_staging_id)
+                    ->update(['status' => 2]);
             }
 
             DB::commit();
@@ -266,6 +273,78 @@ class TransactionController extends Controller
             ->sum('total_amount');
 
         return $totalDebt ?? 0;
+    }
+
+    public function getProcessingOrders(Request $request)
+    {
+        $query = DB::table('transaction_staging')
+            ->select(
+                'transaction_staging.id',
+                'transaction_staging.code',
+                'transaction_staging.customer_id',
+                DB::raw("TO_CHAR(transaction_staging.date, 'dd/mm/YYYY HH24:MI:SS') as date"),
+                'customers.name as customer_name',
+                'customers.id as customer_id',
+                'transaction_staging.total_amount',
+                DB::raw('SUM(transaction_staging_items.quantity) as quantity')
+            )
+            ->leftJoin('transaction_staging_items', 'transaction_staging.id', '=', 'transaction_staging_items.transaction_staging_id')
+            ->leftJoin('customers', 'transaction_staging.customer_id', '=', 'customers.id')
+            ->where('transaction_staging.status', 1) // Status 1 = Pending Processing
+            ->where('transaction_staging.branch_id', Auth::user()->branch_id);
+
+        // Filter berdasarkan kode transaksi jika parameter q ada
+        if ($request->has('q') && !empty($request->q)) {
+            $query->where('transaction_staging.code', 'ilike', '%' . $request->q . '%');
+        }
+
+        $processingOrders = $query->groupBy(
+            'transaction_staging.id',
+            'transaction_staging.code',
+            'transaction_staging.customer_id',
+            'transaction_staging.date',
+            'customers.name',
+            'customers.id',
+            'transaction_staging.total_amount'
+        )
+        ->orderBy('transaction_staging.date', 'desc')
+        ->get();
+
+        return response()->json([
+            'data' => $processingOrders
+        ]);
+    }
+
+    public function getProcessingOrderItems($transactionStagingId)
+    {
+        try {
+            $items = DB::table('transaction_staging_items')
+                ->select(
+                    'transaction_staging_items.id',
+                    'transaction_staging_items.product_id',
+                    'transaction_staging_items.quantity',
+                    'transaction_staging_items.price',
+                    'transaction_staging_items.discount',
+                    'products.name',
+                    'stocks.id as stock_id'
+                )
+                ->leftJoin('products', 'transaction_staging_items.product_id', '=', 'products.id')
+                ->leftJoin('stocks', function($join) {
+                    $join->on('products.id', '=', 'stocks.product_id')
+                        ->where('stocks.branch_id', '=', Auth::user()->branch_id);
+                })
+                ->where('transaction_staging_items.transaction_staging_id', $transactionStagingId)
+                ->get();
+
+            return response()->json([
+                'data' => $items
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to fetch items',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
 }
