@@ -2633,9 +2633,13 @@ $(document).ready(function() {
         if (value == '2') {
             $('.butcherees-element').hide();
             $(".processing-order-hide").hide();
+
+            $(".cart-item-lists").remove();
         } else if (value == '1') {
             $('.butcherees-element').show();
             $(".processing-order-hide").show();
+
+            $(".cart-item-lists").remove();
         }
     });
 

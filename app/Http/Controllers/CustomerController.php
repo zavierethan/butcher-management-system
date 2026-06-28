@@ -12,11 +12,21 @@ class CustomerController extends Controller
     }
 
     public function getLists(Request $request) {
+        $searchValue = $request->input('search.value');
+        $start = (int) $request->input('start', 0);
+        $length = (int) $request->input('length', 10);
 
-        $params = $request->all();
+        // Total records before filtering
+        $totalRecords = DB::table('customers')->count();
 
+        // Base query
         $query = DB::table('customers')
-            ->leftJoin('customer_overpayments', 'customer_overpayments.customer_id', '=', 'customers.id')
+            ->leftJoin(
+                'customer_overpayments',
+                'customer_overpayments.customer_id',
+                '=',
+                'customers.id'
+            )
             ->selectRaw("
                 customers.id,
                 customers.name,
@@ -26,16 +36,21 @@ class CustomerController extends Controller
                 customers.address,
                 TO_CHAR(
                     ROUND(
-                        COALESCE(SUM(
-                            CASE
-                                WHEN customer_overpayments.direction = 'IN' THEN customer_overpayments.amount
-                                WHEN customer_overpayments.direction = 'OUT' THEN -customer_overpayments.amount
-                                ELSE 0
-                            END
-                        ), 0)::numeric
+                        COALESCE(
+                            SUM(
+                                CASE
+                                    WHEN customer_overpayments.direction = 'IN'
+                                        THEN customer_overpayments.amount
+                                    WHEN customer_overpayments.direction = 'OUT'
+                                        THEN -customer_overpayments.amount
+                                    ELSE 0
+                                END
+                            ),
+                            0
+                        )::numeric
                     ),
                     'FM999,999,999'
-                ) as total_saldo_overpayment
+                ) AS total_saldo_overpayment
             ")
             ->groupBy(
                 'customers.id',
@@ -43,30 +58,38 @@ class CustomerController extends Controller
                 'customers.ktp_number',
                 'customers.phone_number',
                 'customers.type',
-                'customers.address',
-                );
+                'customers.address'
+            );
 
-        // Apply global search if provided
-        $searchValue = $request->input('search.value');
+        // Global search
         if (!empty($searchValue)) {
-            $query->whereRaw('customers.name ILIKE ?', ['%' . $searchValue . '%']);
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('customers.name', 'ILIKE', "%{$searchValue}%")
+                ->orWhere('customers.ktp_number', 'ILIKE', "%{$searchValue}%")
+                ->orWhere('customers.phone_number', 'ILIKE', "%{$searchValue}%")
+                ->orWhere('customers.address', 'ILIKE', "%{$searchValue}%")
+                ->orWhere('customers.type', 'ILIKE', "%{$searchValue}%");
+            });
         }
 
-        $start = $request->input('start', 0);
-        $length = $request->input('length', 10);
+        // Count after filtering
+        $filteredRecords = DB::query()
+            ->fromSub(clone $query, 'customer_list')
+            ->count();
 
-        $totalRecords = $query->count();
-        $filteredRecords = $query->count();
-        $data = $query->orderBy('customers.name', 'asc')->skip($start)->take($length)->get();
+        // Pagination
+        $data = $query
+            ->orderBy('customers.id', 'desc')
+            ->offset($start)
+            ->limit($length)
+            ->get();
 
-        $response = [
-            'draw' => $request->input('draw'),
+        return response()->json([
+            'draw' => (int) $request->input('draw'),
             'recordsTotal' => $totalRecords,
             'recordsFiltered' => $filteredRecords,
-            'data' => $data
-        ];
-
-        return response()->json($response);
+            'data' => $data,
+        ]);
     }
 
     public function create() {

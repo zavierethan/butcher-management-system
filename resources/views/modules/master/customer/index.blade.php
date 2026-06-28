@@ -126,7 +126,6 @@
     let table = $("#kt_customers_table").DataTable({
         processing: true,
         serverSide: true,
-        paging: true, // Enable pagination
         pageLength: 10, // Number of rows per page
         ajax: {
             url: `{{route('customers.get-lists')}}`, // Replace with your route
