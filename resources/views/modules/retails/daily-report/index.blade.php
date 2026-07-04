@@ -391,6 +391,44 @@
                 </div>
                 <!-- End Main Content Row -->
 
+                <!-- Main Content Row -->
+                <div class="row gy-5 g-xl-10 mb-5">
+                    <!-- Left Column: Table -->
+                    <div class="col-lg-6">
+                        <!-- Revenue Summary Table -->
+                        <div class="card card-flush">
+                            <div class="card-header pt-5">
+                                <h3 class="card-title fw-bold">Loos Orders</h3>
+                            </div>
+                            <div class="card-body pt-3 overflow-x-auto">
+                                <table class="table table-hover align-middle table-row-dashed fs-6 gy-5"
+                                    id="loose-order-table">
+                                    <thead>
+                                        <tr class="text-start fw-bolder fs-7 text-uppercase gs-0">
+                                            <th class="min-w-125px">Product</th>
+                                            <th class="min-w-125px">Quantity</th>
+                                            <th class="min-w-125px">Keterangan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Bar/Line Chart -->
+                    <div class="col-lg-6">
+                        <div class="card card-flush">
+                            <div class="card-header pt-5">
+                                <h3 class="card-title fw-bold"></h3>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- End Main Content Row -->
+
                 <div class="row gy-5 g-xl-10 mb-5">
                     <div class="col-lg-12">
                         <div class="card card-flush">
@@ -710,6 +748,39 @@ $(document).ready(function() {
         ]
     });
 
+    const looseOrders = $("#loose-order-table").DataTable({
+        processing: true,
+        serverSide: true,
+        paging: true, // Enable pagination
+        pageLength: 50, // Number of rows per page
+        ajax: {
+            url: `{{ route('retails.daily-report.loose-orders') }}`, // Replace with your route
+            type: 'GET',
+            data: function(d) {
+                d.date = $('#date').val();
+                d.branch_id = $('#branch').val();
+            },
+            dataSrc: function(json) {
+                return json.data; // Map the 'data' field
+            }
+        },
+        columns: [
+            {
+                data: 'product_name',
+                name: 'product_name'
+            },
+            {
+                data: 'quantity',
+                name: 'quantity',
+                className: 'text-center'
+            },
+            {
+                data: 'notes',
+                name: 'notes',
+            }
+        ]
+    });
+
     $(document).on('change', '#date, #branch', function() {
         var date = $('#date').val();
         var branch = $('#branch').val();
@@ -721,7 +792,7 @@ $(document).ready(function() {
         expenesTable.draw();
         receivableTable.draw();
         stockOpnameReport.draw();
-
+        looseOrders.draw();
     });
 });
 

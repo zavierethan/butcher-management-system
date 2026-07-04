@@ -347,4 +347,44 @@ class TransactionController extends Controller
         }
     }
 
+    public function saveLooseOrder(Request $request)
+    {
+        $request->validate([
+            'rows' => 'required|array|min:1',
+            'rows.*.product_id' => 'required|integer|exists:products,id',
+            'rows.*.quantity' => 'required|numeric|min:0.01',
+            'rows.*.description' => 'nullable|string|max:255',
+        ]);
+
+        try {
+            DB::beginTransaction();
+            $orderDate = Carbon::now();
+            $rows = $request->input('rows');
+            foreach ($rows as $row) {
+                DB::table('loose_orders')->insert([
+                    'order_date' => $orderDate,
+                    'branch_id' => $row['branch_id'],
+                    'product_id' => $row['product_id'],
+                    'price' => 0,
+                    'quantity' => $row['quantity'],
+                    'notes' => $row['description'] ?? null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Loose order berhasil disimpan'
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Gagal menyimpan loose order',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 }

@@ -212,6 +212,7 @@ Route::group(['middleware' => ['auth']], function() {
 
             Route::get('/processing-orders', [App\Http\Controllers\TransactionController::class, 'getProcessingOrders'])->name('get-processing-orders');
             Route::get('/processing-orders/{id}/items', [App\Http\Controllers\TransactionController::class, 'getProcessingOrderItems'])->name('get-processing-orders-items');
+            Route::post('/loose-order', [App\Http\Controllers\TransactionController::class, 'saveLooseOrder'])->name('save-loose-order');
         });
     });
 
@@ -276,6 +277,8 @@ Route::group(['middleware' => ['auth']], function() {
                     Route::get('/get-product-qty-pivot-today', [App\Http\Controllers\Retails\DailyReportController::class, 'getProductQtyPivotToday'])->name('get-product-qty-pivot-today');
 
                     Route::get('/get-processing-orders', [App\Http\Controllers\Retails\DailyReportController::class, 'getProcessingOrders'])->name('get-processing-orders');
+
+                    Route::get('/loose-orders', [App\Http\Controllers\Retails\DailyReportController::class, 'getLooseOrders'])->name('loose-orders');
                 });
             });
 

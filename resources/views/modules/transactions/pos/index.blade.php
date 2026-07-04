@@ -540,7 +540,7 @@
                                     @php
                                         $isSpecialGroup = Auth::user()->group_id == 1 || Auth::user()->group_id == 13;
                                     @endphp
-                                    <div class="d-flex align-items-center gap-3 flex-grow-1">
+                                    <div class="d-flex align-items-center gap-3 flex-grow-1 flex-wrap">
                                         <div class="fw-bold text-gray-800">Store</div>
                                         <div class="flex-grow-1" id="branch-container">
                                             <select class="form-select form-select-solid w-100" data-control="select2" data-placeholder="Pilih Store" name="branch-id" id="branch-id" style="height: 38px;" {{ !$isSpecialGroup ? 'disabled' : '' }}>
@@ -552,7 +552,9 @@
                                                 @endforeach
                                             </select>
                                         </div>
+                                        <button type="button" id="loose-order" class="btn btn-primary btn-sm" style="height: 38px; white-space: nowrap;">Loos Order</button>
                                     </div>
+
                                 </div>
                             </div>
                             <!--end: Card Body-->
@@ -1290,6 +1292,41 @@
     <!--end::Modal dialog-->
 </div>
 
+<!-- Modal: Loose Order -->
+<div class="modal fade" id="modal-loose-order" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Loos Order</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle" id="loose-order-table">
+                        <thead>
+                            <tr>
+                                <th>Nama Product</th>
+                                <th style="width: 140px;">Quantity</th>
+                                <th>Keterangan</th>
+                                <th style="width: 80px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-between mt-3">
+                    <button type="button" class="btn btn-sm btn-secondary" id="btn-add-loose-order-row">Tambah Row</button>
+                    <div class="text-muted">Gunakan select box untuk memilih product.</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-primary" id="btn-save-loose-order">Simpan Loose Order</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal: Close Session / Close Transaction -->
 <div class="modal fade" id="modal-close-session" tabindex="-1">
     <div class="modal-dialog">
@@ -1371,6 +1408,8 @@ $(document).ready(function() {
     getProductList(null, null);
 
     getProcessingOrders(null);
+
+    initLooseOrderModal();
 
     $("#payment-method-credit").hide();
 
@@ -2880,6 +2919,163 @@ $(document).ready(function() {
 
         $("#nominal-cash").val("");
         $("#nominal-return").val("");
+    }
+
+    function initLooseOrderModal() {
+        let looseOrderProducts = [];
+
+        function renderLooseOrderRow(rowId) {
+            const options = looseOrderProducts.map(product => `
+                <option value="${product.id}">${product.name}</option>
+            `).join('');
+
+            return `
+                <tr data-row-id="${rowId}">
+                    <td>
+                        <select class="form-select form-select-solid form-select-sm loose-order-product" name="product_id[]">
+                            <option value="">Pilih Product</option>
+                            ${options}
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" min="0" step="0.1" class="form-control form-control-sm" name="quantity[]" placeholder="Qty" />
+                    </td>
+                    <td>
+                        <input type="text" class="form-control form-control-sm" name="description[]" placeholder="Keterangan" />
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-icon btn-sm btn-danger btn-remove-loose-order-row" title="Hapus Row">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function loadLooseOrderProducts(callback) {
+            if (looseOrderProducts.length > 0) {
+                callback();
+                return;
+            }
+
+            const branchId = $('#branch-id').val();
+
+            $.ajax({
+                url: `/api/products`,
+                type: 'GET',
+                data: {
+                    branch_id: branchId
+                },
+                dataType: 'json',
+                success: function(response) {
+                    looseOrderProducts = response.data || [];
+                    callback();
+                },
+                error: function() {
+                    looseOrderProducts = [];
+                    callback();
+                }
+            });
+        }
+
+        function addLooseOrderRow() {
+            const rowId = Date.now();
+            $('#loose-order-table tbody').append(renderLooseOrderRow(rowId));
+        }
+
+        $('#loose-order').on('click', function() {
+            loadLooseOrderProducts(function() {
+                $('#loose-order-table tbody').html('');
+                addLooseOrderRow();
+                const modal = new bootstrap.Modal(document.getElementById('modal-loose-order'));
+                modal.show();
+            });
+        });
+
+        $('#btn-add-loose-order-row').on('click', function() {
+            addLooseOrderRow();
+        });
+
+        $(document).on('click', '.btn-remove-loose-order-row', function() {
+            $(this).closest('tr').remove();
+        });
+
+        $('#btn-save-loose-order').on('click', function() {
+            const rows = [];
+            let hasError = false;
+
+            const branchId = $('#branch-id').val();
+
+            $('#loose-order-table tbody tr').each(function() {
+                const productId = $(this).find('.loose-order-product').val();
+                const quantity = $(this).find('input[name="quantity[]"]').val();
+                const description = $(this).find('input[name="description[]"]').val();
+
+                if (!productId) {
+                    $(this).find('.loose-order-product').addClass('is-invalid');
+                    hasError = true;
+                } else {
+                    $(this).find('.loose-order-product').removeClass('is-invalid');
+                }
+
+                if (!quantity || parseFloat(quantity) <= 0) {
+                    $(this).find('input[name="quantity[]"]').addClass('is-invalid');
+                    hasError = true;
+                } else {
+                    $(this).find('input[name="quantity[]"]').removeClass('is-invalid');
+                }
+
+                if (productId && quantity && parseFloat(quantity) > 0) {
+                    rows.push({
+                        branch_id: branchId,
+                        product_id: productId,
+                        quantity: quantity,
+                        description: description
+                    });
+                }
+            });
+
+            if (hasError || rows.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Periksa kembali form Loose Order',
+                    text: 'Pastikan setiap baris memiliki Product dan Quantity valid.',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            $.ajax({
+                url: '/transactions/loose-order',
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                contentType: 'application/json',
+                data: JSON.stringify({ rows: rows }),
+                success: function(response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: response.message || 'Loose order berhasil disimpan',
+                        confirmButtonText: 'OK'
+                    });
+                    $('#modal-loose-order').modal('hide');
+                },
+                error: function(xhr) {
+                    let message = 'Gagal menyimpan loose order';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message = xhr.responseJSON.message;
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: message,
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
     }
 
     function formatCurrency(amount) {

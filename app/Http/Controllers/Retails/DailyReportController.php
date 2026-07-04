@@ -287,6 +287,44 @@ class DailyReportController extends Controller
         ]);
     }
 
+    public function getLooseOrders(Request $request) {
+        $params = $request->all();
+        $query = DB::table('loose_orders')
+            ->select(
+                'loose_orders.id',
+                'products.name as product_name',
+                'loose_orders.quantity',
+                'loose_orders.notes',
+            )
+            ->leftJoin('products', 'products.id', '=', 'loose_orders.product_id')
+            ->where('loose_orders.order_date', $params['date'])
+            ->where('loose_orders.branch_id', $params['branch_id']);
+
+        // Apply sorting
+        if ($request->has('order') && $request->order) {
+            $columnIndex = $request->order[0]['column']; // Column index from the DataTable
+            $sortDirection = $request->order[0]['dir']; // 'asc' or 'desc'
+            $columnName = $request->columns[$columnIndex]['data']; // Column name
+
+            $query->orderBy($columnName, $sortDirection);
+        }
+
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 10);
+
+        $totalRecords = $query->count();
+        $filteredRecords = $query->count();
+        $data = $query->orderBy('id', 'desc')->skip($start)->take($length)->get();
+
+        return response()->json([
+            'draw' => $request->input('draw'),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $data
+        ]);
+
+    }
+
     public function getDataFromPosSessions() {
         $branchId = Auth::user()->branch_id;
         $data = DB::table('pos_sessions as ps')
