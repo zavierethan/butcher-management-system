@@ -1395,7 +1395,12 @@
 // Counter untuk generate unique ID setiap kali item ditambahkan ke cart
 let cartItemCounter = 0;
 
+const PRINT_AGENT_URL = 'http://127.0.0.1:9100/print-transaction';
+const PRINT_AGENT_TOKEN = '{{ config("services.print_agent.token") }}';
+
 $(document).ready(function() {
+
+    console.log('PRINT_AGENT_TOKEN:', PRINT_AGENT_TOKEN);
     checkOpenSession();
     getRemainingCashToday();
 
@@ -1676,6 +1681,7 @@ $(document).ready(function() {
                     var productItem = `<div class="cart-item-lists p-3 mb-2" id="${uniqueItemId}" style="border: 1px solid #e9ecef; border-radius: 0.375rem; background-color: #f8f9fa;">
                         <!-- Hidden data fields -->
                         <div class="d-none product-id">${item.product_id}</div>
+                        <div class="d-none product-name">${item.name}</div>
                         <div class="d-none stock-id">${item.stock_id}</div>
                         <div class="d-none base-price">${item.price}</div>
                         <div class="d-none discount">${item.discount}</div>
@@ -1876,6 +1882,7 @@ $(document).ready(function() {
         var productItem = `<div class="cart-item-lists p-3 mb-2" id="${uniqueItemId}" style="border: 1px solid #e9ecef; border-radius: 0.375rem; background-color: #f8f9fa;">
             <!-- Hidden data fields -->
             <div class="d-none product-id">${productId}</div>
+            <div class="d-none product-name">${productName}</div>
             <div class="d-none stock-id">${stockId}</div>
             <div class="d-none base-price">${productPrice}</div>
             <div class="d-none discount">${productDiscount}</div>
@@ -2104,6 +2111,7 @@ $(document).ready(function() {
                     $('.cart-item-lists').each(function() {
                         // IMPROVED: Use safe extraction for all numeric values
                         const productId = $(this).find('.product-id').text().trim();
+                        const productName = $(this).find('.product-name').text().trim();
                         const stockId = $(this).find('.stock-id').text().trim();
                         const price = extractNumericValue($(this).find('.price'));
                         const basePrice = extractNumericValue($(this).find('.base-price'));
@@ -2114,6 +2122,7 @@ $(document).ready(function() {
 
                         products.push({
                             product_id: productId,
+                            product_name: productName,
                             stock_id: stockId,
                             base_price: basePrice,
                             quantity: quantity,
@@ -2212,78 +2221,51 @@ $(document).ready(function() {
                                 allowOutsideClick: false
                             }).then((result) => {
                                 if (result.isConfirmed) {
-                                    $.ajax({
-                                        url: `/orders/print-thermal/${response.transaction_id}`,
-                                        type: "GET",
-                                        dataType: "json",
-                                        success: function(response) {
-                                            if (response.code == 200) {
-                                                var printerName = "{{ ($settings) ? $settings->printer_name : '' }}";
+                                    var printerName = "{{ ($settings) ? $settings->printer_name : '' }}";
+                                    var branchPhone = "{{ ($settings) ? $settings->branch_phone : '' }}";
+                                    var branchAddress = "{{ ($settings) ? $settings->branch_address : '' }}";
 
-                                                if (printerName === '') {
-                                                    Swal.fire({
-                                                        title: 'Gagal mencetak nota',
-                                                        text: 'Nama Printer tidak ditemukan. harap periksa pengaturan pada sistem.',
-                                                        icon: 'warning',
-                                                        timer: 5000,
-                                                        showConfirmButton: false
-                                                    });
-
-                                                    $(".cart-item-lists").remove();
-                                                    calculateTotals
-                                                        ();
-                                                    return;
-                                                }
-
-                                                printReceipt(
-                                                    printerName,
-                                                    response
-                                                );
-
-                                                Swal.fire({
-                                                    title: 'Nota Berhasil Dicetak!',
-                                                    icon: 'success',
-                                                    timer: 5000,
-                                                    showConfirmButton: false
-                                                });
-
-                                                $(".cart-item-lists").remove();
-                                                calculateTotals();
-                                                getRemainingCashToday();
-                                                window.location.reload(true);
-                                            } else {
-                                                Swal.fire({
-                                                    title: 'Gagal Mencetak Nota',
-                                                    text: response
-                                                        .message ||
-                                                        'Terjadi kesalahan saat mencetak nota.',
-                                                    icon: 'error'
-                                                });
-
-                                                $(".cart-item-lists")
-                                                    .remove();
-                                                calculateTotals
-                                                    ();
-                                                getRemainingCashToday();
-                                            }
-                                        },
-                                        error: function(xhr, status,
-                                            error) {
-                                            Swal.fire({
-                                                title: 'Error!',
-                                                text: xhr
-                                                    .responseJSON
-                                                    .message,
-                                                icon: 'error'
-                                            });
-                                        }
+                                if (printerName === '') {
+                                    Swal.fire({
+                                        title: 'Gagal mencetak nota',
+                                        text: 'Nama Printer tidak ditemukan. harap periksa pengaturan pada sistem.',
+                                        icon: 'warning',
+                                        timer: 5000,
+                                        showConfirmButton: false
                                     });
-                                } else if (result.dismiss === Swal
-                                    .DismissReason.cancel) {
+                                    $(".cart-item-lists").remove();
+                                    calculateTotals();
+                                    return;
+                                }
+
+                                printReceiptViaAgent(printerName, branchPhone, branchAddress, response.transaction_code, formData)
+                                    .then(() => {
+                                        Swal.fire({
+                                            title: 'Nota Berhasil Dicetak!',
+                                            icon: 'success',
+                                            timer: 5000,
+                                            showConfirmButton: false
+                                        });
+                                        $(".cart-item-lists").remove();
+                                        calculateTotals();
+                                        getRemainingCashToday();
+                                                        //window.location.reload(true);
+                                    })
+                                    .catch((err) => {
+                                        Swal.fire({
+                                            title: 'Gagal Mencetak Nota',
+                                            text: err.message || 'Tidak bisa terhubung ke print agent. Pastikan aplikasinya berjalan di komputer ini.',
+                                            icon: 'error'
+                                        });
+                                        $(".cart-item-lists").remove();
+                                        calculateTotals();
+                                        getRemainingCashToday();
+                                    });
+                                } else if (result.dismiss === Swal.DismissReason.cancel) {
                                     $(".cart-item-lists").remove();
                                     calculateTotals();
                                     getRemainingCashToday();
-                                    window.location.reload(true);
+                                    //window.location.reload(true);
                                 }
                             });
                         },
@@ -3225,94 +3207,6 @@ $(document).ready(function() {
         return true;
     }
 
-    function listPrinters() {
-        if (!qz.websocket.isActive()) {
-            qz.websocket.connect()
-                .then(() => getPrinters())
-                .catch(err => console.error("QZ Tray connection failed:", err));
-        } else {
-            getPrinters();
-        }
-    }
-
-    function getPrinters() {
-        qz.printers.find()
-            .then(printers => {
-                let printerList = document.getElementById("printerList");
-                printerList.innerHTML = ""; // Clear previous list
-
-                printers.forEach(printer => {
-                    let li = document.createElement("li");
-                    li.textContent = printer;
-                    printerList.appendChild(li);
-                });
-            })
-            .catch(err => console.error("Error listing printers:", err));
-    }
-
-    function printReceipt(printerName, jsonData) {
-        if (!qz.websocket.isActive()) {
-            qz.websocket.connect()
-                .then(() => sendPrintCommand(printerName, jsonData)) // Adjust printer name
-                .catch(err => console.error("QZ Tray connection failed:", err));
-        } else {
-            sendPrintCommand(printerName, jsonData);
-        }
-    }
-
-    function sendPrintCommand(printerName, jsonData) {
-        qz.printers.find(printerName)
-            .then(printer => {
-                console.log(jsonData)
-                let config = qz.configs.create(printer);
-                let header = jsonData.data.header;
-                let details = jsonData.data.details;
-
-                let data = [
-                    '\x1B\x40', // Initialize printer
-                    '\x1B\x61\x31', // Center align
-                    '\x1B\x21\x10', // Double height
-                    'Priyadis Butchers\n',
-                    '\x1B\x21\x00', // Reset to normal text
-                    `${header.address}\n`,
-                    `Telp: ${header.phone_number}\n`,
-                    '\n',
-                    '\x1B\x61\x30', // Left align
-                    '--------------------------------\n',
-                    `No Transaksi  : ${header.code}\n`,
-                    `Tanggal       : ${header.transaction_date.split(' ')[0]}\n`, // Extract date only
-                    `Pembayaran    : ${header.payment_method}\n`,
-                    `Kasir         : ${header.created_by}\n`,
-                    '--------------------------------\n',
-                ];
-
-                // **Loop through items**
-                details.forEach(item => {
-                    data.push(`${item.name}\n`);
-                    data.push(
-                        `${item.quantity} X ${item.base_price} (Discount ${item.discount})\n`);
-                    data.push('\x1B\x61\x32'); // Right align
-                    data.push(`${item.sell_price}\n`);
-                    data.push('\x1B\x61\x30'); // Back to left align
-                });
-
-                data.push('--------------------------------\n');
-                data.push('\x1B\x61\x32'); // Right align
-                data.push(`Total  ${header.total_amount}\n`);
-                data.push(`Bayar (${header.payment_method})  ${header.nominal_cash}\n`);
-                data.push(`Kembali  ${header.nominal_return}\n`);
-                data.push('--------------------------------\n');
-                data.push('\n\n\n');
-                data.push('\x1D\x56\x41'); // Cut paper
-
-                return qz.print(config, data);
-            })
-            .then(() => console.log("Print successful"))
-            .catch(err => console.error("Print failed:", err));
-    }
-    // Auto-connect QZ Tray
-    qz.websocket.connect().catch(err => console.error("QZ Tray not running:", err));
-
     function formatNumberInput(input) {
 
         // Ambil hanya angka
@@ -3329,6 +3223,89 @@ $(document).ready(function() {
         if (!value) return 0;
         const num = parseFloat(value.toString().replace(/,/g, ''));
         return isNaN(num) ? 0 : num;
+    }
+
+    async function printReceiptViaAgent(printerName, branchPhone, branchAddress, transactionCode, formData) {
+
+        const date = new Date(formData.get('transaction_date') || new Date().toISOString());
+
+        const formattedDate =
+            String(date.getDate()).padStart(2, '0') + '-' +
+            String(date.getMonth() + 1).padStart(2, '0') + '-' +
+            date.getFullYear() + ' ' +
+            String(date.getHours()).padStart(2, '0') + ':' +
+            String(date.getMinutes()).padStart(2, '0');
+
+        const paymentMethod = formData.get('payment_method');
+
+        const totalAmount =
+            Number(formData.get('total_amount')) || 0;
+
+        const nominalCash =
+            Number(formData.get('nominal_cash')) || 0;
+
+        const nominalReturn =
+            Number(formData.get('nominal_return')) || 0;
+
+        const subtotal =
+            Number(formData.get('sub_total')) || 0;
+
+        const totalDiscount =
+            Number(formData.get('total_discount')) || 0;
+
+        const detailsJson = formData.get('details');
+
+        const details = detailsJson
+            ? JSON.parse(detailsJson)
+            : [];
+
+        const payload = {
+            device: printerName || undefined,
+
+            header: {
+                store_name: "Priyadis Butcher",
+                address: branchAddress || "-",
+                phone_number: branchPhone || "-",
+
+                transaction_date: formattedDate,
+                payment_method: paymentMethod,
+                transaction_code: transactionCode,
+
+                subtotal: subtotal,
+                total_discount: totalDiscount,
+                total: totalAmount,
+
+                nominal_cash: nominalCash,
+                nominal_return: nominalReturn
+            },
+
+            details: details.map(item => ({
+                name: item.product_name || '',
+                quantity: Number(item.quantity) || 0,
+                unit: item.unit || 'Kg',
+                price: Number(item.base_price) || 0,
+                discount: Number(item.discount) || 0
+            }))
+        };
+
+        console.log('Print payload:', payload);
+
+        const res = await fetch(PRINT_AGENT_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Print-Token': PRINT_AGENT_TOKEN
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await res.json();
+
+        if (result.status !== 'ok') {
+            throw new Error(
+                result.message || 'Print agent mengembalikan error'
+            );
+        }
     }
 });
 </script>
