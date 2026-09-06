@@ -2225,6 +2225,8 @@ $(document).ready(function() {
                                     var branchPhone = "{{ ($settings) ? $settings->branch_phone : '' }}";
                                     var branchAddress = "{{ ($settings) ? $settings->branch_address : '' }}";
 
+                                    console.log('Printer Name:', printerName);
+
                                 if (printerName === '') {
                                     Swal.fire({
                                         title: 'Gagal mencetak nota',
@@ -2249,7 +2251,7 @@ $(document).ready(function() {
                                         $(".cart-item-lists").remove();
                                         calculateTotals();
                                         getRemainingCashToday();
-                                                        //window.location.reload(true);
+                                        window.location.reload(true);
                                     })
                                     .catch((err) => {
                                         Swal.fire({
@@ -2265,7 +2267,7 @@ $(document).ready(function() {
                                     $(".cart-item-lists").remove();
                                     calculateTotals();
                                     getRemainingCashToday();
-                                    //window.location.reload(true);
+                                    window.location.reload(true);
                                 }
                             });
                         },
